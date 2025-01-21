@@ -1,0 +1,35 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Financial Year Master</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" control="FinYearCode" [label]="formConfig.FinYearCode.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" control="FinYearName" [label]="formConfig.FinYearName.label" [validationMessage]="formConfig.FinYearName.error"></z-inputtext>
+      </div>
+      <div class="row">
+        <div class="col-xl-6 form-group">
+          <z-datepicker [group]="form" control="FinYearStartDate" [label]="formConfig.FinYearStartDate.label" [validationMessage]="formConfig.FinYearStartDate.error"></z-datepicker>
+        </div>
+        <div class="col-xl-6 form-group">
+          <z-datepicker [group]="form" control="FinYearEndDate" [label]="formConfig.FinYearEndDate.label" [validationMessage]="formConfig.FinYearEndDate.error"></z-datepicker>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="form.get('ActiveStatus')?.value == false">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>

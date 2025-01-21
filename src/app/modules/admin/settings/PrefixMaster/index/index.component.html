@@ -1,0 +1,33 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+</ng-template>
+<app-index-table [tableDef]="tableDef"
+                 (lazyLoad)="onIndexTableLazyLoad($event)">
+</app-index-table>
+<ng-template #prefixCodeTemplate let-row>
+  <span class="fw-bold font-blue" (click)="onClickEditDetails(row.PrefixID, row.ActiveStatus)" style="cursor: pointer;">{{ row.PrefixCode }}</span>
+</ng-template>
+<ng-template #prefixIsAllowedForPatient let-row>
+  <span class="badge rounded-pill {{ row.IsAllowedForPatient ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsAllowedForPatient ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+<ng-template #prefixIsAllowedForStaff let-row>
+  <span class="badge rounded-pill {{ row.IsAllowedForStaff ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsAllowedForStaff ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+<ng-template #prefixGenderTemplate let-row>
+  {{ row.PrefixGender === '1' ? 'Male' : row.PrefixGender === '2' ? 'Female' : (row.PrefixGender === null ? '' : '') }}
+</ng-template>
+<ng-template #prefixActiveStatusTemplate let-row>
+  <span class="badge {{ row.ActiveStatus ? 'bg-outline-success' : 'bg-outline-danger' }}">
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+<ng-template #actionColTemplate let-row>
+  <div class="hstack gap-2 fs-15 justify-content-end">
+    <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)"><i class="ri-delete-bin-line"></i></span>
+  </div>
+</ng-template>
+<app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>

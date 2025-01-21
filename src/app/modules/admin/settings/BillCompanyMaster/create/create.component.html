@@ -1,0 +1,74 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Bill Company Master</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'BillCompanyCode'" [label]="formConfig.BillCompanyCode.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'BillCompanyName'" [label]="formConfig.BillCompanyName.label" [validationMessage]="formConfig.BillCompanyName.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-textarea [group]="form" [control]="'BillCompanyAddress'" [label]="formConfig.BillCompanyAddress.label"></z-textarea>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'BillCompanyCity'" [label]="formConfig.BillCompanyCity.label"></z-inputtext>
+      </div>
+      <div class="row">
+        <div class="col-xl-6 form-group">
+          <z-select [group]="form" [control]="'BillCompanyCountryID'" [label]="formConfig.BillCompanyCountryID.label" (onChange)="onCountryChange($event)"
+                    [options]="CountryList" [optionLabel]="'CountryName'" [optionValue]="'CountryID'">
+          </z-select>
+        </div>
+        <div class="col-xl-6 form-group">
+          <z-select [group]="form" [control]="'BillCompanyStateID'" [label]="formConfig.BillCompanyStateID.label"
+                    [options]="StateList" [optionLabel]="'StateName'" [optionValue]="'StateID'">
+          </z-select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-6 form-group">
+          <z-inputtext [group]="form" [control]="'BillCompanyPinCode'" [label]="formConfig.BillCompanyPinCode.label" [validationMessage]="formConfig.BillCompanyPinCode.error"></z-inputtext>
+        </div>
+        <div class="col-xl-6 form-group">
+          <z-inputtext [group]="form" [control]="'BillCompanyPhoneNo'" [label]="formConfig.BillCompanyPhoneNo.label" [validationMessage]="formConfig.BillCompanyPhoneNo.error"></z-inputtext>
+        </div>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'BillCompanyFaxNo'" [label]="formConfig.BillCompanyFaxNo.label" [validationMessage]="formConfig.BillCompanyFaxNo.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'BillCompanyEmailID'" [label]="formConfig.BillCompanyEmailID.label" [validationMessage]="formConfig.BillCompanyEmailID.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'BillCompanyGSTIN'" [label]="formConfig.BillCompanyGSTIN.label" [validationMessage]="formConfig.BillCompanyGSTIN.error"></z-inputtext>
+      </div>
+      <div class="row">
+        <div class="col-xl-6 form-group">
+          <z-inputtext [group]="form" [control]="'BillCompanyPAN'" [label]="formConfig.BillCompanyPAN.label" [validationMessage]="formConfig.BillCompanyPAN.error"></z-inputtext>
+        </div>
+        <div class="col-xl-6 form-group">
+          <z-inputtext [group]="form" [control]="'BillCompanyTAN'" [label]="formConfig.BillCompanyTAN.label"></z-inputtext>
+        </div>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'HospitalID'" [label]="formConfig.HospitalID.label"></z-inputtext>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>
+

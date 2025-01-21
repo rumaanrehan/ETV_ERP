@@ -1,0 +1,89 @@
+/*.form-floating > span {
+  padding: 0.75rem 0.75rem !important;
+  font-size: 0.813rem;
+}
+
+.form-floating > label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0 0.25rem;
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.form-floating > .form-control:focus + label {
+  top: -0.1rem;
+  left: 0.5rem;
+  color: var(--primary-color) !important;
+  background-color: white;
+  height: unset;
+}
+
+.form-floating > .form-control:not(:placeholder-shown):not(select) + label {
+  top: -0.1rem;
+  left: 0.5rem;
+  background-color: white;
+  height: unset;
+}
+
+.form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select {
+  height: calc(3rem - 8px);
+}
+
+.form-floating > .form-control:placeholder-shown:not(:focus) + label {
+  opacity: 1;
+  visibility: visible;
+  top: 0;
+  left: 0.6rem;
+}
+
+.form-floating .form-control:focus {
+  border-color: var(--primary-color);
+}
+
+.form-floating > .form-control:not(:placeholder-shown):not(select) ~ label {
+  transform: scale(0.8) translateY(-0.5rem) translateX(0.15rem);
+}
+
+.form-floating > .form-select + label {
+  font-weight: 400;
+  transform: unset;
+  top: 0;
+  color: #4b5563 !important;
+  left: 0.6rem;
+}
+
+.form-floating > .form-select:focus + label {
+  transform: scale(0.8) translateY(-0.5rem) translateX(0.15rem);
+  font-weight: 600;
+  top: -0.1rem;
+  left: 0.5rem;
+  color: var(--primary-color) !important;
+  background-color: white;
+  height: unset;
+}
+
+.form-floating > .form-control, .form-floating > span {
+  padding: 0.55rem 0.75rem !important;
+}
+
+.form-floating label, .form-switch {
+  display: flex;
+  align-items: center;
+}
+
+.form-vertical > div {
+  margin-bottom: 1rem;
+}*/
+
+
+/*-----------------------------------------------------------*/
+/*.form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select, .form-floating > span {
+  min-height: unset;
+}
+
+.form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select {
+  height: 2rem;
+}*/
+

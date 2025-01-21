@@ -1,0 +1,14 @@
+<div [formGroup]="group">
+    <p-floatLabel>
+      <p-calendar
+        [styleClass]="styleClass"
+        [formControlName]="control"
+        [appShowValidationTooltip]="validationMessage"
+        [dateFormat]="'dd-mm-yy'"
+        [showIcon]="true"
+        [iconDisplay]="'input'"
+        (onSelect)="onDateSelect($event)"
+      ></p-calendar>
+      <label>{{ label }}</label>
+    </p-floatLabel>
+  </div>

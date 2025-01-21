@@ -1,0 +1,35 @@
+<!-- Page Header Action Button Template -->
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+</ng-template>
+<!-- Page Header Action Button Template -->
+<!-- Index Table Component -->
+<app-index-table [tableDef]="tableDef"
+                 (lazyLoad)="onIndexTableLazyLoad($event)">
+</app-index-table>
+<!-- Index Table Component -->
+<!-- Table Column Custom Template -->
+<ng-template #fixServiceCodeTemplate let-row>
+  <span class="fw-bold font-blue" (click)="onClickEditDetails(row.FixServiceID)" style="cursor: pointer;">{{ row.FixServiceCode }}</span>
+</ng-template>
+<ng-template #fixServiceName let-row>
+  <span class="fw-bold">{{ row.FixServiceName }}</span>
+</ng-template>
+<ng-template #fixServiceFixedIDTemplate let-row>
+  <span class="fw-bold">{{ row.FixedID }}</span>
+</ng-template>
+<ng-template #fixServiceActiveStatusTemplate let-row>
+  <span class="badge {{ row.ActiveStatus ? 'bg-outline-success' : 'bg-outline-danger' }}">
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+<ng-template #actionColTemplate let-row>
+  <div class="hstack gap-2 fs-15 justify-content-end">
+    <!--<span class="btn btn-icon btn-sm btn-info-transparent rounded-pill" (click)="onClickEdit(row)"><i class="ri-edit-line"></i></span>-->
+    <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)"><i class="ri-delete-bin-line"></i></span>
+  </div>
+</ng-template>
+<!-- Table Column Custom Template -->
+<!-- Create Component -->
+<app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>
+<!-- Create Component -->

@@ -1,0 +1,42 @@
+<div [formGroup]="group" class="z-auto-complete">
+  <p-floatLabel>
+    <p-autoComplete [formControlName]="control"
+                    [appShowValidationTooltip]="validationMessage"
+                    [suggestions]="suggestions"
+                    [placeholder]="placeholder"
+                    [lazy]="true"
+                    [optionLabel]="optionLabel"
+                    (completeMethod)="filterItem($event)"
+                    (onSelect)="onItemSelect($event)"
+                    (dblclick)="doubleclick()">
+
+      <!-- Header template -->
+      <ng-template pTemplate="header" *ngIf="showHeader">
+        <table class="autocomplete-table">
+          <thead>
+            <tr>
+              <th *ngFor="let col of columns" [ngStyle]="{ 'width': col.width || 'auto' }">
+                {{ col.name }}
+              </th>
+            </tr>
+          </thead>
+        </table>
+      </ng-template>
+
+      <!-- Item template -->
+      <ng-template let-item pTemplate="item">
+        <table class="autocomplete-table">
+          <tbody>
+            <tr>
+              <td *ngFor="let col of columns"
+                  [ngStyle]="{ 'width': col.width || 'auto' }">
+                {{ item[col.valueField] }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </p-autoComplete>
+    <label>{{ label }}</label>
+  </p-floatLabel>
+</div>

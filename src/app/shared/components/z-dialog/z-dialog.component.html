@@ -1,0 +1,12 @@
+<p-dialog
+    [modal]="true"
+    [visible]="isVisible"
+    [closable]="false"
+    [header]="header"
+    [styleClass]="styleClass">
+    
+    <!-- Content slot -->
+    <ng-template pTemplate="content">
+        <ng-content select="[dialogContent]"></ng-content>
+    </ng-template>
+  </p-dialog>

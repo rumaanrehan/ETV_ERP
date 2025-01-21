@@ -1,0 +1,90 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Plugins Link Start */
+// @import '../node_modules/animate.css/animate.css';
+@import "../node_modules/keen-slider/keen-slider.min.css";
+@import "../node_modules/@angular/cdk/overlay-prebuilt.css";
+@import "../node_modules/@swimlane/ngx-datatable/index.css";
+@import "../node_modules/@swimlane/ngx-datatable/themes/material.scss";
+@import "../node_modules/@swimlane/ngx-datatable/assets/icons.css";
+@import "../node_modules/@ng-select/ng-select/themes/default.theme.css";
+/*@import "../node_modules/dropzone/dist/min/dropzone.min.css";*/
+@import "../node_modules/@angular/cdk/overlay-prebuilt.css";
+@import "../node_modules/ngx-owl-carousel-o/lib/styles/scss/owl.carousel";
+@import "../node_modules/ngx-owl-carousel-o/lib/styles/scss/owl.theme.default";
+
+//swiperjs
+@import "swiper/scss";
+@import "swiper/scss/navigation";
+@import "swiper/scss/pagination";
+
+// angular material
+@import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+
+@import "../node_modules/@angular/cdk/overlay-prebuilt.css";
+
+//angular calendar
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
+
+// font awsome
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+
+//flatepicker
+@import url("../node_modules/flatpickr/dist/flatpickr.css");
+
+//ng2-nouislider
+@import "../node_modules/nouislider/dist/nouislider.css";
+
+@import "../node_modules/ngx-toastr/toastr.css";
+
+//keen-slider
+@import url("../node_modules/keen-slider/keen-slider.min.css");
+
+/* Plugins Link End */
+
+/* Custom assets Link Start */
+
+// -- Style Css --
+@layer bootstrap, bootstrap-override, primeng;
+
+// @import url("./assets/scss/bootstrap.scss") layer(bootstrap);
+@import url(../node_modules/bootstrap/scss/bootstrap.scss) layer(bootstrap);
+// @import url("../node_modules/bootstrap/scss/bootstrap-reboot.scss") layer(bootstrap-reboot);
+// @import url("./assets/scss/bootstrap.scss") layer(bootstrap);
+@import url("./assets/css/bootstrap-override.css") layer(bootstrap-override);
+
+// @import url("./assets/css/styles.css");
+
+@import url("./assets/scss/theme.scss");
+// -- Icons Css --
+@import url("./assets/css/icons.css");
+// -- Sidebar --
+@import url("./assets/libs/simplebar/simplebar.min.css");
+// -- Prime NG Icons --
+@import "primeicons/primeicons.css";
+
+// @import url("./assets/scss/primeng-theme/theme/aura/aura-light/blue/theme.scss");
+@import url("./assets/scss/primeng-theme/theme/zunified/theme.scss");
+@import url("../node_modules/primeng/resources/primeng.min.css");
+
+// -- Custom App CSS --
+// @import url("./assets/css/app.css");
+@import "assets/scss/app";
+
+/*@import url("./assets/scss/app.scss");*/
+
+/* Custom assets Link End */
+
+
+.p-datatable-table {
+  @extend .table !optional;
+  @extend .table-dark !optional;
+}
+
+.p-datatable-thead {
+  @extend .thead-dark !optional;
+}
+
+.p-datatable-body {
+  @extend .tbody !optional;
+}

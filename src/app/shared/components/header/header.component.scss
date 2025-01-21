@@ -1,0 +1,52 @@
+.desktop-logo {
+    height: 25px;
+    margin-bottom: -4px;
+    margin-left: 7px;
+}
+
+.company-dropdown {
+    border-radius: 0.15rem;
+    font-weight: 500;
+    border: none;
+    margin: 0 auto;
+}
+
+.main-header-container .header-link-icon {
+  color: #fff;
+}
+
+.animated-arrow span {
+    background: #fff;
+}
+
+.animated-arrow span:before, .animated-arrow span:after {
+  background: #fff;
+}
+
+.app-header #mainHeaderProfile {
+    color: #fff;
+}
+
+a.header-link {
+  padding: 0 0.65rem !important;
+}
+
+i {
+  color: #fff;
+}
+
+@media (min-width: 992px) {
+  .app-header {
+    padding-inline-start: 0;
+    z-index: 104;
+  }
+}
+
+.app-header {
+  height: 3.125rem;
+}
+
+
+#header-shortcut-scroll, #header-notification-scroll, #header-cart-items-scroll {
+  max-height: 23rem;
+}

@@ -1,0 +1,69 @@
+input, span {
+  font-size: 0.9rem;
+}
+
+.form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select, .form-floating > span {
+  min-height: unset;
+}
+
+/*Start Form Floating CSS*/
+
+/*.form-floating > .form-control, .form-floating > span {
+  padding: 0.75rem 0.75rem !important;
+}*/
+
+
+/*.form-floating > span {
+  padding: 0.75rem 0.75rem !important;*/
+/*font-size: 1rem;*/
+/*}*/
+
+/*.form-floating > label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0 0.25rem;
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.form-floating > .form-control:focus + label {
+  top: -0.1rem;
+  left: 0.5rem;
+  color: var(--primary-color) !important;
+  background-color: white;
+  height: unset;
+}
+
+.form-floating > .form-control:not(:placeholder-shown) + label {
+  top: -0.1rem;
+  left: 0.5rem;
+  background-color: white;
+  height: unset;
+}
+
+
+.form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select {
+  height: calc(3rem - 8px);
+}
+
+.form-floating > .form-control:placeholder-shown:not(:focus) + label {
+  opacity: 1;
+  visibility: visible;
+  top: 0.6rem;
+  left: 0.6rem;
+}
+
+.form-floating .form-control:focus {
+  border-color: var(--primary-color);
+}
+
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  transform: scale(0.8) translateY(-0.5rem) translateX(0.15rem);
+}*/
+
+/*End Form Floating CSS*/
+
+#CountryCode {
+  cursor: not-allowed;
+}

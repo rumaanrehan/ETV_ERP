@@ -1,0 +1,255 @@
+<!-- [tableStyleClass]="'table table-striped'" -->
+<div [formGroup]="tableFilterForm" style="height: calc(100vh - 122px);">
+  <p-table 
+    [styleClass]="'p-paginator-striped'" 
+    [tableStyleClass]="'table index-table'" 
+    [value]="tableDef.data"
+    [totalRecords]="tableDef.totalRecords" 
+    [rows]="25" 
+    [showCurrentPageReport]="true"
+    [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'" 
+    [scrollable]="true"
+    [scrollHeight]="'flex'" 
+    [rowHover]="true"
+    [(selection)]="selectedRow"
+    [selectionMode]="'multiple'"
+    [stateStorage]="'local'"
+    [stateKey]="tableStateKey"
+    [paginator]="true" 
+    [showJumpToPageInput]="true"
+    [rowsPerPageOptions]="[25, 50, 100, 200]"
+    [loading]="tableDef.loading" 
+    [lazy]="true"
+    (onLazyLoad)="loadData($event)"
+    [filterDelay]="300"
+    (onFilter)="onFilter($event)"
+    [sortField]="tableDef.defaultSortColumn.sortField" 
+    [sortOrder]="tableDef.defaultSortColumn.sortOrder">
+    <ng-template pTemplate="caption">
+      <div class="index-table-action-bar">
+        <div class="d-flex justify-content-end">
+          <span><i class="pi pi-filter filter-toggle" (click)="toggleFilterPanel();" [ngClass]="{'active-toggle': showFilterPanel}"></i></span>
+          <span><i class="pi pi-sliders-h column-visibility-toggle" (click)="columnMenu.toggle($event)" [ngClass]="{'active-toggle': columnMenu.overlayVisible}"></i></span>
+          <p-overlayPanel #columnMenu>
+            <div class="column-toggle-panel">
+              <ng-container *ngFor="let col of tableHeaderDef">
+                <!-- <p-checkbox
+                  *ngIf="!col.excludeVisibleToggle"
+                  [(ngModel)]="col.visible"
+                  binary="true"
+                  [label]="col.label"
+                  (ngModelChange)="onVisibilityChange(col)"
+                >
+                </p-checkbox> -->
+              </ng-container>
+              <hr class="m-0">
+              <button type="button" class="btn btn-primary">Reset to default</button>
+            </div>
+          </p-overlayPanel>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <!-- colgroup pending hai -->
+      <tr *ngIf="showFilterPanel" class="filter-panel">
+        <ng-container *ngFor="let col of tableDef.columnDef">
+          <th
+            *ngIf="col.visible !== false"
+            [class]="col.cssClass"
+            [style.width]="col.width">
+            <p-columnFilter *ngIf="col.hasFilter == true"
+              [showMenu]="false"
+              [showClearButton]="false"
+              [matchMode]="'equals'"
+              field="{{ col.filterKey ?? col.data }}" 
+              [type]="'text'"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <ng-container *ngIf="col.filterType === 'selectList'">
+                  <p-dropdown 
+                        [formControlName]="col.filterKey ?? col.data"
+                        [options]="col.filterData"
+                        [optionLabel]="col.filterData.label"
+                        [optionValue]="col.filterData.value"
+                        (onChange)="filter($event.value)" 
+                        placeholder="Select One"
+                        showClear="true">
+                    </p-dropdown>
+                </ng-container>
+                <ng-container *ngIf="col.filterType === 'text' || !col.filterType">
+                  <input pInputText type="text" [formControlName]="col.filterKey ?? col.data" (input)="filter(tableFilterForm.get(col.filterKey ?? col.data)?.value)" placeholder="Search">
+                </ng-container>
+              </ng-template>
+            </p-columnFilter>
+            
+            <!-- <ng-container *ngIf="col.hasFilter == true">
+              <ng-container *ngIf="col.filterType == 'selectList'; else textFilterTemplate">
+                <p-columnFilter
+                  [showMenu]="false" 
+                  [showClearButton]="false"
+                  [matchMode]="'equals'" 
+                  [type]="'text'" 
+                  field="{{ col.data }}"
+                >
+                  <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                    <p-dropdown 
+                        [ngModel]="value" 
+                        [options]="col.filterData"
+                        [optionLabel]="col.filterData.label"
+                        [optionValue]="col.filterData.value"
+                        (onChange)="filter($event.value)" 
+                        placeholder="Select One"
+                        showClear="true">
+                    </p-dropdown>
+                  </ng-template>
+              </p-columnFilter>
+              </ng-container>
+              <ng-template #textFilterTemplate>
+                <p-columnFilter 
+                  *ngIf="col.hasFilter == true" 
+                  [showMenu]="false" 
+                  [showClearButton]="false"
+                  [matchMode]="'equals'" 
+                  [type]="'text'" 
+                  field="{{ col.data }}"
+                  placeholder="Search by {{ col.label }}"/>
+              </ng-template>
+            </ng-container> -->
+
+            <!-- <p-columnFilter 
+                *ngIf="col.hasFilter == true" 
+                [showMenu]="false" 
+                [showClearButton]="false"
+                [matchMode]="'equals'" 
+                [type]="'text'" 
+                field="{{ col.data }}"
+                
+                placeholder="Search by {{ col.label }}"/> -->
+          </th>
+          <!-- (input)="filter($event)" -->
+          <!-- <th *ngIf="col.visible !== false" [pSortableColumn]="col.orderable !== false ? col.data : ''"
+            class="{{col.cssClass}}">
+            {{ col.label }}
+            <p-sortIcon *ngIf="col.orderable !== false" field="{{ col.data }}"></p-sortIcon>
+          </th> -->
+        </ng-container>
+      </tr>
+
+      <tr>
+        <ng-container *ngFor="let col of tableHeaderDef">
+          <th 
+              *ngIf="col.visible !== false"
+              [pSortableColumn]="col.orderable !== false ? col.data : ''"
+              class="{{col.cssClass}}"
+              [attr.colspan]="col.colSpan"
+              [attr.rowspan]="col.hasSubHeader === true ? 1 : 2"
+              [attr.class]="col.cssClass + (col.hasSubHeader === true ? ' text-center' : '')">
+              {{ col.label }}
+              <p-sortIcon *ngIf="col.orderable !== false" field="{{ col.data }}"></p-sortIcon>
+          </th>
+        </ng-container>
+      </tr>
+
+      <tr *ngIf="tableSubHeaderDef">
+        <ng-container *ngFor="let col of tableSubHeaderDef">
+          <th 
+              *ngIf="col.visible !== false"
+              [pSortableColumn]="col.orderable !== false ? col.data : ''"
+              class="{{col.cssClass}}"
+              [attr.colspan]="col.colSpan">
+              {{ col.label }}
+              <p-sortIcon *ngIf="col.orderable !== false" field="{{ col.data }}"></p-sortIcon>
+          </th>
+        </ng-container>
+      </tr>
+
+      <!-- <tr *ngFor="let row of tableHeaderColDef">
+        <ng-container *ngFor="let col of row">
+          <th *ngIf="col.visible !== false"
+              [attr.colspan]="col.colSpan">
+              {{ col.label }}
+          </th>
+        </ng-container>
+      </tr> -->
+      
+      <!-- <ng-container *ngIf="tableDef.customHeaderTemplate; else defaultHeaderTemplate">
+        <ng-container *ngTemplateOutlet="tableDef.customHeaderTemplate; context: { $implicit: tableDef.columnDef }"></ng-container>
+      </ng-container>
+      <ng-template #defaultHeaderTemplate>
+        <tr>
+          <ng-container *ngFor="let col of tableDef.columnDef">
+            <th 
+              *ngIf="col.visible !== false"
+              [pSortableColumn]="col.orderable !== false ? col.data : ''"
+              class="{{col.cssClass}}"
+              [style.width]="col.width">
+              {{ col.label }}
+              <p-sortIcon *ngIf="col.orderable !== false" field="{{ col.data }}"></p-sortIcon>
+            </th>
+          </ng-container>
+        </tr>
+      </ng-template> -->
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+      <tr [pSelectableRow]="rowData">
+        <ng-container *ngFor="let col of tableDef.columnDef">
+          <td *ngIf="col.visible !== false" class="{{col.cssClass}}">
+            <ng-container *ngIf="col.customTemplate; else defaultTemplate">
+              <ng-container *ngTemplateOutlet="col.customTemplate; context: { $implicit: rowData }"></ng-container>
+            </ng-container>
+            <ng-template #defaultTemplate>
+              {{ rowData[col.data] | titlecase }}
+            </ng-template>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+    </ng-template>
+
+    <!-- <ng-template pTemplate="paginatorLeft">
+      <div>
+        <label for="rows">Page Size: </label>
+        <select id="rows" [(ngModel)]="rows" (change)="onPageSizeChange($event)">
+          <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
+        </select>
+      </div>
+    </ng-template> -->
+  
+    <!-- <ng-template pTemplate="paginatorCenter">
+      <span>{{ currentPageReport }}</span>
+    </ng-template> -->
+  
+    <!-- <ng-template pTemplate="paginatorRight">
+      <button
+        type="button"
+        pButton
+        icon="pi pi-angle-double-left"
+        (click)="paginate('first')"
+        [disabled]="pageIndex === 0"
+      ></button>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-angle-left"
+        (click)="paginate('prev')"
+        [disabled]="pageIndex === 0"
+      ></button>
+      <span>Page {{ pageIndex + 1 }}</span>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-angle-right"
+        (click)="paginate('next')"
+        [disabled]="pageIndex >= totalPages - 1"
+      ></button>
+      <button
+        type="button"
+        pButton
+        icon="pi pi-angle-double-right"
+        (click)="paginate('last')"
+        [disabled]="pageIndex >= totalPages - 1"
+      ></button>
+    </ng-template> -->
+  </p-table>
+</div>

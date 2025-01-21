@@ -1,0 +1,26 @@
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <ng-template #content let-c="close" let-d="dismiss">
+        <div class="modal-header">
+          <h6 class="modal-title" id="exampleModalLabel1">Modal title</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="d('Cross click')" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          This is my first modal
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="c('Closelick')" data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="button" class="btn btn-primary">Savechanges</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- 
+<div class="col-2 p-2">
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" (click)="open(content)" data-bs-target="#exampleModal">Launch demo modal</button>
+</div> -->

@@ -1,0 +1,50 @@
+<!-- Page Header Action Button Template -->
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i class="pi pi-plus"></i>&nbsp;Add Plan</button>
+</ng-template>
+
+<!-- Page Header Action Button Template -->
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef"
+    (lazyLoad)="onIndexTableLazyLoad($event)">
+  </z-datatable>
+</div>
+<!-- Index Table Component -->
+
+<!-- Index Table Component -->
+<!-- Table Column Custom Template -->
+<ng-template #planCodeTemplate let-row>
+  <span class="table-action-link" (click)="onClickEditDetails(row.PlanID)" style="cursor: pointer;">{{ row.PlanCode }}</span>
+</ng-template>
+<ng-template #planIsAllowedForOPTemplate let-row>
+  <span class="{{ row.IsAllowedForOP ? 'text-success' : 'text-danger' }}">
+    <i class="pi {{ row.IsAllowedForOP ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
+  </span>
+</ng-template>
+<ng-template #planIsAllowedForIPTemplate let-row>
+  <span class="{{ row.IsAllowedForIP ? 'text-success' : 'text-danger' }}">
+    <i class="pi {{ row.IsAllowedForIP ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
+  </span>
+</ng-template>
+<ng-template #planIsPreAuthorizationRequiredTemplate let-row>
+  <span class="{{ row.IsPreAuthorizationRequired ? 'text-success' : 'text-danger' }}">
+    <i class="pi {{ row.IsPreAuthorizationRequired ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
+  </span>
+</ng-template>
+<ng-template #planIsDefaultTemplate let-row>
+  <span class="{{ row.IsDefault ? 'text-success' : 'text-danger' }}">
+    <i class="pi {{ row.IsDefault ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
+  </span>
+</ng-template>
+<ng-template #planActiveStatusTemplate let-row>
+  <span class="table-row-status">
+    <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+<ng-template #actionColTemplate let-row>
+  <div class="d-flex justify-content-end" *ngIf="row.CanDelete">
+    <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
+  </div>
+</ng-template>
+<!-- Table Column Custom Template -->

@@ -1,0 +1,48 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Discount Reason Master</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'DiscountReasonCode'" [label]="formConfig.DiscountReasonCode.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'DiscountReasonName'" [label]="formConfig.DiscountReasonName.label" [validationMessage]="formConfig.DiscountReasonName.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputswitch [group]="form" [control]="'IsAllowedAdditionalDescription'" [label]="formConfig.IsAllowedAdditionalDescription.label"></z-inputswitch>
+      </div>
+      <div *ngIf="(form.get('IsAllowedAdditionalDescription')?.value)" class="col-xl-12 form-group">
+        <z-inputswitch [group]="form" [control]="'IsAdditionalDescriptionRequired'" [label]="formConfig.IsAdditionalDescriptionRequired.label"></z-inputswitch>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputswitch [group]="form" [control]="'IsDiscountApprovalRequired'" [label]="formConfig.IsDiscountApprovalRequired.label"></z-inputswitch>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputnumber [group]="form" [control]="'DiscountPercent'" [label]="formConfig.DiscountPercent.label" [validationMessage]="formConfig.DiscountPercent.error"></z-inputnumber>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputswitch [group]="form" [control]="'IsAllowedForOPRegistration'" [label]="formConfig.IsAllowedForOPRegistration.label"></z-inputswitch>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputswitch [group]="form" [control]="'IsAllowedForBilling'" [label]="formConfig.IsAllowedForBilling.label"></z-inputswitch>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputswitch [group]="form" [control]="'IsAllowedForPharmacy'" [label]="formConfig.IsAllowedForPharmacy.label"></z-inputswitch>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>

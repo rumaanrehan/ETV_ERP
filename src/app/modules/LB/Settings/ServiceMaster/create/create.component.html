@@ -1,0 +1,145 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderBackButton()"> <i class="bi bi-arrow-left-circle" style="vertical-align: bottom; margin-right: 5px;"></i>Back </button>
+</ng-template>
+
+<form [formGroup]="form" autocomplete="off">
+  <div class="row">
+    <div class="col-xl-4"></div>
+    <div class="col-xl-4 card card-body">
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'ServiceCode'" [label]="formConfig.ServiceCode.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'ServiceCategoryID'" [label]="formConfig.ServiceCategoryID.label" [validationMessage]="formConfig.ServiceCategoryID.error"
+                  [options]="CategoryList" [optionLabel]="'ServiceCategoryName'" [optionValue]="'ServiceCategoryID'">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'ServiceName'" [label]="formConfig.ServiceName.label" [validationMessage]="formConfig.ServiceName.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputnumber [group]="form" [control]="'ServiceRate'" [label]="formConfig.ServiceRate.label" [validationMessage]="formConfig.ServiceRate.error"></z-inputnumber>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'TestType'" [label]="formConfig.TestType.label" [validationMessage]="formConfig.TestType.error"
+                  [options]="TestTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
+        </z-select>
+      </div>
+      <div *ngIf="[1].includes(form.get('TestType')?.value)">
+        <div class="col-xl-12 form-group">
+          <z-checkbox [group]="form" [control]="'ShowMethodOnReport'" [label]="formConfig.ShowMethodOnReport.label"></z-checkbox>
+        </div>
+        <div class="col-xl-12 form-group">
+          <z-select [group]="form" [control]="'ResultType'" [label]="formConfig.ResultType.label" [validationMessage]="formConfig.ResultType.error" (onChange)="onResultTypeChange()"
+                    [options]="ResultTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
+          </z-select>
+        </div>
+        <div class="col-xl-12 form-group" *ngIf="[1, 2].includes(form.get('ResultType')?.value)">
+          <z-inputtext [group]="form" [control]="'SIUnit'" [label]="formConfig.SIUnit.label"></z-inputtext>
+        </div>
+
+        <!--<div *ngIf="[2].includes(form.get('ResultType')?.value)">
+          <div class="col-xl-12 d-flex justify-content-center">
+            <h5 class="text-center">Field Options</h5>
+          </div>
+          <div class="row">
+            <div class="col-xl-8"></div>
+            <div class="col-xl-4">
+              <button type="button" class="btn btn-md btn-primary w-100" (click)="addRow()">Add Field Label</button>
+            </div>
+          </div>
+          <p-table [value]="LabelArray.controls">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 10%;"></th>
+                <th style="width: 10%;">SN</th>
+                <th style="width: 80%;">Label</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-group let-i="rowIndex">
+              <tr>
+                <td>
+                  <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="deleteRow(i)"><i class="ri-delete-bin-line"></i></span>
+                </td>
+                <td>{{ i + 1 }}</td>
+                <td>
+                  <z-inputtext [group]="getGroup(i)" [control]="'Label'" [label]="formConfig.LabelArray.items.Label.label" [validationMessage]="formConfig.LabelArray.items.Label.error?.[i]"> </z-inputtext>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>-->
+
+        <div *ngIf="[2].includes(form.get('ResultType')?.value)">
+          <div class="col-xl-12 d-flex justify-content-center">
+            <h5 class="text-center">Field Options</h5>
+          </div>
+          <div class="row">
+            <div class="col-xl-8"></div>
+            <div class="col-xl-4 pb-2">
+              <button type="button" class="btn btn-md btn-primary w-100" (click)="addRow()">Add Field Label</button>
+            </div>
+          </div>
+          <div formArrayName="LabelArray">
+            <div class="form-group row font-weight-bold">
+              <div class="col-xl-1"></div>
+              <div class="col-xl-1">SN</div>
+              <div class="col-xl-10">Label</div>
+            </div>
+            <div *ngFor="let group of LabelArray.controls; let i = index" class="form-group row">
+              <div class="col-xl-1">
+                <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="deleteRow(i)"><i class="ri-delete-bin-line"></i></span>
+              </div>
+              <div class="col-xl-1 mt-2">{{ i + 1 }}</div>
+              <div class="col-xl-10">
+                <z-inputtext [group]="getGroup(i)" [control]="'Label'" [label]="formConfig.LabelArray.items.Label.label" [validationMessage]="formConfig.LabelArray.items.Label.error?.[i]"> </z-inputtext>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-12 form-group" *ngIf="[1].includes(form.get('ResultType')?.value)">
+          <z-checkbox [group]="form" [control]="'IsRangeBounds'" [label]="formConfig.IsRangeBounds.label"></z-checkbox>
+        </div>
+        <div *ngIf="[false].includes(form.get('IsRangeBounds')?.value)">
+          <div class="col-xl-12 form-group" *ngIf="[1].includes(form.get('ResultType')?.value)">
+            <z-inputnumber [group]="form" [control]="'ResultRange_MinValue'" [label]="formConfig.ResultRange_MinValue.label" [validationMessage]="formConfig.ResultRange_MinValue.error"></z-inputnumber>
+          </div>
+          <div class="col-xl-12 form-group" *ngIf="[1].includes(form.get('ResultType')?.value)">
+            <z-inputnumber [group]="form" [control]="'ResultRange_MaxValue'" [label]="formConfig.ResultRange_MaxValue.label" [validationMessage]="formConfig.ResultRange_MaxValue.error"></z-inputnumber>
+          </div>
+          <div class="col-xl-12 form-group" *ngIf="[1].includes(form.get('ResultType')?.value)">
+            <z-textarea [group]="form" [control]="'ResultRange_ReferenceValue'" [label]="formConfig.ResultRange_ReferenceValue.label" [validationMessage]="formConfig.ResultRange_ReferenceValue.error"></z-textarea>
+          </div>
+        </div>
+
+        <!--<div class="col-xl-12 form-group">
+          <z-checkbox [group]="form" [control]="'IsRangeBounds'" [label]="formConfig.IsRangeBounds.label"></z-checkbox>
+        </div>
+        <div >
+          <div class="col-xl-12 form-group" >
+            <z-inputnumber [group]="form" [control]="'ResultRange_MinValue'" [label]="formConfig.ResultRange_MinValue.label" [validationMessage]="formConfig.ResultRange_MinValue.error"></z-inputnumber>
+          </div>
+          <div class="col-xl-12 form-group" >
+            <z-inputnumber [group]="form" [control]="'ResultRange_MaxValue'" [label]="formConfig.ResultRange_MaxValue.label" [validationMessage]="formConfig.ResultRange_MaxValue.error"></z-inputnumber>
+          </div>
+          <div class="col-xl-12 form-group">
+            <z-textarea [group]="form" [control]="'ResultRange_ReferenceValue'" [label]="formConfig.ResultRange_ReferenceValue.label" [validationMessage]="formConfig.ResultRange_ReferenceValue.error"></z-textarea>
+          </div>
+        </div>-->
+
+      </div>
+      <div class="row pt-2">
+        <div class="col-md-4 pe-1">
+          <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" autofocus>
+            {{ isEditMode ? 'Update' : 'Save' }}
+          </button>
+        </div>
+        <div class="col-md-4 ps-1">
+          <button type="button" class="btn btn-md btn-light w-100" (click)="resetForm()">Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4"></div>
+  </div>
+</form>

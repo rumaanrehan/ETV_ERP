@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" width="105.6" height="74.41" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 105.6 74.41">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient-2);
+      }
+
+      .cls-3 {
+        fill: url(#linear-gradient-3);
+      }
+
+      .cls-4 {
+        fill: url(#linear-gradient-4);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0" y1="5.97" x2="89.21" y2="5.97" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b39ddb"/>
+      <stop offset="1" stop-color="#874bf9"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" y1="19.62" y2="19.62" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" y1="46.65" y2="46.65" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-4" x1="71.56" y1="57.39" x2="105.6" y2="57.39" xlink:href="#linear-gradient"/>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <path class="cls-1" d="m89.21,9.03v2.9H0v-2.9C0,4.05,4.05,0,9.03,0h71.18c4.95,0,9,4.05,9,9.03Z"/>
+      <rect class="cls-2" y="16.98" width="89.21" height="5.27"/>
+      <path class="cls-3" d="m0,27.3v29.67c0,4.98,4.05,9.03,9.03,9.03h58.29c-.46-.76-.69-1.65-.69-2.6v-12c0-3,2.41-5.41,5.37-5.41h5.18v-5.18c0-2.97,2.44-5.37,5.41-5.37h6.63v-8.14H0Zm11.01,8.41h14.04c1.78,0,3.23,1.45,3.23,3.23s-1.45,3.2-3.23,3.2h-14.04c-1.78,0-3.23-1.45-3.23-3.2s1.45-3.23,3.23-3.23Zm19.19,15H11.01c-1.78,0-3.23-1.45-3.23-3.23s1.45-3.23,3.23-3.23h19.19c1.78,0,3.23,1.45,3.23,3.23s-1.45,3.23-3.23,3.23Z"/>
+      <path class="cls-4" d="m105.14,50.93h-10.11v-10.11c0-.25-.2-.46-.46-.46h-12c-.25,0-.46.2-.46.46v10.11h-10.11c-.25,0-.46.2-.46.46v12c0,.25.2.46.46.46h10.11v10.11c0,.25.2.46.46.46h12c.25,0,.46-.2.46-.46v-10.11h10.11c.25,0,.46-.2.46-.46v-12c0-.25-.2-.46-.46-.46Z"/>
+    </g>
+  </g>
+</svg>

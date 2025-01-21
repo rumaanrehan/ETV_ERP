@@ -1,0 +1,73 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Musheer Khalid</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'HolidayCode'" [label]="formConfig.HolidayCode.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'HolidayName'" [label]="formConfig.HolidayName.label" [validationMessage]="formConfig.HolidayName.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'HolidayTypeID'" [label]="formConfig.HolidayTypeID.label" [validationMessage]="formConfig.HolidayTypeID.error"
+          [options]="HolidayTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-datepicker [group]="form" [control]="'HolidayDate'" [label]="formConfig.HolidayDate.label" [validationMessage]="formConfig.HolidayDate.error"></z-datepicker>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-textarea [group]="form" [control]="'HolidayDescriptions'" [label]="formConfig.HolidayDescriptions.label" [validationMessage]="formConfig.HolidayDescriptions.error"></z-textarea>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputnumber [group]="form" [control]="'InputNumber'" [label]="formConfig.InputNumber.label" [validationMessage]="formConfig.InputNumber.error"></z-inputnumber>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputswitch [group]="form" [control]="'Switch'" [label]="formConfig.Switch.label"></z-inputswitch>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-checkbox [group]="form" [control]="'checkbox'" [label]="formConfig.checkbox.label"></z-checkbox>
+      </div>
+      <div class="col-xl-12 form-group d-flex flex-column gap-1">
+        <div *ngFor="let category of categories">
+          <z-radiobutton [group]="form" [control]="'selectedCategory'" [validationMessage]="formConfig.selectedCategory.error" [value]="category.key" [label]="category.name"></z-radiobutton>
+        </div>
+      </div>
+      <div class="col-xl-12 form-group">
+        <div class="input-group">
+          <span class="input-group-text" id="addon-wrapping"><z-checkbox [group]="form" [control]="'checkbox'" [label]="''"></z-checkbox></span>
+          <z-inputtext [group]="form" control="HolidayName" [label]="formConfig.HolidayName.label" [validationMessage]="formConfig.HolidayName.error"></z-inputtext>
+        </div>
+      </div>
+      <div class="col-xl-12 form-group">
+        <div class="input-group">
+          <span class="input-group-text" id="addon-wrapping"><i class="pi pi-indian-rupee"></i></span>
+          <z-inputtext [group]="form" control="HolidayName" [label]="formConfig.HolidayName.label" [validationMessage]="formConfig.HolidayName.error"></z-inputtext>
+          <span class="input-group-text" id="addon-wrapping">.00</span>
+        </div>
+      </div>
+      <div class="col-xl-12 form-group">
+        <div class="input-group">
+          <span class="input-group-text" id="addon-wrapping"><z-checkbox [group]="form" [control]="'checkbox'" [label]="''"></z-checkbox></span>
+          <z-select [group]="form" [control]="'HolidayTypeID'" [label]="formConfig.HolidayTypeID.label" [validationMessage]="formConfig.HolidayTypeID.error"
+            [options]="HolidayTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
+          </z-select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"  [disabled]="isSubmitted">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>

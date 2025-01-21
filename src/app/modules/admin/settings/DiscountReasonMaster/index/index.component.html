@@ -1,0 +1,69 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+</ng-template>
+
+<app-index-table [tableDef]="tableDef"
+                 (lazyLoad)="onIndexTableLazyLoad($event)">
+</app-index-table>
+
+<ng-template #discountReasonCodeTemplate let-row>
+  <span class="fw-bold font-blue" (click)="onClickEditDetails(row.DiscountReasonID, row.ActiveStatus)" style="cursor: pointer;">{{ row.DiscountReasonCode }}</span>
+</ng-template>
+
+<ng-template #isAllowedAdditionalDescriptionTemplate let-row>
+  <span class="badge rounded-pill {{ row.IsAllowedAdditionalDescription ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsAllowedAdditionalDescription ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+
+<ng-template #isAdditionalDescriptionRequiredTemplate let-row>
+  <span class="badge rounded-pill {{ row.IsAdditionalDescriptionRequired ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsAdditionalDescriptionRequired ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+
+<ng-template  #isDiscountApprovalRequiredTemplate let-row>
+  <span class="badge rounded-pill {{ row.IsDiscountApprovalRequired ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsDiscountApprovalRequired ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+
+<ng-template #discountPercentTemplate let-row>
+  <span>
+    <strong>
+      {{ row.DiscountPercent > 0 ? (row.DiscountPercent + ' %') : '-' }}
+    </strong>
+  </span>
+</ng-template>
+
+<ng-template #isAllowedForOPRegistrationTemplate let-row>
+  <span class="badge rounded-pill {{ row.IsAllowedForOPRegistration ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsAllowedForOPRegistration ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+
+<ng-template #isAllowedForBillingTemplate let-row>
+  <span class="badge rounded-pill {{ row.IsAllowedForBilling ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsAllowedForBilling ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+
+<ng-template #isAllowedForPharmacyTemplate let-row>
+  <span class="badge rounded-pill {{ row.IsAllowedForPharmacy ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsAllowedForPharmacy ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+
+<ng-template #discountReasonActiveStatusTemplate let-row>
+  <span class="badge {{ row.ActiveStatus ? 'bg-outline-success' : 'bg-outline-danger' }}">
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+<ng-template #actionColTemplate let-row>
+  <div class="hstack gap-2 fs-15 justify-content-end">
+    <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)"><i class="ri-delete-bin-line"></i></span>
+  </div>
+</ng-template>
+
+<app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>
+

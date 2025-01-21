@@ -1,0 +1,27 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+</ng-template>
+
+<app-index-table [tableDef]="tableDef"
+                 (lazyLoad)="onIndexTableLazyLoad($event)">
+</app-index-table>
+
+<ng-template #referredbyCodeTemplate let-row>
+  <span class="fw-bold font-blue" (click)="onClickEditDetails(row.ReferredByID, row.ActiveStatus)" style="cursor: pointer;">{{ row.ReferredByCode }}</span>
+</ng-template>
+
+<ng-template #referredByActiveStatusTemplate let-row>
+  <span class="badge {{ row.ActiveStatus ? 'bg-outline-danger' : 'bg-outline-success' }}">
+    {{ row.ActiveStatus ? 'Cancelled' : 'Active' }}
+  </span>
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+  <div class="hstack gap-2 fs-15 justify-content-end">
+    <button *ngIf="!row.ActiveStatus" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)">
+      <i class="ri-delete-bin-line"></i>
+    </button>
+  </div>
+</ng-template>
+
+<app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>

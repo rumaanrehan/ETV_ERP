@@ -1,0 +1,26 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+</ng-template>
+<app-index-table [tableDef]="tableDef"
+                 (lazyLoad)="onIndexTableLazyLoad($event)">
+</app-index-table>
+<ng-template #employeeLoanNoTemplate let-row>
+  <span class="fw-bold font-blue" (click)="onClickEditDetails(row.EmployeeLoanID)" style="cursor: pointer;">{{ row.EmployeeLoanNo }}</span>
+</ng-template>
+<ng-template #dtEmployeeLoanDateTemplate let-row>
+  {{ row.dtEmployeeLoanDate | date: 'dd-MM-yyyy' }}
+</ng-template>
+<ng-template #statusIDTemplate let-row>
+  <span class="badge {{ row.StatusID == '1' ? 'bg-outline-warning' : row.StatusID == '2' ? 'bg-outline-danger' : row.StatusID == '3' ? 'bg-outline-success' : row.StatusID == '4' ? 'bg-outline-secondary' : row.StatusID == '5' ? 'bg-outline-info' : row.StatusID == '6' ? 'bg-outline-primary' : row.StatusID == '7' ? 'bg-outline-dark' : 'bg-outline-white' }}">
+    {{ row.StatusID == '1' ? 'Pending' : row.StatusID == '2' ? 'Cancelled' : row.StatusID == '3' ? 'Approved' : row.StatusID == '4' ? 'Rejected' : row.StatusID == '5' ? 'Repayment On-Hold' : row.StatusID == '6' ? 'Open' : row.StatusID == '7' ? 'Closed' : '' }}
+  </span>
+</ng-template>
+<ng-template #actionColTemplate let-row>
+  <div class="hstack gap-2 fs-15 justify-content-end">
+    <ng-container *ngIf="row.StatusID == '1'">
+      <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)">
+        <i class="ri-delete-bin-line"></i>
+      </span>
+    </ng-container>
+  </div>
+</ng-template>

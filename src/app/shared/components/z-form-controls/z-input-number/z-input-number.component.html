@@ -1,0 +1,17 @@
+<div [formGroup]="group">
+    <p-floatLabel>
+        <p-inputNumber
+            [inputStyleClass]="styleClass"
+            [formControlName]="control"
+            [appShowValidationTooltip]="validationMessage"
+            [mode]="mode"
+            [min]="min"
+            [max]="max"
+            [maxFractionDigits]="'2'"
+            [currency]="'INR'"
+            [locale]="'en-IN'"
+            (onInput)="onValueChange($event.value)"
+        ></p-inputNumber>
+        <label>{{ label }}</label>
+    </p-floatLabel>
+</div>

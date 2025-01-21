@@ -1,0 +1,102 @@
+<form class="form-sidebar" [formGroup]="form" autocomplete="off">
+  <div class="row">
+    <div class="col-xl-4"></div>
+    <div class="col-xl-4 card card-body">
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'ModuleCode'" (onChange)="onModuleChange()" [label]="formConfig.ModuleCode.label" [validationMessage]="formConfig.ModuleCode.error"
+                  [options]="ModuleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleCode'">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'FormatFor'" (onChange)="onFormatForChange()" [label]="formConfig.FormatFor.label" [validationMessage]="formConfig.FormatFor.error"
+                  [options]="FormatForList" [optionLabel]="'Text'" [optionValue]="'Value'">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group"
+           *ngIf="(['ReceiptVoucherNo', 'RefundVoucherNo'].includes(form.get('FormatFor')?.value) || form.get('ModuleCode')?.value === 'PHR' || form.get('ModuleCode')?.value === 'PCR')">
+        <z-select [group]="form" [control]="'CounterID'" [label]="formConfig.CounterID.label" [validationMessage]="formConfig.CounterID.error" (onChange)="onCounterChange()"
+                  [options]="CounterList" [optionLabel]="'Text'" [optionValue]="'Value'">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group" *ngIf="['ServiceInvoiceNo','CreditNoteNo'].includes(form.get('FormatFor')?.value)">
+        <z-select [group]="form" [control]="'BillingSection'" [label]="formConfig.BillingSection.label" [validationMessage]="formConfig.BillingSection.error" (onChange)="onBillingSectionChange()"
+                  [options]="BillingSectionList" [optionLabel]="'Text'" [optionValue]="'Value'">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputnumber [group]="form" [control]="'StartNumber'" [label]="formConfig.StartNumber.label" [validationMessage]="formConfig.StartNumber.error"></z-inputnumber>
+      </div> <div class="col-xl-12 form-group">
+        <z-inputnumber [group]="form" [control]="'WidthOfNumberPart'" [label]="formConfig.WidthOfNumberPart.label" [validationMessage]="formConfig.WidthOfNumberPart.error"></z-inputnumber>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-checkbox [group]="form" [control]="'PrefillZero'" [label]="formConfig.PrefillZero.label"></z-checkbox>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'PrefixFront'" [label]="formConfig.PrefixFront.label" [validationMessage]="formConfig.PrefixFront.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'PrefixRear'" [label]="formConfig.PrefixRear.label" [validationMessage]="formConfig.PrefixRear.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'Suffix'" [label]="formConfig.Suffix.label" [validationMessage]="formConfig.Suffix.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-datepicker [group]="form" [control]="'EffectiveFromDate'" [label]="formConfig.EffectiveFromDate.label" [validationMessage]="formConfig.EffectiveFromDate.error"></z-datepicker>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'RestartType'" [label]="formConfig.RestartType.label" [validationMessage]="formConfig.RestartType.error"
+                  [options]="RestartTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
+        </z-select>
+      </div>
+      <div class="row">
+        <div class="col-md-4 pe-1">
+          <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted">Save </button>
+        </div>
+        <div class="col-md-4 ps-1">
+          <button type="reset" class="btn btn-md btn-light w-100" (click)="resetForm()">Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4"></div>
+  </div>
+</form>
+
+<p-table [value]="tableData">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>SN</th>
+      <th>Sample Number</th>
+      <th>Effective From</th>
+      <th>Term Date</th>
+      <th>Starting Number</th>
+      <th>WidthOf Number</th>
+      <th>Prefill Zero</th>
+      <th>Prefix Front</th>
+      <th>Prefix Rear</th>
+      <th>Suffix</th>
+      <th>Restart</th>
+      <th>Added By</th>
+      <th>Added Time</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-item let-i="rowIndex">
+    <tr>
+      <td>{{ i + 1 }}</td>
+      <td> <b>{{ item.SampleNumberFormat }}</b></td>
+      <td>{{ item.EffectiveFromDate | date: 'dd-MM-yyyy' }}</td>
+      <td>{{ item.TermEndDate | date: 'dd-MM-yyyy' }}</td>
+      <td>{{ item.StartNumber }}</td>
+      <td>{{ item.WidthOfNumberPart }}</td>
+      <td>{{ item.PrefillZero ? 'Yes' : 'No' }}</td>
+      <td>{{ item.PrefixFront }}</td>
+      <td>{{ item.PrefixRear }}</td>
+      <td>{{ item.Suffix }}</td>
+      <td>
+        {{ item.RestartType === 'N' ? 'Never' : item.RestartType === 'D' ? 'Daily' : item.RestartType === 'Y' ? 'Yearly' : item.RestartType === 'F' ? 'Financial Year' : item.RestartType === 'M' ? 'Monthly' : item.RestartType }}
+      </td>
+      <td>{{ item.CreatedBy }}</td>
+      <td>{{ item.CreatedDateTime }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+<p *ngIf="tableData.length === 0">No data available in table</p>

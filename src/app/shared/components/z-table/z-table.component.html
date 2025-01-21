@@ -1,0 +1,70 @@
+<div>
+  <p-table
+    [value]="tableDef.data"
+    [styleClass]="'p-paginator-striped'" 
+    [tableStyleClass]="'table page-table'"
+    [scrollable]="true"
+    [scrollHeight]="'flex'">
+    <ng-template pTemplate="caption">
+      <div class="index-table-action-bar">
+        <div class="d-flex justify-content-end">
+          <span><i class="pi pi-sliders-h column-visibility-toggle" (click)="columnMenu.toggle($event)" [ngClass]="{'active-toggle': columnMenu.overlayVisible}"></i></span>
+          <p-overlayPanel #columnMenu>
+            <div class="column-toggle-panel">
+              <ng-container *ngFor="let col of tableHeaderDef">
+                <p-checkbox
+                  *ngIf="!col.colVisToggle"
+                  [(ngModel)]="col.visible"
+                  binary="true"
+                  [label]="col.label"
+                  (ngModelChange)="onChangeColVisSwitch(col)"
+                >
+                </p-checkbox>
+              </ng-container>
+              <hr class="m-0">
+              <button type="button" class="btn btn-primary">Reset to default</button>
+            </div>
+          </p-overlayPanel>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <ng-container *ngFor="let col of tableDef.columnDef">
+          <th class="{{ col.cssClass }}">
+            {{ col.label }}
+          </th>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+      <tr>
+        <ng-container *ngFor="let col of tableDef.columnDef">
+          <td class="{{col.cssClass}}">
+            <ng-container *ngIf="col.customTemplate; else defaultTemplate">
+              <ng-container *ngTemplateOutlet="col.customTemplate; context: { $implicit: rowData }"></ng-container>
+            </ng-container>
+            <ng-template #defaultTemplate>
+              {{ col.data ? rowData[col.data] : '' }}
+            </ng-template>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Column visibility toggle icon (gear or list icon) -->
+<!--<span (click)="toggleColumnVisibility()">
+  <i class="pi pi-sliders-v"></i>
+</span>-->
+
+<!-- Column visibility options panel with checkboxes -->
+<!--<div *ngIf="columnVisibilityPanel" class="column-options">
+  <p-multiSelect [options]="columnOptions"
+                 [(ngModel)]="visibleColumns"
+                 optionLabel="label"
+                 optionValue="value"
+                 (onChange)="onColumnVisibilityChange()">
+  </p-multiSelect>
+</div>-->

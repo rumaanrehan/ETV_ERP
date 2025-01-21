@@ -1,0 +1,80 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-arrow-go-back-fill" style="vertical-align: bottom;"></i> Back</button>&nbsp;
+</ng-template>
+<form  [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+  <div class="row">
+    <div class="col-xl-3"></div>
+    <div class="col-xl-6 card card-body pb-1">
+      <div class="row">
+        <div class="col-xl-8 form-group">
+          <z-select [group]="form" [control]="'WardID'"  (onChange)="onWardBedDChange($event)" [label]="formConfig.WardID.label" [validationMessage]="formConfig.WardID.error"
+                    [options]="wardlist" [optionLabel]="'WardName'" [optionValue]="'WardID'">
+          </z-select>
+        </div>
+        <div class="col-xl-4 form-group">
+          <z-select [group]="form" [control]="'StatusID'"  (onChange)="onStatusChange($event)" [label]="formConfig.StatusID.label" [validationMessage]="formConfig.StatusID.error"
+                    [options]="StatusList" [optionLabel]="'Text'" [optionValue]="'Value'">
+          </z-select>
+        </div>
+      </div>
+      <div *ngIf="WardBedDetailsMappingArray.length > 0" formArrayName="WardMapping">
+        <p-table [value]="WardBedDetailsMappingArray.controls" [scrollable]="true" scrollHeight="475px">
+          <ng-template pTemplate="header">
+            <tr class="table-primary text-center">
+              <th style="width: 2%;">SN</th>
+              <th style="width: 5%;">Bed No</th>
+              <th style="width: 3%;">BOR Status</th>
+              <th style="width: 10%;">Effective From Date</th>
+              <th style="width: 12%;">Term End Date</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-group let-i="rowIndex">
+            <tr>
+              <td>
+                <div class="text-center p-0">
+                  {{ i + 1 }}
+                </div>
+              </td>
+              <td>
+                <div class="col-xl-12">
+                  <z-inputtext [group]="group" [control]="'BedNo'"></z-inputtext>
+                </div>
+              </td>
+              <td>
+                <div class="col-xl-12">
+                  <z-checkbox [group]="group" [control]="'IsIncludedInBOR'" [label]="'Included'"></z-checkbox>
+                </div>
+              </td>
+              <td>
+                <div class="col-xl-12">
+                  <z-datepicker [group]="group" [control]="'EffectiveFromDate'"></z-datepicker>
+                </div>
+              </td>
+              <td>
+                <div class="col-xl-12">
+                  <z-datepicker [group]="group" [control]="'TermEndDate'" [label]="'Term End Date'"></z-datepicker>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+    <div class="col-xl-3"></div>
+  </div>
+</form>
+  <div class="row">
+    <div class="col-xl-4"></div>
+    <div class="col-xl-4">
+      <div class="row">
+        <div class="col-md-6">
+          <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted ||  WardBedDetailsMappingArray.length === 0">Update</button>
+        </div>
+        <div class="col-md-6 ps-1">
+          <button type="button" class="btn btn-md btn-primary w-100" (click)="onClickPageHeaderAddButton()">Back To List</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4"></div>
+  </div>
+

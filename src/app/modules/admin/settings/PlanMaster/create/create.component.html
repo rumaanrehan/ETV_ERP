@@ -1,0 +1,235 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-arrow-left"></i>&nbsp;Back</button>
+</ng-template>
+
+<div class="col-xl-12">
+  <div class="col-xl-12 page-content">
+    <div class="col-xl-12 page-content-scrollable">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="col-xl-4 card m-auto mb-2">
+          <div class="card-body">
+            <div class="col-xl-12 form-group">
+              <z-span [text]="form.get('PlanCode')?.value" [label]="formConfig.PlanCode.label"></z-span>
+            </div>
+            <div class="col-xl-12 form-group">
+              <z-select [group]="form" [control]="'PlanTypeID'" [label]="formConfig.PlanTypeID.label"
+                [validationMessage]="formConfig.PlanTypeID.error" [options]="PlanTypeList" [optionLabel]="'Text'"
+                [optionValue]="'Value'">
+              </z-select>
+            </div>
+            <div *ngIf="[2, 3].includes(form.get('PlanTypeID')?.value)" class="col-xl-12 form-group">
+              <z-select [group]="form" [control]="'BillCompanyID'" [label]="formConfig.BillCompanyID.label"
+                [validationMessage]="formConfig.BillCompanyID.error" [options]="BillCompanyList"
+                [optionLabel]="'BillCompanyName'" [optionValue]="'BillCompanyID'">
+              </z-select>
+            </div>
+            <div class="col-xl-12 form-group">
+              <z-inputtext [group]="form" [control]="'PlanName'" [label]="formConfig.PlanName.label"></z-inputtext>
+            </div>
+            <div *ngIf="!isEditMode" class="col-xl-12 form-group">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <z-checkbox [group]="form" [control]="'IsCopyRate'" [label]="''" (onChange)="onChange_IsCopyRate($event)"></z-checkbox>
+                </span>
+                <z-select class='flex-grow-1' [group]="form" [control]="'CopyRateID'"
+                  [label]="formConfig.CopyRateID.label" [validationMessage]="formConfig.CopyRateID.error"
+                  [options]="PlanList" [optionLabel]="'PlanName'" [optionValue]="'PlanID'">
+                </z-select>
+              </div>
+            </div>
+            <div class="row align-items-center form-group form-control-group">
+              <label class="col-xl-4 form-label">Allowed For</label>
+              <div class="col-xl-4">
+                <z-checkbox [group]="form" [control]="'IsAllowedForIP'"
+                  [label]="formConfig.IsAllowedForIP.label"></z-checkbox>
+              </div>
+              <div class="col-xl-4">
+                <z-checkbox [group]="form" [control]="'IsAllowedForOP'"
+                  [label]="formConfig.IsAllowedForOP.label"></z-checkbox>
+              </div>
+            </div>
+            <div *ngIf="[2,3].includes(form.get('PlanTypeID')?.value)"
+              class="row align-items-center form-group justify-content-end form-control-group">
+              <div class="col-xl-8">
+                <z-checkbox [group]="form" [control]="'IsPreAuthorizationRequired'"
+                  [label]="formConfig.IsPreAuthorizationRequired.label"></z-checkbox>
+              </div>
+            </div>
+            <div *ngIf="[2,3].includes(form.get('PlanTypeID')?.value)"
+              class="row align-items-center form-group justify-content-end form-control-group">
+              <div class="col-xl-8">
+                <z-checkbox [group]="form" [control]="'IsPharmacyIndentApprovalRequired'"
+                  [label]="formConfig.IsPharmacyIndentApprovalRequired.label"></z-checkbox>
+              </div>
+            </div>
+            <div class="row align-items-center form-group form-control-group">
+              <label class="col-xl-4 form-label">Adjust Pharmacy Credit in</label>
+              <div class="col-xl-4">
+                <z-checkbox [group]="form" [control]="'IsAllowedPHCreditAdjustmentInIPB'"
+                  [label]="formConfig.IsAllowedPHCreditAdjustmentInIPB.label"></z-checkbox>
+              </div>
+              <div class="col-xl-4">
+                <z-checkbox [group]="form" [control]="'IsAllowedPHCreditAdjustmentInOPB'"
+                  [label]="formConfig.IsAllowedPHCreditAdjustmentInOPB.label"></z-checkbox>
+              </div>
+            </div>
+            <div class="row align-items-center form-group form-control-group justify-content-end">
+              <div class="col-xl-8">
+                <z-checkbox [group]="form" [control]="'IsDefault'" [label]="formConfig.IsDefault.label"></z-checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-10 card m-auto bg-primary">
+          <div class="card-header text-end">
+            <span><strong>Note: Enter 0 in Days field for the same date</strong></span>
+          </div>
+          <div class="card-body p-2">
+            <div class="d-flex flex-column gap-2" formArrayName="BillTypeMapping">
+              <div class="card mb-0" *ngFor="let group of PlanMasterBillTypeMappingArray.controls; let i = index" [formGroupName]="i">
+                <div class="card-header">
+                  <div class="col-xl-2 div-center">
+                    <div class="input-group justify-content-center">
+                      <span class="input-group-text">Section</span>
+                      <span class="input-span"> {{ group.get('BillingSectionText')?.value }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="row gap-2">
+                    <div class="col-xl-2 form-group div-center">
+                      <z-select [group]="group" [control]="'DefaultBillType'"
+                        [label]="formConfig.BillTypeMapping.items.DefaultBillType.label"
+                        [validationMessage]="formConfig.BillTypeMapping.items.DefaultBillType.error?.[i]"
+                        [options]="DefaultBillTypeList" [optionLabel]="'Text'" [optionValue]="'Value'" [showClear]="false">
+                      </z-select>
+                    </div>
+                  </div>
+                  <div class="row align-items-center">
+                    <label class="col-xl-1 form-label form-group">Out-Patient</label>
+                    <div class="col-xl-11 row">
+                      <div class="col-xl-2 px-1 ">
+                        <div class="row align-items-center form-group form-control-group">
+                          <div class="col-xl-6">
+                            <z-checkbox [group]="group" [control]="'IsAllowedCreditBillForOP'"
+                              [label]="formConfig.BillTypeMapping.items.IsAllowedCreditBillForOP.label">
+                            </z-checkbox>
+                          </div>
+                          <div class="col-xl-6">
+                            <z-checkbox [group]="group" [control]="'IsAllowedFreeBillForOP'"
+                              [label]="formConfig.BillTypeMapping.items.IsAllowedFreeBillForOP.label">
+                            </z-checkbox>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xl-5 form-group px-1">
+                        <div class="input-group">
+                          <z-inputnumber [group]="group" control="OP_BillingAllowed_Days"
+                            [label]="formConfig.BillTypeMapping.items.OP_BillingAllowed_Days.label"
+                            [validationMessage]="formConfig.BillTypeMapping.items.OP_BillingAllowed_Days.error?.[i]">
+                          </z-inputnumber>
+                          <span class="input-group-text">Days</span>
+                        </div>
+                      </div>
+                      <div class="col-xl-5 row px-1">
+                        <div class="col-xl-8 form-group">
+                          <z-select [group]="group" [control]="'OP_ReturnAllowed_BasedOn'"
+                            [options]="OPReturnAllowedBasedOnList" [optionLabel]="'Text'" [optionValue]="'Value'"
+                            [label]="formConfig.BillTypeMapping.items.OP_ReturnAllowed_BasedOn.label"
+                            [validationMessage]="formConfig.BillTypeMapping.items.OP_ReturnAllowed_BasedOn.error?.[i]" [showClear]="false">
+                          </z-select>
+                        </div>
+                        <div class="col-xl-4 form-group">
+                          <div class="input-group">
+                            <z-inputnumber [styleClass]="'no-border-left'" [group]="group" control="OP_ReturnAllowed_BasedOn_Days"
+                              [label]="formConfig.BillTypeMapping.items.OP_ReturnAllowed_BasedOn_Days.label"
+                              [validationMessage]="formConfig.BillTypeMapping.items.OP_ReturnAllowed_BasedOn_Days.error?.[i]">
+                            </z-inputnumber>
+                            <span class="input-group-text">Days</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row align-items-center">
+                    <label class="col-xl-1 form-label">In-Patient</label>
+                    <div class="col-xl-11 row">
+                      <div class="col-xl-2 px-1 ">
+                        <div class="row align-items-center form-group mb-0 form-control-group">
+                          <div class="col-xl-6">
+                            <z-checkbox [group]="group" [control]="'IsAllowedCreditBillForIP'"
+                              [label]="formConfig.BillTypeMapping.items.IsAllowedCreditBillForIP.label">
+                            </z-checkbox>
+                          </div>
+                          <div class="col-xl-6">
+                            <z-checkbox [group]="group" [control]="'IsAllowedFreeBillForIP'"
+                              [label]="formConfig.BillTypeMapping.items.IsAllowedFreeBillForIP.label">
+                            </z-checkbox>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xl-5 row px-1">
+                        <div
+                          [ngClass]="['form-group','mb-0','col-xl-' + ([3,4].includes(group.get('IP_BillingAllowed_BasedOn')?.value) ? 8 : 12)] ">
+                          <z-select [group]="group" [control]="'IP_BillingAllowed_BasedOn'"
+                            [label]="formConfig.BillTypeMapping.items.IP_BillingAllowed_BasedOn.label"
+                            [validationMessage]="formConfig.BillTypeMapping.items.IP_BillingAllowed_BasedOn.error?.[i]"
+                            [options]="IPBillingAllowedBasedOnList" [optionLabel]="'Text'" [optionValue]="'Value'"  [showClear]="false">
+                          </z-select>
+                        </div>
+                        <div *ngIf="[3, 4].includes(group.get('IP_BillingAllowed_BasedOn')?.value)"
+                          class="col-xl-4 form-group mb-0">
+                          <div class="input-group">
+                            <z-inputnumber [styleClass]="'no-border-left'" [group]="group" control="IP_BillingAllowed_BasedOn_Days"
+                              [label]="formConfig.BillTypeMapping.items.IP_BillingAllowed_BasedOn_Days.label"
+                              [validationMessage]="formConfig.BillTypeMapping.items.IP_BillingAllowed_BasedOn_Days.error?.[i]">
+                            </z-inputnumber>
+                            <span class="input-group-text">Days</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xl-5 row px-1">
+                        <div class="col-xl-8 form-group mb-0">
+                          <z-select [group]="group" [control]="'IP_ReturnAllowed_BasedOn'"
+                            [options]="IPReturnAllowedBasedOnList" [optionLabel]="'Text'" [optionValue]="'Value'"
+                            [label]="formConfig.BillTypeMapping.items.IP_ReturnAllowed_BasedOn.label"
+                            [validationMessage]="formConfig.BillTypeMapping.items.IP_ReturnAllowed_BasedOn.error?.[i]"  [showClear]="false">
+                          </z-select>
+                        </div>
+                        <div class="col-xl-4 form-group mb-0">
+                          <div class="input-group">
+                            <z-inputnumber [styleClass]="'no-border-left'" [group]="group" control="IP_ReturnAllowed_BasedOn_Days"
+                              [label]="formConfig.BillTypeMapping.items.IP_ReturnAllowed_BasedOn_Days.label"
+                              [validationMessage]="formConfig.BillTypeMapping.items.IP_ReturnAllowed_BasedOn_Days.error?.[i]">
+                            </z-inputnumber>
+                            <span class="input-group-text">Days</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="page-action-panel">
+    <div class="col-xl-4">
+
+    </div>
+    <div class="col-xl-4">
+      
+    </div>
+    <div class="col-xl-4">
+      <div class="col-xl-3 px-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()">{{ isEditMode ? 'Update' : 'Save' }}</button>
+      </div>
+      <div class="col-xl-3 px-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="resetForm()">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h4>Country Master</h4>
+  </div>
+  <div sidebarContent>
+    <form [formGroup]="mainForm" (ngSubmit)="onSubmit()" autocomplete="off">
+      <hr />
+      <div class="col-xl-12 mb-4">
+        <div class="form-floating">
+          <span class="form-control form-control-lg" id="CountryCode">{{ mainForm.get('CountryCode')?.value }}</span>
+          <label for="CountryCode">Country Code</label>
+        </div>
+      </div>
+      <div class="col-xl-12 mb-4">
+        <div class="form-floating">
+          <input type="text" class="form-control form-control-lg" id="CountryName" formControlName="CountryName" placeholder="CountryName" [appShowValidationTooltip]="formErrors['CountryName']">
+          <label for="CountryName">Country Name</label>
+        </div>
+      </div>
+      <div class="col-xl-12 mb-4">
+        <div class="form-floating">
+          <input type="text" class="form-control form-control-lg" id="CountryName" formControlName="CountryISOCode" placeholder="Country ISO Code" [appShowValidationTooltip]="formErrors['CountryISOCode']">
+
+          <label for="CountryISOCode">Country ISO Code</label>
+        </div>
+      </div>
+      <div class="col-xl-12 mb-4">
+        <div class="form-check form-check-md form-switch mb-2 ps-0">
+          <input type="checkbox" class="form-check-input ms-0" formControlName="IsDefault" id="IsDefault" role="slider" checked="" />
+          <label class="form-check-label" for="IsDefault">Is Default</label>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <!--{{rowData["CountryCode"]}}
+        {{rowData[CountryCode]}}
+        {{rowData.CountryCode}}-->
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" autofocus>
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>

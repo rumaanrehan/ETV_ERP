@@ -1,0 +1,346 @@
+.badge{
+    line-height:1.4;
+}
+
+.font-blue {
+  color: blue;
+}
+
+.swal2-container {
+    z-index: 1101;
+}
+
+.w-30rem {
+  width: 30rem !important;
+}
+
+.w-40rem {
+  width: 40rem !important;
+}
+
+.w-50rem {
+  width: 50rem !important;
+}
+
+/* Start - Invalid Border & Validation Tooltip */
+.tooltip-container {
+  position: absolute;
+}
+
+.validation-tooltip, .password-capslock-tooltip {
+  background-color: #FFFFA3;
+  color: #555;
+  border: 1px solid #F78B83;
+  border-radius: 4px;
+  padding: 4px;
+  z-index: 1000;
+  /* Position the tooltip */
+  margin-top: 8px; /* Adjust if needed */
+}
+
+.password-capslock-tooltip::after {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: calc((100% - 20px) / 2);
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #F78B83 transparent;
+}
+
+span#password-capslock-tooltip {
+  position: absolute;
+  right: 0;
+  bottom: -40px;
+}
+
+.validation-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  right: calc((100% - 20px)/2);
+  border-width: 10px;
+  border-style: solid;
+  border-color: #F78B83 transparent transparent transparent;
+}
+
+/* .ng-invalid.ng-touched, .p-inputwrapper.ng-touched.ng-invalid .p-component {
+  border-color: #e24c4c;
+} */
+
+.ng-invalid.ng-touched,
+.p-element.ng-touched.ng-invalid .p-component,
+.p-element.ng-touched.ng-invalid > .p-radiobutton > .p-radiobutton-box {
+  border-color: #e24c4c;
+}
+/* End - Invalid Border & Validation Tooltip */
+
+/* Customize the paginator container */
+/*.p-paginator {
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}*/
+
+/* Style for paginator buttons */
+/*.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last,
+.p-paginator-page {
+    background-color: #007bff;*/  /* Change button background color */
+    /*color: white;*/                /* Change button text color */
+    /*border-radius: 50%;*/          /* Make buttons round */
+    /*margin: 0 5px;*/               /* Space between buttons */
+    /*border: none;*/                /* Remove border */
+    /*width: 35px;
+    height: 35px;
+}*/
+
+/* Style for active page button */
+/*.p-paginator-page.p-highlight {
+    background-color: #28a745;*/ /* Different color for active page */
+/*}*/
+
+/* Hover effects */
+/*.p-paginator-page:hover {
+    background-color: #0056b3;
+}*/
+
+/* Style for the dropdown (rows per page) */
+/*.p-dropdown {
+    margin-left: 20px;*/ /* Add some space between dropdown and pagination */
+    /*border: 1px solid #007bff;
+    border-radius: 5px;
+}*/
+
+/* Optional: Style dropdown items */
+/*.p-dropdown-items .p-dropdown-item {
+    color: #007bff;
+}*/
+
+/* Style page input */
+/*.p-paginator .p-paginator-input {
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 5px;
+    margin-left: 10px;
+}*/
+
+
+/* Dark Mode */
+/*[data-theme-mode=dark] .p-datatable-table {
+  background-color: #333;
+  color: #fff;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-thead {
+  background-color: #444;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-thead th {
+  color: #fff;
+  border-color: #555;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-body td {
+  border-color: #555;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-footer {
+  background-color: #444;
+  color: #fff;
+}*/
+
+/* Optional: Add hover and selection styles */
+/*[data-theme-mode=dark] .p-datatable-table .p-datatable-body td:hover {
+  background-color: #555;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-body td.p-highlight {
+  background-color: #666;
+}*/
+
+
+/*Start Form Floating CSS*/
+
+/* .form-floating > span {
+  padding: 0.75rem 0.75rem !important;
+font-size: 1rem;
+} */
+ 
+.form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select, .form-floating > span {
+  min-height: unset;
+}
+
+.form-floating > .form-control, .form-floating > span {
+  padding: 0.75rem 0.75rem !important;
+}
+
+
+
+
+.form-floating > label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0 0.25rem;
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.form-floating > .form-control:focus + label {
+  top: -0.1rem;
+  left: 0.5rem;
+  color: var(--primary-color) !important;
+  background-color: white;
+  height: unset;
+}
+
+.form-floating > .form-control:not(:placeholder-shown) + label {
+  top: -0.1rem;
+  left: 0.5rem;
+  background-color: white;
+  height: unset;
+}
+
+
+.form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select {
+  height: calc(3rem - 8px);
+}
+
+  .form-floating > .form-control:placeholder-shown:not(:focus) + label {
+    opacity: 1;
+    visibility: visible;
+    top: 0.6rem;
+    left: 0.6rem;
+  }
+
+.form-floating .form-control:focus {
+  border-color: var(--primary-color);
+}
+
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+  transform: scale(0.8) translateY(-0.5rem) translateX(0.15rem);
+}
+
+/*End Form Floating CSS*/
+.p-sidebar{
+  background-color: #fff;
+}
+.p-sidebar-header {
+  background: var(--primary-color);
+  justify-content: center;
+  margin: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+label {
+  left: 0.9rem;
+}
+
+.p-float-label input:focus ~ label, .p-float-label input.p-filled ~ label,
+.p-float-label textarea:focus ~ label, .p-float-label textarea.p-filled ~ label,
+.p-float-label .p-inputwrapper-focus ~ label, .p-float-label .p-inputwrapper-filled ~ label {
+  top: 0.15rem;
+  font-size: 12px;
+  background-color: #fff;
+  padding: 0 0.25rem;
+  transition: all 0.2s;
+  font-weight: 600;
+  transform: scale(0.8) translateX(-0.9rem);
+}
+
+.p-float-label input:focus ~ label, .p-float-label textarea:focus ~ label, .p-float-label .p-inputwrapper-focus ~ label {
+  color: var(--primary-color);
+}
+
+.p-float-label input, .p-float-label .p-inputwrapper{
+  height: 2rem;
+}
+
+.p-float-label input, .p-float-label textarea, .p-float-label .p-inputwrapper {
+  border-color: #ccc;
+  width: 100%;
+  line-height: 1.8;
+}
+
+.p-float-label input ~ label, .p-float-label textarea ~ label, .p-float-label .p-inputwrapper ~ label {
+  transition: all 0.2s;
+}
+
+.p-float-label input:focus, .p-float-label textarea:focus, .p-float-label .p-inputwrapper-focus {
+  border-color: var(--primary-color);
+}
+
+.p-float-label .p-inputwrapper, .p-float-label .p-calendar {
+  width: 100%;
+  max-height: 100%;
+}
+
+.p-button-icon-only {
+  border-radius: 0 4px 4px 0;
+}
+
+.p-datepicker-calendar thead tr th {
+  text-align: center;
+}
+
+/* 0.25rem 0.8rem */
+/* .p-dropdown-panel {
+  background: rgb(255, 255, 255);
+  color: rgb(75, 85, 99);
+  border: 0px none;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
+}
+
+.p-dropdown-panel .p-dropdown-items {
+  padding: 0.75rem 0px;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):not(.p-disabled).p-focus {
+  color: rgb(75, 85, 99);
+  background: rgb(229, 231, 235);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):not(.p-disabled):hover {
+  color: rgb(75, 85, 99);
+  background: rgb(243, 244, 246);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  margin: 0px;
+  padding: 0.75rem 1.25rem;
+  border: 0px none;
+  color: rgb(75, 85, 99);
+  background: transparent;
+  transition: box-shadow 0.2s;
+  border-radius: 0px;
+} */
+
+
+/* Added by Musheer Khalid */
+.input-group-text {
+  padding: 0.25rem 0.50rem;
+}
+
+.form-control-margin {
+  margin-bottom: 0.75rem !important;
+}
+
+.form-group {
+  margin-bottom: 0.75rem !important;
+}
+
+.input-group>:not(:first-child), .input-group>:not(:first-child) * {
+  border-radius: 0 !important;
+}
+
+.input-group>:last-child, .input-group>:last-child * {
+  border-top-right-radius: var(--border-radius) !important;
+  border-bottom-right-radius: var(--border-radius) !important;
+}

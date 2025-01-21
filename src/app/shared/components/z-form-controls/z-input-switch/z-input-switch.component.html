@@ -1,0 +1,11 @@
+<div [formGroup]="group" class="d-flex align-items-center gap-1">
+    <p-inputSwitch
+        [styleClass]="styleClass"
+        [formControlName]="control"
+        [inputId]="control"
+        (onChange)="onValueChange($event.checked)"
+    ></p-inputSwitch>
+    <label [for]="control">
+      {{ label }}
+    </label>
+</div>

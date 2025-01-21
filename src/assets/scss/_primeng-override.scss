@@ -1,0 +1,195 @@
+.p-float-label label {
+    top: 55%;
+    left: 0.625rem;
+}
+
+.p-sidebar {
+    background-color: var(--background-sidebar);
+    box-shadow: unset;
+    border: none;
+}
+
+.p-sidebar-header {
+    background: var(--primary-color);
+    justify-content: center;
+    margin: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.p-float-label input:focus~label,
+.p-float-label input.p-filled~label,
+.p-float-label textarea:focus~label,
+.p-float-label textarea.p-filled~label,
+.p-float-label .p-inputwrapper-focus~label,
+.p-float-label .p-inputwrapper-filled~label {
+    top: 0.15rem;
+    font-size: 12px;
+    background-color: var(--background-tertiary);
+    padding: 0 0.25rem;
+    transition: all 0.2s;
+    font-weight: 600;
+    transform: scale(0.8) translateX(-0.9rem);
+}
+
+.p-float-label input:focus~label,
+.p-float-label textarea:focus~label,
+.p-float-label .p-inputwrapper-focus~label {
+    color: var(--primary-color);
+}
+
+.p-float-label input,
+.p-float-label .p-inputwrapper, .p-float-label>span {
+    height: 2rem;
+}
+
+.p-float-label input,
+.p-float-label textarea,
+.p-float-label .p-inputwrapper {
+    border-color: #ccc;
+    width: 100%;
+    line-height: 1.8;
+}
+
+.p-float-label input~label,
+.p-float-label textarea~label,
+.p-float-label .p-inputwrapper~label {
+    transition: all 0.2s;
+}
+
+.p-float-label input:focus,
+.p-float-label textarea:focus,
+.p-float-label .p-inputwrapper-focus {
+    border-color: var(--primary-color);
+}
+
+.p-float-label .p-inputwrapper,
+.p-float-label .p-calendar {
+    width: 100%;
+    max-height: 100%;
+}
+
+.p-button-icon-only {
+    border-radius: 0 4px 4px 0;
+}
+
+.p-datepicker-calendar thead tr th {
+    text-align: center;
+}
+
+
+// FieldSet CSS
+.p-fieldset {
+    padding: 0 1.125rem 1.125rem 1.125rem;
+    margin: 0;
+    border-color: #ccc !important;
+}
+
+.p-fieldset .p-fieldset-legend {
+    border: 0 none;
+    padding: 0;
+    margin-bottom: 0.375rem;
+}
+
+.p-fieldset .p-fieldset-legend-text {
+    padding: 0.5rem 0.75rem;
+}
+
+.p-fieldset .p-fieldset-content {
+    padding: unset;
+}
+
+.pi {
+    font-size: var(--default-font-size);
+}
+
+.p-datatable .p-datatable-tbody>tr>td {
+    border: none;
+}
+
+.p-datatable .p-datatable-thead>tr>th {
+    background: var(--custom-white);
+    border: unset;
+    border-width: unset;
+    transition: unset;
+    border-bottom: 1px solid var(--default-border);
+}
+
+.p-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+.p-paginator{
+    background: var(--custom-white);
+    padding: 0.375rem;
+}
+
+.p-datatable .p-paginator-bottom {
+    border-width: 1px 0 0 0;
+    border-color: var(--default-border);
+}
+
+.p-paginator .p-paginator-current,
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last,
+.p-paginator .p-paginator-pages .p-paginator-page {
+    color: var(--default-text-color);
+    transition: unset;
+    height: unset;
+    margin: 0;
+    line-height: unset;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight{
+    background: transparent;
+    border: 1px solid var(--default-text-color);
+    border-radius: 50rem;
+}
+
+.p-paginator .p-dropdown{
+    height: 2rem;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+    min-width: 2rem;
+    height: 2rem;
+}
+
+.p-paginator .p-paginator-page-input .p-inputtext {
+    height: 2rem;
+}
+
+.p-datatable .p-datatable-tbody > tr{
+    transition: unset;
+}
+
+.p-overlaypanel{
+    background-color: var(--background-tertiary);
+    border: none;
+    margin-top: unset;
+}
+
+.p-overlaypanel-content{
+    padding: 0.5rem;
+}
+
+.p-overlaypanel:after, .p-overlaypanel:before{
+    content: unset;
+}
+
+.p-datatable-header{
+    padding: 0;
+    background-color: transparent;
+    border-color: var(--default-border);
+}
+
+.p-picklist .p-picklist-list-wrapper {
+    background-color: var(--custom-white);
+    transition: unset;
+}
+
+.p-picklist .p-picklist-header{
+    color: var(--default-text-color);
+}

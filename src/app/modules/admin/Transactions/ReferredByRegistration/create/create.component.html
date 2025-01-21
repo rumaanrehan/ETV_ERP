@@ -1,0 +1,53 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Referred By Registration</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'ReferredByCode'"  [label]="formConfig.ReferredByCode.label"></z-inputtext>
+      </div>
+      <div class="row">
+        <div class="col-xl-5 form-group">
+          <z-select [group]="form" [control]="'ReferredByPrefix'"  [label]="formConfig.ReferredByPrefix.label"
+                    [options]="PrefixList" [optionLabel]="'PrefixName'" [optionValue]="'PrefixName'">
+          </z-select>
+        </div>
+        <div class="col-xl-7 form-group">
+            <z-inputtext [group]="form" [control]="'ReferredByName'" [label]="formConfig.ReferredByName.label" [validationMessage]="formConfig.ReferredByName.error"></z-inputtext>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-5 form-group">
+          <z-inputtext [group]="form" [control]="'MobileNo'" [label]="formConfig.MobileNo.label" [validationMessage]="formConfig.MobileNo.error"></z-inputtext>
+        </div>
+        <div class="col-xl-7 form-group">
+          <z-inputtext [group]="form" [control]="'EmailID'" [label]="formConfig.EmailID.label" [validationMessage]="formConfig.EmailID.error"></z-inputtext>
+        </div>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'ReferredByAddress'" [label]="formConfig.ReferredByAddress.label"></z-inputtext>
+      </div>
+      <div class="row">
+        <div class="col-xl-6 form-group">
+          <z-inputtext [group]="form" [control]="'ReferredByLocation'" [label]="formConfig.ReferredByLocation.label"></z-inputtext>
+        </div>
+        <div class="col-xl-6 form-group">
+          <z-inputtext [group]="form" [control]="'ReferredByCity'" [label]="formConfig.ReferredByCity.label"></z-inputtext>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>

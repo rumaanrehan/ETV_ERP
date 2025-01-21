@@ -1,0 +1,26 @@
+<p-sidebar [(visible)]="isVisible"
+           [position]="position"
+           [dismissible]="false"
+           [showCloseIcon]="false"
+           [closeOnEscape]="false"
+           [blockScroll]="'true'"
+           [styleClass]="styleClass"
+           >
+    <!-- Block scroll is not working currently -->
+
+  <!-- Header slot -->
+  <ng-template pTemplate="header">
+    <ng-content select="[sidebarHeader]"></ng-content>
+  </ng-template>
+
+  <!-- Content slot -->
+  <ng-template pTemplate="content">
+    <ng-content select="[sidebarContent]"></ng-content>
+  </ng-template>
+
+  <!-- Footer slot -->
+  <ng-template pTemplate="footer">
+    <ng-content select="[sidebarFooter]"></ng-content>
+  </ng-template>
+</p-sidebar>
+

@@ -1,0 +1,51 @@
+<p-pickList 
+  [source]="sourceList"
+  [target]="targetList"
+  [sourceHeader]="sourceHeader"
+  [targetHeader]="targetHeader"
+  [responsive]="true"
+  [dragdrop]="true"
+  [stripedRows]="true"
+  [showSourceControls]="showSourceControls"
+  [showTargetControls]="showTargetControls"
+  [metaKeySelection]="metaKeySelection"
+  [sourceStyle]="sourceStyle"
+  [targetStyle]="targetStyle"
+  [filterBy]="itemName"
+  [showSourceFilter]="sourceList.length > 5"
+  [showTargetFilter]="targetList.length > 5"
+  [sourceFilterPlaceholder]="formattedsourceFilterPlaceholder"
+  [targetFilterPlaceholder]="formattedtargetFilterPlaceholder"
+  [breakpoint]="breakpoint"
+  (onTargetSelect)="onTargetSelect.emit($event)"
+  (onMoveToSource)="onMoveToSource.emit($event)"
+  (onMoveAllToSource)="onMoveAllToSource.emit($event)"
+  (onMoveToTarget)="onMoveToTarget.emit($event)"
+  (onMoveAllToTarget)="onMoveAllToTarget.emit($event)"
+>
+  <ng-template pTemplate="targetHeader">
+    <div class="flex justify-content-between align-items-center">
+      <div class="row">
+        <div class="col-xl-8">
+          <div class="font-bold">{{ targetHeader }}</div>
+        </div>
+        <div class="col-xl-4">
+          <button *ngIf="showActionButton && targetList.length > 0"
+                  type="button"
+                  class="btn btn-md btn-primary w-100 p-0"
+                  [disabled]="disableActionButton"
+                  (click)="onActionButtonClick.emit()">
+            {{ actionButtonLabel }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="item" let-item>
+    <div class="d-flex align-items-center gap-3 p-2">
+      <div class="flex-grow-1">
+        <span class="font-bold">{{ item[itemName] }}</span>
+      </div>
+    </div>
+  </ng-template>
+</p-pickList>

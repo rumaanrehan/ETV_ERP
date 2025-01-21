@@ -1,0 +1,54 @@
+:root{
+    --bs-primary-rgb: 0, 120, 212;
+    --bs-border-radius: var(--default-radius);
+}
+
+dl, ol, ul {
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding-inline-start: 0;
+}
+
+h1,h2,h3,h4,h5,h6{
+    margin: 0;
+}
+
+.main-content .container-fluid {
+    padding: unset;
+}
+
+.breadcrumb-item + .breadcrumb-item::before, .breadcrumb-item + .breadcrumb-item {
+    all: unset;
+}
+
+legend{
+    all: unset;
+}
+
+.btn {
+    font-size: 0.75rem;
+}
+
+.row {
+    margin: unset;
+}
+
+.row > * {
+    padding: unset;
+}
+
+.input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    margin-left: unset;
+}
+
+.form-label {
+    margin: unset;
+}
+
+.input-group {
+    flex-wrap: unset;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-striped-bg: rgba(var(--body-bg-rgb),1) !important;
+}

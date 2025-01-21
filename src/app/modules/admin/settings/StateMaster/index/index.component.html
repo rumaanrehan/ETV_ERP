@@ -1,0 +1,39 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+</ng-template>
+
+<app-index-table [tableDef]="tableDef"
+                 (lazyLoad)="onIndexTableLazyLoad($event)">
+</app-index-table>
+
+<ng-template #stateCodeTemplate let-row>
+  <span class="fw-bold font-blue" (click)="onClickEditDetails(row.StateID, row.ActiveStatus)" style="cursor: pointer;">{{ row.StateCode }}</span>
+</ng-template>
+
+<ng-template #stateGSTCodeTemplate let-row>
+  <span class="fw-bold">{{ row.StateGSTCode }}</span>
+</ng-template>
+
+<ng-template #stateISOCodeTemplate let-row>
+  <span class="fw-bold">{{ row.StateISOCode }}</span>
+</ng-template>
+
+<ng-template #stateIsDefaultTemplate let-row>
+  <span class="badge rounded-pill {{ row.IsDefault ? 'bg-outline-success' : 'bg-outline-dark' }}">
+    {{ row.IsDefault ? 'Yes' : 'No' }}
+  </span>
+</ng-template>
+
+<ng-template #stateActiveStatusTemplate let-row>
+  <span class="badge {{ row.ActiveStatus ? 'bg-outline-success' : 'bg-outline-danger' }}">
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+  <div class="hstack gap-2 fs-15 justify-content-end">
+    <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)"><i class="ri-delete-bin-line"></i></span>
+  </div>
+</ng-template>
+
+<app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>

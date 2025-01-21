@@ -1,0 +1,41 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Fix Service Master</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="mainForm" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="mainForm" control="FixServiceCode" label="Fix Service Code"></z-inputtext>
+      </div>
+      <div class="col-xl-6 form-group">
+        <z-inputnumber [group]="mainForm" [control]="'FixedID'" [label]="'FixedID'" [validationMessage]="formErrors['FixedID']"></z-inputnumber>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="mainForm" control="FixServiceName" label="Fix Service Name" [validationMessage]="formErrors['FixServiceName']"></z-inputtext>
+      </div>
+      <div *ngIf="!isEditMode" class="col-xl-6 form-group">
+        <z-inputnumber [group]="mainForm" [control]="'FixServiceRate'" [label]="'Service Rate'" [validationMessage]="formErrors['FixServiceRate']"></z-inputnumber>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-textarea [group]="mainForm" control="ServiceDescription" label="Description" [validationMessage]="formErrors['ServiceDescription']"></z-textarea>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="mainForm.get('ActiveStatus')?.value == false">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>
+
+
+
+
+

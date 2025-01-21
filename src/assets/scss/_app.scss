@@ -1,0 +1,703 @@
+/*Main Sidebar Start*/
+.main-sidebar {
+  padding-block-end: 1.875rem;
+}
+/*Main Sidebar End*/
+
+/*Page Header Start*/
+.page-header-breadcrumb {
+  z-index: 1;
+  padding: 0.1875rem 0.5rem;
+  background: var(--background-tertiary);
+  position: sticky;
+  top: 3.125rem;
+  // box-shadow: 0 2px 5px rgba(40, 90, 185, .1);
+}
+
+.btn-page-header {
+  padding: 0.125rem 1rem;
+  gap: 0.25rem;
+}
+
+.btn-page-header i {
+  color: #fff;
+  font-size: 0.65rem;
+}
+
+.breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  font-family: "primeicons";
+  content: "\e932";
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+
+.breadcrumb-item a {
+  color: var(--primary-color);
+}
+
+[data-vertical-style=overlay][data-toggled=icon-overlay-close] .page-header-breadcrumb {
+  width: calc(100% - 79px);
+}
+
+/*Page Header End*/
+
+/*Page Content Start*/
+.page-content {
+  padding: .75rem;
+}
+
+.index-page-content {
+  padding: .75rem .75rem 0 .75rem;
+  background-color: var(--custom-white);
+}
+
+.page-content-scrollable {
+  height: calc(100vh - 172px);
+  // max-height: 100%;
+  overflow-y: scroll;
+}
+/*Page Content End*/
+
+/*Page Action Bar Start*/
+.page-action-panel {
+  display: flex;
+  justify-content: space-between;
+  background: var(--background-tertiary);
+  padding: 0.1875rem 0;
+  // box-shadow: 0 -2px 5px rgba(40, 90, 185, 0.1);
+}
+
+.page-action-panel>div{
+  display: flex;
+}
+
+.page-action-panel>div:nth-child(2){
+  justify-content: center;
+}
+.page-action-panel>div:last-child{
+  justify-content: end;
+}
+/*Page Action Bar End*/
+
+/* Footer Start*/
+app-footer{
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+}
+
+footer {
+  padding: 6px 0px !important;
+  background-color: var(--header-bg);
+  color: rgba(255,255,255,0.7);
+}
+
+.footer a, .footer a:hover{
+  color: rgba(255,255,255,0.7);
+} 
+/* Footer End*/
+
+.badge{
+    line-height:1.4;
+}
+
+.font-blue {
+  color: blue;
+}
+
+.swal2-container {
+    z-index: 1101;
+}
+
+.w-30rem {
+  width: 30rem !important;
+}
+
+.w-40rem {
+  width: 40rem !important;
+}
+
+.w-50rem {
+  width: 50rem !important;
+}
+
+/* Start - Invalid Border & Validation Tooltip */
+.tooltip-container {
+  position: absolute;
+}
+
+.validation-tooltip, .password-capslock-tooltip {
+  background-color: #FFFFA3;
+  color: #555;
+  border: 1px solid #F78B83;
+  border-radius: var(--default-radius-sm);
+  padding: 4px;
+  z-index: 1000;
+  /* Position the tooltip */
+  margin-top: 8px; /* Adjust if needed */
+}
+
+.password-capslock-tooltip::after {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: calc((100% - 20px) / 2);
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #F78B83 transparent;
+}
+
+span#password-capslock-tooltip {
+  position: absolute;
+  right: 0;
+  bottom: -40px;
+}
+
+.validation-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  right: calc((100% - 20px)/2);
+  border-width: 10px;
+  border-style: solid;
+  border-color: #F78B83 transparent transparent transparent;
+}
+
+/* .ng-invalid.ng-touched, .p-inputwrapper.ng-touched.ng-invalid .p-component {
+  border-color: #e24c4c;
+} */
+
+.ng-invalid.ng-touched,
+.p-element.ng-touched.ng-invalid .p-component,
+.p-element.ng-touched.ng-invalid > .p-radiobutton > .p-radiobutton-box {
+  border-color: #e24c4c;
+}
+/* End - Invalid Border & Validation Tooltip */
+
+/* Customize the paginator container */
+/*.p-paginator {
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}*/
+
+/* Style for paginator buttons */
+/*.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last,
+.p-paginator-page {
+    background-color: #007bff;*/  /* Change button background color */
+    /*color: white;*/                /* Change button text color */
+    /*border-radius: 50%;*/          /* Make buttons round */
+    /*margin: 0 5px;*/               /* Space between buttons */
+    /*border: none;*/                /* Remove border */
+    /*width: 35px;
+    height: 35px;
+}*/
+
+/* Style for active page button */
+/*.p-paginator-page.p-highlight {
+    background-color: #28a745;*/ /* Different color for active page */
+/*}*/
+
+/* Hover effects */
+/*.p-paginator-page:hover {
+    background-color: #0056b3;
+}*/
+
+/* Style for the dropdown (rows per page) */
+/*.p-dropdown {
+    margin-left: 20px;*/ /* Add some space between dropdown and pagination */
+    /*border: 1px solid #007bff;
+    border-radius: 5px;
+}*/
+
+/* Optional: Style dropdown items */
+/*.p-dropdown-items .p-dropdown-item {
+    color: #007bff;
+}*/
+
+/* Style page input */
+/*.p-paginator .p-paginator-input {
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 5px;
+    margin-left: 10px;
+}*/
+
+
+/* Dark Mode */
+/*[data-theme-mode=dark] .p-datatable-table {
+  background-color: #333;
+  color: #fff;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-thead {
+  background-color: #444;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-thead th {
+  color: #fff;
+  border-color: #555;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-body td {
+  border-color: #555;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-footer {
+  background-color: #444;
+  color: #fff;
+}*/
+
+/* Optional: Add hover and selection styles */
+/*[data-theme-mode=dark] .p-datatable-table .p-datatable-body td:hover {
+  background-color: #555;
+}
+
+[data-theme-mode=dark] .p-datatable-table .p-datatable-body td.p-highlight {
+  background-color: #666;
+}*/
+
+
+/*Start Form Floating CSS*/
+
+/* .form-floating > span {
+      padding: 0.75rem 0.75rem !important;
+      font-size: 1rem;
+} */
+ 
+// .form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select, .form-floating > span {
+//   min-height: unset;
+// }
+
+// .form-floating > .form-control, .form-floating > span {
+//   padding: 0.75rem 0.75rem !important;
+// }
+
+
+
+
+// .form-floating > label {
+//   position: absolute;
+//   top: 0.75rem;
+//   left: 0.75rem;
+//   padding: 0 0.25rem;
+//   transition: all 0.2s;
+//   pointer-events: none;
+// }
+
+// .form-floating > .form-control:focus + label {
+//   top: -0.1rem;
+//   left: 0.5rem;
+//   color: var(--primary-color) !important;
+//   background-color: white;
+//   height: unset;
+// }
+
+// .form-floating > .form-control:not(:placeholder-shown) + label {
+//   top: -0.1rem;
+//   left: 0.5rem;
+//   background-color: white;
+//   height: unset;
+// }
+
+
+// .form-floating > .form-control, .form-floating > .form-control-plaintext, .form-floating > .form-select {
+//   height: calc(3rem - 8px);
+// }
+
+//   .form-floating > .form-control:placeholder-shown:not(:focus) + label {
+//     opacity: 1;
+//     visibility: visible;
+//     top: 0.6rem;
+//     left: 0.6rem;
+//   }
+
+// .form-floating .form-control:focus {
+//   border-color: var(--primary-color);
+// }
+
+// .form-floating > .form-control:not(:placeholder-shown) ~ label {
+//   transform: scale(0.8) translateY(-0.5rem) translateX(0.15rem);
+// }
+
+/*End Form Floating CSS*/
+
+/* 0.25rem 0.8rem */
+/* .p-dropdown-panel {
+  background: rgb(255, 255, 255);
+  color: rgb(75, 85, 99);
+  border: 0px none;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
+}
+
+.p-dropdown-panel .p-dropdown-items {
+  padding: 0.75rem 0px;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):not(.p-disabled).p-focus {
+  color: rgb(75, 85, 99);
+  background: rgb(229, 231, 235);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):not(.p-disabled):hover {
+  color: rgb(75, 85, 99);
+  background: rgb(243, 244, 246);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  margin: 0px;
+  padding: 0.75rem 1.25rem;
+  border: 0px none;
+  color: rgb(75, 85, 99);
+  background: transparent;
+  transition: box-shadow 0.2s;
+  border-radius: 0px;
+} */
+
+
+/* Added by Musheer Khalid */
+.input-group-text {
+  padding: 0.25rem 0.5rem;
+  font-size: var(--default-font-size);
+  border-radius: var(--default-radius-sm);
+  border-color: #ccc;
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.form-control-margin {
+  margin-bottom: 0.75rem !important;
+}
+
+.form-group {
+  margin-bottom: 0.75rem;
+}
+
+.input-span{
+  padding: 0.25rem 0.5rem;
+  border: 1px solid#ccc;
+  flex-grow: 1;
+}
+
+.input-group .pi{
+  color: #94a3b8;
+  // vertical-align: middle;
+}
+
+.input-group>:first-child{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.input-group-addon {
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--default-body-bg-color);
+  border: 1px solid #ccc;
+}
+
+.input-group-select {
+  display: flex;
+  align-items: center;
+  background-color: var(--default-body-bg-color);
+}
+
+.input-group>:not(:first-child), .input-group>:not(:first-child) * {
+  border-radius: 0 !important;
+}
+
+.input-group>:last-child, .input-group>:last-child * {
+  border-top-right-radius: var(--default-radius-sm) !important;
+  border-bottom-right-radius: var(--default-radius-sm) !important;
+}
+
+.input-group>:not(:last-child){
+  border-right: none;
+}
+
+.input-group > :not(:last-child):not(.input-group-addon) * {
+  border-right: none;
+}
+
+/* New Changes*/
+
+.form-vertical {
+  background: var(--custom-white);
+  padding: 1rem;
+  border-radius: var(--default-radius-sm);
+}
+
+.app-sidebar .p-sidebar-content{
+  padding: 1rem 0;
+}
+
+.btn {
+  width: 100%;
+  border-radius: var(--default-radius-sm);
+}
+
+
+.form-control-group{
+  padding: 0.25rem 0.5rem;
+  height: 2rem;
+  border-radius: var(--default-radius-sm);
+  border: 1px solid #ccc !important;
+}
+
+.card {
+  box-shadow: 0 3.2px 7.2px 0 var(--card-shadow-color,rgba(0, 0, 0, .132)),0 .6px 1.8px 0 var(--card-shadow-secondary-color,rgba(0, 0, 0, .108));
+  background-color: var(--background-tertiary);
+}
+
+label {
+  color: var(--default-text-color);
+}
+
+.input-group z-inputnumber, .input-group z-inputtext, .input-group z-select, .input-group z-autocomplete {
+  flex: 1;
+}
+
+.div-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.no-border {
+  border: none !important;
+}
+.no-border-left {
+  border-left: none !important;
+}
+.no-border-right {
+  border-right: none !important;
+}
+.no-border-bottom {
+  border-bottom: none !important;
+}
+.no-border-top {
+  border-top: none !important;
+}
+
+// .no-margin {
+//   margin: none !important;
+// }
+// .no-margin-left {
+//   margin-left: none !important;
+// }
+// .no-margin-right {
+//   margin-right: none !important;
+// }
+// .no-margin-bottom {
+//   margin-bottom: none !important;
+// }
+// .no-margin-top {
+//   margin-top: none !important;
+// }
+
+// .no-padding {
+//   padding: none !important;
+// }
+// .no-padding-left {
+//   padding-left: none !important;
+// }
+// .no-padding-right {
+//   padding-right: none !important;
+// }
+// .no-padding-bottom {
+//   padding-bottom: none !important;
+// }
+// .no-padding-top {
+//   padding-top: none !important;
+// }
+
+
+.index-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.index-table tr td, .index-table tr th,
+.page-table tr td, .page-table tr th {
+  font-size: 14px !important;
+}
+
+.page-table {
+  margin-bottom: 0.75rem;
+}
+
+.page-table thead {
+  border: 1px solid var(--primary-color);
+}
+
+.page-table tbody {
+  border: 1px solid var(--default-border);
+}
+
+.page-table thead tr th {
+  background: var(--primary-color) !important;
+  color: #fff;
+}
+
+.btn-delete-reactivate{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50rem !important;
+}
+
+// .p-datatable-tbody > tr:not(.p-highlight):hover{
+//   background-color: #f8f8f8;
+// }
+
+.table tbody tr:not(.p-highlight):hover {
+  background-color: var(--table-hover-color);
+  transition: unset;
+}
+
+.table tbody tr:not(.p-highlight):hover td{
+  background-color: transparent;
+}
+
+.table tbody tr:hover, .table tbody tr:hover .table-action-link {
+  color: rgba(0, 90, 158, 1);
+}
+
+.table tbody tr:hover .table-action-link{
+  font-weight: 500;
+}
+
+.table .table-action-link:hover {
+	background-color: var(--table-action-link-hover-color);
+}
+
+.table .p-highlight td{
+  background-color: var(--table-selected-row-color);
+}
+
+.table-row-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.table .pi{
+  font-size: 14px;
+}
+
+.table-row-status .pi {
+  font-size: 0.5rem;
+  line-height: 0.375;
+}
+
+.index-table-action-bar{
+  padding: 0 !important;
+}
+
+.index-table-action-bar i{
+  padding: 0.75rem;
+  font-size: 14px;
+  color: var(--default-text-color);
+}
+
+.index-table-action-bar i:hover{
+  background-color: var(--background-tertiary);
+}
+.filter-panel{
+  padding: 0.5rem;
+  background-color: var(--background-tertiary);
+  height: 50px; 
+  border-radius: 4px;
+}
+
+.filter-panel>th:first-child{
+  border-radius: var(--default-radius) 0 0 var(--default-radius);
+}
+
+.filter-panel>th:last-child{
+  border-radius: 0 var(--default-radius) var(--default-radius) 0;
+}
+
+.filter-panel>th{
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.refresh-filter, .filter-toggle, .column-visibility-toggle{
+  cursor: pointer;
+}
+
+.column-toggle-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0;
+}
+
+.active-toggle{
+  background-color: var(--background-tertiary);
+}
+
+.p-dropdown-panel, .p-dropdown-header {
+  background-color: var(--background-tertiary);
+  border-color: var(--default-border);
+}
+
+.p-dropdown-item{
+  color: var(--default-text-color);
+}
+
+.p-dropdown-item:hover, .p-dropdown-item.p-highlight {
+  background: var(--background-primary);
+}
+
+.filter-panel .p-float-label input, .filter-panel .p-float-label .p-inputwrapper {
+  border-color: var(--default-border);
+}
+
+span{
+  color: var(--default-text-color);
+}
+
+.p-float-label > .input-span {
+  display: flex !important;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: var(--default-radius-sm);
+  line-height: 1.8;
+}
+
+.p-float-label > span:not(:empty) ~ label {
+  top: 0.15rem;
+  transition: all 0.2s;
+  font-weight: 600;
+  transform: scale(0.8) translateX(-0.9rem);
+  padding: 0 0.25rem;
+  background-color: var(--background-tertiary);
+}
+
+
+.form-horizontal {
+  padding: 0.75rem 0.75rem 0 0;
+}
+
+.form-horizontal [class*="col-"] {
+  padding-left: 0.75rem;
+  float: left;
+}
+
+.form-horizontal [class*="col-"] .m-auto {
+  float: unset;
+}
+
+.input-group  {
+  flex-grow: 1;
+}

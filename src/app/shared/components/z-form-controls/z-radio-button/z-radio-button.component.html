@@ -1,0 +1,13 @@
+<div [formGroup]="group" class="d-flex align-items-center gap-1">
+    <p-radioButton
+      [styleClass]="styleClass"
+      [formControlName]="control"
+      [appShowValidationTooltip]="validationMessage"
+      [value]="value"
+      [inputId]="control+'_'+value"
+      (onClick)="onButtonClick($event.value)"
+    ></p-radioButton>
+    <label [for]="control+'_'+value">
+      {{ label }}
+    </label>
+</div>

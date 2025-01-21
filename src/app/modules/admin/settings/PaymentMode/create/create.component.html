@@ -1,0 +1,135 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Payment Mode</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'PaymentModeCode'" [label]="formConfig.PaymentModeCode.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'PaymentModeName'" [label]="formConfig.PaymentModeName.label" [validationMessage]="formConfig.PaymentModeName.error"></z-inputtext>
+      </div>
+      <div class="card flex">
+        <p-fieldset class="m-0" legend="Reference Details">
+          <div class="col-xl-12 form-group">
+            <z-inputswitch [group]="form" [control]="'ReferenceNo_IsAllowed'" [label]="formConfig.ReferenceNo_IsAllowed.label"></z-inputswitch>
+          </div>
+          <div class="col-xl-12 form-group">
+            <z-inputswitch [group]="form" [control]="'ReferenceNo_IsRequired'"[label]="formConfig.ReferenceNo_IsRequired.label" ></z-inputswitch>
+          </div>
+          <div class="col-xl-12 form-group">
+            <z-inputtext [group]="form" [control]="'ReferenceNo_Label'" [label]="formConfig.ReferenceNo_Label.label" [validationMessage]="formConfig.ReferenceNo_Label.error"></z-inputtext>
+          </div>
+        </p-fieldset>
+      </div>
+      <div class="card flex">
+        <p-fieldset class="m-0" legend="Date Details">
+          <div class="col-xl-12 form-group">
+            <z-inputswitch [group]="form" [control]="'ReferenceDate_IsAllowed'" [label]="formConfig.ReferenceDate_IsAllowed.label" ></z-inputswitch>
+          </div>
+          <div class="col-xl-12 form-group">
+            <z-inputswitch [group]="form" [control]="'ReferenceDate_IsRequired'" [label]="formConfig.ReferenceDate_IsRequired.label"></z-inputswitch>
+          </div>
+          <div class="col-xl-12 form-group">
+            <z-inputtext [group]="form" [control]="'ReferenceDate_Label'" [label]="formConfig.ReferenceDate_Label.label" [validationMessage]="formConfig.ReferenceDate_Label.error"></z-inputtext>
+          </div>
+        </p-fieldset>
+      </div>
+      <div class="card flex">
+        <p-fieldset class="m-0" legend="Bank Details">
+          <div class="col-xl-12 form-group">
+            <z-inputswitch [group]="form" [control]="'Bank_IsAllowed'" [label]="formConfig.Bank_IsAllowed.label"></z-inputswitch>
+          </div>
+          <div class="col-xl-12 form-group">
+            <z-inputswitch [group]="form" [control]="'Bank_IsRequired'" [label]="formConfig.Bank_IsRequired.label"></z-inputswitch>
+          </div>
+          <div class="col-xl-12 form-group">
+            <z-inputtext [group]="form" [control]="'Bank_Label'" [label]="formConfig.Bank_Label.label" [validationMessage]="formConfig.Bank_Label.error"></z-inputtext>
+          </div>
+        </p-fieldset>
+      </div>
+      <!--<div class="col-xl-12" formArrayName="PaymentModeMapping">
+    <p-table [value]="paymentModeMappingArray.controls">
+      <ng-template pTemplate="header">
+        <tr class="table-primary text-center">
+          <th style="width: 5%;">SN</th>
+          <th style="width: 55%;">Payment Mode</th>
+          <th style="width: 40%;">Allowed</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-group let-i="rowIndex">
+        <tr [formGroupName]="i">
+          <td class="p-0">
+            <div class="col-xl-12 mb-0 mt-0 p-0">
+              <p-floatLabel>
+                <input pInputText value="{{ i + 1 }}" readonly style="text-align: center;" />
+              </p-floatLabel>
+            </div>
+          </td>
+          <td style="padding:1px;">
+            <div class="col-xl-12 mb-0 mt-0 p-0">
+              <p-floatLabel>
+                <input pInputText id="PaymentModeName-{{ i }}" formControlName="PaymentModeName" readonly />
+              </p-floatLabel>
+            </div>
+          </td>
+          <td style="padding:1px;">
+            <div class="col-xl-12 mb-0 mt-0">
+              <p-floatLabel>
+                <p-dropdown inputId="AllowedForPaymentMode-{{ i }}" formControlName="AllowedForPaymentMode" [options]="AllowedForPaymentModeList" optionLabel="Text" optionValue="Value"></p-dropdown>
+              </p-floatLabel>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>-->
+
+      <div class="col-xl-12" formArrayName="PaymentModeMapping">
+        <p-table [value]="paymentModeMappingArray.controls">
+          <ng-template pTemplate="header">
+            <tr class="table-primary text-center">
+              <th style="width: 5%;">SN</th>
+              <th style="width: 55%;">Billing Area</th>
+              <th style="width: 40%;">Is Allowed</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-group let-i="rowIndex">
+            <tr>
+              <td class="p-0 text-center">
+                <div class="col-xl-12 p-0">
+                  {{i+1}}
+                </div>
+              </td>
+              <td class="p-1">
+                <div class="col-xl-12 form-group">
+                  <z-inputtext [group]="group" [control]="'PaymentModeName'" [validationMessage]="formConfig.PaymentModeMapping.items.PaymentModeName.error?.[i]" ></z-inputtext>
+                </div>
+              </td>
+              <td class="p-1">
+                <div class="col-xl-12 p-0">
+                  <div class="col-xl-12 form-group">
+                    <z-inputswitch [group]="group" [control]="'AllowedForPaymentMode'" [label]="''"></z-inputswitch>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>

@@ -1,0 +1,10 @@
+<div [formGroup]="group">
+    <p-floatLabel>
+        <input pInputText
+            [class]="styleClass"
+            [formControlName]="control"
+            [appShowValidationTooltip]="validationMessage"
+            (onChange)="onValueChange($event)" />
+        <label>{{ label }}</label>
+    </p-floatLabel>
+</div>
