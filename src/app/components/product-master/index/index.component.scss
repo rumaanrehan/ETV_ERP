@@ -1,0 +1,47 @@
+/* Ensures consistent styling for table cells */
+.table-cell {
+    cursor: pointer;
+    margin-right: 10px;
+    display: inline-block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  /* Header style */
+  th {
+    text-align: left;
+    padding: 12px 20px;
+    font-weight: bold;
+    background-color: #f4f4f4;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  /* Add space between columns */
+  table {
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+  
+  /* Optional: Add padding for table cells */
+  td {
+    padding: 10px;
+    vertical-align: middle;
+  }
+  
+  /* Align the table content horizontally */
+  .table-cell {
+    text-align: left; /* or right/center depending on your requirement */
+  }
+  
+  /* Optionally, if you need more spacing in headers */
+  th, td {
+    padding: 12px;
+  }
+  
+  /* Handle responsive design */
+  @media (max-width: 768px) {
+    .table-cell {
+      font-size: 14px;
+    }
+  }
+  

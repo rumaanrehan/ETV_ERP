@@ -112,13 +112,13 @@
                         RTL
                       </label>
                       <input
-                      (click)="DirectionsChange('rtl')"
-                      [checked]="localdata['dir'] == 'rtl'"
-                      name="onoffswitch25"
-                      id="switcher-rtl"
-                      class="form-check-input"
-                      type="radio"
-                    />
+                        (click)="DirectionsChange('rtl')"
+                        [checked]="localdata['dir'] == 'rtl'"
+                        name="onoffswitch25"
+                        id="switcher-rtl"
+                        class="form-check-input"
+                        type="radio"
+                      />
                     </div>
                   </div>
                 </div>
@@ -229,70 +229,122 @@
               <div class="sidemenu-layout-styles">
                 <p class="switcher-style-head">Sidemenu Layout Styles:</p>
                 <div class="row switcher-style gx-0 pb-2 gy-2">
-                    <div class="col-sm-6">
-                        <div class="form-check switch-select">
-                            <label class="form-check-label" for="switcher-default-menu"  >
-                                Default Menu
-                            </label>
-                            <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
-                                id="switcher-default-menu" checked
-                                (click)="SideMenus('overlay', '')"
-                                [checked]="localdata['ynexverticalstyles'] != 'default-menu'"
-                              />
-                        </div>
+                  <div class="col-sm-6">
+                    <div class="form-check switch-select">
+                      <label
+                        class="form-check-label"
+                        for="switcher-default-menu"
+                      >
+                        Default Menu
+                      </label>
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="sidemenu-layout-styles"
+                        id="switcher-default-menu"
+                        checked
+                        (click)="SideMenus('overlay', '')"
+                        [checked]="
+                          localdata['ynexverticalstyles'] != 'default-menu'
+                        "
+                      />
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-check switch-select">
-                            <label class="form-check-label" for="switcher-closed-menu">
-                                Closed Menu
-                            </label>
-                            <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
-                                id="switcher-closed-menu"(click)="SideMenus('close-menu-close', 'closed')"
-                                [checked]="localdata['ynexverticalstyles'] == 'closed'">
-                        </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-check switch-select">
+                      <label
+                        class="form-check-label"
+                        for="switcher-closed-menu"
+                      >
+                        Closed Menu
+                      </label>
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="sidemenu-layout-styles"
+                        id="switcher-closed-menu"
+                        (click)="SideMenus('close-menu-close', 'closed')"
+                        [checked]="localdata['ynexverticalstyles'] == 'closed'"
+                      />
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-check switch-select">
-                            <label class="form-check-label" for="switcher-icontext-menu">
-                                Icon Text
-                            </label>
-                            <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
-                                id="switcher-icontext-menu" (click)="SideMenus('icon-text-close', 'icontext')"
-                                [checked]="localdata['ynexverticalstyles'] == 'icontext'">
-                        </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-check switch-select">
+                      <label
+                        class="form-check-label"
+                        for="switcher-icontext-menu"
+                      >
+                        Icon Text
+                      </label>
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="sidemenu-layout-styles"
+                        id="switcher-icontext-menu"
+                        (click)="SideMenus('icon-text-close', 'icontext')"
+                        [checked]="
+                          localdata['ynexverticalstyles'] == 'icontext'
+                        "
+                      />
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-check switch-select">
-                            <label class="form-check-label" for="switcher-icon-overlay">
-                                Icon Overlay
-                            </label>
-                            <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
-                                id="switcher-icon-overlay" (click)="SideMenus('icon-overlay-close', 'overlay')"
-                                [checked]="localdata['ynexverticalstyles'] == 'overlay'">
-                        </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-check switch-select">
+                      <label
+                        class="form-check-label"
+                        for="switcher-icon-overlay"
+                      >
+                        Icon Overlay
+                      </label>
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="sidemenu-layout-styles"
+                        id="switcher-icon-overlay"
+                        (click)="SideMenus('icon-overlay-close', 'overlay')"
+                        [checked]="localdata['ynexverticalstyles'] == 'overlay'"
+                      />
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-check switch-select">
-                            <label class="form-check-label" for="switcher-detached">
-                                Detached
-                            </label>
-                            <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
-                                id="switcher-detached" (click)="SideMenus('detached-close', 'detached')"
-                                [checked]="localdata['ynexverticalstyles'] == 'detached'">
-                        </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-check switch-select">
+                      <label class="form-check-label" for="switcher-detached">
+                        Detached
+                      </label>
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="sidemenu-layout-styles"
+                        id="switcher-detached"
+                        (click)="SideMenus('detached-close', 'detached')"
+                        [checked]="
+                          localdata['ynexverticalstyles'] == 'detached'
+                        "
+                      />
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-check switch-select">
-                            <label class="form-check-label" for="switcher-double-menu">
-                                Double Menu
-                            </label>
-                            <input class="form-check-input" type="radio" name="sidemenu-layout-styles"
-                            id="switcher-double-menu"  (click)="SideMenus('double-menu-open', 'doublemenu')"
-                            [checked]="localdata['ynexverticalstyles'] == 'doublemenu'" >
-                        </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-check switch-select">
+                      <label
+                        class="form-check-label"
+                        for="switcher-double-menu"
+                      >
+                        Double Menu
+                      </label>
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="sidemenu-layout-styles"
+                        id="switcher-double-menu"
+                        (click)="SideMenus('double-menu-open', 'doublemenu')"
+                        [checked]="
+                          localdata['ynexverticalstyles'] == 'doublemenu'
+                        "
+                      />
                     </div>
+                  </div>
                 </div>
-            </div>
+              </div>
               <div class="">
                 <p class="switcher-style-head">Page Styles:</p>
                 <div class="row switcher-style gx-0">
@@ -356,7 +408,6 @@
                         type="radio"
                         name="layout-width"
                         id="switcher-full-width"
-                        
                         (click)="WidthChange('full-width')"
                         [checked]="localdata['ynex-width-mode'] != 'boxed'"
                       />
@@ -825,17 +876,19 @@
                       <div class="pickr-container-background">
                         <div class="pickr-container-background">
                           <div class="pickr">
-                          <button type="button"
-                          role="button"
-                          aria-label="toggle color picker dialog"
-                          class="color-bg-transparent pcr-button"
-                          [style.background]="color1"
-                          [cpAlphaChannel]="'disabled'"
-                          [cpOutputFormat]="'hex'"
-                          [(colorPicker)]="color1"
-                          (cpSliderDragEnd)="dynamicTranparentBgPrimary($event)"
-                      >
-                      </button> 
+                            <button
+                              type="button"
+                              role="button"
+                              aria-label="toggle color picker dialog"
+                              class="color-bg-transparent pcr-button"
+                              [style.background]="color1"
+                              [cpAlphaChannel]="'disabled'"
+                              [cpOutputFormat]="'hex'"
+                              [(colorPicker)]="color1"
+                              (cpSliderDragEnd)="
+                                dynamicTranparentBgPrimary($event)
+                              "
+                            ></button>
                           </div>
                         </div>
                       </div>
@@ -844,7 +897,9 @@
                 </div>
                 <div class="menu-image mb-3">
                   <p class="switcher-style-head">Menu With Background Image:</p>
-                  <div class="d-flex flex-wrap align-items-center switcher-style">
+                  <div
+                    class="d-flex flex-wrap align-items-center switcher-style"
+                  >
                     <div class="form-check switch-select m-1">
                       <input
                         class="form-check-input bgimage-input bg-img1"
@@ -906,8 +961,14 @@
     <div class="tab-content" id="nav-tabContent">
       <div [ngbNavOutlet]="nav"></div>
       <div class="d-grid canvas-footer">
-        <a href="javascript:void(0);" id="reset-all" class="btn btn-danger btn-block"  (click)="reset()">Reset</a>
-    </div>
+        <a
+          href="javascript:void(0);"
+          id="reset-all"
+          class="btn btn-danger btn-block"
+          (click)="reset()"
+          >Reset</a
+        >
+      </div>
     </div>
   </div>
 </div>

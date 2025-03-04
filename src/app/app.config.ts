@@ -1,5 +1,9 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, ErrorHandler, importProvidersFrom } from '@angular/core';
+import {
+  ApplicationConfig,
+  ErrorHandler,
+  importProvidersFrom,
+} from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterOutlet, UrlSerializer, provideRouter } from '@angular/router';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -13,10 +17,13 @@ import { authTokenInterceptor } from './core/interceptors/auth-token.interceptor
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { CustomService } from './shared/services/custom.service';
 import { LowerCaseUrlSerializer } from './core/utility/lower-case-url-serializer';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withInterceptors([authTokenInterceptor,httpErrorInterceptor])),
+    provideHttpClient(
+      withInterceptors([authTokenInterceptor, httpErrorInterceptor])
+    ),
     provideRouter(routes),
     RouterOutlet,
     ColorPickerModule,
@@ -33,6 +40,6 @@ export const appConfig: ApplicationConfig = {
       BrowserAnimationsModule
     ),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
-    { provide: UrlSerializer, useClass: LowerCaseUrlSerializer }
-  ]
+    { provide: UrlSerializer, useClass: LowerCaseUrlSerializer }, provideAnimationsAsync(),
+  ],
 };

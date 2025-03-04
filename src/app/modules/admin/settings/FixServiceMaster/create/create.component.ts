@@ -1,6 +1,6 @@
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ShowValidationTooltipDirective } from '../../../../../shared/directives/show-validation-tooltip.directive';
+import { ShowValidationTooltipDirective } from '../../../../../shared/layouts/directives/show-validation-tooltip.directive';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';

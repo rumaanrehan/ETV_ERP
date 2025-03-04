@@ -13,9 +13,9 @@ import { PageHeaderComponent } from './components/page-header/page-header.compon
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SwitcherComponent } from './components/switcher/switcher.component';
 import { TabToTopComponent } from './components/tab-to-top/tab-to-top.component';
-import { AppshowcodeDirective } from './directives/appshowcode.directive';
-import { FullscreenDirective } from './directives/fullscreen.directive';
-import { HoverEffectSidebarDirective } from './directives/hover-effect-sidebar.directive';
+import { AppshowcodeDirective } from './layouts/directives/appshowcode.directive';
+import { FullscreenDirective } from './layouts/directives/fullscreen.directive';
+import { HoverEffectSidebarDirective } from './layouts/directives/hover-effect-sidebar.directive';
 import { HomeLayoutComponent } from './layouts/home-layout/home-layout.component';
 import { CustomService } from './services/custom.service';
 import { ZFormControlsModule } from './components/z-form-controls/z-form-controls.module';

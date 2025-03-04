@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { ShowValidationTooltipDirective } from '../../../directives/show-validation-tooltip.directive';
+import { ShowValidationTooltipDirective } from '../../../layouts/directives/show-validation-tooltip.directive';
 
 @Component({
   selector: 'z-inputnumber',

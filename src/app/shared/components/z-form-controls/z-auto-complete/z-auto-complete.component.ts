@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ZFormControlsModule } from '../z-form-controls.module';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ShowValidationTooltipDirective } from '../../../directives/show-validation-tooltip.directive';
+import { ShowValidationTooltipDirective } from '../../../layouts/directives/show-validation-tooltip.directive';
 import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({

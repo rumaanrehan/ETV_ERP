@@ -1,0 +1,41 @@
+<div class="mainContainer">
+  <div class="container">
+    <h1>Create-Industry Master</h1>
+
+    <form (ngSubmit)="onSubmit()" #industryForm="ngForm">
+      <div>
+        <label for="industryCode">Industry Code</label>
+        <input
+          type="text"
+          id="industryCode"
+          name="industryCode"
+          [(ngModel)]="industry.industryCode"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="industryName">Industry Name</label>
+        <input
+          type="text"
+          id="industryName"
+          name="industryName"
+          [(ngModel)]="industry.industryName"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="isActive">Is Active</label>
+        <select [(ngModel)]="industry.isActive" name="isActive">
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+
+      <button type="submit" [disabled]="!industryForm.valid">
+        Create Industry
+      </button>
+    </form>
+  </div>
+</div>

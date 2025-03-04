@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -12,7 +18,11 @@ import { BillCompanyMasterList } from '../../BillCompanyMaster/bill-company-mast
 import { BillCompanyMasterService } from '../../BillCompanyMaster/bill-company-master.service';
 import { SelectList } from '../../SelectList/select-list';
 import { SelectListService } from '../../SelectList/select-list.service';
-import { PlanMaster, PlanMaster_BillTypeMappingList, PlanMaster_SelectList } from '../plan-master';
+import {
+  PlanMaster,
+  PlanMaster_BillTypeMappingList,
+  PlanMaster_SelectList,
+} from '../plan-master';
 import { PlanMasterService } from '../plan-master.service';
 
 @Component({
@@ -25,8 +35,9 @@ import { PlanMasterService } from '../plan-master.service';
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  
+  @ViewChild('pageHeaderActionTemplate', { static: true })
+  pageHeaderActionTemplate!: TemplateRef<any>;
+
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   form!: FormGroup;
@@ -52,21 +63,33 @@ export class CreateComponent implements OnInit, OnDestroy {
     private alertService: AlertNotificationService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<PlanMaster>(this.formConfig);
-    this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.formService.initializeFormValidationMessage(
+      this.formConfig,
+      this.form
+    );
 
     this.loadMappingList(null);
     this.loadPlan();
     this.loadBillCompany();
     this.loadSelectListData('PlanType', 'PlanTypeList');
-    this.loadSelectListData('IPBillingAllowedBasedOn', 'IPBillingAllowedBasedOnList');
-    this.loadSelectListData('OPReturnAllowedBasedOn', 'OPReturnAllowedBasedOnList');
-    this.loadSelectListData('IPReturnAllowedBasedOn', 'IPReturnAllowedBasedOnList');
+    this.loadSelectListData(
+      'IPBillingAllowedBasedOn',
+      'IPBillingAllowedBasedOnList'
+    );
+    this.loadSelectListData(
+      'OPReturnAllowedBasedOn',
+      'OPReturnAllowedBasedOnList'
+    );
+    this.loadSelectListData(
+      'IPReturnAllowedBasedOn',
+      'IPReturnAllowedBasedOnList'
+    );
     this.loadSelectListData('BillType', 'DefaultBillTypeList');
     this.getDetails();
   }
@@ -79,10 +102,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   onClickPageHeaderAddButton(): void {
     try {
       this.router.navigate(['/Admin/PlanMaster/Index']);
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   get PlanMasterBillTypeMappingArray(): FormArray<FormGroup> {
@@ -91,7 +111,8 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadSelectListData(FieldName: string, targetList: keyof CreateComponent) {
     try {
-      this.selectListService.PopulateList('Admin', 'PlanMaster', FieldName)
+      this.selectListService
+        .PopulateList('Admin', 'PlanMaster', FieldName)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -100,17 +121,15 @@ export class CreateComponent implements OnInit, OnDestroy {
             } else {
               this.alertService.showServerResponseToast(response);
             }
-          }
+          },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   loadBillCompany(): void {
     try {
-      this.billCompanyService.PopulateList('SelectList')
+      this.billCompanyService
+        .PopulateList('SelectList')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -121,15 +140,13 @@ export class CreateComponent implements OnInit, OnDestroy {
             }
           },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   loadPlan(): void {
     try {
-      this.pageService.PopulateList('SelectList')
+      this.pageService
+        .PopulateList('SelectList')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -138,36 +155,36 @@ export class CreateComponent implements OnInit, OnDestroy {
             } else {
               this.alertService.showServerResponseToast(response);
             }
-          }
+          },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   loadMappingList(PlanID: number | null) {
     try {
-      this.pageService.GetDetailsBillTypeMapping(PlanID)
+      this.pageService
+        .GetDetailsBillTypeMapping(PlanID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.PlanMasterBillTypeMappingList = response.Data.Items;
               this.PlanMasterBillTypeMappingList.forEach((mapping) => {
-                this.PlanMasterBillTypeMappingArray.push(this.formService.createFormArrayItem(this.formConfig.BillTypeMapping.items));
-              })
-              this.PlanMasterBillTypeMappingArray.patchValue(this.PlanMasterBillTypeMappingList = response.Data.Items)
-            }
-            else {
+                this.PlanMasterBillTypeMappingArray.push(
+                  this.formService.createFormArrayItem(
+                    this.formConfig.BillTypeMapping.items
+                  )
+                );
+              });
+              this.PlanMasterBillTypeMappingArray.patchValue(
+                (this.PlanMasterBillTypeMappingList = response.Data.Items)
+              );
+            } else {
               this.alertService.showServerResponseAlert(response);
             }
-          }
+          },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   onChange_IsCopyRate(event: any): void {
@@ -175,13 +192,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (!IsCopyRate) {
       this.form.get('CopyRateID')?.setValue(null);
       this.form.get('CopyRateID')?.disable();
-    }
-    else{
+    } else {
       this.form.get('CopyRateID')?.enable();
     }
   }
 
-  resetForm(): void{
+  resetForm(): void {
     this.formService.resetFormValue<PlanMaster>(this.formConfig, this.form);
   }
 
@@ -202,88 +218,79 @@ export class CreateComponent implements OnInit, OnDestroy {
 
       // Handle form submission based on editMode
       if (this.isEditMode) {
-        this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
-        }).then(result => {
-          if (result.isConfirmed) {
-            const model: PlanMaster = {
-              ...this.formService.transformFormData(this.form.value),
-              ReasonToUpdate: result.value
-            };
-            this.updateRecord(model);
-          }
-          else {
-            this.isSubmitted = false;
-          }
-        });
-      }
-      else {
+        this.alertService
+          .showConfirmationWithInput({
+            text: 'Do you really want to Update?',
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              const model: PlanMaster = {
+                ...this.formService.transformFormData(this.form.value),
+                ReasonToUpdate: result.value,
+              };
+              this.updateRecord(model);
+            } else {
+              this.isSubmitted = false;
+            }
+          });
+      } else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   createRecord(model: PlanMaster): void {
     try {
-      this.pageService.CreateRecord(model)
+      this.pageService
+        .CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.alertService.showAlert({
-                type: "success",
+                type: 'success',
                 text: response.Message,
-                timer: 5000
+                timer: 5000,
               });
               setTimeout(() => {
                 this.ngOnInit();
               }, 2000);
-            }
-            else {
+            } else {
               this.alertService.showServerResponseAlert(response);
             }
           },
           complete: () => {
             this.isSubmitted = false;
-          }
+          },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   updateRecord(model: PlanMaster): void {
     try {
-      this.pageService.UpdateRecord(model)
+      this.pageService
+        .UpdateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.alertService.showAlert({
-                type: "success",
+                type: 'success',
                 text: response.Message,
-                timer: 5000
+                timer: 5000,
               });
               setTimeout(() => {
                 this.router.navigate(['/Admin/PlanMaster/Index']);
               }, 2000);
-            }
-            else {
+            } else {
               this.alertService.showServerResponseAlert(response);
             }
           },
           complete: () => {
             this.isSubmitted = false;
-          }
+          },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   getDetails(): void {
@@ -292,13 +299,15 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.PlanID) {
         this.isEditMode = true;
         try {
-          this.pageService.GetDetails(this.PlanID)
+          this.pageService
+            .GetDetails(this.PlanID)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
                   // Get the Mapping List Data
-                  this.pageService.GetDetailsBillTypeMapping(this.PlanID)
+                  this.pageService
+                    .GetDetailsBillTypeMapping(this.PlanID)
                     .pipe(takeUntil(this.destroy$))
                     .subscribe({
                       next: (detailResponse) => {
@@ -308,21 +317,19 @@ export class CreateComponent implements OnInit, OnDestroy {
                             BillTypeMapping: detailResponse.Data.Items,
                           };
                           this.form.patchValue(model);
-                        }
-                        else {
-                          this.alertService.showServerResponseAlert(detailResponse);
+                        } else {
+                          this.alertService.showServerResponseAlert(
+                            detailResponse
+                          );
                         }
                       },
                     });
-                }
-                else {
+                } else {
                   this.alertService.showServerResponseAlert(response);
                 }
               },
             });
-        }
-        catch (error) {
-        }
+        } catch (error) {}
       }
     });
   }

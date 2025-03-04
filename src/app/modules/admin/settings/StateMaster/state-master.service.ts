@@ -82,6 +82,7 @@ export class StateMasterService {
   }
 
   PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<StateMasterList>> {
+    console.log(tabledata);
     return this.http.post<ApiPagedListResponse<StateMasterList>>(`${this.apiUrl}Admin/StateMaster/PopulateGrid`, tabledata);
   }
 
@@ -100,4 +101,5 @@ export class StateMasterService {
   DeleteRecord(model: StateMaster): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}Admin/StateMaster/Delete`, model);
   }
+  
 }

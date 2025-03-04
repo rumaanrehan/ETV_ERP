@@ -3,7 +3,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { OnDestroy, OnInit, } from '@angular/core';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
-import { ShowValidationTooltipDirective } from '../../../../../shared/directives/show-validation-tooltip.directive';
+import { ShowValidationTooltipDirective } from '../../../../../shared/layouts/directives/show-validation-tooltip.directive';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { WardMaster_AddWardBed } from '../ward-master';

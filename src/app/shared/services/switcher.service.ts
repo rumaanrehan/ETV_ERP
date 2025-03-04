@@ -5,7 +5,6 @@ import { BehaviorSubject, Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class SwitcherService {
-  
   constructor() {}
   private emitChangeSource = new Subject<any>();
   changeEmitted = this.emitChangeSource.asObservable();
@@ -26,6 +25,4 @@ export class SwitcherService {
   updateContent(content: string) {
     this.contentSubject.next(content);
   }
-
-  
 }

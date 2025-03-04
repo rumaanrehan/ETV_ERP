@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
-import { ShowValidationTooltipDirective } from '../../../directives/show-validation-tooltip.directive';
+import { ShowValidationTooltipDirective } from '../../../layouts/directives/show-validation-tooltip.directive';
 
 @Component({
   selector: 'z-checkbox',

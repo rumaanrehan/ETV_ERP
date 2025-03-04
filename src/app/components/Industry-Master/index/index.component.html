@@ -1,0 +1,27 @@
+<div class="mainContainer">
+  <div class="container">
+    <h1>Index-Industry Master</h1>
+
+    <div class="tableContainer">
+      <table>
+        <thead>
+          <tr>
+            <th>Industry ID</th>
+            <th>Industry Code</th>
+            <th>Industry Name</th>
+            <th>Is Active</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let industry of industries; let i = index">
+            <td>{{ industry.industryId }}</td>
+            <td>{{ industry.industryCode }}</td>
+            <td>{{ industry.industryName }}</td>
+            <!-- Use 'Active' or 'Inactive' for isActive based on string value -->
+            <td>{{ industry.isActive }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

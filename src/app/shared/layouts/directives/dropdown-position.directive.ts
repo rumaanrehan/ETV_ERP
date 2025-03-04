@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Menu, NavService } from '../services/nav.service';
+import { Menu, NavService } from '../../services/nav.service';
 
 @Directive({
   selector: '[appDropdownPosition]',

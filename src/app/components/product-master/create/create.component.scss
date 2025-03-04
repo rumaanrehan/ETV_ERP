@@ -1,0 +1,26 @@
+.page-content-scrollable {
+  // overflow-y: auto;
+  max-height: calc(100vh - 200px); /* Adjust based on header/footer height */
+  overflow-y: auto;
+  // padding-bottom: 20px; 
+}
+.fixed-action-buttons {
+  position: sticky;
+  bottom: 0;
+  background: #fff; /* Match card background */
+  // padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(133, 129, 129, 0.1);
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 1rem 0 0.5rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.custom-column-gap .col-md-6 {
+  padding-right: 15px;
+  padding-left: 15px;
+}

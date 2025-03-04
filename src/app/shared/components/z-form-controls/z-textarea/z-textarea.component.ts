@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { ShowValidationTooltipDirective } from '../../../directives/show-validation-tooltip.directive';
+import { ShowValidationTooltipDirective } from '../../../layouts/directives/show-validation-tooltip.directive';
 
 @Component({
   selector: 'z-textarea',

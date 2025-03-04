@@ -7,12 +7,19 @@ export class DateUtils {
 
   /**
    * Formats a date to a specified string format.
-   * 
+   *
    * @param date - The date to format.
    * @param options - Formatting options for Intl.DateTimeFormat.
    * @returns A formatted date string.
    */
-  static formatDate(date: Date | string | number, options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' }): string {
+  static formatDate(
+    date: Date | string | number,
+    options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }
+  ): string {
     const parsedDate = DateUtils.toDate(date); // Convert the input to a Date object
     if (!parsedDate) return ''; // Return an empty string if the date is invalid
 
@@ -21,7 +28,7 @@ export class DateUtils {
 
   /**
    * Converts a string or number to a Date object.
-   * 
+   *
    * @param date - The date to convert, can be a Date, string, or number (timestamp).
    * @returns A Date object or null if invalid.
    */
@@ -42,11 +49,13 @@ export class DateUtils {
 
   static toUTCDate(dateString: Date | null): Date | null {
     if (!dateString) {
-      return null
+      return null;
     }
     const date = new Date(dateString);
 
     // Return a Date object with time set to 00:00:00 in UTC (ignoring local time zone)
-    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    return new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    );
   }
 }

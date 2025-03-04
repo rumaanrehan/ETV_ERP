@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ShowValidationTooltipDirective } from '../../shared/directives/show-validation-tooltip.directive';
+import { ShowValidationTooltipDirective } from '../../shared/layouts/directives/show-validation-tooltip.directive';
 import { DTO } from '../../shared/models/dto.model';
 import { AuthenticationService } from '../../shared/services/auth.service';
 import { FormErrors, FormValidationMessages, FormValidationService } from '../../shared/services/form-validation.service';

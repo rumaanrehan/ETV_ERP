@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { ShowValidationTooltipDirective } from '../../../directives/show-validation-tooltip.directive';
+import { ShowValidationTooltipDirective } from '../../../layouts/directives/show-validation-tooltip.directive';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CommonModule } from '@angular/common';

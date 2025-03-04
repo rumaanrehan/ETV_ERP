@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Config } from 'datatables.net';
 import { DataTableService ,DataTablesResponse } from './data-table.service';
 import { DataTablesModule, DataTableDirective } from 'angular-datatables';
-import { MydatatableDirective } from '../../shared/directives/mydatatable.directive';
+import { MydatatableDirective } from '../../shared/layouts/directives/mydatatable.directive';
 //import { DataTablesSettings } from 'angular-datatables';
 
 @Component({

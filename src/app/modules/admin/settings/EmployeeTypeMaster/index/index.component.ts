@@ -126,7 +126,6 @@ export class IndexComponent implements OnInit, OnDestroy {
       }
     }
     catch (error) {
-
     }
   }
 

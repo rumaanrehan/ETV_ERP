@@ -1,7 +1,7 @@
-import { ValidatorFn } from "@angular/forms";
+import { ValidatorFn } from '@angular/forms';
 
 export type FormConfigType<T> = {
-  [P in keyof T]: T[P] extends Array<infer U>  // Check if T[P] is an array
+  [P in keyof T]: T[P] extends Array<infer U> // Check if T[P] is an array
     ? {
         type: 'array';
         items: FormConfigType<U>; // Array of configurations for each item in the array
@@ -25,8 +25,6 @@ export type FormConfigType<T> = {
 export type DataTableFilterFormConfigType<T> = {
   [P in keyof T]: T[P];
 };
-
-
 
 // Root configuration interface
 export interface FormConfig {
@@ -62,8 +60,6 @@ interface FormControlConfig {
 // Unified error type
 type FormConfigError = string | { [key: number]: string };
 
-
-
 // Deprecated Interface
 export type FormValidationMessages = {
   [key: string]: {
@@ -98,7 +94,7 @@ interface ValidationMessages {
 
 // // Recursive FormConfig interface that uses conditional types
 // export type FormConfig<T> = {
-//   [P in keyof T]: T[P] extends Array<infer U> 
+//   [P in keyof T]: T[P] extends Array<infer U>
 //     ? FormArrayConfig<U>
 //     : FormControlConfig<T[P]>;
 // };
@@ -235,8 +231,6 @@ interface ValidationMessages {
 //         children?: FormConfigType<T[P]>; // For nested groups/objects
 //       };
 // };
-
-
 
 // export type FormConfigType<T> = {
 //   [P in keyof T]: T[P] extends Array<infer U> // If T[P] is an array

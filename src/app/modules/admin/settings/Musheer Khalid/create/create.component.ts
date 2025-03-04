@@ -1,5 +1,11 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
@@ -15,8 +21,13 @@ import { MusheerKhalidService } from '../musheer-khalid.service';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent,ReactiveFormsModule,CommonModule,ZFormControlsModule],
-  providers: [FormService,DatePipe],
+  imports: [
+    FormSidebarComponent,
+    ReactiveFormsModule,
+    CommonModule,
+    ZFormControlsModule,
+  ],
+  providers: [FormService, DatePipe],
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
 })
@@ -34,20 +45,25 @@ export class CreateComponent implements OnInit, OnDestroy {
     { name: 'Accounting', key: 'A' },
     { name: 'Marketing', key: 'M' },
     { name: 'Production', key: 'P' },
-    { name: 'Research', key: 'R' }
+    { name: 'Research', key: 'R' },
   ];
 
   constructor(
     private componentService: MusheerKhalidService,
     private selectListService: SelectListService,
     private formService: FormService,
-    private alertService: AlertNotificationService,
-  ) { }
+    private alertService: AlertNotificationService
+  ) {}
 
   ngOnInit(): void {
     this.formConfig = this.componentService.getFormConfig();
-    this.form = this.formService.createFormGroup<MusheerKhalid>(this.formConfig);
-    this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.form = this.formService.createFormGroup<MusheerKhalid>(
+      this.formConfig
+    );
+    this.formService.initializeFormValidationMessage(
+      this.formConfig,
+      this.form
+    );
     this.loadHolidayType('Admin', 'HolidayMaster', 'HolidayType');
   }
 
@@ -58,23 +74,21 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadHolidayType(ModuleName: string, PageName: string, FieldName: string) {
     try {
-      this.selectListService.PopulateList(ModuleName, PageName, FieldName)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.HolidayTypeList = response.Data.Items;
-          }
-        },
-      });
-    }
-    catch (error) {
-    
-    }
+      this.selectListService
+        .PopulateList(ModuleName, PageName, FieldName)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.HolidayTypeList = response.Data.Items;
+            }
+          },
+        });
+    } catch (error) {}
   }
 
   openSidebar(isEditMode: boolean, model: MusheerKhalid): void {
-    if(isEditMode && model){
+    if (isEditMode && model) {
       this.isEditMode = isEditMode;
       // this.form.get('HolidayID')?.setValidators([Validators.required]);
     }
@@ -109,83 +123,74 @@ export class CreateComponent implements OnInit, OnDestroy {
 
       // Handle form submission based on editMode
       if (this.isEditMode) {
-        this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
-        }).then(result => {
-          if (result.isConfirmed) {
-            const model: MusheerKhalid = {
-              ...this.formService.transformFormData(this.form.value),
-              ReasonToUpdate: result.value
-            };
-            this.updateRecord(model);
-          }
-          else {
-            this.isSubmitted = false;
-          }
-        });
-      }
-      else {
+        this.alertService
+          .showConfirmationWithInput({
+            text: 'Do you really want to Update?',
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              const model: MusheerKhalid = {
+                ...this.formService.transformFormData(this.form.value),
+                ReasonToUpdate: result.value,
+              };
+              this.updateRecord(model);
+            } else {
+              this.isSubmitted = false;
+            }
+          });
+      } else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-    }
-    catch (error) {
-    
-    }
+    } catch (error) {}
   }
 
   createRecord(model: MusheerKhalid): void {
     try {
-      this.componentService.CreateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: "success",
-              text: response.Message,
-              timer: 5000
-            });
-          }
-          else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete:() => {
-          this.isSubmitted = false;
-        }
-      });
-    }
-    catch (error) {
-    
-    }
+      this.componentService
+        .CreateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000,
+              });
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
+          },
+        });
+    } catch (error) {}
   }
 
   updateRecord(model: MusheerKhalid): void {
     try {
-      this.componentService.UpdateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: "success",
-              text: response.Message,
-              timer: 5000
-            });
-          }
-          else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete:() => {
-          this.isSubmitted = false;
-        }
-      });
-    }
-    catch (error) {
-    
-    }
+      this.componentService
+        .UpdateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000,
+              });
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
+          },
+        });
+    } catch (error) {}
   }
 }
