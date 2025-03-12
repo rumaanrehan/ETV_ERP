@@ -1,4 +1,4 @@
-import { CategoryMaster } from './../CategoryMaster';
+
 import { CommonModule, DatePipe } from '@angular/common';
 import {
   Component,
@@ -19,19 +19,14 @@ import { PageHeaderService } from '../../../shared/services/page-header.service'
 import { AlertNotificationService } from '../../../shared/services/alert-notification.service';
 // import { CategoryMaster } from '../CategoryMaster';
 import { Router } from '@angular/router';
-import { IMS_CategoryMasterService } from '../IMS_CatergoryMasterService';
+import { CategoryMasterService } from '../category-master.service';
 import { CreateComponent } from '../create/create.component';
-import { Create_ProductMasterComponent } from '../../product-master/create/create.component';
+import { CategoryMaster } from '../category-master';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [
-    IndexTableComponent,
-    CommonModule,
-    Create_ProductMasterComponent,
-    CreateComponent,
-  ],
+  imports: [IndexTableComponent, CommonModule, CreateComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss',
   providers: [FormValidationService, DatePipe],
@@ -72,11 +67,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private componentService: IMS_CategoryMasterService,
+    private componentService: CategoryMasterService,
     private formService: FormService,
     private pageHeaderService: PageHeaderService,
     private alertService: AlertNotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
@@ -196,7 +191,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             },
           });
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   onClickPageHeaderAddButton() {
@@ -225,9 +220,8 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.alertService
         .showConfirmationWithInput({
           inputPlaceholder: inputPlaceholder,
-          text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${
-            category.CategoryName
-          }</b>"?`,
+          text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${category.CategoryName
+            }</b>"?`,
         })
         .then((result) => {
           if (result.isConfirmed) {

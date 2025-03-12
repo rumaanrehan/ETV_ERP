@@ -1,4 +1,4 @@
-import { IMS_CategoryMasterService } from './../IMS_CatergoryMasterService';
+import { IMS_CategoryMasterService } from '../category-master.service';
 import { CategoryMaster, CategoryType } from './../CategoryMaster';
 import {
   Component,

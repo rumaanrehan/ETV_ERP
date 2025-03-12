@@ -1,0 +1,91 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-arrow-left"></i>&nbsp;Back</button>
+</ng-template>
+
+<div class="col-xl-12">
+  <div class="col-xl-12 page-content">
+    <div class="col-xl-12 page-content-scrollable">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="col-xl-8 card m-auto mb-2">
+          <div class="card-body">
+            <div class="col-xl-12 m-auto horizontal-form">
+              <div class="col-12 col-md-6 form-group">
+                <z-span [text]="form.get('ProductCode')?.value" [label]="formConfig.ProductCode.label"></z-span>
+              </div>
+              <div class="col-md-6">
+                <z-inputtext [group]="form" [control]="'ProductName'" [label]="formConfig.ProductName.label"></z-inputtext>
+              </div>
+              <div class="col-md-6">
+                <z-select [group]="form" [control]="'CategoryID'" [label]="formConfig.CategoryID.label" [optionLabel]="'CategoryName'" [optionValue]="'CategoryID'" [options]="categoryList"></z-select>
+              </div>
+              <div class="col-md-6">
+                <z-select [group]="form" [control]="'GenericID'" [label]="formConfig.GenericID.label" [optionLabel]="'GenericName'" [optionValue]="'GenericID'" [options]="genericList"></z-select>
+              </div>
+              <div class="col-md-6">
+                <z-select [group]="form" [control]="'ManufacturerID'" [label]="formConfig.ManufacturerID.label" [optionLabel]="'ManufacturerName'" [optionValue]="'ManufacturerID'" [options]="manufacturerList"></z-select>
+              </div>
+              <div class="col-md-6">
+                <z-select [group]="form" [control]="'UOMID'" [label]="formConfig.UOMID.label" [optionLabel]="'UOMName'" [optionValue]="'UOMID'" [options]="UOMList"></z-select>
+              </div>
+              <div class="col-md-6">
+                <z-inputnumber [group]="form" [control]="'Unit'" [label]="formConfig.Unit.label"></z-inputnumber>
+              </div>
+              <div class="col-md-6">
+                <z-inputtext [group]="form" [control]="'HSCode'" [label]="formConfig.HSCode.label"></z-inputtext>
+              </div>
+              <div class="col-md-6">
+                <z-select [group]="form" [control]="'PurTaxOn'" [label]="formConfig.PurTaxOn.label" [optionLabel]="'cValue'" [optionValue]="'iValue'" [options]="purTaxOnList"></z-select>
+              </div>
+              <div class="col-md-6">
+                <z-select [group]="form" [control]="'TaxSlabID'" [label]="formConfig.TaxSlabID.label" [optionLabel]="'cValue'" [optionValue]="'iValue'" [options]="taxSlabIDList"></z-select>
+              </div>
+              <div class="col-md-6">
+                <z-inputnumber [group]="form" [control]="'ReorderLevel'" [label]="formConfig.ReorderLevel.label"></z-inputnumber>
+              </div>
+              <div class="col-md-6">
+                <z-inputnumber [group]="form" [control]="'ReorderQty'" [label]="formConfig.ReorderQty.label"></z-inputnumber>
+              </div>
+              <div class="row align-items-center form-group form-control-group">
+                <label class="col-xl-4 form-label">Is Approval Required To Purchase</label>
+                <div class="col-xl-4">
+                  <z-checkbox [group]="form" [control]="'IsApprovalRequiredToPurchase'"
+                    [label]="formConfig.IsApprovalRequiredToPurchase.label"></z-checkbox>
+                </div>
+              </div>
+              <div class="row align-items-center form-group form-control-group">
+                <label class="col-xl-4 form-label">Is Approval Required To Issue</label>
+                <div class="col-xl-4">
+                  <z-checkbox [group]="form" [control]="'IsApprovalRequiredToIssue'"
+                    [label]="formConfig.IsApprovalRequiredToIssue.label"></z-checkbox>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <z-inputnumber [group]="form" [control]="'NetWeight'" [label]="formConfig.NetWeight.label"></z-inputnumber>
+              </div>
+              <div class="col-md-6">
+                <z-inputnumber [group]="form" [control]="'GrossWeight'" [label]="formConfig.GrossWeight.label"></z-inputnumber>
+              </div>
+              <div class="col-md-6">
+                <z-textarea [group]="form" [control]="'ProductDescription'" [label]="formConfig.ProductDescription.label"></z-textarea>
+              </div>v
+            </div>
+          </div>
+        </div>        
+      </form>
+    </div>
+  </div>
+  <div class="page-action-panel">
+    <div class="col-xl-4">
+    </div>
+    <div class="col-xl-4">      
+    </div>
+    <div class="col-xl-4">
+      <div class="col-xl-3 px-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()">{{ isEditMode ? 'Update' : 'Save' }}</button>
+      </div>
+      <div class="col-xl-3 px-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="resetForm()">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,21 +7,18 @@
   </button>
 </ng-template>
 
-<div style="overflow-x: auto">
-  <app-index-table
-    [tableDef]="tableDef"
-    (lazyLoad)="onIndexTableLazyLoad($event)"
-    scrollable="true"
-    scrollHeight="400px"
-  >
-  </app-index-table>
-</div>
+  <!-- Page Header Action Button Template -->
+  <div class="col-xl-12 index-page-content">
+    <z-datatable [tableDef]="tableDef"
+      (lazyLoad)="onIndexTableLazyLoad($event)">
+    </z-datatable>
+  </div>
 
 <!-- ng-template for each data field with added margin for spacing and max-width for scrollable content -->
 <ng-template #productCodeTemplate let-row>
   <span
     class="fw-bold font-blue flexible-text"
-    (click)="onClickEditDetails(row.ProductId, row.ActiveStatus)"
+    (click)="onClickEditDetails(row.ProductID)"
   >
     {{ row.ProductCode }}
   </span>
@@ -213,128 +210,9 @@
   <div class="hstack gap-2 fs-15 justify-content-end">
     <span
       class="btn btn-icon btn-sm btn-danger-transparent rounded-pill"
-      (click)="onClickDelete(row)"
+      (click)="onClickDeleteReactivate(row)"
     >
       <i class="ri-delete-bin-line"></i>
     </span>
   </div>
 </ng-template>
-
-<ng-container *ngIf="showCreateSidebar">
-  <app-create
-    #createSidebar
-    (closeSidebarEvent)="onCloseSidebar()"
-    style="display: none"
-  ></app-create>
-</ng-container>
-
-<!-- <app-create (closeSidebarEvent)="onCloseSidebar()"></app-create> -->
-<!-- <ng-container *ngIf="showCreateSidebar"> -->
-<!-- <app-create
-  (closeSidebarEvent)="onCloseSidebar()"
-  ></app-create> -->
-<!-- style="display: none" -->
-<!-- </ng-container> -->
-
-<!-- <app-create style="display: none"></app-create> -->
-
-<!-- <ng-template #dimensionsTemplate let-row>
-  <span
-    style="
-      margin-right: 10px;
-      max-width: 150px;
-      display: inline-block;
-      overflow-x: auto;
-      white-space: nowrap;
-    "
-  >
-    {{ row.Dimensions }}
-  </span>
-</ng-template> -->
-
-<!-- <ng-template #packagingTypeTemplate let-row>
-  <span
-    style="
-      margin-right: 10px;
-      max-width: 150px;
-      display: inline-block;
-      overflow-x: auto;
-      white-space: nowrap;
-    "
-  >
-    {{ row.PackagingType }}
-  </span>
-</ng-template> -->
-
-<!-- <ng-template #createdByTemplate let-row>
-  <span
-    style="
-      margin-right: 10px;
-      max-width: 100px;
-      display: inline-block;
-      overflow-x: auto;
-      white-space: nowrap;
-    "
-  >
-    {{ row.CreatedBy }}
-  </span>
-</ng-template> -->
-
-<!-- <ng-template #reorderLevelTemplate let-row>
-  <span
-    style="
-      margin-right: 10px;
-      max-width: 100px;
-      display: inline-block;
-      overflow-x: auto;
-      white-space: nowrap;
-    "
-  >
-    {{ row.ReorderLevel }}
-  </span>
-</ng-template> -->
-
-<!-- <ng-template #measurementUnitTemplate let-row>
-  <span
-    style="
-      margin-right: 10px;
-      max-width: 100px;
-      display: inline-block;
-      overflow-x: auto;
-      white-space: nowrap;
-    "
-  >
-    {{ row.MeasurementUnit }}
-  </span>
-</ng-template> -->
-
-<!-- <ng-template #taxSlabIdTemplate let-row>
-  <span
-    style="
-      margin-right: 10px;
-      max-width: 100px;
-      display: inline-block;
-      overflow-x: auto;
-      white-space: nowrap;
-    "
-  >
-    {{ row.TaxSlabID }}
-  </span>
-</ng-template> -->
-
-<!-- <ng-template #hsCodeTemplate let-row>
-  <span
-    style="
-      margin-right: 10px;
-      max-width: 100px;
-      display: inline-block;
-      overflow-x: auto;
-      white-space: nowrap;
-    "
-  >
-    {{ row.HSCode }}
-  </span>
-</ng-template> -->
-
-<!-- index.component.html -->
-<!-- <app-create #createSidebar></app-create> -->

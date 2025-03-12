@@ -1,4 +1,4 @@
-import { UpdateProductList } from './../product-master';
+import { ProductMaster, UpdateProductList } from './../product-master';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -11,59 +11,51 @@ import {
 } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { FormSidebarComponent } from '../../../shared/components/form-sidebar/form-sidebar.component';
-import { FormService } from '../../../shared/services/form.service';
-import { FormConfigType } from '../../../shared/models/form.model';
-import { Product } from '../product-master';
-import { ProductService } from '../product.service';
-import { AlertNotificationService } from '../../../shared/services/alert-notification.service';
-import { ZFormControlsModule } from '../../../shared/components/z-form-controls/z-form-controls.module';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PageHeaderService } from '../../../shared/services/page-header.service';
 import { ChangeDetectorRef } from '@angular/core';
-import { IMS_CategoryMasterService } from '../../ims-category-master/IMS_CatergoryMasterService';
-import { CategoryMaster } from '../../ims-category-master/CategoryMaster';
+import { CategoryMaster } from '../../CategoryMaster/category-master';
+import { CategoryMasterService } from '../../CategoryMaster/category-master.service';
+import { PageHeaderService } from '../../../../shared/services/page-header.service';
+import { FormService } from '../../../../shared/services/form.service';
+import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
+import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../shared/models/form.model';
+import { ProductMasterService } from '../product-master.service';
+import { StaticList } from '../../../../shared/models/select-list';
+import { GenericItem_SelectList } from '../../GenericItemMaster/generic-item-master';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [
-    FormSidebarComponent,
-    ReactiveFormsModule,
-    CommonModule,
-    ZFormControlsModule,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, ZFormControlsModule],
   providers: [FormService],
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
 })
-export class Create_ProductMasterComponent implements OnInit, OnDestroy {
-  @ViewChild('pageHeaderActionTemplate', { static: true })
-  pageHeaderActionTemplate!: TemplateRef<any>;
-
+export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
-  isFormSidebarVisible: boolean = false;
+  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false;
-  Id!: number;
   form!: FormGroup;
-  formConfig!: FormConfigType<Product>;
-  details?: any;
+  formConfig!: FormConfigType<ProductMaster>;
 
-  CategoryList: CategoryMaster[] = [];
+  purTaxOnList: StaticList[] = [];
+  taxSlabIDList: StaticList[] = [];
+
+  categoryList: CategoryMaster[] = [];
+  genericList: GenericItem_SelectList[] = [];
+  manufacturerList: 
+  UOMList:
+
   defaultCategoryID?: number | null = null;
 
   constructor(
-    private categoryService: IMS_CategoryMasterService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-    private productService: ProductService,
+    private pageService: ProductMasterService,
+    private pageHeaderService: PageHeaderService,
     private formService: FormService,
     private alertService: AlertNotificationService,
-    private pageHeaderService: PageHeaderService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadCategory();
@@ -100,7 +92,7 @@ export class Create_ProductMasterComponent implements OnInit, OnDestroy {
           }
         },
       });
-    } catch (error) {}
+    } catch (error) { }
   }
 
   getDetails() {

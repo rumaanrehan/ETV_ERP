@@ -10,7 +10,7 @@ import { ServiceIndustryMaster } from '../Industry.Service';
   templateUrl: '../create/create.component.html',
   styleUrls: ['../create/create.component.scss'],
 })
-export class CreateIndustryMasterComponent implements OnInit {
+export class CreateComponent implements OnInit {
   industry: Industry = {
     industryId: 0,
     industryCode: '',

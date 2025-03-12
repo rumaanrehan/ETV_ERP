@@ -7,10 +7,6 @@ import { MainLayoutComponent } from './shared/layouts/main-layout/main-layout.co
 import { authRoute } from './shared/routes/auth.routes';
 import { homeRoute } from './shared/routes/home.routes';
 import { mainRoute } from './shared/routes/main.routes';
-import {CreateIndustryMasterComponent} from './components/Industry-Master/create/create.component'
-import {IndustryMasterIndexComponent} from './components/Industry-Master/index/index.component'
-import { Index_ProductMasterComponent } from './components/product-master/index/index.component';
-import { Create_ProductMasterComponent } from './components/product-master/create/create.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   //{ path: '', loadChildren: () => import('./shared/routes/auth.routes').then(m => m.AuthenticationRoutingModule) },
@@ -19,12 +15,4 @@ export const routes: Routes = [
   { path: '', component: HomeLayoutComponent, children: homeRoute },
   // { path: '', component: MainLayoutComponent, children: mainRoute, canActivate: [authGuard] },
   { path: '', component: MainLayoutComponent, children: mainRoute },
-
-
-  //Industry-Master-Routes......................  
-  { path: 'industryMasterCreate', component: CreateIndustryMasterComponent, pathMatch: 'full' },
-  { path: 'industryMasterIndex', component: IndustryMasterIndexComponent, pathMatch: 'full' },
-
-  { path: 'CreateProductMaster', component: Create_ProductMasterComponent, pathMatch: 'full' },
-  // { path: 'ProductMasterIndex', component: Index_ProductMasterComponent, pathMatch: 'full' },
 ];

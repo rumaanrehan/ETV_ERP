@@ -1,4 +1,3 @@
-import { CategoryMaster, CategoryType } from './CategoryMaster';
 import { Injectable } from '@angular/core';
 import { Environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -13,11 +12,12 @@ import {
   TResultPagedList,
 } from '../../shared/models/api-response';
 import { Observable } from 'rxjs';
+import { CategoryMaster, CategoryType } from './category-master';
 
 @Injectable({
   providedIn: 'root',
 })
-export class IMS_CategoryMasterService {
+export class CategoryMasterService {
   private apiUrl = 'https://localhost:44316/api/ERP/IMS_CategoryMaster';
 
   // tabledata = {

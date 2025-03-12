@@ -12,7 +12,7 @@ import { ServiceIndustryMaster } from '../Industry.Service';
   templateUrl: '../index/index.component.html',
   styleUrls: ['../index/index.component.scss'],
 })
-export class IndustryMasterIndexComponent implements OnInit {
+export class IndexComponent implements OnInit {
   industries: Industry[] = [];
 
   constructor(private industryService: ServiceIndustryMaster) {}
