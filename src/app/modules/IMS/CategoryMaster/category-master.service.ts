@@ -20,14 +20,6 @@ import { CategoryMaster, CategoryType } from './category-master';
 export class CategoryMasterService {
   private apiUrl = 'https://localhost:44316/api/ERP/IMS_CategoryMaster';
 
-  // tabledata = {
-  //   first: 0,
-  //   rows: 100,
-  //   sortField: 'CategoryName',
-  //   sortOrder: 1,
-  //   PopulateType: 'PopulateGrid',
-  //   LoginID: 1,
-  // };
   constructor(private http: HttpClient) {
     // this.apiUrl = Environment.apiUrl;
   }
@@ -68,18 +60,7 @@ export class CategoryMasterService {
         validators: [],
         validationMessages: {},
       },
-      // CreatedByDateTime: {
-      //   label: 'Created By Date In',
-      //   defaultValue: '',
-      //   validators: [],
-      //   validationMessages: {},
-      // },
-      // ModifiedDateTime: {
-      //   label: 'Modify By Date In',
-      //   defaultValue: '',
-      //   validators: [],
-      //   validationMessages: {},
-      // },
+
     };
   }
 
@@ -108,8 +89,8 @@ export class CategoryMasterService {
     );
   }
 
-  CreateCategory(categoryMaster: CategoryMaster): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Create`, categoryMaster);
+  CreateCategory(categoryMaster: CategoryMaster): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${this.apiUrl}/Create`, categoryMaster);
   }
 
   PopulateGrid(

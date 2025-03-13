@@ -15,6 +15,7 @@ export class AuthenticationService {
   }
 
   login(dto: DTO): Observable<any> {
+    console.log(dto)
     return this.http.post(`${this.apiUrl}Angular/authenticate`, dto);
   }
 
