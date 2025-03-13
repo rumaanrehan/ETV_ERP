@@ -17,20 +17,25 @@ import {
 })
 export class ProductService {
   private apiUrl = 'https://localhost:44316/api/Admin/ProductMaster';
-  tabledata = {
-    first: 0,
-    rows: 100,
-    sortField: 'ProductName',
-    sortOrder: 1,
-    PopulateType: 'PopulateGrid',
-    LoginID: 1,
-  };
+  // tabledata = {
+  //   first: 0,
+  //   rows: 100,
+  //   sortField: 'ProductName',
+  //   sortOrder: 1,
+  //   PopulateType: 'PopulateGrid',
+  //   LoginID: 1,
+  // };
 
   constructor(private http: HttpClient) {}
 
-  
-  PopulateList(CategoryID?: number, PopulateType?: any): Observable<ApiListResponse<Product>> {
-    return this.http.post<ApiListResponse<Product>>(`${this.apiUrl}Admin/StateMaster/PopulateList?CountryID=${CategoryID}&PopulateType=${PopulateType}`, {});
+  PopulateList(
+    CategoryID?: number,
+    PopulateType?: any
+  ): Observable<ApiListResponse<Product>> {
+    return this.http.post<ApiListResponse<Product>>(
+      `${this.apiUrl}Admin/StateMaster/PopulateList?CountryID=${CategoryID}&PopulateType=${PopulateType}`,
+      {}
+    );
   }
 
   GetDetails(productId: number): Observable<ApiDataResponse<Product>> {
@@ -43,9 +48,6 @@ export class ProductService {
   CreateProduct(product: Product): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}/Create`, product);
   }
-  // createProduct(product: Product): Observable<any> {
-  //   return this.http.post(`${this.apiUrl}/Create`, product);
-  // }
 
   PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<Product>> {
     return this.http.post<ApiPagedListResponse<Product>>(
@@ -54,8 +56,8 @@ export class ProductService {
     );
   }
 
-  UpdateProduct(id: any, product: UpdateProductList): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Update`, product);
+  UpdateProduct(id: any, product: UpdateProductList): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${this.apiUrl}/Update`, product);
   }
 
   DeleteProduct(id: Product): Observable<ApiResponse> {
@@ -87,7 +89,7 @@ export class ProductService {
           required: 'Product Name is required.',
         },
       },
-      
+
       productDescription: {
         label: 'Product Description',
         defaultValue: '',
