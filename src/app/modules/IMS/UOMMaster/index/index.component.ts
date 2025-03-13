@@ -1,25 +1,16 @@
-import { DeleteUOM_Master, UOM_Master } from './../UOM-master';
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
-import {
-  IndexTableComponent,
-  IndexTableParams,
-} from '../../../shared/components/index-table/index-table.component';
+import { DeleteUOM_Master, UOMMaster } from './../UOM-master';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 // import { CreateComponent } from '../create/create.component';
-import { FormValidationService } from '../../../shared/services/form-validation.service';
 import { Subject, takeUntil } from 'rxjs';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { UOMMasterService } from '../UOM-master.service';
-import { FormService } from '../../../shared/services/form.service';
-import { PageHeaderService } from '../../../shared/services/page-header.service';
-import { AlertNotificationService } from '../../../shared/services/alert-notification.service';
 import { CreateComponent } from '../create/create.component';
+import { IndexTableComponent, IndexTableParams } from '../../../../shared/components/index-table/index-table.component';
+import { FormValidationService } from '../../../../shared/services/form-validation.service';
+import { PageHeaderService } from '../../../../shared/services/page-header.service';
+import { FormService } from '../../../../shared/services/form.service';
+import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 
 @Component({
   selector: 'app-index',
@@ -172,7 +163,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             item.UOMName
           }</b>"?`,
         })
-        .then((result) => {
+        .then((result: any) => {
           if (result.isConfirmed) {
             const model: DeleteUOM_Master = {
               ...item,
@@ -220,7 +211,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.createSidebar.openSidebar(
         true,
         false,
-        this.formService.createNullObject<UOM_Master>()
+        this.formService.createNullObject<UOMMaster>()
       );
     }
   }
@@ -236,7 +227,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                const model: UOM_Master = {
+                const model: UOMMaster = {
                   ...response.Data,
                 };
                 this.createSidebar.openSidebar(ActiveStatus, true, model);

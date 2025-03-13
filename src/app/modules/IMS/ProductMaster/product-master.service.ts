@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { Validators } from '@angular/forms';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
@@ -8,44 +8,55 @@ import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTable
 import { Environment } from '../../../../environments/environment';
 import { DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
+import { StaticList, StaticListRequest } from '../../../shared/models/select-list';
+import { SelectListService } from '../../../shared/services/select-list.service';
+import { ItemCategoryMaster_SelectList } from '../CategoryMaster/category-master';
+import { ApiService } from '../../../core/services/api.service';
+import { ItemCategoryMasterService } from '../CategoryMaster/category-master.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductMasterService {
-  private apiUrl: string;
+  private endpoint = 'IMS/ProductMaster';
   
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
+  constructor(
+    private apiService: ApiService,
+    private selectListService: SelectListService,
+    private itemcategoryMasterService: ItemCategoryMasterService
+  ) {}
+
+  GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
+    return this.selectListService.GetStaticList(model);
   }
 
-  
-  PopulateList(CategoryID?: number, PopulateType?: any): Observable<ApiListResponse<ProductMaster>> {
-    return this.http.post<ApiListResponse<ProductMaster>>(`${this.apiUrl}Admin/StateMaster/PopulateList?CountryID=${CategoryID}&PopulateType=${PopulateType}`, {});
+  GetMasterDropdownLists(): Observable<{ 
+    categoryList: ApiListResponse<ItemCategoryMaster_SelectList>;
+    }> {
+    return forkJoin({
+      categoryList: this.itemcategoryMasterService.PopulateList("SelectList"),
+    });
   }
   
   PopulateGrid(model: DataTableParams<ProductMaster_IndexTableFilter>): Observable<ApiPagedListResponse<ProductMaster_IndexTableList>> {
-    return this.http.post<ApiPagedListResponse<ProductMaster_IndexTableList>>(`${this.apiUrl}IMS/ProductMaster/PopulateGrid`, model);
+    return this.apiService.post<ApiPagedListResponse<ProductMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
 
-  GetDetails(productId: number): Observable<ApiDataResponse<ProductMaster>> {
-    return this.http.post<ApiDataResponse<ProductMaster>>(`${this.apiUrl}IMS//GetDetails?productId=${productId}`, {});
+  GetDetails(productID: number): Observable<ApiDataResponse<ProductMaster>> {
+    return this.apiService.post<ApiDataResponse<ProductMaster>>(`${this.endpoint}/GetDetails?productID=${productID}`, {});
   }
 
-  CreateProduct(product: ProductMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Create`, product);
+  CreateRecord(model: ProductMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
-
-
-  UpdateProduct(model: ProductMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Update`, model);
+  UpdateRecord(model: ProductMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Update`, model);
   }
 
-  DeleteProduct(id: ProductMaster): Observable<ApiResponse> {
-    const body = { ProductId: id };
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Delete`, body);
+  DeleteProduct(model: ProductMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ProductMaster_IndexTableFilter> {

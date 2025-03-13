@@ -1,17 +1,11 @@
-import { UOM_Master } from './UOM-master';
-import {
-  ApiDataResponse,
-  ApiPagedListResponse,
-  ApiResponse,
-  ApiTResponse,
-  TResultPagedList,
-} from '../../shared/models/api-response';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormConfigType } from '../../shared/models/form.model';
 import { Validators } from '@angular/forms';
-import { NotOnlyWhitespaceValidator } from '../../shared/validators/not-only-whitespace.validator';
+import { ApiResponse, ApiPagedListResponse, ApiDataResponse } from '../../../shared/models/api-response';
+import { FormConfigType } from '../../../shared/models/form.model';
+import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
+import { UOMMaster } from './UOM-master';
 
 @Injectable({
   providedIn: 'root',
@@ -28,40 +22,38 @@ export class UOMMasterService {
     return this.http.post<ApiResponse>(`${this.apiUrl}/Delete`, body);
   }
 
-  CreateItemGroup(uom_Master: UOM_Master): Observable<ApiResponse> {
+  CreateItemGroup(uom_Master: UOMMaster): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}/Create`, uom_Master);
   }
 
   PopulateGrid(
     tabledata: any
-  ): Observable<ApiPagedListResponse<UOM_Master>> {
+  ): Observable<ApiPagedListResponse<UOMMaster>> {
     console.log(tabledata);
-    return this.http.post<ApiPagedListResponse<UOM_Master>>(
+    return this.http.post<ApiPagedListResponse<UOMMaster>>(
       `${this.apiUrl}/PopulateGrid`,
       tabledata
     );
   }
 
-  GetDetails(ItemGroupID: any): Observable<ApiDataResponse<UOM_Master>> {
-    return this.http.post<ApiDataResponse<UOM_Master>>(
+  GetDetails(ItemGroupID: any): Observable<ApiDataResponse<UOMMaster>> {
+    return this.http.post<ApiDataResponse<UOMMaster>>(
       `${this.apiUrl}/GetDetails?itemGroupID=${ItemGroupID}`,
       {}
     );
   }
 
-   UpdateUOM_Master(itemGroup: UOM_Master): Observable<ApiResponse> {
+   UpdateUOM_Master(itemGroup: UOMMaster): Observable<ApiResponse> {
     console.log(itemGroup)
     return this.http.post<ApiResponse>(`${this.apiUrl}/Update`, itemGroup);
   }
 
-    getFormConfig(): FormConfigType<UOM_Master> {
+    getFormConfig(): FormConfigType<UOMMaster> {
       return {
-      //   CategoryTypeID: {
-      //     label: 'Category Type',
-      //     defaultValue: null,
-      //     validators: [],
-      //     validationMessages: {},
-      //   },
+        UOMID: {
+          label: '',
+          defaultValue: null
+        },
         UOMCode: {
           label: 'NEW UOM Code',
           defaultValue: null,

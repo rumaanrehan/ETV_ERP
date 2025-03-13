@@ -1,114 +1,93 @@
 import { Injectable } from '@angular/core';
-import { Environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
-import { NotOnlyWhitespaceValidator } from '../../shared/validators/not-only-whitespace.validator';
-import { FormConfigType } from '../../shared/models/form.model';
-import {
-  ApiDataResponse,
-  ApiPagedListResponse,
-  ApiResponse,
-  ApiTResponse,
-  TResultPagedList,
-} from '../../shared/models/api-response';
-import { Observable } from 'rxjs';
-import { CategoryMaster, CategoryType } from './category-master';
+import { forkJoin, Observable } from 'rxjs';
+import { ApiService } from '../../../core/services/api.service';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse, ApiTResponse, TResultPagedList } from '../../../shared/models/api-response';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
+import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
+import { DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
+import { ItemCategoryMaster, ItemCategoryMaster_IndexFilter, ItemCategoryMaster_IndexList, ItemCategoryMaster_SelectList } from './category-master';
+import { ItemGroupMasterService } from '../ItemGroupMaster/item-group-master.service';
+import { ItemGroupMaster_SelectList } from '../ItemGroupMaster/item-group-master';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CategoryMasterService {
-  private apiUrl = 'https://localhost:44316/api/ERP/IMS_CategoryMaster';
+export class ItemCategoryMasterService {
+  private endpoint = 'IMS/CategoryMaster';
 
-  constructor(private http: HttpClient) {
-    // this.apiUrl = Environment.apiUrl;
+  constructor(
+    private apiService: ApiService,
+    private itemGroupService: ItemGroupMasterService,
+  ) { }
+
+  GetMasterDropdownLists(): Observable<{ 
+      itemGroupList: ApiListResponse<ItemGroupMaster_SelectList>;
+      }> {
+      return forkJoin({
+        itemGroupList: this.itemGroupService.PopulateList("SelectList"),
+      });
+    }
+
+  PopulateList(PopulateType: any): Observable<ApiListResponse<ItemCategoryMaster_SelectList>> {
+    return this.apiService.post<ApiListResponse<ItemCategoryMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {} );
   }
 
-  getFormConfig(): FormConfigType<CategoryMaster> {
+  PopulateGrid(model: DataTableParams<ItemCategoryMaster_IndexFilter>): Observable<ApiPagedListResponse<ItemCategoryMaster_IndexList>> {
+    return this.apiService.post<ApiPagedListResponse<ItemCategoryMaster_IndexList>>(`${this.endpoint}/PopulateGrid`, model);
+  }
+
+  GetDetails(ItemCategoryID: number): Observable<ApiDataResponse<ItemCategoryMaster>> {
+    return this.apiService.post<ApiDataResponse<ItemCategoryMaster>>(`${this.endpoint}/GetDetails?ItemCategoryID=${ItemCategoryID}`, {});
+  }
+
+  CreateRecord(model: ItemCategoryMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
+  }
+
+  UpdateRecord(model: ItemCategoryMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+  }
+
+  DeleteRecord(model: ItemCategoryMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  }
+
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ItemCategoryMaster_IndexFilter>{
     return {
-      CategoryTypeID: {
-        label: 'Category Type',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {},
+      ItemCategoryCode: '',
+      ItemCategoryName: '',
+      ActiveStatusID: 1,
+    }
+  }
+
+  getFormConfig(): FormConfigType<ItemCategoryMaster> {
+    return {
+      ItemCategoryID: {
+        label: '',
+        defaultValue: null
       },
-      CategoryCode: {
-        label: 'Category Code',
-        defaultValue: '',
+      ItemCategoryCode: {
+        label: 'Item Category Code',
+        defaultValue: 'NEW',
         validators: [Validators.required],
         validationMessages: {
-          required: 'Category Code is required.',
-        },
+          required: 'Item Category Code is required.'
+        }
       },
-      CategoryName: {
-        label: 'Category Name',
+      ItemCategoryName: {
+        label: 'Item Category Name',
         defaultValue: '',
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Category Name is required.',
-        },
+          required: 'Item Category Name is required.'
+        }
       },
-      // CategoryType: {
-      //   label: 'Category Type',
-      //   defaultValue: '',
-      //   validators: [],
-      //   validationMessages: {},
-      // },
-      ActiveStatus: {
-        label: 'ActiveStatus',
-        defaultValue: true,
-        validators: [],
-        validationMessages: {},
+      ItemGroupID: {
+        label: 'Item Group',
+        defaultValue: 0
       },
-
     };
-  }
-
-  CategoryTypePopulateList(
-    PopulateType: any
-  ): Observable<ApiTResponse<TResultPagedList<CategoryType>>> {
-    return this.http.post<ApiTResponse<TResultPagedList<CategoryType>>>(
-      `${this.apiUrl}/TypePopulateList`,
-      {}
-    );
-  }
-  
-  PopulateList(
-    PopulateType: any
-  ): Observable<ApiTResponse<TResultPagedList<CategoryMaster>>> {
-    return this.http.post<ApiTResponse<TResultPagedList<CategoryMaster>>>(
-      `${this.apiUrl}/PopulateList`,
-      {}
-    );
-  }
-
-  GetDetails(categoryId: any): Observable<ApiDataResponse<CategoryMaster>> {
-    return this.http.post<ApiDataResponse<CategoryMaster>>(
-      `${this.apiUrl}/GetDetails?CategoryID=${categoryId}`,
-      {}
-    );
-  }
-
-  CreateCategory(categoryMaster: CategoryMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Create`, categoryMaster);
-  }
-
-  PopulateGrid(
-    tabledata: any
-  ): Observable<ApiPagedListResponse<CategoryMaster>> {
-    console.log(tabledata)
-    return this.http.post<ApiPagedListResponse<CategoryMaster>>(
-      `${this.apiUrl}/PopulateGrid`,
-      tabledata
-    );
-  }
-
-  UpdateCategory(category: CategoryMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Update`, category);
-  }
-
-  DeleteCategory(id: any): Observable<ApiResponse> {
-    const body = { CategoryID: id };
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Delete`, body);
   }
 }

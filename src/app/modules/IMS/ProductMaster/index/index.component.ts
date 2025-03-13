@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ProductMaster, ProductMaster_IndexTableFilter } from '../product-master';
+import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from '../product-master';
 import { ProductMasterService } from '../product-master.service';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../shared/services/form-validation.service';
@@ -28,7 +28,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('createdByTemplate', { static: true }) createdByTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
-  tableDef!: DataTableDef<ProductMaster>;
+  tableDef!: DataTableDef<ProductMaster_IndexTableList>;
   tableEvent!: DataTableLazyLoadEvent;
   constructor(
     private pageService: ProductMasterService,

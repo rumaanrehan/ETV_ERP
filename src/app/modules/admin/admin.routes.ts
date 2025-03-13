@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 
 export const adminRoute: Routes = [
   { path: 'IMS/ItemGroupMaster/Index', loadComponent: () => import('../../components/ItemGroupMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'IMS/UOMMaster/Index', loadComponent: () => import('../../components/UOM-Master/index/index.component').then((m) => m.IndexComponent) },
+  // { path: 'IMS/UOMMaster/Index', loadComponent: () => import('../../components/UOM-Master/index/index.component').then((m) => m.IndexComponent) },
 
   { path: 'manufacturer-master/index', loadComponent: () => import('../../components/Manufacturer-Master/index/index.component').then((m) => m.IndexComponent) },
   // { path: 'manufacturer-master/create', loadComponent: () => import('../../components/Manufacturer-Master/create/create.component').then((m) => m.CreateComponent) },
@@ -11,9 +11,9 @@ export const adminRoute: Routes = [
 
   { path: 'item-group/index', loadComponent: () => import('../../components/Item-Group/index/index.component').then((m) => m.IndexComponent) },
 
-  { path: 'IMS/CategoryMaster/Index', loadComponent: () => import('../../components/ims-category-master/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'IMS/CategoryMaster/Create', loadComponent: () => import('../../components/ims-category-master/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'IMS/CategoryMaster/Edit/:id', loadComponent: () => import('../../components/ims-category-master/create/create.component').then((m) => m.CreateComponent) },
+  // { path: 'IMS/CategoryMaster/Index', loadComponent: () => import('../../components/ims-category-master/index/index.component').then((m) => m.IndexComponent) },
+  // { path: 'IMS/CategoryMaster/Create', loadComponent: () => import('../../components/ims-category-master/create/create.component').then((m) => m.CreateComponent) },
+  // { path: 'IMS/CategoryMaster/Edit/:id', loadComponent: () => import('../../components/ims-category-master/create/create.component').then((m) => m.CreateComponent) },
 
   // { path: 'Admin/ProductMaster/Index', component: Index_ProductMasterComponent, pathMatch: 'full' },
   // { path: 'Admin/ProductMaster/Create', component: Create_ProductMasterComponent, pathMatch: 'full' },

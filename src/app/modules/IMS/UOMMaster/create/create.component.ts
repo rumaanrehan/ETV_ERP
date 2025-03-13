@@ -1,26 +1,22 @@
-import { UOM_Master } from './../UOM-master';
+
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormSidebarComponent } from '../../../shared/components/form-sidebar/form-sidebar.component';
+import { UOMMasterService } from '../UOM-master.service';
+import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
-import { ZFormControlsModule } from '../../../shared/components/z-form-controls/z-form-controls.module';
-import { FormService } from '../../../shared/services/form.service';
-import { Subject, takeUntil } from 'rxjs';
-import { FormConfigType } from '../../../shared/models/form.model';
+import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormService } from '../../../../shared/services/form.service';
 import { ActivatedRoute } from '@angular/router';
-import { AlertNotificationService } from '../../../shared/services/alert-notification.service';
-import { SelectListService } from '../../../shared/services/select-list.service';
-import { UOMMasterService } from '../UOM-master.service';
+import { Subject, takeUntil } from 'rxjs';
+import { FormConfigType } from '../../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
+import { SelectListService } from '../../../../shared/services/select-list.service';
+import { UOMMaster } from '../UOM-master';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [
-    FormSidebarComponent,
-    ReactiveFormsModule,
-    CommonModule,
-    ZFormControlsModule,
-  ],
+  imports: [ FormSidebarComponent, ReactiveFormsModule, CommonModule, ZFormControlsModule ],
   providers: [FormService, DatePipe],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss',
@@ -33,7 +29,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
   ActiveStatus: boolean = false;
   form!: FormGroup;
-  formConfig!: FormConfigType<UOM_Master>;
+  formConfig!: FormConfigType<UOMMaster>;
   Id!: number;
   details?: any;
   defaultItemGroupTypeID: number | null = null;
@@ -53,7 +49,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.formConfig = this.componentService.getFormConfig();
-    this.form = this.formService.createFormGroup<UOM_Master>(
+    this.form = this.formService.createFormGroup<UOMMaster>(
       this.formConfig
     );
     this.formService.initializeFormValidationMessage(
@@ -80,7 +76,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   openSidebar(
     ActiveStatus: boolean,
     isEditMode: boolean,
-    model: UOM_Master
+    model: UOMMaster
   ): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
@@ -106,7 +102,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .showConfirmationWithInput({ text: 'Do you really want to Update?' })
         .then((result) => {
           if (result.isConfirmed) {
-            const model: UOM_Master = {
+            const model: UOMMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value,
             };
@@ -116,7 +112,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
         });
     } else {
-      const itemData: UOM_Master = {
+      const itemData: UOMMaster = {
         ...this.formService.transformFormData(this.form.value),
         ActiveStatus: true,
       };
@@ -124,7 +120,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: UOM_Master): void {
+  updateRecord(model: UOMMaster): void {
     model.UOMID = this.Id;
     this.componentService
       .UpdateUOM_Master(model)
@@ -144,7 +140,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       });
   }
 
-  createRecord(model: UOM_Master): void {
+  createRecord(model: UOMMaster): void {
     model.UOMCode = `U0000${this.Id}`;
     this.componentService
       .CreateItemGroup(model)
@@ -168,7 +164,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<UOM_Master>(
+    this.formService.resetFormValue<UOMMaster>(
       this.formConfig,
       this.form
     );
@@ -197,7 +193,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   resetForm(): void {
-    this.formService.resetFormValue<UOM_Master>(
+    this.formService.resetFormValue<UOMMaster>(
       this.formConfig,
       this.form
     );
