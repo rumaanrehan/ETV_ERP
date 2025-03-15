@@ -2,15 +2,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ViewChild, TemplateRef, } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ItemCategoryMaster, ItemCategoryMaster_IndexFilter, ItemCategoryMaster_IndexList } from '../category-master';
 import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../shared/services/form-validation.service';
 import { CreateComponent } from '../create/create.component';
-import { ItemCategoryMasterService } from '../category-master.service';
+import { ItemCategoryMasterService } from '../item-category-master.service';
 import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatable.component';
+import { ItemCategoryMaster_IndexList, ItemCategoryMaster_IndexFilter, ItemCategoryMaster } from '../item-category-master';
 
 @Component({
   selector: 'app-index',
@@ -24,7 +24,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent) createSidebar!: CreateComponent;
-  @ViewChild('ItemCategoryCodeTemplate', { static: true }) itemCategoryCodeTemplate!: TemplateRef<any>;
+  @ViewChild('itemCategoryCodeTemplate', { static: true }) itemCategoryCodeTemplate!: TemplateRef<any>;
   @ViewChild('itemCategoryActiveStatusTemplate', { static: true }) itemCategoryActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
@@ -75,13 +75,13 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
 
     this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN',  width: "1%", hideVisToggle: true, orderable: false },
+      { data: 'RowID', label: 'SN',  width: "5%", hideVisToggle: true, orderable: false },
       { data: 'ItemCategoryID', visible: false, hideVisToggle: true, orderable: false },
-      { data: 'ItemCategoryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.itemCategoryCodeTemplate },
+      { data: 'ItemCategoryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.itemCategoryCodeTemplate },
       { data: 'ItemCategoryName', label: 'Item Category Name', filterable: true },
       { data: 'ItemGroupName', label: 'Item Group Name', filterable: true },
       { data: 'ActiveStatus', label: 'Status',filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.itemCategoryActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false,  cssClass: 'text-center', width: "1%", customTemplate: this.actionColTemplate }
+      { data: '', hideVisToggle: true, orderable: false,  cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
     ];
   }
 

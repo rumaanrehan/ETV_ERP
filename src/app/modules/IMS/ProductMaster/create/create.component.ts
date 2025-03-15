@@ -4,7 +4,6 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ItemCategoryMaster_SelectList } from '../../CategoryMaster/category-master';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { FormService } from '../../../../shared/services/form.service';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
@@ -16,6 +15,7 @@ import { GenericItem_SelectList } from '../../GenericItemMaster/generic-item-mas
 import { ManufacturerMaster_SelectList } from '../../../../components/Manufacturer-Master/manufacturer-master';
 import { ApiListResponse } from '../../../../shared/models/api-response';
 import { UOMMaster_SelectList } from '../../UOMMaster/UOM-master';
+import { ItemCategoryMaster_SelectList } from '../../ItemCategoryMaster/item-category-master';
 @Component({
   selector: 'app-create',
   standalone: true,

@@ -13,6 +13,7 @@ export interface ItemCategoryMaster_SelectList {
 export interface ItemCategoryMaster_IndexFilter {
   ItemCategoryCode: string;
   ItemCategoryName: string;
+  ItemGroupName: string;
   ActiveStatusID: number | null;
 }
 
