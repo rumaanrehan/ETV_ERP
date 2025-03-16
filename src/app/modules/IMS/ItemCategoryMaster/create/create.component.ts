@@ -3,14 +3,14 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ItemCategoryMaster } from '../category-master';
 import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormService } from '../../../../shared/services/form.service';
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { ItemCategoryMasterService } from '../category-master.service';
+import { ItemCategoryMasterService } from '../item-category-master.service';
 import { ItemGroup_SelectList } from '../../../../components/Item-Group/item-group';
+import { ItemCategoryMaster } from '../item-category-master';
 
 @Component({
   selector: 'app-create',
@@ -30,7 +30,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<ItemCategoryMaster>;
 
-  itemGroupList: ItemGroup_SelectList[] = [];
+  // itemGroupList: ItemGroup_SelectList[] = [];
+
+  itemGroupList: ItemGroup_SelectList[] = [
+    { ItemGroupID: 1, ItemGroupName: "Random Group" }]
 
 
   constructor(
@@ -70,7 +73,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           if(data.itemGroupList.IsSuccess) {
-            this.itemGroupList = data.itemGroupList.Data.Items;
+            // this.itemGroupList = data.itemGroupList.Data.Items;
           }
         }
     });
@@ -178,14 +181,12 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              this.closeSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,
                 timer: 5000
               });
-              setTimeout(() => {
-                this.router.navigate(['/IMS/ProductMaster']);
-              }, 2000);
             }
             else {
               this.alertService.showServerResponseAlert(response);

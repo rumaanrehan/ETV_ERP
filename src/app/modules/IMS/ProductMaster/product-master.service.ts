@@ -25,9 +25,9 @@ import {
   StaticListRequest,
 } from '../../../shared/models/select-list';
 import { SelectListService } from '../../../shared/services/select-list.service';
-import { ItemCategoryMaster_SelectList } from '../CategoryMaster/category-master';
 import { ApiService } from '../../../core/services/api.service';
-import { ItemCategoryMasterService } from '../CategoryMaster/category-master.service';
+import { ItemCategoryMasterService } from '../ItemCategoryMaster/item-category-master.service';
+import { ItemCategoryMaster_SelectList } from '../ItemCategoryMaster/item-category-master';
 
 @Injectable({
   providedIn: 'root',

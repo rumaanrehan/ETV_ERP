@@ -7,15 +7,15 @@ import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse, Ap
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
 import { DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
-import { ItemCategoryMaster, ItemCategoryMaster_IndexFilter, ItemCategoryMaster_IndexList, ItemCategoryMaster_SelectList } from './category-master';
 import { ItemGroupMasterService } from '../ItemGroupMaster/item-group-master.service';
 import { ItemGroupMaster_SelectList } from '../ItemGroupMaster/item-group-master';
+import { ItemCategoryMaster, ItemCategoryMaster_IndexFilter, ItemCategoryMaster_IndexList, ItemCategoryMaster_SelectList } from './item-category-master';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ItemCategoryMasterService {
-  private endpoint = 'IMS/CategoryMaster';
+  private endpoint = 'IMS/ItemCategoryMaster';
 
   constructor(
     private apiService: ApiService,
@@ -58,6 +58,7 @@ export class ItemCategoryMasterService {
     return {
       ItemCategoryCode: '',
       ItemCategoryName: '',
+      ItemGroupName: '',
       ActiveStatusID: 1,
     }
   }
