@@ -1,13 +1,27 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from '../product-master';
+import {
+  ProductMaster,
+  ProductMaster_IndexTableFilter,
+  ProductMaster_IndexTableList,
+} from '../product-master';
 import { ProductMasterService } from '../product-master.service';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../shared/services/form-validation.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import {
+  DataTableDef,
+  DataTableLazyLoadEvent,
+  DataTableParams,
+} from '../../../../shared/components/z-datatable/z-datatable';
 import { FormService } from '../../../../shared/services/form.service';
 import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatable.component';
 
@@ -21,12 +35,18 @@ import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatabl
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('productCodeTemplate', { static: true }) productCodeTemplate!: TemplateRef<any>;
-  @ViewChild('productNameTemplate', { static: true }) productNameTemplate!: TemplateRef<any>;
-  @ViewChild('isActiveTemplate', { static: true }) isActiveTemplate!: TemplateRef<any>;
-  @ViewChild('createdByTemplate', { static: true }) createdByTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild('pageHeaderActionTemplate', { static: true })
+  pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('productCodeTemplate', { static: true })
+  productCodeTemplate!: TemplateRef<any>;
+  @ViewChild('productNameTemplate', { static: true })
+  productNameTemplate!: TemplateRef<any>;
+  @ViewChild('isActiveTemplate', { static: true })
+  isActiveTemplate!: TemplateRef<any>;
+  @ViewChild('createdByTemplate', { static: true })
+  createdByTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true })
+  actionColTemplate!: TemplateRef<any>;
 
   tableDef!: DataTableDef<ProductMaster_IndexTableList>;
   tableEvent!: DataTableLazyLoadEvent;
@@ -36,7 +56,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     private pageHeaderService: PageHeaderService,
     private alertService: AlertNotificationService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
@@ -45,24 +65,36 @@ export class IndexComponent implements OnInit, OnDestroy {
       tableKey: 'IMS_ProductMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'ProductCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ProductMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      filterForm:
+        this.formService.createFormGroup_DataTableFilter<ProductMaster_IndexTableFilter>(
+          this.pageService.getFormConfig_DataTableFilter()
+        ),
       data: [],
       totalRecords: 0,
       loading: false,
     };
-    
+
     this.tableDef.columnDef = [
-      {data: 'ProductID', visible: false, orderable: false},
-      {data: 'ProductCode', label: 'Product Code', customTemplate: this.productCodeTemplate},
-      {data: 'ProductName', label: 'Product Name'},
-      {data: 'UnitPrice', label: 'Unit Price', cssClass: 'text-right'},
-      {data: 'CostPrice', label: 'Cost Price',cssClass: 'text-right'},
-      {data: 'NetWeight', label: 'Net Weight'},
-      {data: 'GrossWeight', label: 'Gross Weight'},
-      {data: 'PurTaxRate', label: 'Purchase Tax Rate'},
-      {data: 'IsActive', label: 'Status', cssClass: 'text-center'},
-      {data: '', orderable: false, cssClass: 'text-center',customTemplate: this.actionColTemplate},
-    ]
+      { data: 'ProductID', visible: false, orderable: false },
+      {
+        data: 'ProductCode',
+        label: 'Product Code',
+        customTemplate: this.productCodeTemplate,
+      },
+      { data: 'ProductName', label: 'Product Name' },
+      { data: 'UnitPrice', label: 'Unit Price', cssClass: 'text-right' },
+      { data: 'CostPrice', label: 'Cost Price', cssClass: 'text-right' },
+      { data: 'NetWeight', label: 'Net Weight' },
+      { data: 'GrossWeight', label: 'Gross Weight' },
+      { data: 'PurTaxRate', label: 'Purchase Tax Rate' },
+      { data: 'IsActive', label: 'Status', cssClass: 'text-center' },
+      {
+        data: '',
+        orderable: false,
+        cssClass: 'text-center',
+        customTemplate: this.actionColTemplate,
+      },
+    ];
   }
 
   ngOnDestroy(): void {
@@ -71,7 +103,8 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   onClickPageHeaderAddButton() {
-    this.router.navigate(['/Admin/ProductMaster/Create']);
+    this.router.navigate(['ims/product-master/create']);
+    // this.router.navigate(['/Admin/ProductMaster/Create']);
   }
 
   onClickEditDetails(ProductID: number) {
@@ -86,46 +119,52 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   loadData() {
-    try{
+    try {
       const model: DataTableParams<ProductMaster_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
         sortOrder: this.tableEvent.sortOrder,
-        filters: this.tableDef.filterForm?.value
+        filters: this.tableDef.filterForm?.value,
       };
+      // console.log(model)
+
 
       this.pageService
-      .PopulateGrid(this.formService.transformFormData(model))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        },
-      });
-    }catch (error) {
+        .PopulateGrid(this.formService.transformFormData(model))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
 
-    }
+              console.log(this.tableDef.data);
+              console.log(response.Data.Items);
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
+          },
+        });
+    } catch (error) {}
   }
 
   onClickDeleteReactivate(row: any) {
     try {
       const ActionType = row.ActiveStatus ? 'Delete' : 'Reactivate';
-      const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
+      const inputPlaceholder = row.ActiveStatus
+        ? 'Reason To Delete'
+        : 'Reason To Reactivate';
 
       this.alertService
         .showConfirmationWithInput({
           inputPlaceholder: inputPlaceholder,
-          text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${row.ProductName
-            }</b>"?`,
+          text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${
+            row.ProductName
+          }</b>"?`,
         })
         .then((result) => {
           if (result.isConfirmed) {
@@ -135,7 +174,8 @@ export class IndexComponent implements OnInit, OnDestroy {
               ReasonToUpdate: result.value,
             };
 
-            this.pageService.DeleteProduct(model)
+            this.pageService
+              .DeleteProduct(model)
               .pipe(takeUntil(this.destroy$))
               .subscribe({
                 next: (response) => {
@@ -149,12 +189,10 @@ export class IndexComponent implements OnInit, OnDestroy {
                   } else {
                     this.alertService.showServerResponseAlert(response);
                   }
-                }
+                },
               });
           }
         });
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }
 }

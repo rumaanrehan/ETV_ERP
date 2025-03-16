@@ -27,13 +27,13 @@ export interface ProductMaster_IndexTableFilter {
   IsActive: boolean | null;
 }
 
-export interface ProductMaster_IndexTableList{
+export interface ProductMaster_IndexTableList {
   RowID: number;
-  ProductID: number ;
-  ProductCode: string ;
-  ProductName: string ;
-  ProductCategory: string ;
-  UOM: string ;
+  ProductID: number;
+  ProductCode: string;
+  ProductName: string;
+  ProductCategory: string;
+  UOM: string;
   UnitPrice: number;
   IsActive: boolean;
 }

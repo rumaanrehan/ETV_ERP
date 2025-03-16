@@ -1,6 +1,12 @@
 import { ProductMaster } from './../product-master';
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,7 +32,8 @@ import { UOMMaster_SelectList } from '../../UOMMaster/UOM-master';
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('pageHeaderActionTemplate', { static: true })
+  pageHeaderActionTemplate!: TemplateRef<any>;
 
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
@@ -47,15 +54,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     private alertService: AlertNotificationService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ProductMaster>(this.formConfig);
-    this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.form = this.formService.createFormGroup<ProductMaster>(
+      this.formConfig
+    );
+    this.formService.initializeFormValidationMessage(
+      this.formConfig,
+      this.form
+    );
 
-    
     this.loadDropdownList();
     this.getDetails();
   }
@@ -67,33 +78,33 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderAddButton(): void {
     try {
-      this.router.navigate(['/Admin/ProductMaster/Index']);
-    }
-    catch (error) {
-
-    }
+      this.router.navigate(['/ims/product-master/Index']);
+    } catch (error) {}
   }
 
-  loadDropdownList(){
+  loadDropdownList() {
     this.loadStaticLists([
       { fieldName: 'PurTaxOn', targetList: 'purTaxOnList' },
-      { fieldName: 'TaxSlabID', targetList: 'taxSlabIDList' }
+      { fieldName: 'TaxSlabID', targetList: 'taxSlabIDList' },
     ]);
-    
-    this.pageService.GetMasterDropdownLists()
+
+    this.pageService
+      .GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          if(data.categoryList.IsSuccess) {
+          if (data.categoryList.IsSuccess) {
             this.categoryList = data.categoryList.Data.Items;
           }
-        }
-    });
+        },
+      });
   }
 
-  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
+  loadStaticLists(
+    listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]
+  ): void {
     const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
-  
+
     listConfigs.forEach(({ fieldName, targetList }) => {
       sources[targetList] = this.pageService.GetStaticList({
         AreaName: 'IMS',
@@ -108,16 +119,17 @@ export class CreateComponent implements OnInit, OnDestroy {
         next: (response) => {
           listConfigs.forEach(({ targetList }) => {
             if (response[targetList]?.IsSuccess) {
-              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+              (this[targetList] as StaticList[]) =
+                response[targetList].Data.Items || [];
             } else {
               (this[targetList] as StaticList[]) = [];
             }
           });
-        }
+        },
       });
   }
 
-  resetForm(): void{
+  resetForm(): void {
     this.formService.resetFormValue<ProductMaster>(this.formConfig, this.form);
   }
 
@@ -138,88 +150,79 @@ export class CreateComponent implements OnInit, OnDestroy {
 
       // Handle form submission based on editMode
       if (this.isEditMode) {
-        this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
-        }).then(result => {
-          if (result.isConfirmed) {
-            const model: ProductMaster = {
-              ...this.formService.transformFormData(this.form.value),
-              ReasonToUpdate: result.value
-            };
-            this.updateRecord(model);
-          }
-          else {
-            this.isSubmitted = false;
-          }
-        });
-      }
-      else {
+        this.alertService
+          .showConfirmationWithInput({
+            text: 'Do you really want to Update?',
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              const model: ProductMaster = {
+                ...this.formService.transformFormData(this.form.value),
+                ReasonToUpdate: result.value,
+              };
+              this.updateRecord(model);
+            } else {
+              this.isSubmitted = false;
+            }
+          });
+      } else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   createRecord(model: ProductMaster): void {
     try {
-      this.pageService.CreateRecord(model)
+      this.pageService
+        .CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.alertService.showAlert({
-                type: "success",
+                type: 'success',
                 text: response.Message,
-                timer: 5000
+                timer: 5000,
               });
               setTimeout(() => {
                 this.ngOnInit();
               }, 2000);
-            }
-            else {
+            } else {
               this.alertService.showServerResponseAlert(response);
             }
           },
           complete: () => {
             this.isSubmitted = false;
-          }
+          },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   updateRecord(model: ProductMaster): void {
     try {
-      this.pageService.UpdateRecord(model)
+      this.pageService
+        .UpdateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.alertService.showAlert({
-                type: "success",
+                type: 'success',
                 text: response.Message,
-                timer: 5000
+                timer: 5000,
               });
               setTimeout(() => {
                 this.router.navigate(['/IMS/ProductMaster']);
               }, 2000);
-            }
-            else {
+            } else {
               this.alertService.showServerResponseAlert(response);
             }
           },
           complete: () => {
             this.isSubmitted = false;
-          }
+          },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   getDetails(): void {
@@ -228,21 +231,19 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (ProductID) {
         this.isEditMode = true;
         try {
-          this.pageService.GetDetails(ProductID)
+          this.pageService
+            .GetDetails(ProductID)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
                   this.form.patchValue(response.Data);
-                }
-                else {
+                } else {
                   this.alertService.showServerResponseAlert(response);
                 }
               },
             });
-        }
-        catch (error) {
-        }
+        } catch (error) {}
       }
     });
   }

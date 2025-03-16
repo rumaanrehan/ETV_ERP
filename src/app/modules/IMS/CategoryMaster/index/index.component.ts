@@ -1,9 +1,22 @@
-
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ViewChild, TemplateRef, } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  TemplateRef,
+} from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ItemCategoryMaster, ItemCategoryMaster_IndexFilter, ItemCategoryMaster_IndexList } from '../category-master';
-import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import {
+  ItemCategoryMaster,
+  ItemCategoryMaster_IndexFilter,
+  ItemCategoryMaster_IndexList,
+} from '../category-master';
+import {
+  DataTableDef,
+  DataTableLazyLoadEvent,
+  DataTableParams,
+} from '../../../../shared/components/z-datatable/z-datatable';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
@@ -15,19 +28,22 @@ import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatabl
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [CommonModule,ZDataTable,CreateComponent],
+  imports: [CommonModule, ZDataTable, CreateComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss',
   providers: [FormValidationService],
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('pageHeaderActionTemplate', { static: true })
+  pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent) createSidebar!: CreateComponent;
-  @ViewChild('ItemCategoryCodeTemplate', { static: true }) itemCategoryCodeTemplate!: TemplateRef<any>;
-  @ViewChild('itemCategoryActiveStatusTemplate', { static: true }) itemCategoryActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-
+  @ViewChild('ItemCategoryCodeTemplate', { static: true })
+  itemCategoryCodeTemplate!: TemplateRef<any>;
+  @ViewChild('itemCategoryActiveStatusTemplate', { static: true })
+  itemCategoryActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true })
+  actionColTemplate!: TemplateRef<any>;
 
   // @ViewChild('CategoryIDTemplate', { static: true })
   // CategoryIDTemplate!: TemplateRef<any>;
@@ -40,8 +56,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   // @ViewChild('CategoryTypeTemplate', { static: true })
   // CategoryTypeTemplate!: TemplateRef<any>;
-
-  
 
   // @ViewChild('CreatedByDateInTemplate', { static: true })
   // CreatedDateTime!: TemplateRef<any>;
@@ -60,7 +74,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private pageHeaderService: PageHeaderService,
     private alertService: AlertNotificationService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
@@ -68,21 +82,109 @@ export class IndexComponent implements OnInit, OnDestroy {
       tableKey: 'IMS_ItemCategoryMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'ItemCategoryCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ItemCategoryMaster_IndexFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      filterForm:
+        this.formService.createFormGroup_DataTableFilter<ItemCategoryMaster_IndexFilter>(
+          this.pageService.getFormConfig_DataTableFilter()
+        ),
       data: [],
       totalRecords: 0,
-      loading: false
+      loading: false,
     };
 
     this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN',  width: "1%", hideVisToggle: true, orderable: false },
-      { data: 'ItemCategoryID', visible: false, hideVisToggle: true, orderable: false },
-      { data: 'ItemCategoryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.itemCategoryCodeTemplate },
-      { data: 'ItemCategoryName', label: 'Item Category Name', filterable: true },
+      {
+        data: 'RowID',
+        label: 'SN',
+        width: '1%',
+        hideVisToggle: true,
+        orderable: false,
+      },
+      {
+        data: 'ItemCategoryID',
+        visible: false,
+        hideVisToggle: true,
+        orderable: false,
+      },
+      {
+        data: 'ItemCategoryCode',
+        label: 'Code',
+        hideVisToggle: true,
+        filterable: true,
+        width: '5%',
+        customTemplate: this.itemCategoryCodeTemplate,
+      },
+      {
+        data: 'ItemCategoryName',
+        label: 'Item Category Name',
+        filterable: true,
+      },
       { data: 'ItemGroupName', label: 'Item Group Name', filterable: true },
-      { data: 'ActiveStatus', label: 'Status',filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.itemCategoryActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false,  cssClass: 'text-center', width: "1%", customTemplate: this.actionColTemplate }
+      {
+        data: 'ActiveStatus',
+        label: 'Status',
+        filterable: true,
+        filterType: 'select',
+        filterKey: 'ActiveStatusID',
+        cssClass: 'text-center',
+        width: '5%',
+        customTemplate: this.itemCategoryActiveStatusTemplate,
+      },
+      {
+        data: '',
+        hideVisToggle: true,
+        orderable: false,
+        cssClass: 'text-center',
+        width: '1%',
+        customTemplate: this.actionColTemplate,
+      },
     ];
+     // this.tableDef.columnDef = [
+    //   {
+    //     data: 'RowID',
+    //     label: 'SN',
+    //     width: '1%',
+    //     hideVisToggle: true,
+    //     orderable: false,
+    //   },
+    //   {
+    //     data: 'ItemCategoryID',
+    //     visible: false,
+    //     hideVisToggle: true,
+    //     orderable: false,
+    //   },
+    //   {
+    //     data: 'ItemCategoryCode',
+    //     label: 'Code',
+    //     hideVisToggle: true,
+    //     filterable: true,
+    //     width: '5%',
+    //     customTemplate: this.itemCategoryCodeTemplate,
+    //   },
+    //   {
+    //     data: 'ItemCategoryName',
+    //     label: 'Item Category Name',
+    //     filterable: true,
+    //   },
+    //   { data: 'ItemGroupName', label: 'Item Group Name', filterable: true },
+    //   {
+    //     data: 'ActiveStatus',
+    //     label: 'Status',
+    //     filterable: true,
+    //     filterType: 'select',
+    //     filterKey: 'ActiveStatusID',
+    //     cssClass: 'text-center',
+    //     width: '5%',
+    //     customTemplate: this.itemCategoryActiveStatusTemplate,
+    //   },
+    //   {
+    //     data: '',
+    //     hideVisToggle: true,
+    //     orderable: false,
+    //     cssClass: 'text-center',
+    //     width: '1%',
+    //     customTemplate: this.actionColTemplate,
+    //   },
+    // ];
   }
 
   ngOnDestroy(): void {
@@ -92,7 +194,10 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
-      this.createSidebar.openSidebar(false, this.formService.createNullObject<ItemCategoryMaster>());
+      this.createSidebar.openSidebar(
+        false,
+        this.formService.createNullObject<ItemCategoryMaster>()
+      );
     }
   }
 
@@ -111,19 +216,20 @@ export class IndexComponent implements OnInit, OnDestroy {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
-        sortOrder: this.tableEvent.sortOrder,        
-        filters: this.tableDef.filterForm?.value
+        sortOrder: this.tableEvent.sortOrder,
+        filters: this.tableDef.filterForm?.value,
       };
-      
-      this.pageService.PopulateGrid(model)
+      this.pageService
+        .PopulateGrid(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.tableDef.data = response.Data.Items;
               this.tableDef.totalRecords = response.Data.TotalRecords;
-            }
-            else {
+              console.log(this.tableDef.data);
+              console.log(response.Data.Items);
+            } else {
               this.tableDef.data = [];
               this.tableDef.totalRecords = 0;
               this.alertService.showServerResponseToast(response);
@@ -131,82 +237,74 @@ export class IndexComponent implements OnInit, OnDestroy {
           },
           complete: () => {
             this.tableDef.loading = false;
-          }
+          },
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   onClickEditDetails(ItemCategoryID: number) {
     try {
       if (this.createSidebar && ItemCategoryID) {
-        this.pageService.GetDetails(ItemCategoryID)
+        this.pageService
+          .GetDetails(ItemCategoryID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
                 const model: ItemCategoryMaster = {
-                  ...response.Data
+                  ...response.Data,
                 };
                 this.createSidebar.openSidebar(true, model);
-              }
-              else {
+              } else {
                 this.alertService.showServerResponseAlert(response);
               }
             },
           });
       }
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   onClickDeleteReactivate(row: any) {
     try {
       const ActionType = row.ActiveStatus ? 'Delete' : 'Reactivate';
-      const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
+      const inputPlaceholder = row.ActiveStatus
+        ? 'Reason To Delete'
+        : 'Reason To Reactivate';
 
-      this.alertService.showConfirmationWithInput({
-        inputPlaceholder: inputPlaceholder,
-        text: `Do you really want to ${ActionType} the "<b>${row.ItemCategoryName}</b>"?`,
-      })
-        .then(result => {
+      this.alertService
+        .showConfirmationWithInput({
+          inputPlaceholder: inputPlaceholder,
+          text: `Do you really want to ${ActionType} the "<b>${row.ItemCategoryName}</b>"?`,
+        })
+        .then((result) => {
           if (result.isConfirmed) {
             const model: ItemCategoryMaster = {
               ...row,
               ActionType: ActionType,
-              ReasonToUpdate: result.value
+              ReasonToUpdate: result.value,
             };
 
-            this.pageService.DeleteRecord(model)
+            this.pageService
+              .DeleteRecord(model)
               .pipe(takeUntil(this.destroy$))
               .subscribe({
                 next: (response) => {
                   if (response.IsSuccess) {
                     this.loadData();
                     this.alertService.showAlert({
-                      type: "success",
+                      type: 'success',
                       text: response.Message,
-                      timer: 5000
+                      timer: 5000,
                     });
-                  }
-                  else {
+                  } else {
                     this.alertService.showServerResponseAlert(response);
                   }
-                }
+                },
               });
           }
         });
-    }
-    catch (error) {
-
-    }
+    } catch (error) {}
   }
-
-
 
   // loadCategory(tableParameters: TableLazyLoadEvent) {
   //   // this.tableDef.loading = true;
