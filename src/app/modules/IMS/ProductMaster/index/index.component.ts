@@ -1,59 +1,36 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
-import {
-  ProductMaster,
-  ProductMaster_IndexTableFilter,
-  ProductMaster_IndexTableList,
-} from '../product-master';
-import { ProductMasterService } from '../product-master.service';
-import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { FormValidationService } from '../../../../shared/services/form-validation.service';
-import { PageHeaderService } from '../../../../shared/services/page-header.service';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import {
-  DataTableDef,
-  DataTableLazyLoadEvent,
-  DataTableParams,
-} from '../../../../shared/components/z-datatable/z-datatable';
-import { FormService } from '../../../../shared/services/form.service';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatable.component';
+import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../shared/services/form.service';
+import { PageHeaderService } from '../../../../shared/services/page-header.service';
+import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from '../product-master';
+import { ProductMasterService } from '../product-master.service';
 
 @Component({
-  selector: 'app-index-product-master',
+  selector: 'app-index',
   standalone: true,
-  templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss'],
   imports: [CommonModule, ZDataTable],
-  providers: [FormValidationService],
+  templateUrl: './index.component.html',
+  styleUrl: './index.component.scss'
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true })
-  pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('productCodeTemplate', { static: true })
-  productCodeTemplate!: TemplateRef<any>;
-  @ViewChild('productNameTemplate', { static: true })
-  productNameTemplate!: TemplateRef<any>;
-  @ViewChild('isActiveTemplate', { static: true })
-  isActiveTemplate!: TemplateRef<any>;
-  @ViewChild('createdByTemplate', { static: true })
-  createdByTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true })
-  actionColTemplate!: TemplateRef<any>;
+  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('productCodeTemplate', { static: true }) productCodeTemplate!: TemplateRef<any>;
+  @ViewChild('productActiveStatusTemplate', { static: true }) productActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
   tableDef!: DataTableDef<ProductMaster_IndexTableList>;
   tableEvent!: DataTableLazyLoadEvent;
+
   constructor(
     private pageService: ProductMasterService,
-    private formService: FormService,
     private pageHeaderService: PageHeaderService,
+    private formService: FormService,
     private alertService: AlertNotificationService,
     private router: Router
   ) {}
@@ -65,35 +42,23 @@ export class IndexComponent implements OnInit, OnDestroy {
       tableKey: 'IMS_ProductMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'ProductCode', sortOrder: 1 },
-      filterForm:
-        this.formService.createFormGroup_DataTableFilter<ProductMaster_IndexTableFilter>(
-          this.pageService.getFormConfig_DataTableFilter()
-        ),
+      filterForm: this.formService.createFormGroup_DataTableFilter<ProductMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false,
     };
 
     this.tableDef.columnDef = [
-      { data: 'ProductID', visible: false, orderable: false },
-      {
-        data: 'ProductCode',
-        label: 'Product Code',
-        customTemplate: this.productCodeTemplate,
-      },
-      { data: 'ProductName', label: 'Product Name' },
-      { data: 'UnitPrice', label: 'Unit Price', cssClass: 'text-right' },
-      { data: 'CostPrice', label: 'Cost Price', cssClass: 'text-right' },
-      { data: 'NetWeight', label: 'Net Weight' },
-      { data: 'GrossWeight', label: 'Gross Weight' },
-      { data: 'PurTaxRate', label: 'Purchase Tax Rate' },
-      { data: 'IsActive', label: 'Status', cssClass: 'text-center' },
-      {
-        data: '',
-        orderable: false,
-        cssClass: 'text-center',
-        customTemplate: this.actionColTemplate,
-      },
+      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "3%" },
+      { data: 'ProductCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.productCodeTemplate },
+      { data: 'ProductName', label: 'Product Name', filterable: true },
+      { data: 'ItemGroupName', label: 'Item Group', width: "10%", filterable: true },
+      { data: 'ItemCategoryName', label: 'Item Category', width: "10%", filterable: true },
+      { data: 'GenericItemName', label: 'Generic Item', width: "10%", filterable: true },
+      { data: 'ManufacturerName', label: 'Manufacturer Name', width: "10%", filterable: true },
+      { data: 'UOMName', label: 'UOM Name', width: "10%", filterable: true },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.productActiveStatusTemplate },
+      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate }
     ];
   }
 
@@ -104,12 +69,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderAddButton() {
     this.router.navigate(['ims/product-master/create']);
-    // this.router.navigate(['/Admin/ProductMaster/Create']);
   }
 
-  onClickEditDetails(ProductID: number) {
-    if (ProductID) {
-      this.router.navigate([`/JobPost/Edit/${ProductID}`]);
+  onClickEditDetails(productID: number) {
+    if (productID) {
+      this.router.navigate([`ims/product-master/edit/${productID}`]);
     }
   }
 
@@ -127,72 +91,69 @@ export class IndexComponent implements OnInit, OnDestroy {
         sortOrder: this.tableEvent.sortOrder,
         filters: this.tableDef.filterForm?.value,
       };
-      // console.log(model)
 
+      this.pageService.PopulateGrid(this.formService.transformFormData(model))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            console.log(response.Data);
+            this.tableDef.data = response.Data.Items;
+            this.tableDef.totalRecords = response.Data.TotalRecords;
+          }
+          else {
+            this.tableDef.data = [];
+            this.tableDef.totalRecords = 0;
+            this.alertService.showServerResponseToast(response);
+          }
+        },
+        complete: () => {
+          this.tableDef.loading = false;
+        }
+      });
+    } catch (error) {
 
-      this.pageService
-        .PopulateGrid(this.formService.transformFormData(model))
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
-
-              console.log(this.tableDef.data);
-              console.log(response.Data.Items);
-            } else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.tableDef.loading = false;
-          },
-        });
-    } catch (error) {}
+    }
   }
 
   onClickDeleteReactivate(row: any) {
     try {
       const ActionType = row.ActiveStatus ? 'Delete' : 'Reactivate';
-      const inputPlaceholder = row.ActiveStatus
-        ? 'Reason To Delete'
-        : 'Reason To Reactivate';
+      const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
 
       this.alertService
-        .showConfirmationWithInput({
-          inputPlaceholder: inputPlaceholder,
-          text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${
-            row.ProductName
-          }</b>"?`,
-        })
+      .showConfirmationWithInput({
+        inputPlaceholder: inputPlaceholder,
+        text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${ row.ProductName }</b>"?`,})
         .then((result) => {
-          if (result.isConfirmed) {
-            const model: ProductMaster = {
-              ...row,
-              ActionType: ActionType,
-              ReasonToUpdate: result.value,
-            };
+        if (result.isConfirmed) {
+          const model: ProductMaster = {
+            ...row,
+            ActionType: ActionType,
+            ReasonToUpdate: result.value,
+          };
 
-            this.pageService
-              .DeleteProduct(model)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: (response) => {
-                  this.loadData();
-                  if (response.IsSuccess) {
-                    this.alertService.showAlert({
-                      type: 'success',
-                      text: response.Message,
-                      timer: 5000,
-                    });
-                  } else {
-                    this.alertService.showServerResponseAlert(response);
-                  }
-                },
-              });
-          }
-        });
-    } catch (error) {}
+          this.pageService
+          .DeleteReactivate(model)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              this.loadData();
+              if (response.IsSuccess) {
+                this.alertService.showAlert({
+                  type: 'success',
+                  text: response.Message,
+                  timer: 5000,
+                });
+              } else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
+        }
+      });
+    } catch (error) {
+
+    }
   }
 }

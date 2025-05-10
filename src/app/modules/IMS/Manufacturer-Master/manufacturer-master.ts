@@ -2,7 +2,6 @@ export interface ManufacturerMaster {
   ManufacturerID: number | null;
   ManufacturerCode: string | null;
   ManufacturerName: string | null;
-  ActiveStatus: boolean;
 }
 
 export interface ManufacturerMaster_IndexTableList {
@@ -15,7 +14,7 @@ export interface ManufacturerMaster_IndexTableList {
 export interface ManufacturerMaster_IndexTableFilter {
   ManufacturerCode: string | null;
   ManufacturerName: string | null;
-  ActiveStatus: number | null;
+  ActiveStatusID: number | null;
 }
 
 export interface ManufacturerMaster_SelectList {

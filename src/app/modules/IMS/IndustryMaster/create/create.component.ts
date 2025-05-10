@@ -1,52 +1,150 @@
-import { Industry } from './../IndustryUtils';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { ServiceIndustryMaster } from '../Industry.Service';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
+import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../shared/services/form.service';
+import { IndustryMaster } from '../industry-master';
+import { IndustryMasterService } from '../industry-master.service';
+
 @Component({
-  imports: [CommonModule, FormsModule],
+  selector: 'app-create',
   standalone: true,
-  selector: 'app-industry-master',
-  templateUrl: '../create/create.component.html',
-  styleUrls: ['../create/create.component.scss'],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
+  templateUrl: './create.component.html',
+  styleUrl: './create.component.scss'
 })
-export class CreateComponent implements OnInit {
-  industry: Industry = {
-    industryId: 0,
-    industryCode: '',
-    industryName: '',
-    isActive: 'true',
-  };
+export class CreateComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
 
-  industries: any[] = [];
+  isFormSidebarVisible: boolean = false;
+  isEditMode: boolean = false;
+  isSubmitted: boolean = false;
+  ActiveStatus: boolean = false;
+  form!: FormGroup;
+  formConfig!: FormConfigType<IndustryMaster>;
 
-  constructor(private industyService: ServiceIndustryMaster) {}
-
-  // Fetch industries from API
-  getIndustries() {
-    this.industyService.getIndustries();
-  }
+  constructor(
+    private pageService: IndustryMasterService,
+    private formService: FormService,
+    private alertService: AlertNotificationService,
+  ) { }
 
   ngOnInit(): void {
-    this.getIndustries();
+    this.formConfig = this.pageService.getFormConfig();
+    this.form = this.formService.createFormGroup<IndustryMaster>(this.formConfig);
+    this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  onSubmit() {
-    console.log('Creating Industry:', this.industry);
-
- 
-    if (!this.industry.industryCode || !this.industry.industryName) {
-      alert('Please fill in all fields.');
-      return;
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: IndustryMaster): void {
+    if (isEditMode && model) {
+      this.isEditMode = isEditMode;
+      this.ActiveStatus = activeStatus;
     }
+    this.ActiveStatus = activeStatus;
+    this.form.patchValue(model);
+    this.isFormSidebarVisible = true;
+  }
 
-    this.industyService.CreateIndustry(this.industry);
+  closeSidebar(): void {
+    this.isFormSidebarVisible = false;
+    this.isEditMode = false;
+    this.formService.resetFormValue<IndustryMaster>(this.formConfig, this.form);
 
-    this.industry = {
-      industryId: 0,
-      industryCode: '',
-      industryName: '',
-      isActive: 'true',
-    };
+    setTimeout(() => {
+      this.closeSidebarEvent.emit();
+    }, 1);
+  }
+  
+  onSubmit(): void {
+    if (this.isSubmitted) return;
+
+    this.isSubmitted = true;
+    try{
+      if (this.form.invalid) {
+        this.form.markAllAsTouched();
+        this.formService.validateFormFields(this.formConfig, this.form);
+        this.alertService.showValidationAlert();
+        this.isSubmitted = false;
+        return;
+      }
+      if (this.isEditMode) {
+        this.alertService.showConfirmation({
+          text: 'Do you really want to update?',
+        }).then(result => {
+          if (result.isConfirmed) {
+            this.updateRecord(this.formService.transformFormData(this.form.value));
+          }
+          else {
+            this.isSubmitted = false;
+          }
+        });
+      } 
+      else {
+        this.createRecord(this.formService.transformFormData(this.form.value));
+      }
+   }
+   catch (error) {
+
+   }
+  }
+
+  createRecord(model: IndustryMaster): void {
+    try{
+    this.pageService.CreateRecord(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((response) => {
+        if (response.IsSuccess) {
+          this.closeSidebar();
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+        } else {
+          this.alertService.showServerResponseAlert(response);
+        }
+        this.isSubmitted = false;
+      });
+    }
+    catch (error) {
+
+    }
+  }
+  
+  updateRecord(model: IndustryMaster): void {
+    try {
+      this.pageService.UpdateRecord(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: "success",
+              text: response.Message,
+              timer: 5000
+            });
+          }
+          else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
+    }
+    catch (error) {
+
+    }
   }
 }

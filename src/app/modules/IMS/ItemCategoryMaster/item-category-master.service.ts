@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse, ApiTResponse, TResultPagedList } from '../../../shared/models/api-response';
+import { DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
-import { ItemGroupMasterService } from '../ItemGroupMaster/item-group-master.service';
 import { ItemGroupMaster_SelectList } from '../ItemGroupMaster/item-group-master';
+import { ItemGroupMasterService } from '../ItemGroupMaster/item-group-master.service';
 import { ItemCategoryMaster, ItemCategoryMaster_IndexFilter, ItemCategoryMaster_IndexList, ItemCategoryMaster_SelectList } from './item-category-master';
 
 @Injectable({
@@ -23,12 +22,12 @@ export class ItemCategoryMasterService {
   ) { }
 
   GetMasterDropdownLists(): Observable<{ 
-      itemGroupList: ApiListResponse<ItemGroupMaster_SelectList>;
-      }> {
-      return forkJoin({
-        itemGroupList: this.itemGroupService.PopulateList("SelectList"),
-      });
-    }
+    itemGroupList: ApiListResponse<ItemGroupMaster_SelectList>;
+    }> {
+    return forkJoin({
+      itemGroupList: this.itemGroupService.PopulateList("SelectList"),
+    });
+  }
 
   PopulateList(PopulateType: any): Observable<ApiListResponse<ItemCategoryMaster_SelectList>> {
     return this.apiService.post<ApiListResponse<ItemCategoryMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {} );
@@ -50,7 +49,7 @@ export class ItemCategoryMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteRecord(model: ItemCategoryMaster): Observable<ApiResponse> {
+  DeleteReactivate(model: ItemCategoryMaster): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
@@ -59,7 +58,7 @@ export class ItemCategoryMasterService {
       ItemCategoryCode: '',
       ItemCategoryName: '',
       ItemGroupName: '',
-      ActiveStatusID: 1,
+      ActiveStatusID: 0,
     }
   }
 
@@ -87,7 +86,11 @@ export class ItemCategoryMasterService {
       },
       ItemGroupID: {
         label: 'Item Group',
-        defaultValue: 0
+        defaultValue: 0,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Item Group is required.'
+        }        
       },
     };
   }

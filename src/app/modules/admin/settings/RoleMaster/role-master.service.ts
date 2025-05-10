@@ -1,77 +1,76 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Environment } from '../../../../../environments/environment';
-import { ApiListResponse, ApiPagedListResponse, ApiResponse, ApiTResponse } from '../../../../shared/models/api-response';
-import { FormConfigType } from '../../../../shared/models/form.model';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { RoleMaster, RoleMasterList } from './role-master';
+import { RoleMaster, RoleMaster_IndexTableFilter, RoleMaster_IndexTableList, RoleMaster_SelectList } from './role-master';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoleMasterService {
-  private apiUrl: string;
+  private endpoint = 'Admin/RoleMaster';
 
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
+  constructor(
+    private apiService: ApiService,
+  ) {}
+ 
+  PopulateList(PopulateType: any): Observable<ApiListResponse<RoleMaster_SelectList>> {
+    return this.apiService.post<ApiListResponse<RoleMaster_SelectList>>(`${this.endpoint}PopulateList?PopulateType=${PopulateType}`, {});
   }
 
-  //#region Form Configuration
+  PopulateGrid(model: DataTableParams<RoleMaster_IndexTableFilter>): Observable<ApiPagedListResponse<RoleMaster_IndexTableList>> {
+    console.log("Fetching List From RoleMasterService");
+    return this.apiService.post<ApiPagedListResponse<RoleMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  }
+
+  GetDetails(roleID: number): Observable<ApiDataResponse<RoleMaster>> {
+    return this.apiService.post<ApiDataResponse<RoleMaster>>(`${this.endpoint}/GetDetails?RoleID=${roleID}`, {});
+  }
+
+  CreateRecord(model: RoleMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
+  }
+
+  UpdateRecord(model: RoleMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+  }
+
+  DeleteReactivate(model: RoleMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  }
+  
+ //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<RoleMaster_IndexTableFilter> {
+    return {
+      RoleCode: '',
+      RoleName: '',
+      ActiveStatusID: 0
+    }
+  }
+
   getFormConfig(): FormConfigType<RoleMaster> {
     return {
       RoleID: {
         label: '',
         defaultValue: null,
-        validators: [],
-        validationMessages: {},
-        type: 'control'
       },
       RoleCode: {
-        label: 'Code',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {},
-        type: 'control'
+        label: 'Tax Slab Code',
+        defaultValue: 'NEW'
       },
       RoleName: {
         label: 'Role Name',
         defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
+        validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Role Name is Required.',
-          maxlength: 'Role Name cannot be longer than 50 characters.'
-        },
-        type: 'control'
+          required: 'Role Name is required'
+        }
       },
-    };
+    }
   }
   //#endregion
-
-
-  PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<RoleMasterList>> {
-    return this.http.post<ApiPagedListResponse<RoleMasterList>>(`${this.apiUrl}Admin/RoleMaster/PopulateGrid`, tabledata);
-  }
-
-  PopulateList(PopulateType: any): Observable<ApiListResponse<RoleMasterList>> {
-   
-    return this.http.post<ApiListResponse<RoleMasterList>>(`${this.apiUrl}Admin/RoleMaster/PopulateList?PopulateType=${PopulateType}`, {});
-  }
-
-  GetDetails(RoleID: number): Observable<ApiTResponse<RoleMaster>> {
-    return this.http.post<ApiTResponse<RoleMaster>>(`${this.apiUrl}Admin/RoleMaster/GetDetails?RoleID=${RoleID}`, {});
-  }
-
-  CreateRecord(model: RoleMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/RoleMaster/Create`, model);
-  }
-
-  UpdateRecord(model: RoleMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/RoleMaster/Edit`, model);
-  }
-
-  DeleteRecord(model: RoleMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/RoleMaster/Delete`, model);
-  }
 }

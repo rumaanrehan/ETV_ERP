@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
+import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { TaxSlabMaster } from '../tax-slab-master';
@@ -13,22 +14,22 @@ import { TaxSlabMasterService } from '../tax-slab-master.service';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, CommonModule, ZFormControlsModule],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
-export class CreateComponent {
+export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   ActiveStatus: boolean = false;
   form!: FormGroup;
   formConfig!: FormConfigType<TaxSlabMaster>;
-  TaxTypeList: any[]= [
-    { name: 'PUR TAX', Value: 1}
-  ];
+
+  taxTypeList: StaticList[] = [];
 
   constructor(
     private pageService: TaxSlabMasterService,
@@ -47,12 +48,44 @@ export class CreateComponent {
     this.destroy$.complete();
   }
 
-  openSidebar(ActiveStatus: boolean, isEditMode: boolean, model: TaxSlabMaster): void {
+  loadDropdownList() {
+    this.loadStaticLists([
+      { fieldName: 'TaxType', targetList: 'taxTypeList' }
+    ]);
+  }
+  
+  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
+
+    listConfigs.forEach(({ fieldName, targetList }) => {
+      sources[targetList] = this.pageService.GetStaticList({
+        AreaName: 'Admin',
+        ControllerName: 'TaxSlabMaster',
+        FieldName: fieldName,
+      });
+    });
+
+    forkJoin(sources)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response) => {
+        listConfigs.forEach(({ targetList }) => {
+          if (response[targetList]?.IsSuccess) {
+            (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+          } else {
+            (this[targetList] as StaticList[]) = [];
+          }
+        });
+      },
+    });
+  }
+
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: TaxSlabMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
-      this.ActiveStatus = ActiveStatus;
+      this.ActiveStatus = activeStatus;
     }
-    this.ActiveStatus = ActiveStatus;
+    this.ActiveStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
@@ -71,9 +104,7 @@ export class CreateComponent {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
     try {
-      // Handle invalid form
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -81,24 +112,18 @@ export class CreateComponent {
         this.isSubmitted = false;
         return;
       }
-
-      // Handle form submission based on editMode
       if (this.isEditMode) {
-        this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
+        this.alertService.showConfirmation({
+          text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: TaxSlabMaster = {
-              ...this.formService.transformFormData(this.form.value),
-              ReasonToUpdate: result.value
-            };
-            this.updateRecord(model);
+            this.updateRecord(this.formService.transformFormData(this.form.value));
           }
           else {
             this.isSubmitted = false;
           }
         });
-      }
+      } 
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
@@ -109,55 +134,50 @@ export class CreateComponent {
   }
 
   createRecord(model: TaxSlabMaster): void {
-    try {
-      this.pageService.CreateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.closeSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
-          }
-        });
+    try{
+    this.pageService.CreateRecord(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((response) => {
+        if (response.IsSuccess) {
+          this.closeSidebar();
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+        } else {
+          this.alertService.showServerResponseAlert(response);
+        }
+        this.isSubmitted = false;
+      });
     }
     catch (error) {
 
     }
   }
-
+  
   updateRecord(model: TaxSlabMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.closeSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: "success",
+              text: response.Message,
+              timer: 5000
+            });
           }
-        });
+          else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
     }
     catch (error) {
 

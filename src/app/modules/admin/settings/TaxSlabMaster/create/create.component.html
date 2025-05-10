@@ -5,25 +5,25 @@
   <div sidebarContent>
     <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" control="TaxSlabCode" [label]="formConfig.TaxSlabCode.label"></z-inputtext>
+          <z-span [text]="form.get('TaxSlabCode')?.value" [label]="formConfig.TaxSlabCode.label"></z-span>
       </div>
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'TaxType'" [label]="formConfig.TaxType.label" [validationMessage]="formConfig.TaxType.error"
-                  [options]="TaxTypeList" [optionLabel]="'name'" [optionValue]="'Value'">
+        <z-select [group]="form" [control]="'TaxTypeID'" [label]="formConfig.TaxTypeID.label"
+        [validationMessage]="formConfig.TaxTypeID.error" [optionLabel]="'TaxTypeName'" [optionValue]="'TaxTypeID'" [options]="taxTypeList">
         </z-select>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" control="TaxSlabName" [label]="formConfig.TaxSlabName.label" [validationMessage]="formConfig.TaxSlabName.error"></z-inputtext>
+        <z-inputtext [group]="form" control="TaxSlabName" [label]="formConfig.TaxSlabName.label"></z-inputtext>
       </div>
       <div class="col-xl-6 form-group">
-        <z-inputnumber [group]="form" [control]="'TaxRate'" [min]="0" [max]="100" [label]="formConfig.TaxRate.label" [validationMessage]="formConfig.TaxRate.error"></z-inputnumber>
+        <z-inputnumber [group]="form" [control]="'TaxRate'" [min]="0" [max]="100" [label]="formConfig.TaxRate.label"></z-inputnumber>
       </div>
     </form>
   </div>
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="form.invalid">
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>

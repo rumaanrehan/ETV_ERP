@@ -1,56 +1,87 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Environment } from '../../../../../environments/environment';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { FormConfigType } from '../../../../shared/models/form.model';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
+import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { SelectListService } from '../../../../shared/services/select-list.service';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { TaxSlabMaster, TaxSlabMasterList } from './tax-slab-master';
+import { TaxSlab_IndexTableFilter, TaxSlab_IndexTableList, TaxSlab_SelectList, TaxSlabMaster } from './tax-slab-master';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaxSlabMasterService {
-  private apiUrl: string;
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
+  private endpoint = 'Admin/TaxSlabMaster';
+
+  constructor(
+    private apiService: ApiService,
+    private selectListService: SelectListService,
+  ) {}
+
+  GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
+    return this.selectListService.GetStaticList(model);
+  }
+    
+  PopulateList(PopulateType: any): Observable<ApiListResponse<TaxSlab_SelectList>> {
+    return this.apiService.post<ApiListResponse<TaxSlab_SelectList>>(`${this.endpoint}PopulateList?PopulateType=${PopulateType}`, {});
   }
 
+  PopulateGrid(model: DataTableParams<TaxSlab_IndexTableFilter>): Observable<ApiPagedListResponse<TaxSlab_IndexTableList>> {
+    console.log("Fetching List From TaxSlabMasterService");
+    return this.apiService.post<ApiPagedListResponse<TaxSlab_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  }
+
+  GetDetails(taxSlabID: number): Observable<ApiDataResponse<TaxSlabMaster>> {
+    return this.apiService.post<ApiDataResponse<TaxSlabMaster>>(`${this.endpoint}/GetDetails?TaxSlabID=${taxSlabID}`, {});
+  }
+
+  CreateRecord(model: TaxSlabMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
+  }
+
+  UpdateRecord(model: TaxSlabMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+  }
+
+  DeleteReactivate(model: TaxSlabMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  }
+  
+ //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<TaxSlab_IndexTableFilter> {
+    return {
+      TaxSlabCode: '',
+      TaxSlabName: '',
+      ActiveStatusID: 0
+    }
+  }
+  
   getFormConfig(): FormConfigType<TaxSlabMaster> {
     return {
       TaxSlabID: {
         label: '',
         defaultValue: null,
-        validators: [],
-        validationMessages: {},
-        type: 'control'
       },
       TaxSlabCode: {
         label: 'Tax Slab Code',
+        defaultValue: 'NEW'
+      },
+      TaxTypeID: {
+        label: 'Tax Type',
         defaultValue: null,
         validators: [],
-        validationMessages: {},
-        type: 'control'
-      },
-      TaxType: {
-        label: 'Tax Type',
-        defaultValue: 1,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'Tax Type is Required.'
-        },
-        type: 'control'
+        validationMessages: {}
       },
       TaxSlabName: {
         label: 'Tax Slab Name',
         defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
+        validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Tax Slab Name is Required.',
-          maxlength: 'TaxSlab name cannot be longer than 50 characters.'
-        },
-        type: 'control'
+          required: 'Tax Slab Name is required'
+        }
       },
       TaxRate: {
         label: 'Tax Rate',
@@ -58,35 +89,8 @@ export class TaxSlabMasterService {
         validators: [Validators.required],
         validationMessages: {
           required: 'Tax Rate is Required.'
-        },
-        type: 'control'
+        }
       }
     }
   }
-
-  PopulateList(PopulateType: any): Observable<ApiListResponse<TaxSlabMasterList>> {
-    return this.http.post<ApiListResponse<TaxSlabMasterList>>(`${this.apiUrl}Admin/TaxSlabMaster/PopulateList?PopulateType=${PopulateType}`, {});
-  }
-
-  PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<TaxSlabMasterList>> {
-    return this.http.post<ApiPagedListResponse<TaxSlabMasterList>>(`${this.apiUrl}Admin/TaxSlabMaster/PopulateGrid`, tabledata);
-  }
-
-  GetDetails(TaxSlabID: number): Observable<ApiDataResponse<TaxSlabMaster>> {
-    return this.http.post<ApiDataResponse<TaxSlabMaster>>(`${this.apiUrl}Admin/TaxSlabMaster/GetDetails?TaxSlabID=${TaxSlabID}`, {});
-  }
-
-  CreateRecord(model: TaxSlabMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/TaxSlabMaster/Create`, model);
-  }
-
-  UpdateRecord(model: TaxSlabMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/TaxSlabMaster/Edit`, model);
-  }
-
-  DeleteRecord(model: TaxSlabMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/TaxSlabMaster/Delete`, model);
-  }
-
-
 }

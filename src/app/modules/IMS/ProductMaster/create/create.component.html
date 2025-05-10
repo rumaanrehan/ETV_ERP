@@ -16,16 +16,19 @@
                 <z-inputtext [group]="form" [control]="'ProductName'" [label]="formConfig.ProductName.label"></z-inputtext>
               </div>
               <div class="col-md-6">
-                <z-select [group]="form" [control]="'CategoryID'" [label]="formConfig.CategoryID.label" [optionLabel]="'CategoryName'" [optionValue]="'CategoryID'" [options]="categoryList"></z-select>
+                <z-select [group]="form" [control]="'ItemGroupID'" [label]="formConfig.ItemGroupID.label" [optionLabel]="'ItemGroupName'" [optionValue]="'ItemGroupID'" [options]="itemGroupList"></z-select>
               </div>
               <div class="col-md-6">
-                <z-select [group]="form" [control]="'GenericID'" [label]="formConfig.GenericID.label" [optionLabel]="'GenericName'" [optionValue]="'GenericID'" [options]="genericList"></z-select>
+                <z-select [group]="form" [control]="'ItemCategoryID'" [label]="formConfig.ItemCategoryID.label" [optionLabel]="'ItemCategoryName'" [optionValue]="'ItemCategoryID'" [options]="itemCategoryList"></z-select>
+              </div>
+              <div class="col-md-6">
+                <z-select [group]="form" [control]="'GenericItemID'" [label]="formConfig.GenericItemID.label" [optionLabel]="'GenericItemName'" [optionValue]="'GenericItemID'" [options]="itemList"></z-select>
               </div>
               <div class="col-md-6">
                 <z-select [group]="form" [control]="'ManufacturerID'" [label]="formConfig.ManufacturerID.label" [optionLabel]="'ManufacturerName'" [optionValue]="'ManufacturerID'" [options]="manufacturerList"></z-select>
               </div>
               <div class="col-md-6">
-                <z-select [group]="form" [control]="'UOMID'" [label]="formConfig.UOMID.label" [optionLabel]="'UOMName'" [optionValue]="'UOMID'" [options]="uomList"></z-select>
+                <z-select [group]="form" [control]="'UOMID'" [label]="formConfig.UOMID.label" [optionLabel]="'UOMName'" [optionValue]="'UOMID'" [options]="uOMList"></z-select>
               </div>
               <div class="col-md-6">
                 <z-inputnumber [group]="form" [control]="'Unit'" [label]="formConfig.Unit.label"></z-inputnumber>
@@ -67,7 +70,7 @@
               </div>
               <div class="col-md-6">
                 <z-textarea [group]="form" [control]="'ProductDescription'" [label]="formConfig.ProductDescription.label"></z-textarea>
-              </div>v
+              </div>
             </div>
           </div>
         </div>        

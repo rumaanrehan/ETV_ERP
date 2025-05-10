@@ -1,53 +1,55 @@
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
-import {
-  ApiResponse,
-  ApiPagedListResponse,
-  ApiDataResponse,
-} from '../../../shared/models/api-response';
-import { FormConfigType } from '../../../shared/models/form.model';
+import { Observable } from 'rxjs';
+import { ApiService } from '../../../core/services/api.service';
+import { DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { UOMMaster } from './UOM-master';
+import { UOMMaster, UOMMaster_IndexTableFilter, UOMMaster_IndexTableList, UOMMaster_SelectList } from './UOM-master';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class UOMMasterService {
-  private apiUrl = 'https://localhost:44316/api/ERP/UOMMaster';
+  private endpoint = 'IMS/UOMMaster';
 
-  constructor(private http: HttpClient) {
-    // this.apiUrl = Environment.apiUrl;
+  constructor(
+    private apiService: ApiService,
+  ) {}
+
+  PopulateList(populateType: any): Observable<ApiListResponse<UOMMaster_SelectList>> {
+    console.log("Fetching List From UOMMasterService");
+    return this.apiService.post<ApiListResponse<UOMMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${populateType}`, {} );
+  }
+  
+  PopulateGrid(model: DataTableParams<UOMMaster_IndexTableFilter>): Observable<ApiPagedListResponse<UOMMaster_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<UOMMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  DeleteItem(id: number): Observable<ApiResponse> {
-    const body = { UOMID: id };
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Delete`, body);
+  GetDetails(UOMID: number): Observable<ApiDataResponse<UOMMaster>> {
+    return this.apiService.post<ApiDataResponse<UOMMaster>>(`${this.endpoint}/GetDetails?UOMID=${UOMID}`, {});
   }
 
-  CreateItemGroup(uom_Master: UOMMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Create`, uom_Master);
+  CreateRecord(model: UOMMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
-  PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<UOMMaster>> {
-    console.log(tabledata);
-    return this.http.post<ApiPagedListResponse<UOMMaster>>(
-      `${this.apiUrl}/PopulateGrid`,
-      tabledata
-    );
+  UpdateRecord(model: UOMMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  GetDetails(ItemGroupID: any): Observable<ApiDataResponse<UOMMaster>> {
-    return this.http.post<ApiDataResponse<UOMMaster>>(
-      `${this.apiUrl}/GetDetails?itemGroupID=${ItemGroupID}`,
-      {}
-    );
+  DeleteReactivate(model: UOMMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
-  UpdateUOM_Master(itemGroup: UOMMaster): Observable<ApiResponse> {
-    console.log(itemGroup);
-    return this.http.post<ApiResponse>(`${this.apiUrl}/Update`, itemGroup);
+  //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<UOMMaster_IndexTableFilter> {
+    return {
+      UOMCode: '',
+      UOMName: '',
+      ActiveStatus: 0
+    }
   }
 
   getFormConfig(): FormConfigType<UOMMaster> {
@@ -57,20 +59,16 @@ export class UOMMasterService {
         defaultValue: null,
       },
       UOMCode: {
-        label: 'NEW UOM Code',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'ItemGroup Code is required.',
-        },
+        label: 'UOM Code',
+        defaultValue: 'NEW'
       },
       UOMName: {
         label: 'UOM Name',
-        defaultValue: '',
+        defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'UOM Name is required.',
-        },
+          required: 'UOM Name is required'
+        }
       },
     };
   }

@@ -1,31 +1,24 @@
+<!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-  <button
-    class="btn btn-primary btn-page-header"
-    (click)="onClickPageHeaderAddButton()"
-  >
-    <i class="pi pi-plus"></i>&nbsp;Add Product
-  </button>
+  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
+      class="pi pi-plus"></i>&nbsp;Add Product</button>
 </ng-template>
 
-  <!-- Page Header Action Button Template -->
-  <div class="col-xl-12 index-page-content">
-    <z-datatable [tableDef]="tableDef"
-      (lazyLoad)="onIndexTableLazyLoad($event)">
-    </z-datatable>
-  </div>
+<!-- Index Table Component -->
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)">
+  </z-datatable>
+</div>
 
-<!-- ng-template for each data field with added margin for spacing and max-width for scrollable content -->
+<!-- Table Column Custom Template -->
 <ng-template #productCodeTemplate let-row>
-  <span
-    class="fw-bold font-blue flexible-text"
-    (click)="onClickEditDetails(row.ProductID)"
-  >
+  <span class="table-action-link" (click)="onClickEditDetails(row.ProductID)" style="cursor: pointer;">
     {{ row.ProductCode }}
   </span>
 </ng-template>
-
+<!-- 
 <ng-template #productNameTemplate let-row>
-  <!-- (click)="onClickEditDetails(row.ProductName, row.ActiveStatus)" -->
+  (click)="onClickEditDetails(row.ProductName, row.ActiveStatus)"
   <span
     style="
       cursor: pointer;
@@ -38,10 +31,10 @@
   >
     {{ row.ProductName }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #productCategoryTemplate let-row>
-  <!-- (click)="onClickEditDetails(row.ProductCategory, row.ActiveStatus)" -->
+  (click)="onClickEditDetails(row.ProductCategory, row.ActiveStatus)"
   <span
     style="
       cursor: pointer;
@@ -54,8 +47,8 @@
   >
     {{ row.ProductCategory }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #statusTemplate let-row>
   <span
     class="badge {{
@@ -65,8 +58,8 @@
   >
     {{ row.isActive ? "Active" : "Inactive" }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #productDescriptionTemplate let-row>
   <span
     style="
@@ -79,8 +72,8 @@
   >
     {{ row.ProductDescription }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #unitTemplate let-row>
   <span
     style="
@@ -93,8 +86,8 @@
   >
     {{ row.Unit }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #manufacturerIdTemplate let-row>
   <span
     style="
@@ -107,8 +100,8 @@
   >
     {{ row.ManufacturerID }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #unitPriceTemplate let-row>
   <span
     class="text-right"
@@ -121,8 +114,8 @@
     "
   >
     {{ row.UnitPrice }}
-  </span>
-</ng-template>
+  </span> -->
+<!-- </ng-template>
 
 <ng-template #costPriceTemplate let-row>
   <span
@@ -137,8 +130,8 @@
   >
     {{ row.CostPrice }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #purTaxRateTemplate let-row>
   <span
     style="
@@ -151,8 +144,8 @@
   >
     {{ row.PurTaxRate }}%
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #reorderQtyTemplate let-row>
   <span
     style="
@@ -165,8 +158,8 @@
   >
     {{ row.ReorderQty }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #netWeightTemplate let-row>
   <span
     style="
@@ -179,8 +172,8 @@
   >
     {{ row.NetWeight }}
   </span>
-</ng-template>
-
+</ng-template> -->
+<!-- 
 <ng-template #grossWeightTemplate let-row>
   <span
     style="
@@ -193,26 +186,19 @@
   >
     {{ row.GrossWeight }}
   </span>
-</ng-template>
+</ng-template> -->
 
-<ng-template #isActiveTemplate let-row>
-  <span
-    class="badge {{
-      row.IsActive ? 'bg-outline-success' : 'bg-outline-danger'
-    }}"
-    style="margin-right: 10px"
-  >
-    {{ row.IsActive ? "Active" : "Inactive" }}
+<ng-template #productActiveStatusTemplate let-row>
+  <span class="table-row-status">
+    <i class="pi pi-circle-fill text-{{ row.StatusText == 'Open' ? 'success' : row.StatusText == 'Closed' ? 'secondary' : 'danger' }}"></i>
+    {{ row.StatusText }}
   </span>
 </ng-template>
 
 <ng-template #actionColTemplate let-row>
-  <div class="hstack gap-2 fs-15 justify-content-end">
-    <span
-      class="btn btn-icon btn-sm btn-danger-transparent rounded-pill"
-      (click)="onClickDeleteReactivate(row)"
-    >
-      <i class="ri-delete-bin-line"></i>
-    </span>
+  <div class="d-flex justify-content-end" *ngIf="row.StatusText == 'Open'">
+      <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+          (click)="onClickDeleteReactivate(row)"><i class="pi pi-times-circle"></i>
+      </span>
   </div>
 </ng-template>

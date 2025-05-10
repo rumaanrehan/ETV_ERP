@@ -8,14 +8,14 @@
         <z-inputtext [group]="form" [control]="'RoleCode'" [label]="formConfig.RoleCode.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'RoleName'" [label]="formConfig.RoleName.label" [validationMessage]="formConfig.RoleName.error"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'RoleName'" [label]="formConfig.RoleName.label"></z-inputtext>
       </div>
     </form>
   </div>
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="form.invalid">
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>

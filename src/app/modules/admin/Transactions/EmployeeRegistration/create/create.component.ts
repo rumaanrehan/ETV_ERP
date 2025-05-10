@@ -30,7 +30,7 @@ import { PrefixMasterList } from '../../../settings/PrefixMaster/prefix-master';
 import { PrefixMasterService } from '../../../settings/PrefixMaster/prefix-master.service';
 import { RelationshipMasterList } from '../../../settings/RelationshipMaster/relationship-master';
 import { RelationshipMasterService } from '../../../settings/RelationshipMaster/relationship-master.service';
-import { RoleMasterList } from '../../../settings/RoleMaster/role-master';
+import { RoleMaster_SelectList } from '../../../settings/RoleMaster/role-master';
 import { RoleMasterService } from '../../../settings/RoleMaster/role-master.service';
 import { SelectList } from '../../../settings/SelectList/select-list';
 import { SelectListService } from '../../../settings/SelectList/select-list.service';
@@ -78,7 +78,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   DepartmentList: DepartmentMasterList[] = [];
   DesignationList: DesignationMasterList[] = [];
   SignatoryAreaList: SelectList[] = [];
-  RoleList: RoleMasterList[] = [];
+  RoleList: RoleMaster_SelectList[] = [];
   ReportingToList: EmployeeRegistrationList[] = [];
   EmployeeID: number | null = null;
   activeStepIndex: number = 0;

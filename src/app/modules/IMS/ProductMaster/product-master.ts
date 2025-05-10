@@ -1,14 +1,14 @@
 export interface ProductMaster {
-  ProductID?: number | null;
+  ProductID: number | null;
   ProductCode: string | null;
   ProductName: string | null;
-  CategoryID: number | null;
-  GenericID: number | null;
+  ItemGroupID: number | null;
+  ItemCategoryID: number | null;
+  GenericItemID: number | null;
   ManufacturerID: number | null;
   UOMID: number | null;
   Unit: number | null;
   HSCode: string | null;
-  PurTaxOn: string | null;
   TaxSlabID: number | null;
   PurTaxRate: number | null;
   ReorderLevel: number | null;
@@ -18,13 +18,23 @@ export interface ProductMaster {
   NetWeight: number | null;
   GrossWeight: number | null;
   ProductDescription: string | null;
+  PurTaxOn: string | null;
+}
+
+export interface ProductMaster_SelectList {
+  ProductID: number | null;
+  ProductName: string | null;
 }
 
 export interface ProductMaster_IndexTableFilter {
   ProductCode: string | null;
   ProductName: string | null;
-  ProductCategory: string | null;
-  IsActive: boolean | null;
+  ItemGroupName: string | null;
+  ItemCategoryName: string | null;
+  GenericItemName: string | null;
+  ManufacturerName: string | null;
+  UOMName: string | null;
+  ActiveStatusID: number | null;
 }
 
 export interface ProductMaster_IndexTableList {
@@ -32,8 +42,11 @@ export interface ProductMaster_IndexTableList {
   ProductID: number;
   ProductCode: string;
   ProductName: string;
-  ProductCategory: string;
-  UOM: string;
+  ItemGroupName: string;
+  ItemCategoryName: string;
+  GenericItemName: string;
+  ManufacturerName: string;
+  UOMName: string;
   UnitPrice: number;
-  IsActive: boolean;
+  ActiveStatus: boolean;
 }

@@ -7,8 +7,6 @@ import { MainLayoutComponent } from './shared/layouts/main-layout/main-layout.co
 import { authRoute } from './shared/routes/auth.routes';
 import { homeRoute } from './shared/routes/home.routes';
 import { mainRoute } from './shared/routes/main.routes';
-import { CreateComponent } from './components/Manufacturer-Master/create/create.component';
-import { IndexComponent } from './components/Manufacturer-Master/index/index.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   //{ path: '', loadChildren: () => import('./shared/routes/auth.routes').then(m => m.AuthenticationRoutingModule) },

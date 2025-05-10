@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
@@ -13,21 +12,21 @@ import { RoleMasterService } from '../role-master.service';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, CommonModule, ZFormControlsModule],
-  providers: [FormService],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false; // for button disabled
+  ActiveStatus: boolean = false;
   form!: FormGroup;
   formConfig!: FormConfigType<RoleMaster>;
-
+  
   constructor(
     private pageService: RoleMasterService,
     private formService: FormService,
@@ -45,12 +44,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(ActiveStatus: boolean, isEditMode: boolean, model: RoleMaster): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: RoleMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
-      this.ActiveStatus = ActiveStatus;
+      this.ActiveStatus = activeStatus;
     }
-    this.ActiveStatus = ActiveStatus;
+    this.ActiveStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
@@ -69,9 +68,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
     try {
-      // Handle invalid form
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -79,24 +76,18 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.isSubmitted = false;
         return;
       }
-
-      // Handle form submission based on editMode
       if (this.isEditMode) {
-        this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
+        this.alertService.showConfirmation({
+          text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: RoleMaster = {
-              ...this.formService.transformFormData(this.form.value),
-              ReasonToUpdate: result.value
-            };
-            this.updateRecord(model);
+            this.updateRecord(this.formService.transformFormData(this.form.value));
           }
           else {
             this.isSubmitted = false;
           }
         });
-      }
+      } 
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
@@ -107,55 +98,50 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   createRecord(model: RoleMaster): void {
-    try {
-      this.pageService.CreateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.closeSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
-          }
-        });
+    try{
+    this.pageService.CreateRecord(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((response) => {
+        if (response.IsSuccess) {
+          this.closeSidebar();
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+        } else {
+          this.alertService.showServerResponseAlert(response);
+        }
+        this.isSubmitted = false;
+      });
     }
     catch (error) {
 
     }
   }
-
+  
   updateRecord(model: RoleMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.closeSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: "success",
+              text: response.Message,
+              timer: 5000
+            });
           }
-        });
+          else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
     }
     catch (error) {
 

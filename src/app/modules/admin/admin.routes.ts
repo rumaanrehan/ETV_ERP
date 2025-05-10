@@ -5,7 +5,6 @@ export const adminRoute: Routes = [
   { path: 'IMS/ItemGroupMaster/Index', loadComponent: () => import('../../components/ItemGroupMaster/index/index.component').then((m) => m.IndexComponent) },
   // { path: 'IMS/UOMMaster/Index', loadComponent: () => import('../../components/UOM-Master/index/index.component').then((m) => m.IndexComponent) },
 
-  { path: 'manufacturer-master/index', loadComponent: () => import('../../components/Manufacturer-Master/index/index.component').then((m) => m.IndexComponent) },
   // { path: 'manufacturer-master/create', loadComponent: () => import('../../components/Manufacturer-Master/create/create.component').then((m) => m.CreateComponent) },
   // { path: 'manufacturer-master/edit/:ManufacturerID', loadComponent: () => import('../../components/Manufacturer-Master/create/create.component').then((m) => m.CreateComponent) },
 
