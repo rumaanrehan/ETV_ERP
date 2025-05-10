@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { ManufacturerMaster, ManufacturerMaster_IndexTableFilter, ManufacturerMaster_IndexTableList } from './manufacturer-master';
 import { Validators } from '@angular/forms';
-import { DataTableFilterFormConfigType, FormConfigType } from '../../shared/models/form.model';
-import { DataTableParams } from '../../shared/components/z-datatable/z-datatable';
-import { NotOnlyWhitespaceValidator } from '../../shared/validators/not-only-whitespace.validator';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse, } from '../../shared/models/api-response';
+import { Observable } from 'rxjs';
 import { Environment } from '../../../environments/environment';
+import { DataTableParams } from '../../shared/components/z-datatable/z-datatable';
+import { ApiDataResponse, ApiPagedListResponse, ApiResponse } from '../../shared/models/api-response';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../shared/models/form.model';
+import { NotOnlyWhitespaceValidator } from '../../shared/validators/not-only-whitespace.validator';
+import { ManufacturerMaster, ManufacturerMaster_IndexTableFilter, ManufacturerMaster_IndexTableList } from './manufacturer-master';
 
 @Injectable({
   providedIn: 'root'

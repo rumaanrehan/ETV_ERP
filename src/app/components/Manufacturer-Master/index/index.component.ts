@@ -1,23 +1,21 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { TableLazyLoadEvent } from 'primeng/table';
-import { DataTableDef, DataTableLazyLoadEvent, DataTableParams, DataTableColumnDef } from '../../../shared/components/z-datatable/z-datatable';
 import { Subject, takeUntil } from 'rxjs';
-import { ManufacturerMaster, ManufacturerMaster_IndexTableList, ManufacturerMaster_IndexTableFilter } from '../manufacturer-master';
-import { ManufacturerMasterService } from '../manufacturer-master.service';
-import { IndexTableComponent, IndexTableParams } from '../../../shared/components/index-table/index-table.component';
+import { DataTableDef, DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
+import { ZDataTable } from '../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../shared/services/form-validation.service';
 import { FormService } from '../../../shared/services/form.service';
 import { PageHeaderService } from '../../../shared/services/page-header.service';
-import { Router } from '@angular/router';
 import { CreateComponent } from '../create/create.component';
-import { CommonModule } from '@angular/common';
-import { ZDataTable } from '../../../shared/components/z-datatable/z-datatable.component';
+import { ManufacturerMaster, ManufacturerMaster_IndexTableFilter, ManufacturerMaster_IndexTableList } from '../manufacturer-master';
+import { ManufacturerMasterService } from '../manufacturer-master.service';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [ZDataTable, IndexTableComponent, CreateComponent, CommonModule],
+  imports: [ZDataTable, CreateComponent, CommonModule],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss',
   providers: [FormValidationService],

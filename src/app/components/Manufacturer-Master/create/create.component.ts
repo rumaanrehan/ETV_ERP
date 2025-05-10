@@ -1,17 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild, } from '@angular/core';
-import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild, } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../shared/components/form-sidebar/form-sidebar.component';
-import { FormService } from '../../../shared/services/form.service';
+import { ZFormControlsModule } from '../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../shared/services/alert-notification.service';
+import { FormService } from '../../../shared/services/form.service';
+import { PageHeaderService } from '../../../shared/services/page-header.service';
 import { ManufacturerMaster } from '../manufacturer-master';
 import { ManufacturerMasterService } from '../manufacturer-master.service';
-import { AlertNotificationService } from '../../../shared/services/alert-notification.service';
-import { ZFormControlsModule } from '../../../shared/components/z-form-controls/z-form-controls.module';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PageHeaderService } from '../../../shared/services/page-header.service';
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-create',
