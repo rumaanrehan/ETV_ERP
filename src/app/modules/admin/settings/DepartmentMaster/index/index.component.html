@@ -1,29 +1,18 @@
+<!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add Department</button>
 </ng-template>
 
-<app-index-table [tableDef]="tableDef"
-                 (lazyLoad)="onIndexTableLazyLoad($event)">
-</app-index-table>
+<!-- Index Table Component -->
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef"
+    (lazyLoad)="onIndexTableLazyLoad($event)">
+  </z-datatable>
+</div>
 
+<!-- Table Column Custom Template -->
 <ng-template #departmentCodeTemplate let-row>
-  <span class="fw-bold font-blue" (click)="onClickEditDetails(row.DepartmentID, row.ActiveStatus)" style="cursor: pointer;">{{ row.DepartmentCode }}</span>
-</ng-template>
-
-<ng-template #departmentShortCodeTemplate let-row>
-  <span class="fw-bold">{{ row.ShortCode }}</span>
-</ng-template>
-
-<ng-template #departmentIsAllowedForOPTemplate let-row>
-  <span class="badge rounded-pill {{ row.IsAllowedForOP ? 'bg-outline-success' : 'bg-outline-dark' }}">
-    {{ row.IsAllowedForOP ? 'Yes' : 'No' }}
-  </span>
-</ng-template>
-
-<ng-template #departmentIsAllowedForIPTemplate let-row>
-  <span class="badge rounded-pill {{ row.IsAllowedForIP ? 'bg-outline-success' : 'bg-outline-dark' }}">
-    {{ row.IsAllowedForIP ? 'Yes' : 'No' }}
-  </span>
+    <span class="table-action-link" (click)="onClickEditDetails(row.DepartmentID, row.ActiveStatus)" style="cursor: pointer;">{{ row.DepartmentCode }}</span>
 </ng-template>
 
 <ng-template #departmentActiveStatusTemplate let-row>
@@ -33,8 +22,8 @@
 </ng-template>
 
 <ng-template #actionColTemplate let-row>
-  <div class="hstack gap-2 fs-15 justify-content-end">
-    <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)"><i class="ri-delete-bin-line"></i></span>
+  <div class="d-flex justify-content-end">
+    <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
   </div>
 </ng-template>
 

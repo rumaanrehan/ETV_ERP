@@ -1,62 +1,61 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { IndexTableComponent, IndexTableParams } from '../../../../../shared/components/index-table/index-table.component';
+import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { FormValidationService } from '../../../../../shared/services/form-validation.service';
+import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { CountryMaster, CountryMasterList } from '../country-master';
+import { CountryMaster, CountryMaster_IndexTableFilter, CountryMaster_IndexTableList } from '../country-master';
 import { CountryMasterService } from '../country-master.service';
 import { CreateComponent } from '../create/create.component';
 
 @Component({
   selector: 'app-index',
   standalone: true,
+  imports: [ZDataTable, CreateComponent],
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss'],
-  imports: [IndexTableComponent,CreateComponent],
-  providers: [FormValidationService]
+  styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
-
   @ViewChild('countryCodeTemplate', { static: true }) countryCodeTemplate!: TemplateRef<any>;
   @ViewChild('countryIsDefaultTemplate', { static: true }) countryIsDefaultTemplate!: TemplateRef<any>;
   @ViewChild('countryActiveStatusTemplate', { static: true }) countryActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
 
-  tableDef!: IndexTableParams<CountryMasterList>;
-  tableParameters!: TableLazyLoadEvent;
+  tableDef!: DataTableDef<CountryMaster_IndexTableList>;
+  tableEvent!: TableLazyLoadEvent;
 
   constructor(
-    private countryService: CountryMasterService,
     private pageHeaderService: PageHeaderService,
-    private alertService: AlertNotificationService,
+    private pageService: CountryMasterService,
+    private formService: FormService,
+    private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
-    // Send the template to the page header
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
 
     this.tableDef = {
+      tableKey: 'Admin_CountryMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: '', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'CountryCode', sortOrder: 1 },
+      filterForm: this.formService.createFormGroup_DataTableFilter<CountryMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
     };
-
     this.tableDef.columnDef = [
-      { data: 'CountryID', visible: false, orderable: false },
-      { data: 'CountryCode', label: 'Code', customTemplate: this.countryCodeTemplate },
-      { data: 'CountryName', label: 'Country Name' },
+      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
+      { data: 'CountryCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.countryCodeTemplate },
+      { data: 'CountryName', label: 'Country Name', filterable: true },
       { data: 'CountryISOCode', label: 'ISO Code', orderable: false, cssClass: 'text-center' },
       { data: 'IsDefault', label: 'Is Default', orderable: false, cssClass: 'text-center', customTemplate: this.countryIsDefaultTemplate },
-      { data: 'ActiveStatus', label: 'Status', orderable: false, cssClass: 'text-center', customTemplate: this.countryActiveStatusTemplate },
-      { data: '', orderable: false, cssClass: 'text-center', customTemplate: this.actionColTemplate }
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.countryActiveStatusTemplate, },
+      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
 
@@ -65,13 +64,53 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onIndexTableLazyLoad(event: TableLazyLoadEvent) {
-    this.tableParameters = event;
-    this.loadData(this.tableParameters);
+  onClickPageHeaderAddButton(): void {
+    if (this.createSidebar) {
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<CountryMaster>());
+    }
+  }
+  
+  onClickEditDetails(countryID: number, activeStatus: boolean): void {
+    try {
+      if (this.createSidebar && countryID) {
+        this.pageService.GetDetails(countryID)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.createSidebar.openSidebar(activeStatus, true, response.Data);
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+        });
+      }
+    }
+    catch (error) {
+
+    }
+  }
+  
+  onCloseSidebar(): void {
+    this.loadData();
+  }
+  
+  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
+    this.tableEvent = event;
+    this.loadData();
   }
 
-  loadData(event: TableLazyLoadEvent) {
-    this.countryService.PopulateGrid(event)
+  loadData(): void {
+    try {
+      const model: DataTableParams<CountryMaster_IndexTableFilter> = {
+        first: this.tableEvent.first,
+        last: this.tableEvent.last,
+        sortField: this.tableEvent.sortField,
+        sortOrder: this.tableEvent.sortOrder,
+        filters: this.tableDef.filterForm?.value
+      };
+      this.pageService.PopulateGrid(model)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -80,57 +119,44 @@ export class IndexComponent implements OnInit, OnDestroy {
             this.tableDef.totalRecords = response.Data.TotalRecords;
           }
           else {
-            console.log(response);
-            this.alertService.showServerResponseAlert({
-              Status: response.Status,
-              Message: response.Message,
-              ValidationErrors: response.ValidationErrors
-            });
+            this.tableDef.data = [];
+            this.tableDef.totalRecords = 0;
+            this.alertService.showServerResponseToast(response);
           }
         },
         complete: () => {
           this.tableDef.loading = false;
         }
-    });
-  }
+      });
+    }
+    catch (error) {
 
-  onClickPageHeaderAddButton(): void {
-    if (this.createSidebar) {
-      this.createSidebar.openSidebar(false);
     }
   }
 
-  onClickEditDetails(row: CountryMaster) {
-    if (this.createSidebar) {
-      this.createSidebar.openSidebar(true, row);
-    }
-  }
+  onClickDeleteReactivate(row: any): void {
+    try {
+      const ActionType = row.ActiveStatus ? 'Delete' : 'Reactivate';
+      const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
 
-  onCloseSidebar(): void {
-    this.loadData(this.tableParameters);
-  }
+      this.alertService.showConfirmationWithInput({
+        inputPlaceholder: inputPlaceholder,
+        text: `Do you really want to ${ActionType} the "<b>${row.CountryName}</b>"?`,
+      })
+      .then(result => {
+        if (result.isConfirmed) {
+          const model: CountryMaster = {
+            ...row,
+            ActionType: ActionType,
+            ReasonToUpdate: result.value
+          };
 
-  onClickDelete(row: CountryMasterList) {
-    const ActionType = row.ActiveStatus ? 'Delete' : 'Reactivate';
-    const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
-
-    console.log(row);
-    this.alertService.showConfirmationWithInput({
-      inputPlaceholder: inputPlaceholder,
-      text: `Do you really want to <b>${ActionType.toUpperCase()} </b> the "<b>${row.CountryName}</b>"?`,
-    }).then(result => {
-      if (result.isConfirmed) {
-        const model: CountryMaster = {
-          ...row,
-          ActionType: ActionType,
-          ReasonToUpdate: result.value
-        };
-        this.countryService.DeleteRecord(model)
+          this.pageService.DeleteReactivate(model)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                this.loadData(this.tableParameters);
+                this.loadData();
                 this.alertService.showAlert({
                   type: "success",
                   text: response.Message,
@@ -138,15 +164,15 @@ export class IndexComponent implements OnInit, OnDestroy {
                 });
               }
               else {
-                this.alertService.showServerResponseAlert({
-                  Status: response.Status,
-                  Message: response.Message,
-                  ValidationErrors: response.ValidationErrors
-                });
+                this.alertService.showServerResponseAlert(response);
               }
             }
-        });
-      }
-    });
+          });
+        }
+      });
+    }
+    catch (error) {
+
+    }
   }
 }

@@ -1,7 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ItemGroup_SelectList } from '../../../../components/Item-Group/item-group';
 import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
@@ -38,7 +37,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     private pageService: ItemCategoryMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
-    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {

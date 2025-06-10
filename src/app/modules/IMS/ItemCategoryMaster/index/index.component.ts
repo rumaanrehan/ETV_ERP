@@ -71,11 +71,11 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(ItemCategoryID: number, activeStatus: boolean) {
+  onClickEditDetails(itemCategoryID: number, activeStatus: boolean) {
     try {
-      if (this.createSidebar && ItemCategoryID) {
+      if (this.createSidebar && itemCategoryID) {
         this.pageService
-          .GetDetails(ItemCategoryID)
+          .GetDetails(itemCategoryID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

@@ -8,7 +8,7 @@ import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../../shared/services/form-validation.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { ModuleMasterList } from '../../ModuleMaster/module-master';
+import { ModuleMaster_SelectList } from '../../ModuleMaster/module-master';
 import { ModuleMasterService } from '../../ModuleMaster/module-master.service';
 import { FormatForList, NumberFormat, NumberFormatList } from '../../NumberFormat/number-format';
 import { NumberFormatService } from '../../NumberFormat/number-format.service';
@@ -29,7 +29,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<NumberFormat>;
   tableData: NumberFormatList[] = [];
-  ModuleList: ModuleMasterList[] = [];
+  moduleList: ModuleMaster_SelectList[] = [];
   CounterList: SelectList[] = [];
   BillingSectionList: SelectList[] = [];
   RestartTypeList: SelectList[] = [];
@@ -65,7 +65,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            this.ModuleList = response.Data.Items;
+            this.moduleList = response.Data.Items;
           } else {
             this.alertService.showServerResponseAlert(response);
           }

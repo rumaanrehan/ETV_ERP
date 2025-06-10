@@ -2,28 +2,29 @@ export interface DepartmentMaster {
   DepartmentID: number | null;
   DepartmentCode: string | null;
   DepartmentName: string | null;
-  IsSubDepartment: boolean | null;
   ShortCode: string | null;
-  DepartmentTypeID: number | null;
+  IsSubDepartment: boolean | null;
   ParentDepartmentID: number | null;
-  IsAllowedForOP: boolean | null;
-  IsAllowedForIP: boolean | null;
-  DepartmentLocation: string | null;
-  NMC_DepartmentCode: string | null;
 }
 
-export interface DepartmentMasterList {
+export interface DepartmentMaster_SelectList {
+  DepartmentID: number;
+  DepartmentName: string;
+}
+
+export interface DepartmentMaster_IndexTableFilter {
+  DepartmentCode: string | null;
+  DepartmentName: string | null;
+  ParentDepartmentName: string | null;
+  ActiveStatusID: number | null;
+}
+
+export interface DepartmentMaster_IndexTableList {
   RowID: number;
   DepartmentID: number;
   DepartmentCode: string;
   DepartmentName: string;
-  IsSubDepartment: boolean;
   ShortCode: string;
-  DepartmentTypeName: string;
   ParentDepartmentName: string;
-  IsAllowedForOP: boolean;
-  IsAllowedForIP: boolean;
-  DepartmentLocation: string;
-  ActionType: string | null;
   ActiveStatus: boolean;
 }

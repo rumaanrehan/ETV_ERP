@@ -14,7 +14,7 @@ export interface UOMMaster_IndexTableList {
 export interface UOMMaster_IndexTableFilter {
   UOMCode: string | null;
   UOMName: string | null;
-  ActiveStatus: number | null;
+  ActiveStatusID: number | null;
 }
 
 export interface UOMMaster_SelectList {

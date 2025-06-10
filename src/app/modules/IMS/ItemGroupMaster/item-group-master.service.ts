@@ -14,7 +14,7 @@ import { ItemTypeMasterService } from '../ItemTypeMaster/item-type-master.servic
   providedIn: 'root'
 })
 export class ItemGroupMasterService {
-  private endpoint = 'IMS/ItemGroupMaster';
+  private endpoint = 'IMS/ItemGroup';
 
   constructor(
     private apiService: ApiService,

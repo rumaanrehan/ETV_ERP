@@ -48,7 +48,7 @@ export class UOMMasterService {
     return {
       UOMCode: '',
       UOMName: '',
-      ActiveStatus: 0
+      ActiveStatusID: 0
     }
   }
 

@@ -8,6 +8,8 @@ import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/m
 import { StaticList, StaticListRequest } from '../../../shared/models/select-list';
 import { SelectListService } from '../../../shared/services/select-list.service';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
+import { ItemMaster_SelectList } from '../GenericItemMaster/item-master';
+import { ItemMasterService } from '../GenericItemMaster/item-master.service';
 import { ItemCategoryMaster_SelectList } from '../ItemCategoryMaster/item-category-master';
 import { ItemCategoryMasterService } from '../ItemCategoryMaster/item-category-master.service';
 import { ItemGroupMaster_SelectList } from '../ItemGroupMaster/item-group-master';
@@ -17,8 +19,6 @@ import { ManufacturerMasterService } from '../Manufacturer-Master/manufacturer-m
 import { UOMMaster_SelectList } from '../UOMMaster/UOM-master';
 import { UOMMasterService } from '../UOMMaster/UOM-master.service';
 import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from './product-master';
-import { ItemMasterService } from '../GenericItemMaster/item-master.service';
-import { ItemMaster_SelectList } from '../GenericItemMaster/item-master';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +44,7 @@ export class ProductMasterService {
     itemGroupList: ApiListResponse<ItemGroupMaster_SelectList>;
     itemCategoryList: ApiListResponse<ItemCategoryMaster_SelectList>;
     itemList: ApiListResponse<ItemMaster_SelectList>;
-    manufactBy urerList: ApiListResponse<ManufacturerMaster_SelectList>;
+    manufacturerList: ApiListResponse<ManufacturerMaster_SelectList>;
     uOMList: ApiListResponse<UOMMaster_SelectList>;
     }> {
     return forkJoin({

@@ -1,72 +1,99 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { Environment } from '../../../../../environments/environment';
+import { forkJoin, Observable } from 'rxjs';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { FormConfigType } from '../../../../shared/models/form.model';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { DepartmentMaster, DepartmentMasterList } from './department-master';
+import { DepartmentMaster, DepartmentMaster_IndexTableFilter, DepartmentMaster_IndexTableList, DepartmentMaster_SelectList } from './department-master';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DepartmentMasterService {
-  private apiUrl: string;
+  private endpoint = 'Admin/DepartmentMaster';
 
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
+  constructor(
+    private apiService: ApiService
+  ) { }
+  
+  GetMasterDropdownLists(): Observable<{ 
+    parentDepartmentList: ApiListResponse<DepartmentMaster_SelectList>;
+    }> {
+    return forkJoin({
+      parentDepartmentList: this.PopulateList("SelectList"),
+    });
   }
 
+  PopulateList(populateType: string): Observable<ApiListResponse<DepartmentMaster_SelectList>> {
+      return this.apiService.post<ApiListResponse<DepartmentMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${populateType}`, {} );
+  }
+
+  PopulateGrid(model: DataTableParams<DepartmentMaster_IndexTableFilter>): Observable<ApiPagedListResponse<DepartmentMaster_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<DepartmentMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  }
+
+  GetDetails(departmentID: number): Observable<ApiDataResponse<DepartmentMaster>> {
+    return this.apiService.post<ApiDataResponse<DepartmentMaster>>(`${this.endpoint}/GetDetails?DepartmentID=${departmentID}`, {});
+  }
+
+  CreateRecord(model: DepartmentMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
+  }
+
+  UpdateRecord(model: DepartmentMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+  }
+
+  DeleteReactivate(model: DepartmentMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  }
+  
   //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<DepartmentMaster_IndexTableFilter> {
+    return {
+      DepartmentCode: '',
+      DepartmentName: '',
+      ParentDepartmentName: '',
+      ActiveStatusID: 0
+    }
+  }
+
   getFormConfig(): FormConfigType<DepartmentMaster> {
     return {
       DepartmentID: {
         label: '',
         defaultValue: null,
-        validators: [],
-        validationMessages: {}
       },
       DepartmentCode: {
         label: 'Department Code',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
+        defaultValue: 'NEW'
       },
       DepartmentName: {
         label: 'Department Name',
         defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
+        validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Department Name is Required.',
-          maxlength: 'Department Name cannot be longer than 50 characters.'
-        },
-        type: 'control'
-      },
-      IsSubDepartment: {
-        label: 'IsSubDepartment',
-        defaultValue: false,
-        validators: [],
-        validationMessages: {}
+          required: 'Department Name is required'
+        }
       },
       ShortCode: {
-        label: ' ShortCode',
+        label: ' Short Code',
         defaultValue: null,
         validators: [Validators.maxLength(6)],
         validationMessages: {
+          required: 'Short Code is required',
           maxlength: 'Maximum 6 character allowed.'
         },
         type: 'control'
       },
-      DepartmentTypeID: {
-        label: 'Department Type',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'Please select an option from the Department Type List.',
-        },
-        type: 'control'
+      IsSubDepartment: {
+        label: 'Is Sub Department??',
+        defaultValue: false,
+        validators: [],
+        validationMessages: {}
       },
       ParentDepartmentID: {
         label: 'Parent Department',
@@ -77,55 +104,6 @@ export class DepartmentMasterService {
         },
         type: 'control'
       },
-      IsAllowedForOP: {
-        label: 'Is Allowed For OP',
-        defaultValue: false,
-        validators: [],
-        validationMessages: {}
-      },
-      IsAllowedForIP: {
-        label: 'Is Allowed For IP',
-        defaultValue: false,
-        validators: [],
-        validationMessages: {}
-      },
-      DepartmentLocation: {
-        label: 'Location/Room No.',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
-      },
-      NMC_DepartmentCode: {
-        label: 'NMC Department',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
-      },
     };
-  }
-  //#endregion
-
-  PopulateList(DepartmentTypeID?: number, PopulateType?: any): Observable<ApiListResponse<DepartmentMasterList>> {
-    return this.http.post<ApiListResponse<DepartmentMasterList>>(`${this.apiUrl}Admin/DepartmentMaster/PopulateList?DepartmentTypeID=${DepartmentTypeID}&PopulateType=${PopulateType}`, {});
-  }
-
-  PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<DepartmentMasterList>> {
-    return this.http.post<ApiPagedListResponse<DepartmentMasterList>>(`${this.apiUrl}Admin/DepartmentMaster/PopulateGrid`, tabledata);
-  }
-
-  GetDetails(DepartmentID: number): Observable<ApiDataResponse<DepartmentMaster>> {
-    return this.http.post<ApiDataResponse<DepartmentMaster>>(`${this.apiUrl}Admin/DepartmentMaster/GetDetails?DepartmentID=${DepartmentID}`, {});
-  }
-
-  CreateRecord(model: DepartmentMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DepartmentMaster/Create`, model);
-  }
-
-  UpdateRecord(model: DepartmentMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DepartmentMaster/Edit`, model);
-  }
-
-  DeleteRecord(model: DepartmentMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DepartmentMaster/Delete`, model);
   }
 }

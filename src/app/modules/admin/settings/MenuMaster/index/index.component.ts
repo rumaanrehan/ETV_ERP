@@ -5,7 +5,7 @@ import { IndexTableComponent, IndexTableParams } from '../../../../../shared/com
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../../shared/services/form-validation.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { MenuMaster, MenuMasterList } from '../menu-master';
+import { MenuMaster, MenuMaster_SelectList } from '../menu-master';
 import { MenuMasterService } from '../menu-master.service';
 import { CreateComponent } from '../create/create.component';
 import { CommonModule } from '@angular/common';
@@ -28,7 +28,7 @@ export class IndexComponent {
   @ViewChild('menuMasterActiveStatusTemplate', { static: true }) menuMasterActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
-  tableDef!: IndexTableParams<MenuMasterList>;
+  tableDef!: IndexTableParams<MenuMaster_SelectList>;
   tableParameters!: TableLazyLoadEvent;
 
   constructor(
@@ -72,35 +72,35 @@ export class IndexComponent {
 
   onIndexTableLazyLoad(event: TableLazyLoadEvent) {
     this.tableParameters = event;
-    this.loadData(this.tableParameters);
+    // this.loadData();
   }
 
   onCloseSidebar(): void {
-    this.loadData(this.tableParameters);
+    // this.loadData();
   }
 
-  loadData(event: TableLazyLoadEvent) {
-    try {
-      this.pageService.PopulateGrid(event)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.tableDef.loading = false;
-          }
-        });
-    } catch (error) {
+  // loadData() {
+  //   try {
+  //     this.pageService.PopulateGrid(any)
+  //       .pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (response) => {
+  //           if (response.IsSuccess) {
+  //             this.tableDef.data = response.Data.Items;
+  //             this.tableDef.totalRecords = response.Data.TotalRecords;
+  //           }
+  //           else {
+  //             this.alertService.showServerResponseAlert(response);
+  //           }
+  //         },
+  //         complete: () => {
+  //           this.tableDef.loading = false;
+  //         }
+  //       });
+  //   } catch (error) {
 
-    }
-  }
+  //   }
+  // }
 
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
@@ -150,12 +150,12 @@ export class IndexComponent {
               ReasonToUpdate: result.value
             };
 
-            this.pageService.DeleteRecord(model)
+            this.pageService.DeleteReactivate(model)
               .pipe(takeUntil(this.destroy$))
               .subscribe({
                 next: (response) => {
                   if (response.IsSuccess) {
-                    this.loadData(this.tableParameters);
+                    // this.loadData();
                     this.alertService.showAlert({
                       type: "success",
                       text: response.Message,

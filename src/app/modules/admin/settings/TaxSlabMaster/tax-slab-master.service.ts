@@ -26,7 +26,7 @@ export class TaxSlabMasterService {
   }
     
   PopulateList(PopulateType: any): Observable<ApiListResponse<TaxSlab_SelectList>> {
-    return this.apiService.post<ApiListResponse<TaxSlab_SelectList>>(`${this.endpoint}PopulateList?PopulateType=${PopulateType}`, {});
+    return this.apiService.post<ApiListResponse<TaxSlab_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {});
   }
 
   PopulateGrid(model: DataTableParams<TaxSlab_IndexTableFilter>): Observable<ApiPagedListResponse<TaxSlab_IndexTableList>> {
@@ -55,6 +55,8 @@ export class TaxSlabMasterService {
     return {
       TaxSlabCode: '',
       TaxSlabName: '',
+      TaxRate: 0,
+      TaxType: 0,
       ActiveStatusID: 0
     }
   }

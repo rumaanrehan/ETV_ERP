@@ -13,8 +13,8 @@ export interface NumberFormat {
   Suffix: string | null;
   EffectiveFromDate: Date | null;
   RestartType: string;
-
 }
+
 export interface NumberFormatList {
   NumberFormatID: number;
   SampleNumberFormat: string;
@@ -35,6 +35,7 @@ export interface NumberFormatList {
   CreatedDateTime: string;
   ActiveStatus: boolean;
 }
+
 export interface FormatForList {
   Value: string;
   Text: string;

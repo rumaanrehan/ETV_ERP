@@ -13,7 +13,7 @@ import { FormService } from "../../../../../shared/services/form.service";
 import { PageHeaderService } from "../../../../../shared/services/page-header.service";
 import { EmployeeRegistrationList } from "../../../../admin/Transactions/EmployeeRegistration/employee-registration";
 import { EmployeeRegistrationService } from "../../../../admin/Transactions/EmployeeRegistration/employee-registration.service";
-import { DepartmentMasterList } from "../../../../admin/settings/DepartmentMaster/department-master";
+import { DepartmentMaster_SelectList } from "../../../../admin/settings/DepartmentMaster/department-master";
 import { DepartmentMasterService } from "../../../../admin/settings/DepartmentMaster/department-master.service";
 import { DesignationMasterList } from "../../../../admin/settings/DesignationMaster/designation-master";
 import { DesignationMasterService } from "../../../../admin/settings/DesignationMaster/designation-master.service";
@@ -29,7 +29,7 @@ import { EmployeeTypeMasterList } from "../../../../admin/settings/EmployeeTypeM
   standalone: true,
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  imports: [IndexTableComponent, DatePipe, CommonModule, ReactiveFormsModule, ZFormControlsModule],
+  imports: [IndexTableComponent, CommonModule, ReactiveFormsModule, ZFormControlsModule],
   providers: [FormValidationService]
 })
 export class IndexComponent implements OnInit, OnDestroy {
@@ -46,7 +46,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<rptEmployeeRegister>;
   EmployeeTypeList: EmployeeTypeMasterList[] = []; 
-  DepartmentList: DepartmentMasterList[] = []; 
+  DepartmentList: DepartmentMaster_SelectList[] = []; 
   DesignationList: DesignationMasterList[] = []; 
   DateRangeList: SelectList[] = []; 
   GroupByList: SelectList[] = []; 
@@ -176,7 +176,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadDepartment(): void {
     try {
-      this.departmentMasterService.PopulateList(1, 'SelectList').subscribe({
+      this.departmentMasterService.PopulateList('SelectList').subscribe({
         next: (response) => {
           if (response.IsSuccess) {
             this.DepartmentList = response.Data.Items;

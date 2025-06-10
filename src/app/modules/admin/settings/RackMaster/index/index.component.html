@@ -1,0 +1,30 @@
+<!-- Page Header Action Button Template -->
+<ng-template #pageHeaderActionTemplate>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add Rack</button>
+</ng-template>
+
+<!-- Index Table Component -->
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef"
+    (lazyLoad)="onIndexTableLazyLoad($event)">
+  </z-datatable>
+</div>
+
+<!-- Table Column Custom Template -->
+<ng-template #rackCodeTemplate let-row>
+    <span class="table-action-link" (click)="onClickEditDetails(row.RackID, row.ActiveStatus)" style="cursor: pointer;">{{ row.RackCode }}</span>
+</ng-template>
+
+<ng-template #rackActiveStatusTemplate let-row>
+  <span class="badge {{ row.ActiveStatus ? 'bg-outline-success' : 'bg-outline-danger' }}">
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+  <div class="d-flex justify-content-end">
+    <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
+  </div>
+</ng-template>
+
+<app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>

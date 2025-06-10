@@ -29,8 +29,8 @@ export class ItemCategoryMasterService {
     });
   }
 
-  PopulateList(PopulateType: any): Observable<ApiListResponse<ItemCategoryMaster_SelectList>> {
-    return this.apiService.post<ApiListResponse<ItemCategoryMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {} );
+  PopulateList(populateType: string): Observable<ApiListResponse<ItemCategoryMaster_SelectList>> {
+    return this.apiService.post<ApiListResponse<ItemCategoryMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${populateType}`, {} );
   }
 
   PopulateGrid(model: DataTableParams<ItemCategoryMaster_IndexFilter>): Observable<ApiPagedListResponse<ItemCategoryMaster_IndexList>> {

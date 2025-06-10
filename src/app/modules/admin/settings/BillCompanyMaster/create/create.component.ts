@@ -8,12 +8,12 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { CountryMasterList } from '../../country-master/country-master';
+import { CountryMaster_SelectList } from '../../country-master/country-master';
 import { CountryMasterService } from '../../country-master/country-master.service';
-import { StateMasterList } from '../../StateMaster/state-master';
 import { StateMasterService } from '../../StateMaster/state-master.service';
 import { BillCompanyMaster } from '../bill-company-master';
 import { BillCompanyMasterService } from '../bill-company-master.service';
+import { StateMaster_SelectList } from '../../StateMaster/state-master';
 
 @Component({
   selector: 'app-create',
@@ -34,8 +34,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   ActiveStatus: boolean = false;  //For Button Disabled.
   form!: FormGroup;
   formConfig!: FormConfigType<BillCompanyMaster>;
-  CountryList: CountryMasterList[] = [];
-  StateList: StateMasterList[] = [];
+  CountryList: CountryMaster_SelectList[] = [];
+  StateList: StateMaster_SelectList[] = [];
   defaultCountryID: number | null = null;
   defaultStateID: number | null = null;
 
@@ -67,7 +67,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       model.BillCompanyCountryID = this.defaultCountryID;
       model.BillCompanyStateID = this.defaultStateID;
     }
-    this.loadState(model.BillCompanyCountryID, isEditMode, model.BillCompanyStateID);
+    this.loadState();
     this.form.patchValue({
       ...model,
       BillCompanyCountryID: model.BillCompanyCountryID,
@@ -84,7 +84,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.CountryList = response.Data.Items;
             this.defaultCountryID = this.CountryList.find(country => country.IsDefault)?.CountryID ?? this.CountryList[0].CountryID;
             this.form.get('BillCompanyCountryID')?.setValue(this.defaultCountryID);
-            this.loadState(this.defaultCountryID);
+            this.loadState();
           } else {
             this.CountryList = [];
             this.alertService.showServerResponseAlert({
@@ -101,34 +101,24 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadState(CountryID: any, isEditMode: boolean = false, selectedStateID: number | null = null): void {
+  loadState(): void {
     try {
-      this.stateService.PopulateList(CountryID, 'SelectList')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.StateList = response.Data.Items;
-              const stateToSet = isEditMode ? selectedStateID : this.StateList.find(state => state.IsDefault)?.StateID ?? this.StateList[0]?.StateID;
-              this.defaultStateID = this.StateList.find(state => state.IsDefault)?.StateID ?? this.StateList[0]?.StateID;
-              if (stateToSet) {
-                this.form.get('BillCompanyStateID')?.setValue(stateToSet);
-              }
-            } else {
-              this.StateList = [];
-            }
-          },
-        });
-    }
-    catch (error) {
-
-    }
+      this.stateService.PopulateList('SelectList').subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.StateList = response.Data.Items;
+          } else {
+            this.StateList = [];
+          }
+        },
+      });
+    } catch (error) {}
   }
 
   onCountryChange(event: DropdownChangeEvent): void {
     const CountryID = this.form.get('BillCompanyCountryID')?.value;
     if (CountryID) {
-      this.loadState(CountryID);
+      this.loadState();
     } else {
       this.StateList = [];
     }
