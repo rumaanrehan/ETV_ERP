@@ -7,8 +7,8 @@ import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } f
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
 import { ItemType_SelectList } from '../item-type-master/item-type-master';
-import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
 import { ItemGroup_IndexTableFilter, ItemGroup_IndexTableList, ItemGroup_SelectList, ItemGroupMaster } from './item-group-master';
+import { ItemTypeMasterService } from './../item-type-master/item-type-master.service';
 
 @Injectable({
   providedIn: 'root'

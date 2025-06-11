@@ -8,7 +8,7 @@ import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { ManufacturerMaster, ManufacturerMaster_IndexTableFilter, ManufacturerMaster_IndexTableList } from '../manufacturer-master';
 import { ManufacturerMasterService } from '../manufacturer-master.service';
-import { CreateComponent } from '../create/create.component';
+import { CreateComponent } from '../../../ims/manufacturer-master/create/create.component';
 
 @Component({
   selector: 'app-index',
