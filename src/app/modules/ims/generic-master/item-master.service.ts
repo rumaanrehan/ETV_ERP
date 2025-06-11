@@ -6,8 +6,8 @@ import { DataTableParams } from '../../../shared/components/z-datatable/z-datata
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { ItemCategoryMaster_SelectList } from '../ItemCategoryMaster/item-category-master';
-import { ItemCategoryMasterService } from '../ItemCategoryMaster/item-category-master.service';
+import { ItemCategory_SelectList } from '../item-category-master/item-category-master';
+import { ItemCategoryMasterService } from '../item-category-master/item-category-master.service';
 import { ItemMaster, ItemMaster_IndexTableFilter, ItemMaster_IndexTableList, ItemMaster_SelectList } from './item-master';
 
 @Injectable({
@@ -22,7 +22,7 @@ export class ItemMasterService {
   ) {}
 
   GetMasterDropdownLists(): Observable<{ 
-    itemCategoryMasterList: ApiListResponse<ItemCategoryMaster_SelectList>;
+    itemCategoryMasterList: ApiListResponse<ItemCategory_SelectList>;
     }> {
     return forkJoin({
       itemCategoryMasterList: this.itemCategoryMasterService.PopulateList("SelectList"),

@@ -10,13 +10,13 @@ import { StaticList } from '../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
-import { ItemCategoryMaster_SelectList } from '../../ItemCategoryMaster/item-category-master';
-import { ManufacturerMaster_SelectList } from '../../Manufacturer-Master/manufacturer-master';
-import { UOMMaster_SelectList } from '../../UOMMaster/UOM-master';
+import { ItemCategory_SelectList } from '../../item-category-master/item-category-master';
+import { ManufacturerMaster_SelectList } from '../../manufacturer-master/manufacturer-master';
+import { UOMMaster_SelectList } from '../../uom-master/UOM-master';
 import { ProductMasterService } from '../product-master.service';
 import { ProductMaster } from './../product-master';
-import { ItemGroupMaster_SelectList } from '../../ItemGroupMaster/item-group-master';
-import { ItemMaster_SelectList } from '../../GenericItemMaster/item-master';
+import { ItemGroup_SelectList } from '../../item-group-master/item-group-master';
+import { ItemMaster_SelectList } from '../../generic-master/item-master';
 
 @Component({
   selector: 'app-create',
@@ -34,8 +34,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<ProductMaster>;
 
-  itemGroupList: ItemGroupMaster_SelectList[] = [];
-  itemCategoryList: ItemCategoryMaster_SelectList[] = [];
+  itemGroupList: ItemGroup_SelectList[] = [];
+  itemCategoryList: ItemCategory_SelectList[] = [];
   itemList: ItemMaster_SelectList[] = [];
   manufacturerList: ManufacturerMaster_SelectList[] = [];
   uOMList: UOMMaster_SelectList[] = [];

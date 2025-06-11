@@ -3,11 +3,12 @@ import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
 import { DataTableDef, DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatable.component';
+import { DataTableFilterList } from '../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
-import { ItemGroupMaster, ItemGroupMaster_IndexTableFilter, ItemGroupMaster_IndexTableList } from '../item-group-master';
+import { ItemGroupMaster, ItemGroup_IndexTableFilter, ItemGroup_IndexTableList } from '../item-group-master';
 import { ItemGroupMasterService } from '../item-group-master.service';
 
 @Component({
@@ -25,8 +26,10 @@ export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<ItemGroupMaster_IndexTableList>;
+  tableDef!: DataTableDef<ItemGroup_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
+
+  itemTypeFilterList: DataTableFilterList[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -37,12 +40,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-
     this.tableDef = {
       tableKey: 'IMS_ItemGroupMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'ItemGroupCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ItemGroupMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      filterForm: this.formService.createFormGroup_DataTableFilter<ItemGroup_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
@@ -52,7 +54,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'ItemGroupCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.itemGroupCodeTemplate },
       { data: 'ItemGroupName', label: 'Item Group Name', filterable: true },
       { data: 'ItemTypeName', label: 'Item Type', filterable: true, filterType: 'select', filterKey: 'ItemTypeID' },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.itemGroupActiveStatusTemplate, },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.itemGroupActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -101,7 +103,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     try {
-      const model: DataTableParams<ItemGroupMaster_IndexTableFilter> = {
+      const model: DataTableParams<ItemGroup_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,

@@ -8,7 +8,7 @@ import { FormValidationService } from '../../../../shared/services/form-validati
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
-import { ItemCategoryMaster, ItemCategoryMaster_IndexFilter, ItemCategoryMaster_IndexList } from '../item-category-master';
+import { ItemCategoryMaster, ItemCategory_IndexFilter, ItemCategory_IndexList } from '../item-category-master';
 import { ItemCategoryMasterService } from '../item-category-master.service';
 
 @Component({
@@ -27,7 +27,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<ItemCategoryMaster_IndexList>;
+  tableDef!: DataTableDef<ItemCategory_IndexList>;
   tableEvent!: DataTableLazyLoadEvent;
 
   constructor(
@@ -43,7 +43,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       tableKey: 'IMS_ItemCategoryMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'ItemCategoryCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ItemCategoryMaster_IndexFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      filterForm: this.formService.createFormGroup_DataTableFilter<ItemCategory_IndexFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false,
@@ -80,10 +80,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                const model: ItemCategoryMaster = {
-                  ...response.Data,
-                };
-                this.createSidebar.openSidebar(activeStatus, true, model);
+                this.createSidebar.openSidebar(activeStatus, true, response.Data);
               } else {
                 this.alertService.showServerResponseAlert(response);
               }
@@ -104,7 +101,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData() {
     try {
-      const model: DataTableParams<ItemCategoryMaster_IndexFilter> = {
+      const model: DataTableParams<ItemCategory_IndexFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,

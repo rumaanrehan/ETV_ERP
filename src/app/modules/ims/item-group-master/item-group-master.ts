@@ -5,12 +5,12 @@ export interface ItemGroupMaster {
     ItemTypeID: number | null;
 }
 
-export interface ItemGroupMaster_SelectList {
+export interface ItemGroup_SelectList {
     ItemGroupID: number | null;
     ItemGroupName: string | null;
 }
 
-export interface ItemGroupMaster_IndexTableList {
+export interface ItemGroup_IndexTableList {
     ItemGroupID: number | null;
     ItemGroupCode: string | null;
     ItemGroupName: string | null;
@@ -18,7 +18,7 @@ export interface ItemGroupMaster_IndexTableList {
     ActiveStatus: boolean;
 }
 
-export interface ItemGroupMaster_IndexTableFilter {
+export interface ItemGroup_IndexTableFilter {
     ItemGroupCode: string | null;
     ItemGroupName: string | null;
     ItemTypeID: number | null;

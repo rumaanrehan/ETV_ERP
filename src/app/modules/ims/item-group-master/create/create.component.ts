@@ -6,9 +6,9 @@ import { ZFormControlsModule } from '../../../../shared/components/z-form-contro
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
-import { ItemCategoryMaster_SelectList } from '../../ItemCategoryMaster/item-category-master';
-import { ItemMaster } from '../item-master';
-import { ItemMasterService } from '../item-master.service';
+import { ItemType_SelectList } from '../../item-type-master/item-type-master';
+import { ItemGroupMaster } from '../item-group-master';
+import { ItemGroupMasterService } from '../item-group-master.service';
 
 @Component({
   selector: 'app-create',
@@ -27,19 +27,19 @@ export class CreateComponent implements OnInit, OnDestroy {
   activeStatus: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<ItemMaster>;
+  formConfig!: FormConfigType<ItemGroupMaster>;
 
-  itemCategoryList: ItemCategoryMaster_SelectList[] = [];
+  itemTypeList: ItemType_SelectList[] = [];
 
   constructor(
-    private pageService: ItemMasterService,
+    private pageService: ItemGroupMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ItemMaster>(this.formConfig);
+    this.form = this.formService.createFormGroup<ItemGroupMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.loadDropdownList();
   }
@@ -49,19 +49,17 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList(): void {
+  loadDropdownList(): void  {
     this.pageService.GetMasterDropdownLists()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          if(data.itemCategoryMasterList.IsSuccess) {
-            this.itemCategoryList = data.itemCategoryMasterList.Data.Items;
-          }
-        }
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.itemTypeList = data.itemTypeList.Data.Items;
+      },
     });
   }
 
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ItemMaster): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ItemGroupMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
@@ -69,11 +67,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
-  
+
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<ItemMaster>(this.formConfig, this.form);
+    this.formService.resetFormValue<ItemGroupMaster>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -97,7 +95,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: ItemMaster = {
+            const model: ItemGroupMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
@@ -117,22 +115,26 @@ export class CreateComponent implements OnInit, OnDestroy {
    }
   }
   
-  createRecord(model: ItemMaster): void {
+  createRecord(model: ItemGroupMaster): void {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((response) => {
-        if (response.IsSuccess) {
-          this.closeSidebar();
-          this.alertService.showAlert({
-            type: 'success',
-            text: response.Message,
-            timer: 5000,
-          });
-        } else {
-          this.alertService.showServerResponseAlert(response);
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: 'success',
+              text: response.Message,
+              timer: 5000,
+            });
+          } else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
         }
-        this.isSubmitted = false;
       });
     }
     catch (error) {
@@ -140,7 +142,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: ItemMaster): void {
+  updateRecord(model: ItemGroupMaster): void {
     try {
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))

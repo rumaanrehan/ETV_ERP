@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
-import { ItemTypeMaster_SelectList } from './item-type-master';
+import { ItemType_SelectList } from './item-type-master';
 import { ApiListResponse } from '../../../shared/models/api-response';
 import { Observable } from 'rxjs';
 
@@ -14,7 +14,7 @@ export class ItemTypeMasterService {
     private apiService: ApiService
   ) { }
 
-  PopulateList(): Observable<ApiListResponse<ItemTypeMaster_SelectList>> {
-    return this.apiService.post<ApiListResponse<ItemTypeMaster_SelectList>>( `${this.endpoint}/PopulateList`, {} );
+  PopulateList(): Observable<ApiListResponse<ItemType_SelectList>> {
+    return this.apiService.post<ApiListResponse<ItemType_SelectList>>(`${this.endpoint}/PopulateList`, {});
   }
 }

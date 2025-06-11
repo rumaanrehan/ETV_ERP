@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ItemGroup_SelectList } from '../../../../components/Item-Group/item-group';
 import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
@@ -86,7 +85,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
     try {
       // Handle invalid form
       if (this.form.invalid) {
@@ -130,6 +128,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              this.closeSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,

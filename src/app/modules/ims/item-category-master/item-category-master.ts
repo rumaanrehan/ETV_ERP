@@ -5,19 +5,19 @@ export interface ItemCategoryMaster {
   ItemGroupID: number | null;
 }
 
-export interface ItemCategoryMaster_SelectList {
+export interface ItemCategory_SelectList {
   ItemCategoryID: number | null;
   ItemCategoryName: string | null;
 }
 
-export interface ItemCategoryMaster_IndexFilter {
+export interface ItemCategory_IndexFilter {
   ItemCategoryCode: string;
   ItemCategoryName: string;
   ItemGroupName: string;
   ActiveStatusID: number | null;
 }
 
-export interface ItemCategoryMaster_IndexList {
+export interface ItemCategory_IndexList {
   RowID: number;
   ItemCategoryID: number;
   ItemCategoryCode: string;

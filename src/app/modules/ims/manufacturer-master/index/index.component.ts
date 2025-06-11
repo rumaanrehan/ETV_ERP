@@ -6,9 +6,9 @@ import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatabl
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
-import { CreateComponent } from '../create/create.component';
 import { ManufacturerMaster, ManufacturerMaster_IndexTableFilter, ManufacturerMaster_IndexTableList } from '../manufacturer-master';
 import { ManufacturerMasterService } from '../manufacturer-master.service';
+import { CreateComponent } from '../create/create.component';
 
 @Component({
   selector: 'app-index',

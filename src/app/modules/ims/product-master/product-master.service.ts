@@ -8,16 +8,16 @@ import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/m
 import { StaticList, StaticListRequest } from '../../../shared/models/select-list';
 import { SelectListService } from '../../../shared/services/select-list.service';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { ItemMaster_SelectList } from '../GenericItemMaster/item-master';
-import { ItemMasterService } from '../GenericItemMaster/item-master.service';
-import { ItemCategoryMaster_SelectList } from '../ItemCategoryMaster/item-category-master';
-import { ItemCategoryMasterService } from '../ItemCategoryMaster/item-category-master.service';
-import { ItemGroupMaster_SelectList } from '../ItemGroupMaster/item-group-master';
-import { ItemGroupMasterService } from '../ItemGroupMaster/item-group-master.service';
-import { ManufacturerMaster_SelectList } from '../Manufacturer-Master/manufacturer-master';
-import { ManufacturerMasterService } from '../Manufacturer-Master/manufacturer-master.service';
-import { UOMMaster_SelectList } from '../UOMMaster/UOM-master';
-import { UOMMasterService } from '../UOMMaster/UOM-master.service';
+import { ItemMaster_SelectList } from '../generic-master/item-master';
+import { ItemMasterService } from '../generic-master/item-master.service';
+import { ItemCategory_SelectList } from '../item-category-master/item-category-master';
+import { ItemCategoryMasterService } from '../item-category-master/item-category-master.service';
+import { ItemGroup_SelectList } from '../item-group-master/item-group-master';
+import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
+import { ManufacturerMaster_SelectList } from '../manufacturer-master/manufacturer-master';
+import { ManufacturerMasterService } from '../manufacturer-master/manufacturer-master.service';
+import { UOMMaster_SelectList } from '../uom-master/UOM-master';
+import { UOMMasterService } from '../uom-master/UOM-master.service';
 import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from './product-master';
 
 @Injectable({
@@ -41,8 +41,8 @@ export class ProductMasterService {
   }
 
   GetMasterDropdownLists(): Observable<{ 
-    itemGroupList: ApiListResponse<ItemGroupMaster_SelectList>;
-    itemCategoryList: ApiListResponse<ItemCategoryMaster_SelectList>;
+    itemGroupList: ApiListResponse<ItemGroup_SelectList>;
+    itemCategoryList: ApiListResponse<ItemCategory_SelectList>;
     itemList: ApiListResponse<ItemMaster_SelectList>;
     manufacturerList: ApiListResponse<ManufacturerMaster_SelectList>;
     uOMList: ApiListResponse<UOMMaster_SelectList>;

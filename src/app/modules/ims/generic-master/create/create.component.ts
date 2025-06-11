@@ -6,9 +6,9 @@ import { ZFormControlsModule } from '../../../../shared/components/z-form-contro
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
-import { ItemTypeMaster_SelectList } from '../../ItemTypeMaster/item-type-master';
-import { ItemGroupMaster } from '../item-group-master';
-import { ItemGroupMasterService } from '../item-group-master.service';
+import { ItemCategory_SelectList } from '../../item-category-master/item-category-master';
+import { ItemMaster } from '../item-master';
+import { ItemMasterService } from '../item-master.service';
 
 @Component({
   selector: 'app-create',
@@ -27,19 +27,19 @@ export class CreateComponent implements OnInit, OnDestroy {
   activeStatus: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<ItemGroupMaster>;
+  formConfig!: FormConfigType<ItemMaster>;
 
-  itemTypeList: ItemTypeMaster_SelectList[] = [];
+  itemCategoryList: ItemCategory_SelectList[] = [];
 
   constructor(
-    private pageService: ItemGroupMasterService,
+    private pageService: ItemMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ItemGroupMaster>(this.formConfig);
+    this.form = this.formService.createFormGroup<ItemMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.loadDropdownList();
   }
@@ -49,17 +49,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList() {
+  loadDropdownList(): void {
     this.pageService.GetMasterDropdownLists()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        this.itemTypeList = data.itemTypeList.Data.Items;
-      },
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          if(data.itemCategoryMasterList.IsSuccess) {
+            this.itemCategoryList = data.itemCategoryMasterList.Data.Items;
+          }
+        }
     });
   }
 
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ItemGroupMaster): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ItemMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
@@ -67,11 +69,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
-
+  
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<ItemGroupMaster>(this.formConfig, this.form);
+    this.formService.resetFormValue<ItemMaster>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -95,7 +97,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: ItemGroupMaster = {
+            const model: ItemMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
@@ -115,7 +117,7 @@ export class CreateComponent implements OnInit, OnDestroy {
    }
   }
   
-  createRecord(model: ItemGroupMaster): void {
+  createRecord(model: ItemMaster): void {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
@@ -138,7 +140,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: ItemGroupMaster): void {
+  updateRecord(model: ItemMaster): void {
     try {
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))

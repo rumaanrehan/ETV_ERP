@@ -6,9 +6,9 @@ import { DataTableParams } from '../../../shared/components/z-datatable/z-datata
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { ItemGroupMaster_SelectList } from '../ItemGroupMaster/item-group-master';
-import { ItemGroupMasterService } from '../ItemGroupMaster/item-group-master.service';
-import { ItemCategoryMaster, ItemCategoryMaster_IndexFilter, ItemCategoryMaster_IndexList, ItemCategoryMaster_SelectList } from './item-category-master';
+import { ItemGroup_SelectList } from '../item-group-master/item-group-master';
+import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
+import { ItemCategoryMaster, ItemCategory_IndexFilter, ItemCategory_IndexList, ItemCategory_SelectList } from './item-category-master';
 
 @Injectable({
   providedIn: 'root',
@@ -22,19 +22,19 @@ export class ItemCategoryMasterService {
   ) { }
 
   GetMasterDropdownLists(): Observable<{ 
-    itemGroupList: ApiListResponse<ItemGroupMaster_SelectList>;
+    itemGroupList: ApiListResponse<ItemGroup_SelectList>;
     }> {
     return forkJoin({
       itemGroupList: this.itemGroupService.PopulateList("SelectList"),
     });
   }
 
-  PopulateList(populateType: string): Observable<ApiListResponse<ItemCategoryMaster_SelectList>> {
-    return this.apiService.post<ApiListResponse<ItemCategoryMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${populateType}`, {} );
+  PopulateList(populateType: string): Observable<ApiListResponse<ItemCategory_SelectList>> {
+    return this.apiService.post<ApiListResponse<ItemCategory_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${populateType}`, {});
   }
 
-  PopulateGrid(model: DataTableParams<ItemCategoryMaster_IndexFilter>): Observable<ApiPagedListResponse<ItemCategoryMaster_IndexList>> {
-    return this.apiService.post<ApiPagedListResponse<ItemCategoryMaster_IndexList>>(`${this.endpoint}/PopulateGrid`, model);
+  PopulateGrid(model: DataTableParams<ItemCategory_IndexFilter>): Observable<ApiPagedListResponse<ItemCategory_IndexList>> {
+    return this.apiService.post<ApiPagedListResponse<ItemCategory_IndexList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
   GetDetails(ItemCategoryID: number): Observable<ApiDataResponse<ItemCategoryMaster>> {
@@ -53,7 +53,7 @@ export class ItemCategoryMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ItemCategoryMaster_IndexFilter>{
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ItemCategory_IndexFilter>{
     return {
       ItemCategoryCode: '',
       ItemCategoryName: '',
@@ -90,8 +90,8 @@ export class ItemCategoryMasterService {
         validators: [Validators.required],
         validationMessages: {
           required: 'Item Group is required.'
-        }        
-      },
+        }
+      }
     };
   }
 }
