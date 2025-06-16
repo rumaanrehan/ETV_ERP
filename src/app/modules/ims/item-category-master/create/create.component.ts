@@ -9,6 +9,8 @@ import { AlertNotificationService } from '../../../../shared/services/alert-noti
 import { FormService } from '../../../../shared/services/form.service';
 import { ItemCategoryMaster } from '../item-category-master';
 import { ItemCategoryMasterService } from '../item-category-master.service';
+import { ItemType_SelectList } from '../../item-type-master/item-type-master';
+import { ItemGroupRequest } from '../../item-group-master/item-group-master';
 
 @Component({
   selector: 'app-create',
@@ -30,6 +32,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<ItemCategoryMaster>;
 
+  itemTypeList: ItemType_SelectList[] = [];
   itemGroupList: ItemGroup_SelectList[] = [];
 
   constructor(
@@ -55,8 +58,8 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          if(data.itemGroupList.IsSuccess) {
-            this.itemGroupList = data.itemGroupList.Data.Items;
+          if(data.itemTypeMasterList.IsSuccess) {
+            this.itemTypeList = data.itemTypeMasterList.Data.Items;
           }
         }
     });
@@ -79,6 +82,31 @@ export class CreateComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
+  }
+
+  onChange_ItemType(): void {
+    this.loadItemGroup();
+  }
+
+  loadItemGroup(): void {
+    const itemTypeID = this.form.value.ItemTypeID;
+    if(itemTypeID){
+      const dto: ItemGroupRequest = {
+        ItemTypeID: itemTypeID,
+        PopulateType: "SelectList"
+      }
+      this.pageService.LoadItemGroup(dto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.itemGroupList = response.Data.Items;
+          } else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        }
+      });
+    }
   }
 
   onSubmit(): void {

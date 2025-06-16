@@ -8,16 +8,19 @@
               <z-span [text]="form.get('UOMCode')?.value" [label]="formConfig.UOMCode.label"></z-span>
           </div>
           <div class="col-xl-12 form-group">
-              <z-inputtext [group]="form" [control]="'UOMName'" [label]="formConfig.UOMName.label"></z-inputtext>
+              <z-inputtext [group]="form" [control]="'UOMName'" [label]="formConfig.UOMName.label" [validationMessage]="formConfig.UOMName.error"></z-inputtext>
+          </div>
+          <div class="col-xl-12 form-group">
+              <z-inputtext [group]="form" [control]="'ShortCode'" [label]="formConfig.ShortCode.label"></z-inputtext>
           </div>
       </form>
   </div>
   <div sidebarFooter>
       <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
           <div class="col-md-6 pe-1">
-              <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" >
-                  {{ isEditMode ? "Update" : "Save" }}
-              </button>
+                <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
+                    {{ isEditMode ? "Update" : "Save" }}
+                </button>
           </div>
           <div class="col-md-6 ps-1">
               <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>

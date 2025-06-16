@@ -8,12 +8,17 @@
         <z-span [text]="form.get('ItemCategoryCode')?.value" [label]="formConfig.ItemCategoryCode.label"></z-span>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ItemCategoryName'" [label]="formConfig.ItemCategoryName.label"></z-inputtext>
+        <z-select [group]="form" [control]="'ItemTypeID'" [label]="formConfig.ItemTypeID.label"
+          [optionLabel]="'ItemTypeName'" [optionValue]="'ItemTypeID'" [options]="itemTypeList"  (onChange)="onChange_ItemType()">
+        </z-select>
       </div>
       <div class="col-xl-12 form-group">
         <z-select [group]="form" [control]="'ItemGroupID'" [label]="formConfig.ItemGroupID.label"
           [optionLabel]="'ItemGroupName'" [optionValue]="'ItemGroupID'" [options]="itemGroupList">
         </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'ItemCategoryName'" [label]="formConfig.ItemCategoryName.label"></z-inputtext>
       </div>
     </form>
   </div>

@@ -4,16 +4,18 @@
 </ng-template>
   
 <!-- Index Table Component -->
-<div style="overflow-x: auto">
-  <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)"></z-datatable>
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef"
+    (lazyLoad)="onIndexTableLazyLoad($event)">
+  </z-datatable>
 </div>
 
 <!-- Table Column Custom Template -->
-<ng-template #UOMCodeTemplate let-row>
+<ng-template #uomCodeTemplate let-row>
   <span class="table-action-link" (click)="onClickEditDetails(row.UOMID, row.ActiveStatus)" style="cursor: pointer;">{{ row.UOMCode }}</span>
 </ng-template>
 
-<ng-template #UOMMasterActiveStatusTemplate let-row>
+<ng-template #uomMasterActiveStatusTemplate let-row>
   <span class="table-row-status">
     <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
     {{ row.ActiveStatus ? 'Active'  : 'Inactive' }}

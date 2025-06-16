@@ -6,8 +6,8 @@ import { DataTableParams } from '../../../shared/components/z-datatable/z-datata
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { ItemType_SelectList } from '../item-type-master/item-type-master';
-import { ItemGroup_IndexTableFilter, ItemGroup_IndexTableList, ItemGroup_SelectList, ItemGroupMaster } from './item-group-master';
+import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
+import { ItemGroup_IndexTableFilter, ItemGroup_IndexTableList, ItemGroup_SelectList, ItemGroupMaster, ItemGroupRequest } from './item-group-master';
 import { ItemTypeMasterService } from './../item-type-master/item-type-master.service';
 
 @Injectable({
@@ -25,12 +25,12 @@ export class ItemGroupMasterService {
     itemTypeList: ApiListResponse<ItemType_SelectList>;
     }> {
     return forkJoin({
-      itemTypeList: this.itemTypeMasterService.PopulateList()
+      itemTypeList: this.itemTypeMasterService.PopulateList({PopulateType: 'SelectList'} as ItemTypeRequest),
     });
   }
 
-  PopulateList(populateType: string): Observable<ApiListResponse<ItemGroup_SelectList>> {
-    return this.apiService.post<ApiListResponse<ItemGroup_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${populateType}`, {});
+  PopulateList(model: ItemGroupRequest): Observable<ApiListResponse<ItemGroup_SelectList>> {
+    return this.apiService.post<ApiListResponse<ItemGroup_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<ItemGroup_IndexTableFilter>): Observable<ApiPagedListResponse<ItemGroup_IndexTableList>> {

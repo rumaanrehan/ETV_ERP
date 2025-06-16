@@ -6,9 +6,9 @@ import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatabl
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
+import { GenericMaster, Generic_IndexTableFilter, Generic_SelectList } from '../generic-master';
+import { GenericMasterService } from '../generic-master.service';
 import { CreateComponent } from '../create/create.component';
-import { ItemMaster, ItemMaster_IndexTableFilter, ItemMaster_SelectList } from '../item-master';
-import { ItemMasterService } from '../item-master.service';
 
 @Component({
   selector: 'app-index',
@@ -20,17 +20,17 @@ import { ItemMasterService } from '../item-master.service';
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('itemCodeTemplate', { static: true }) itemCodeTemplate!: TemplateRef<any>;
-  @ViewChild('itemActiveStatusTemplate', { static: true }) itemActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('genericItemCodeTemplate', { static: true }) genericItemCodeTemplate!: TemplateRef<any>;
+  @ViewChild('genericItemActiveStatusTemplate', { static: true }) genericItemActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<ItemMaster_SelectList>;
+  tableDef!: DataTableDef<Generic_SelectList>;
   tableEvent!: TableLazyLoadEvent;
 
   constructor(
     private pageHeaderService: PageHeaderService,
-    private pageService: ItemMasterService,
+    private pageService: GenericMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
   ) { }
@@ -41,18 +41,18 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.tableDef = {
       tableKey: 'IMS_ItemMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: 'ItemCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ItemMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      defaultSortColumn: { sortField: 'GenericCode', sortOrder: 1 },
+      filterForm: this.formService.createFormGroup_DataTableFilter<Generic_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'ItemCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.itemCodeTemplate },
-      { data: 'ItemName', label: 'Item Name', filterable: true },
+      { data: 'GenericCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.genericItemCodeTemplate },
+      { data: 'GenericName', label: 'Item Name', filterable: true },
       { data: 'ItemCategoryName', label: 'Item Category', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.itemActiveStatusTemplate, },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.genericItemActiveStatusTemplate, },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -64,14 +64,14 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
-      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<ItemMaster>());
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<GenericMaster>());
     }
   }
 
-  onClickEditDetails(itemID: number, activeStatus: boolean): void {
+  onClickEditDetails(genericID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && itemID) {
-        this.pageService.GetDetails(itemID)
+      if (this.createSidebar && genericID) {
+        this.pageService.GetDetails(genericID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -101,7 +101,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     try {
-      const model: DataTableParams<ItemMaster_IndexTableFilter> = {
+      const model: DataTableParams<Generic_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
@@ -139,11 +139,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
       this.alertService.showConfirmationWithInput({
         inputPlaceholder: inputPlaceholder,
-        text: `Do you really want to ${ActionType} the "<b>${row.GenericItemName}</b>"?`,
+        text: `Do you really want to ${ActionType} the "<b>${row.GenericName}</b>"?`,
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: ItemMaster = {
+          const model: GenericMaster = {
             ...row,
             ActionType: ActionType,
             ReasonToUpdate: result.value

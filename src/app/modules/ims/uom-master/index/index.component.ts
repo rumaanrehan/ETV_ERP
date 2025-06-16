@@ -6,9 +6,9 @@ import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatabl
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
-import { UOMMasterService } from '../UOM-master.service';
+import { UOMMasterService } from '../uom-master.service';
 import { CreateComponent } from '../create/create.component';
-import { UOMMaster, UOMMaster_IndexTableFilter, UOMMaster_IndexTableList } from './../UOM-master';
+import { UOMMaster, UOM_IndexTableFilter, UOM_IndexTableList } from '../uom-master';
 
 @Component({
   selector: 'app-index',
@@ -19,13 +19,13 @@ import { UOMMaster, UOMMaster_IndexTableFilter, UOMMaster_IndexTableList } from 
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-    @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-    @ViewChild('UOMCodeTemplate', { static: true }) UOMCodeTemplate!: TemplateRef<any>;
-    @ViewChild('UOMMasterActiveStatusTemplate', { static: true }) UOMMasterActiveStatusTemplate!: TemplateRef<any>;
-    @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-    @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
+  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('uomCodeTemplate', { static: true }) uomCodeTemplate!: TemplateRef<any>;
+  @ViewChild('uomMasterActiveStatusTemplate', { static: true }) uomMasterActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<UOMMaster_IndexTableList>;
+  tableDef!: DataTableDef<UOM_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
 
   constructor(
@@ -37,22 +37,22 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-
     this.tableDef = {
-      tableKey: 'Admin_ManufacturerMaster_IndexTable',
+      tableKey: 'IMS_UOM_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: 'ManufacturerCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<UOMMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      defaultSortColumn: { sortField: 'UOMCode', sortOrder: 1 },
+      filterForm: this.formService.createFormGroup_DataTableFilter<UOM_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'UOMCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.UOMCodeTemplate },
-      { data: 'UOMName', label: 'UOM Name', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.UOMMasterActiveStatusTemplate, },
-      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
+      { data: 'UOMCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.uomCodeTemplate },
+      { data: 'UOMName', label: 'UOM Name', width: "50%", filterable: true },
+      { data: 'ShortCode', label: 'Short Code', width: "15%", orderable: false },
+      { data: 'ActiveStatus', label: 'Status', width: "15%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.uomMasterActiveStatusTemplate},
+      { data: '', hideVisToggle: true, orderable: false, width: "6%", customTemplate: this.actionColTemplate },
     ];
   }
 
@@ -63,19 +63,19 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
-      this.createSidebar.openSidebar(false, this.formService.createNullObject<UOMMaster>());
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<UOMMaster>());
     }
   }
 
-  onClickEditDetails(uOMID: number, activeStatus: boolean): void {
+  onClickEditDetails(uomID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && uOMID) {
-        this.pageService.GetDetails(uOMID)
+      if (this.createSidebar && uomID) {
+        this.pageService.GetDetails(uomID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.createSidebar.openSidebar(true, response.Data);
+              this.createSidebar.openSidebar(activeStatus, true, response.Data);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -100,7 +100,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     try {
-      const model: DataTableParams<UOMMaster_IndexTableFilter> = {
+      const model: DataTableParams<UOM_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,

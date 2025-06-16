@@ -23,7 +23,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false;
+  activeStatus: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<ManufacturerMaster>;
 
@@ -47,9 +48,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: ManufacturerMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
-      this.ActiveStatus = activeStatus;
     }
-    this.ActiveStatus = activeStatus;
+    this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
@@ -99,7 +99,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   
   createRecord(model: ManufacturerMaster): void {
     try{
-    this.pageService.CreateRecord(model)
+      this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
       .subscribe((response) => {
         if (response.IsSuccess) {

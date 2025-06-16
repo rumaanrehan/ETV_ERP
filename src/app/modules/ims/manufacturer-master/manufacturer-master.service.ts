@@ -6,7 +6,7 @@ import { DataTableParams } from '../../../shared/components/z-datatable/z-datata
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { ManufacturerMaster, ManufacturerMaster_IndexTableFilter, ManufacturerMaster_IndexTableList, ManufacturerMaster_SelectList } from './manufacturer-master';
+import { ManufacturerMaster, Manufacturer_IndexTableFilter, Manufacturer_IndexTableList, Manufacturer_SelectList, ManufacturerRequest } from './manufacturer-master';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +18,12 @@ export class ManufacturerMasterService {
     private apiService: ApiService,
   ) {}
 
-  PopulateList(populateType: any): Observable<ApiListResponse<ManufacturerMaster_SelectList>> {
-    console.log("Fetching List From ManufacturerMasterService");
-    return this.apiService.post<ApiListResponse<ManufacturerMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${populateType}`, {} );
+  PopulateList(model: ManufacturerRequest): Observable<ApiListResponse<Manufacturer_SelectList>> {
+    return this.apiService.post<ApiListResponse<Manufacturer_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
-  PopulateGrid(model: DataTableParams<ManufacturerMaster_IndexTableFilter>): Observable<ApiPagedListResponse<ManufacturerMaster_IndexTableList>> {
-    return this.apiService.post<ApiPagedListResponse<ManufacturerMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  PopulateGrid(model: DataTableParams<Manufacturer_IndexTableFilter>): Observable<ApiPagedListResponse<Manufacturer_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<Manufacturer_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
   GetDetails(manufacturerID: number): Observable<ApiDataResponse<ManufacturerMaster>> {
@@ -44,7 +43,7 @@ export class ManufacturerMasterService {
   }
 
   //#region Form Configuration
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ManufacturerMaster_IndexTableFilter> {
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Manufacturer_IndexTableFilter> {
     return {
       ManufacturerCode: '',
       ManufacturerName: '',
@@ -69,6 +68,11 @@ export class ManufacturerMasterService {
         validationMessages: {
           required: 'Manufacturer Name is required'
         }
+      },
+      ShortCode: {
+        label: 'Short Code',
+        defaultValue: null,
+        validators: [NotOnlyWhitespaceValidator()],
       },
     };
   }

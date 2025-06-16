@@ -8,16 +8,16 @@ import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/m
 import { StaticList, StaticListRequest } from '../../../shared/models/select-list';
 import { SelectListService } from '../../../shared/services/select-list.service';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { ItemMaster_SelectList } from '../generic-master/item-master';
-import { ItemMasterService } from '../generic-master/item-master.service';
-import { ItemCategory_SelectList } from '../item-category-master/item-category-master';
+import { Generic_SelectList } from '../generic-master/generic-master';
+import { GenericMasterService } from '../generic-master/generic-master.service';
+import { ItemCategory_SelectList, ItemCategoryRequest } from '../item-category-master/item-category-master';
 import { ItemCategoryMasterService } from '../item-category-master/item-category-master.service';
-import { ItemGroup_SelectList } from '../item-group-master/item-group-master';
+import { ItemGroup_SelectList, ItemGroupRequest } from '../item-group-master/item-group-master';
 import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
-import { ManufacturerMaster_SelectList } from '../manufacturer-master/manufacturer-master';
+import { Manufacturer_SelectList, ManufacturerRequest } from '../manufacturer-master/manufacturer-master';
 import { ManufacturerMasterService } from '../manufacturer-master/manufacturer-master.service';
-import { UOMMaster_SelectList } from '../uom-master/UOM-master';
-import { UOMMasterService } from '../uom-master/UOM-master.service';
+import { UOM_SelectList, UOMRequest } from '../uom-master/uom-master';
+import { UOMMasterService } from '../uom-master/uom-master.service';
 import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from './product-master';
 
 @Injectable({
@@ -31,7 +31,7 @@ export class ProductMasterService {
     private selectListService: SelectListService,
     private ItemGroupMasterService: ItemGroupMasterService,
     private ItemCategoryMasterService: ItemCategoryMasterService,
-    private itemMasterService: ItemMasterService,
+    private genericMasterService: GenericMasterService,
     private ManufacturerMasterService: ManufacturerMasterService,
     private UOMMasterService: UOMMasterService,
   ) {}
@@ -43,16 +43,16 @@ export class ProductMasterService {
   GetMasterDropdownLists(): Observable<{ 
     itemGroupList: ApiListResponse<ItemGroup_SelectList>;
     itemCategoryList: ApiListResponse<ItemCategory_SelectList>;
-    itemList: ApiListResponse<ItemMaster_SelectList>;
-    manufacturerList: ApiListResponse<ManufacturerMaster_SelectList>;
-    uOMList: ApiListResponse<UOMMaster_SelectList>;
+    itemList: ApiListResponse<Generic_SelectList>;
+    manufacturerList: ApiListResponse<Manufacturer_SelectList>;
+    uOMList: ApiListResponse<UOM_SelectList>;
     }> {
     return forkJoin({
-      itemGroupList: this.ItemGroupMasterService.PopulateList("SelectList"),
-      itemCategoryList: this.ItemCategoryMasterService.PopulateList("SelectList"),
-      itemList: this.itemMasterService.PopulateList("SelectList"),
-      manufacturerList: this.ManufacturerMasterService.PopulateList("SelectList"),
-      uOMList: this.UOMMasterService.PopulateList("SelectList")
+      itemGroupList: this.ItemGroupMasterService.PopulateList({PopulateType: "SelectList"} as ItemGroupRequest),
+      itemCategoryList: this.ItemCategoryMasterService.PopulateList({PopulateType: "SelectList"} as ItemCategoryRequest),
+      itemList: this.genericMasterService.PopulateList("SelectList"),
+      manufacturerList: this.ManufacturerMasterService.PopulateList({PopulateType: "SelectList"} as ManufacturerRequest),
+      uOMList: this.UOMMasterService.PopulateList({PopulateType: "SelectList"} as UOMRequest)
     });
   }
 

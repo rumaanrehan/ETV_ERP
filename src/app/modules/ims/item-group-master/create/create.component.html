@@ -8,12 +8,12 @@
                 <z-span [text]="form.get('ItemGroupCode')?.value" [label]="formConfig.ItemGroupCode.label"></z-span>
             </div>
             <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'ItemGroupName'" [label]="formConfig.ItemGroupName.label"></z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
               <z-select [group]="form" [control]="'ItemTypeID'" [label]="formConfig.ItemTypeID.label"
               [validationMessage]="formConfig.ItemTypeID.error" [optionLabel]="'ItemTypeName'" [optionValue]="'ItemTypeID'" [options]="itemTypeList">
               </z-select>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'ItemGroupName'" [label]="formConfig.ItemGroupName.label"></z-inputtext>
             </div>
         </form>
     </div>

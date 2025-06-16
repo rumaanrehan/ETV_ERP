@@ -12,11 +12,11 @@ import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { ItemCategory_SelectList } from '../../item-category-master/item-category-master';
 import { ManufacturerMaster_SelectList } from '../../manufacturer-master/manufacturer-master';
-import { UOMMaster_SelectList } from '../../uom-master/UOM-master';
+import { UOMMaster_SelectList } from '../../uom-master/uom-master';
 import { ProductMasterService } from '../product-master.service';
 import { ProductMaster } from './../product-master';
 import { ItemGroup_SelectList } from '../../item-group-master/item-group-master';
-import { ItemMaster_SelectList } from '../../generic-master/item-master';
+import { ItemMaster_SelectList } from '../../generic-master/generic-master';
 
 @Component({
   selector: 'app-create',

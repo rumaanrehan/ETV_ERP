@@ -24,3 +24,10 @@ export interface ItemGroup_IndexTableFilter {
     ItemTypeID: number | null;
     ActiveStatusID: number | null;
 }
+
+
+export interface ItemGroupRequest {
+    ItemTypeID?: number | null;
+    ItemGroupID?: number | null;
+    PopulateType?: string | null;
+}

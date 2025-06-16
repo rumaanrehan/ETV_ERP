@@ -6,8 +6,8 @@ import { ZFormControlsModule } from '../../../../shared/components/z-form-contro
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
-import { UOMMaster } from '../UOM-master';
-import { UOMMasterService } from '../UOM-master.service';
+import { UOMMaster } from '../uom-master';
+import { UOMMasterService } from '../uom-master.service';
 
 @Component({
   selector: 'app-create',
@@ -23,7 +23,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false;
+  activeStatus: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<UOMMaster>;
 
@@ -44,10 +45,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(isEditMode: boolean, model: UOMMaster): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: UOMMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
+    this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
@@ -99,18 +101,23 @@ export class CreateComponent implements OnInit, OnDestroy {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((response) => {
-        if (response.IsSuccess) {
-          this.closeSidebar();
-          this.alertService.showAlert({
-            type: 'success',
-            text: response.Message,
-            timer: 5000,
-          });
-        } else {
-          this.alertService.showServerResponseAlert(response);
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: "success",
+              text: response.Message,
+              timer: 5000
+            });
+          }
+          else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
         }
-        this.isSubmitted = false;
       });
     }
     catch (error) {

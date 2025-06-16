@@ -6,9 +6,9 @@ import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatabl
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
-import { ManufacturerMaster, ManufacturerMaster_IndexTableFilter, ManufacturerMaster_IndexTableList } from '../manufacturer-master';
-import { ManufacturerMasterService } from '../manufacturer-master.service';
 import { CreateComponent } from '../../../ims/manufacturer-master/create/create.component';
+import { ManufacturerMaster, Manufacturer_IndexTableFilter, Manufacturer_IndexTableList } from '../manufacturer-master';
+import { ManufacturerMasterService } from '../manufacturer-master.service';
 
 @Component({
   selector: 'app-index',
@@ -21,12 +21,12 @@ import { CreateComponent } from '../../../ims/manufacturer-master/create/create.
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('ManufacturerCodeTemplate', { static: true }) ManufacturerCodeTemplate!: TemplateRef<any>;
-  @ViewChild('manufacturerMasterActiveStatusTemplate', { static: true }) manufacturerMasterActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('manufacturerCodeTemplate', { static: true }) manufacturerCodeTemplate!: TemplateRef<any>;
+  @ViewChild('manufacturerActiveStatusTemplate', { static: true }) manufacturerActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<ManufacturerMaster_IndexTableList>;
+  tableDef!: DataTableDef<Manufacturer_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
 
   constructor(
@@ -40,19 +40,20 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
 
     this.tableDef = {
-      tableKey: 'Admin_ManufacturerMaster_IndexTable',
+      tableKey: 'IMS_ManufacturerMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'ManufacturerCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ManufacturerMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      filterForm: this.formService.createFormGroup_DataTableFilter<Manufacturer_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'ManufacturerCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.ManufacturerCodeTemplate },
-      { data: 'ManufacturerName', label: 'Manufacturer Name', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.manufacturerMasterActiveStatusTemplate, },
+      { data: 'ManufacturerCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.manufacturerCodeTemplate },
+      { data: 'ManufacturerName', label: 'Manufacturer Name', width: "50%", filterable: true },
+      { data: 'ShortCode', label: 'Short Code', width: "15%", orderable: false },
+      { data: 'ActiveStatus', label: 'Status', width: "15%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.manufacturerActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -101,7 +102,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     try {
-      const model: DataTableParams<ManufacturerMaster_IndexTableFilter> = {
+      const model: DataTableParams<Manufacturer_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,

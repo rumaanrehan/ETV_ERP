@@ -6,7 +6,7 @@ import { DataTableParams } from '../../../shared/components/z-datatable/z-datata
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { UOMMaster, UOMMaster_IndexTableFilter, UOMMaster_IndexTableList, UOMMaster_SelectList } from './UOM-master';
+import { UOMMaster, UOMRequest, UOM_IndexTableFilter, UOM_IndexTableList, UOM_SelectList } from './uom-master';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +18,12 @@ export class UOMMasterService {
     private apiService: ApiService,
   ) {}
 
-  PopulateList(populateType: any): Observable<ApiListResponse<UOMMaster_SelectList>> {
-    console.log("Fetching List From UOMMasterService");
-    return this.apiService.post<ApiListResponse<UOMMaster_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${populateType}`, {} );
+  PopulateList(model: UOMRequest): Observable<ApiListResponse<UOM_SelectList>> {
+    return this.apiService.post<ApiListResponse<UOM_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }
   
-  PopulateGrid(model: DataTableParams<UOMMaster_IndexTableFilter>): Observable<ApiPagedListResponse<UOMMaster_IndexTableList>> {
-    return this.apiService.post<ApiPagedListResponse<UOMMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  PopulateGrid(model: DataTableParams<UOM_IndexTableFilter>): Observable<ApiPagedListResponse<UOM_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<UOM_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
   GetDetails(UOMID: number): Observable<ApiDataResponse<UOMMaster>> {
@@ -44,7 +43,7 @@ export class UOMMasterService {
   }
 
   //#region Form Configuration
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<UOMMaster_IndexTableFilter> {
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<UOM_IndexTableFilter> {
     return {
       UOMCode: '',
       UOMName: '',
@@ -69,6 +68,11 @@ export class UOMMasterService {
         validationMessages: {
           required: 'UOM Name is required'
         }
+      },
+      ShortCode: {
+        label: 'Short Code',
+        defaultValue: null,
+        validators: [NotOnlyWhitespaceValidator()]
       },
     };
   }
