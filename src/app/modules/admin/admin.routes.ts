@@ -99,4 +99,9 @@ export const adminRoute: Routes = [
   { path: 'HR/EmployeeLoan/Create', loadComponent: () => import('../HR/Transactions/EmployeeLoan/create/create.component').then((m) => m.CreateComponent) },
   { path: 'HR/EmployeeLoan/Edit/:id', loadComponent: () => import('../HR/Transactions/EmployeeLoan/create/create.component').then((m) => m.CreateComponent) },
   { path: 'HR/rptEmployeeRegister/Index', loadComponent: () => import('../HR/Reports/rptEmployeeRegister/index/index.component').then((m) => m.IndexComponent) },
+  { path: 'admin/export-order/dataview', loadComponent: () => import('./settings/ExportOrder/dataview/dataview.component').then((m) => m.DataviewComponent) },
+  { path: 'admin/export-order/create', loadComponent: () => import('./settings/ExportOrder/create/create.component').then((m) => m.CreateComponent) },
+  { path: 'admin/export-order/edit/:id', loadComponent: () => import('./settings/ExportOrder/create/create.component').then(m => m.CreateComponent)
+}
+
 ];
