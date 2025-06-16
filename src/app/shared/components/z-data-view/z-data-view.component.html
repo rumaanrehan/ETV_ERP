@@ -1,0 +1,69 @@
+<div style="height: calc(100vh - 122px);">
+
+    <p-dataView 
+        #dv 
+        [value]="dataViewDef.data"
+        [rows]="5"
+        [totalRecords]="dataViewDef.totalRecords"
+        [paginator]="true"
+        [lazy]="true"
+        (onLazyLoad)="loadData($event)"
+        [sortField]="dataViewDef.defaultSortColumn.sortField" 
+        [sortOrder]="dataViewDef.defaultSortColumn.sortOrder"
+        [layout]="'list'">
+
+        <ng-template pTemplate="header">
+            <div class="index-table-action-bar d-flex justify-content-between">
+                <div class="col-xl-5">
+                    <form class="form-sidebar" [formGroup]="sortingForm">
+                        <div class="d-flex gap-3">
+                            <div class="col-xl-4">
+                                <z-select [group]="sortingForm" [control]="'sortField'" [label]="sortingFormConfig.sortField.label"
+                                [options]="sortFieldList" [optionLabel]="'text'" [optionValue]="'value'"></z-select>
+                            </div>
+                            <div class="col-xl-4">
+                                <z-select [group]="sortingForm" [control]="'sortOrder'" [label]="sortingFormConfig.sortOrder.label"
+                                [options]="sortOrderList" [optionLabel]="'text'" [optionValue]="'value'"></z-select>
+                            </div>
+                            <div class="col-xl-2">
+                                <button class="btn btn-primary" (click)="applySorting()">
+                                    Apply Sorting
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <span><i class="pi pi-refresh refresh-filter" (click)="refreshData();" title="Filter"></i></span>
+                    <span><i class="pi pi-filter filter-toggle" (click)="toggleFilterPanel();" title="Filter"></i></span>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template let-products pTemplate="list">
+            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: products }"></ng-container>
+        </ng-template>
+
+    </p-dataView>
+</div>
+
+<app-form-sidebar [isVisible]="isFilterPanelVisible">
+    <div sidebarHeader>
+        <h5 class="text-white">Filter Panel</h5>
+    </div>
+    <div sidebarContent>
+        <ng-content select="[sidebarContent]"></ng-content>
+    </div>
+    <div sidebarFooter>
+        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+            <div class="col-md-6 pe-1">
+                <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickApplyFilter()">
+                Apply Filter
+                </button>
+            </div>
+            <div class="col-md-6 ps-1">
+                <button type="button" class="btn btn-md btn-light w-100" (click)="toggleFilterPanel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</app-form-sidebar>
