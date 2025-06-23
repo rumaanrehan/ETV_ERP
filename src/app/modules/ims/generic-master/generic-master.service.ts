@@ -12,7 +12,7 @@ import { ItemGroup_SelectList, ItemGroupRequest } from '../item-group-master/ite
 import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
 import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
 import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
-import { GenericMaster, Generic_IndexTableFilter, Generic_IndexTableList, Generic_SelectList } from './generic-master';
+import { GenericMaster, GenericRequest, Generic_IndexTableFilter, Generic_IndexTableList, Generic_SelectList } from './generic-master';
 
 @Injectable({
   providedIn: 'root'
@@ -43,8 +43,8 @@ export class GenericMasterService {
     return this.itemCategoryMasterService.PopulateList(model)
   }
 
-  PopulateList(populateType: any): Observable<ApiListResponse<Generic_SelectList>> {
-    return this.apiService.post<ApiListResponse<Generic_SelectList>>( `${this.endpoint}/PopulateList?PopulateType=${populateType}`, {} );
+  PopulateList(model: GenericRequest): Observable<ApiListResponse<Generic_SelectList>> {
+    return this.apiService.post<ApiListResponse<Generic_SelectList>>( `${this.endpoint}/PopulateList`, model );
   }
 
   PopulateGrid(model: DataTableParams<Generic_IndexTableFilter>): Observable<ApiPagedListResponse<Generic_IndexTableList>> {

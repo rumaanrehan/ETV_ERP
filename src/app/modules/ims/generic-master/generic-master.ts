@@ -33,7 +33,7 @@ export interface Generic_IndexTableList {
 }
 
 export interface GenericRequest {
-    ItemCategoryID: number | null;
-    GenericID: number | null;
-    PopulateType: string | null;
+    ItemCategoryID?: number | null;
+    GenericID?: number | null;
+    PopulateType?: string | null;
 }

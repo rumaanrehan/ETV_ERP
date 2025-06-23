@@ -1,10 +1,11 @@
 export interface ProductMaster {
   ProductID: number | null;
   ProductCode: string | null;
-  ProductName: string | null;
+  ItemTypeID: number | null;
   ItemGroupID: number | null;
   ItemCategoryID: number | null;
-  GenericItemID: number | null;
+  ProductName: string | null;
+  GenericID: number | null;
   ManufacturerID: number | null;
   UOMID: number | null;
   Unit: number | null;
@@ -18,7 +19,15 @@ export interface ProductMaster {
   NetWeight: number | null;
   GrossWeight: number | null;
   ProductDescription: string | null;
-  PurTaxOn: string | null;
+  PurTaxOn: number | null;
+}
+
+export interface ProductMasterTemp {
+  ProductID: number;
+  ProductCode: string;
+  ProductName: string;
+  TaxRate: number;
+
 }
 
 export interface ProductMaster_SelectList {

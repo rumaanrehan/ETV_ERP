@@ -10,13 +10,15 @@ import { StaticList } from '../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
-import { ItemCategory_SelectList } from '../../item-category-master/item-category-master';
-import { ManufacturerMaster_SelectList } from '../../manufacturer-master/manufacturer-master';
-import { UOMMaster_SelectList } from '../../uom-master/uom-master';
+import { ItemCategory_SelectList, ItemCategoryRequest } from '../../item-category-master/item-category-master';
+import { Manufacturer_SelectList } from '../../manufacturer-master/manufacturer-master';
+import { UOM_SelectList } from '../../uom-master/uom-master';
 import { ProductMasterService } from '../product-master.service';
 import { ProductMaster } from './../product-master';
-import { ItemGroup_SelectList } from '../../item-group-master/item-group-master';
-import { ItemMaster_SelectList } from '../../generic-master/generic-master';
+import { ItemGroup_SelectList, ItemGroupRequest } from '../../item-group-master/item-group-master';
+import { Generic_SelectList, GenericRequest } from '../../generic-master/generic-master';
+import { ItemType_SelectList } from '../../item-type-master/item-type-master';
+import { TaxSlab_SelectList } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
 
 @Component({
   selector: 'app-create',
@@ -34,13 +36,17 @@ export class CreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<ProductMaster>;
 
+  itemTypeList: ItemType_SelectList[] = []
   itemGroupList: ItemGroup_SelectList[] = [];
   itemCategoryList: ItemCategory_SelectList[] = [];
-  itemList: ItemMaster_SelectList[] = [];
-  manufacturerList: ManufacturerMaster_SelectList[] = [];
-  uOMList: UOMMaster_SelectList[] = [];
-  purTaxOnList: StaticList[] = [];
-  taxSlabIDList: StaticList[] = [];
+  genericList: Generic_SelectList[] = [];
+  manufacturerList: Manufacturer_SelectList[] = [];
+  uomList: UOM_SelectList[] = [];
+
+  purTaxOnList: StaticList[] = [
+    {iValue: 1, Text: "Pur Value", cValue: ""}
+  ];
+  taxSlabList: TaxSlab_SelectList[] = []
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -67,21 +73,21 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   loadDropdownList() {
-    this.loadStaticLists([
-      { fieldName: 'PurTaxOn', targetList: 'purTaxOnList' },
-      { fieldName: 'TaxSlabID', targetList: 'taxSlabIDList' },
-    ]);
+    // this.loadStaticLists([
+    //   { fieldName: 'PurTaxOn', targetList: 'purTaxOnList' },
+    // ]);
 
-    this.pageService
-    .GetMasterDropdownLists()
+    this.pageService.GetMasterDropdownLists()
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data) => {
-        this.itemGroupList = data.itemGroupList.Data.Items;
-        this.itemCategoryList = data.itemCategoryList.Data.Items;
-        this.itemList = data.itemList.Data.Items;
+        this.itemTypeList = data.itemTypeList.Data.Items;
+        // this.itemGroupList = data.itemGroupList.Data.Items;
+        // this.itemCategoryList = data.itemCategoryList.Data.Items;
+        // this.genericList = data.itemList.Data.Items;
         this.manufacturerList = data.manufacturerList.Data.Items;
-        this.uOMList = data.uOMList.Data.Items;
+        this.uomList = data.uomList.Data.Items;
+        this.taxSlabList = data.taxSlabList.Data.Items;
       },
     });
   }
@@ -120,6 +126,88 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   resetForm(): void {
     this.formService.resetFormValue<ProductMaster>(this.formConfig, this.form);
+  }
+
+  onChange_ItemType(): void{
+    this.itemGroupList = [];
+    this.itemCategoryList = [];
+    this.loadItemGroup(this.form.value.ItemTypeID);
+  }
+
+  loadItemGroup(itemTypeID: number): void {
+    if (itemTypeID) {
+      const dto: ItemGroupRequest = {
+        ItemTypeID: itemTypeID,
+        PopulateType: "SelectList",
+      }
+      this.pageService.LoadItemGroup(dto)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.itemGroupList = response.Data.Items;
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          }
+        });
+    } else {
+      this.itemGroupList = [];
+    }
+  }
+  
+  onChange_ItemGroup(): void {
+    this.itemCategoryList = [];
+    this.loadItemCategory(this.form.value.ItemGroupID);
+  }
+
+  loadItemCategory(itemGroupID: number): void {
+    if (itemGroupID) {
+      const dto: ItemCategoryRequest = {
+        ItemGroupID: itemGroupID,
+        PopulateType: "SelectList",
+      }
+      this.pageService.LoadItemCategory(dto)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.itemCategoryList = response.Data.Items;
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          }
+        });
+    } else {
+      this.itemCategoryList = [];
+    }
+  }
+
+  onChange_ItemCategory(): void {
+    this.genericList = [];
+    this.loadGeneric(this.form.value.ItemCategoryID);
+  }
+
+  loadGeneric(itemCategoryID: number): void {
+    if (itemCategoryID) {
+      const dto: GenericRequest = {
+        ItemCategoryID: itemCategoryID,
+        PopulateType: "SelectList",
+      }
+      this.pageService.loadGeneric(dto)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.genericList = response.Data.Items;
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          }
+        });
+    } else {
+      this.itemCategoryList = [];
+    }
   }
 
   onSubmit(): void {

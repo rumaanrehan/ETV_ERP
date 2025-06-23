@@ -8,7 +8,7 @@ import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/m
 import { StaticList, StaticListRequest } from '../../../shared/models/select-list';
 import { SelectListService } from '../../../shared/services/select-list.service';
 import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-import { Generic_SelectList } from '../generic-master/generic-master';
+import { Generic_SelectList, GenericRequest } from '../generic-master/generic-master';
 import { GenericMasterService } from '../generic-master/generic-master.service';
 import { ItemCategory_SelectList, ItemCategoryRequest } from '../item-category-master/item-category-master';
 import { ItemCategoryMasterService } from '../item-category-master/item-category-master.service';
@@ -19,6 +19,10 @@ import { ManufacturerMasterService } from '../manufacturer-master/manufacturer-m
 import { UOM_SelectList, UOMRequest } from '../uom-master/uom-master';
 import { UOMMasterService } from '../uom-master/uom-master.service';
 import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from './product-master';
+import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
+import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../admin/settings/TaxSlabMaster/tax-slab-master';
+import { TaxSlabMasterService } from '../../admin/settings/TaxSlabMaster/tax-slab-master.service';
 
 @Injectable({
   providedIn: 'root',
@@ -29,11 +33,14 @@ export class ProductMasterService {
   constructor(
     private apiService: ApiService,
     private selectListService: SelectListService,
-    private ItemGroupMasterService: ItemGroupMasterService,
-    private ItemCategoryMasterService: ItemCategoryMasterService,
+    private itemTypeMasterService: ItemTypeMasterService,
+    private itemGroupMasterService: ItemGroupMasterService,
+    private itemCategoryMasterService: ItemCategoryMasterService,
     private genericMasterService: GenericMasterService,
     private ManufacturerMasterService: ManufacturerMasterService,
-    private UOMMasterService: UOMMasterService,
+    private uomMasterService: UOMMasterService,
+    private taxSlabMasterService: TaxSlabMasterService,
+    
   ) {}
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
@@ -41,19 +48,35 @@ export class ProductMasterService {
   }
 
   GetMasterDropdownLists(): Observable<{ 
-    itemGroupList: ApiListResponse<ItemGroup_SelectList>;
-    itemCategoryList: ApiListResponse<ItemCategory_SelectList>;
-    itemList: ApiListResponse<Generic_SelectList>;
+    itemTypeList: ApiListResponse<ItemType_SelectList>
+    // itemGroupList: ApiListResponse<ItemGroup_SelectList>;
+    // itemCategoryList: ApiListResponse<ItemCategory_SelectList>;
+    // itemList: ApiListResponse<Generic_SelectList>;
     manufacturerList: ApiListResponse<Manufacturer_SelectList>;
-    uOMList: ApiListResponse<UOM_SelectList>;
+    uomList: ApiListResponse<UOM_SelectList>;
+    taxSlabList: ApiListResponse<TaxSlab_SelectList>;
     }> {
     return forkJoin({
-      itemGroupList: this.ItemGroupMasterService.PopulateList({PopulateType: "SelectList"} as ItemGroupRequest),
-      itemCategoryList: this.ItemCategoryMasterService.PopulateList({PopulateType: "SelectList"} as ItemCategoryRequest),
-      itemList: this.genericMasterService.PopulateList("SelectList"),
+      itemTypeList: this.itemTypeMasterService.PopulateList({PopulateType: "SelectList"} as ItemTypeRequest),
+      // itemGroupList: this.ItemGroupMasterService.PopulateList({PopulateType: "SelectList"} as ItemGroupRequest),
+      // itemCategoryList: this.ItemCategoryMasterService.PopulateList({PopulateType: "SelectList"} as ItemCategoryRequest),
+      // itemList: this.genericMasterService.PopulateList("SelectList"),
       manufacturerList: this.ManufacturerMasterService.PopulateList({PopulateType: "SelectList"} as ManufacturerRequest),
-      uOMList: this.UOMMasterService.PopulateList({PopulateType: "SelectList"} as UOMRequest)
+      uomList: this.uomMasterService.PopulateList({PopulateType: "SelectList"} as UOMRequest),
+      taxSlabList: this.taxSlabMasterService.PopulateList({PopulateType: "SelectList"} as TaxSlabRequest)
     });
+  }
+
+  LoadItemGroup(model: ItemGroupRequest): Observable<ApiListResponse<ItemGroup_SelectList>> {
+    return this.itemGroupMasterService.PopulateList(model)
+  }
+
+  LoadItemCategory(model: ItemCategoryRequest): Observable<ApiListResponse<ItemCategory_SelectList>> {
+    return this.itemCategoryMasterService.PopulateList(model)
+  }
+
+  loadGeneric(model: GenericRequest): Observable<ApiListResponse<Generic_SelectList>> {
+    return this.genericMasterService.PopulateList(model)
   }
 
   PopulateGrid(model: DataTableParams<ProductMaster_IndexTableFilter>): Observable<ApiPagedListResponse<ProductMaster_IndexTableList>> {
@@ -103,6 +126,30 @@ export class ProductMasterService {
         validators: [],
         validationMessages: {}
       },
+      ItemTypeID: {
+        label: 'Item Type',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          require: "Item Type is required"
+        }
+      },
+      ItemGroupID: {
+        label: 'Item Group ID',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          require: "Item Griup is required"
+        }
+      },
+      ItemCategoryID: {
+        label: 'Item Category ID',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          require: "Item Category is required"
+        }
+      },
       ProductName: {
         label: 'Product Name',
         defaultValue: '',
@@ -111,32 +158,20 @@ export class ProductMasterService {
           required: 'Product Name is required.',
         },
       },
-      ItemGroupID: {
-        label: 'Item Group ID',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
-      },
-      ItemCategoryID: {
-        label: 'Item Category ID',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
-      },
-      GenericItemID: {
-        label: 'Generic Item ID',
+      GenericID: {
+        label: 'Generic/Item',
         defaultValue: null,
         validators: [],
         validationMessages: {}
       },
       ManufacturerID: {
-        label: 'Manufacturer ID',
+        label: 'Manufacturer',
         defaultValue: null,
         validators: [],
         validationMessages: {}
       },
       UOMID: {
-        label: 'UOM ID',
+        label: 'UOM',
         defaultValue: null,
         validators: [],
         validationMessages: {}
@@ -204,8 +239,8 @@ export class ProductMasterService {
         validationMessages: {}
       },
       PurTaxOn: {
-        label: 'Unit Price',
-        defaultValue: null,
+        label: 'Tax on',
+        defaultValue: 1,
         validators: [Validators.required],
         validationMessages: {
           required: 'Purchase Tax On is required',

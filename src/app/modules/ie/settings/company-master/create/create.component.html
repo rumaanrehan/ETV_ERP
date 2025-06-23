@@ -1,0 +1,81 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+    <div sidebarHeader>
+        <h5 class="text-white">Company Master</h5>
+    </div>
+    <div sidebarContent>
+        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+            <div class="col-xl-12 form-group">
+                <z-span [text]="form.get('CompanyCode')?.value" [label]="formConfig.CompanyCode.label"></z-span>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'CompanyName'" [label]="formConfig.CompanyName.label"
+                    [validationMessage]="formConfig.CompanyName.error">
+                </z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-select [group]="form" [control]="'CompanyTypeID'" [label]="formConfig.CompanyTypeID.label"
+                    [validationMessage]="formConfig.CompanyTypeID.error" [options]="companyTypeList" [optionLabel]="'Text'"
+                    [optionValue]="'iValue'">
+                </z-select>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-select [group]="form" [control]="'StateID'" [label]="formConfig.StateID.label"
+                    [validationMessage]="formConfig.StateID.error" [options]="stateList" [optionLabel]="'StateName'"
+                    [optionValue]="'StateID'">
+                </z-select>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'CompanyPhoneNo'" [label]="formConfig.CompanyPhoneNo.label"
+                    [validationMessage]="formConfig.CompanyPhoneNo.error">
+                </z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'CompanyEmailID'" [label]="formConfig.CompanyEmailID.label"
+                    [validationMessage]="formConfig.CompanyEmailID.error">
+                </z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'ImportLicenseNo'" [label]="formConfig.ImportLicenseNo.label"
+                    [validationMessage]="formConfig.ImportLicenseNo.error">
+                </z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'GSTNo'" [label]="formConfig.GSTNo.label"
+                    [validationMessage]="formConfig.GSTNo.error">
+                </z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'TANNo'" [label]="formConfig.TANNo.label"
+                    [validationMessage]="formConfig.TANNo.error">
+                </z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'PANNo'" [label]="formConfig.PANNo.label"
+                    [validationMessage]="formConfig.PANNo.error">
+                </z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-textarea [group]="form" [control]="'BillingAddress'" [label]="formConfig.BillingAddress.label"
+                    [validationMessage]="formConfig.BillingAddress.error">
+                </z-textarea>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-textarea [group]="form" [control]="'ShippingAddress'" [label]="formConfig.ShippingAddress.label"
+                    [validationMessage]="formConfig.ShippingAddress.error">
+                </z-textarea>
+            </div>
+        </form>
+    </div>
+    <div sidebarFooter>
+        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+            <div class="col-md-6 pe-1">
+                <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
+                    {{ isEditMode ? "Update" : "Save" }}
+                </button>
+            </div>
+            <div class="col-md-6 ps-1">
+                <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</app-form-sidebar>
