@@ -101,7 +101,7 @@ export const adminRoute: Routes = [
   { path: 'HR/rptEmployeeRegister/Index', loadComponent: () => import('../HR/Reports/rptEmployeeRegister/index/index.component').then((m) => m.IndexComponent) },
   { path: 'admin/export-order/dataview', loadComponent: () => import('./settings/ExportOrder/dataview/dataview.component').then((m) => m.DataviewComponent) },
   { path: 'admin/export-order/create', loadComponent: () => import('./settings/ExportOrder/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'admin/export-order/edit/:id', loadComponent: () => import('./settings/ExportOrder/create/create.component').then(m => m.CreateComponent)
-}
-
+  { path: 'admin/export-order/edit/:id', loadComponent: () => import('./settings/ExportOrder/create/create.component').then(m => m.CreateComponent) },
+  { path: 'admin/letter-of-credit/index', loadComponent: () => import('./settings/LetterOfCredit/index/index.component').then(m => m.IndexComponent) },
+  { path: 'admin/export-container/index', loadComponent: () => import('./settings/ExportContainer/index/index.component').then(m => m.IndexComponent) }
 ];

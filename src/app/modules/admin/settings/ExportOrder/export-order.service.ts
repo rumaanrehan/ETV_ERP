@@ -3,9 +3,9 @@ import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ApiDataResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../shared/models/form.model';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList } from './export-order';
+import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrderListRequest } from './export-order';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,10 @@ export class ExportOrderService {
     private apiService: ApiService
   ) { }
   
+  GetExportOrderList(model: ExportOrderListRequest): Observable<ApiListResponse<ExportOrder>> {
+    return this.apiService.post<ApiListResponse<ExportOrder>>(`${this.endpoint}/PopulateExportOrder`, model);
+  }
+
   PopulateGrid(model: DataTableParams<ExportOrder_IndexTableFilter>): Observable<ApiPagedListResponse<ExportOrder_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<ExportOrder_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }

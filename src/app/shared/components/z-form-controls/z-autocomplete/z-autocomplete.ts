@@ -12,6 +12,7 @@ export type AutoCompleteDef<T> =
         optionLabel: string;
         columns?: { data: string; label: string; width?: string }[];
         hideHeader?: boolean;
+        multiple?: boolean;
     }
     | {
         type: 'suggestions';

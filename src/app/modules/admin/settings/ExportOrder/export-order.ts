@@ -35,6 +35,11 @@ interface ExportOrderDetail{
     RatePerUnitBC: number | null;
 }
 
+export interface ExportOrder_SelectList {
+    ExportOrderID: number | null;
+    ExportOrderNo: string | null;
+}
+
 export interface ExportOrder_IndexTableFilter {
     ExportOrderNo: string | null;
     StatusID: number | null;
@@ -48,4 +53,9 @@ export interface ExportOrder_IndexTableList {
     TaxAmountBC: number | null;
     DestinationName: string | null;
     StatusID: number | null;
+}
+
+export interface ExportOrderListRequest {
+    ExportOrderNo?: string | null;
+    PopulateType?: string | null;
 }
