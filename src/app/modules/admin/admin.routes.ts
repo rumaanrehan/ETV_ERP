@@ -2,23 +2,7 @@
 import { Routes } from '@angular/router';
 
 export const adminRoute: Routes = [
-  { path: 'IMS/ItemGroupMaster/Index', loadComponent: () => import('../../components/ItemGroupMaster/index/index.component').then((m) => m.IndexComponent) },
-  // { path: 'IMS/UOMMaster/Index', loadComponent: () => import('../../components/UOM-Master/index/index.component').then((m) => m.IndexComponent) },
-
-  // { path: 'manufacturer-master/create', loadComponent: () => import('../../components/Manufacturer-Master/create/create.component').then((m) => m.CreateComponent) },
-  // { path: 'manufacturer-master/edit/:ManufacturerID', loadComponent: () => import('../../components/Manufacturer-Master/create/create.component').then((m) => m.CreateComponent) },
-
   { path: 'item-group/index', loadComponent: () => import('../../components/Item-Group/index/index.component').then((m) => m.IndexComponent) },
-
-  // { path: 'IMS/CategoryMaster/Index', loadComponent: () => import('../../components/ims-category-master/index/index.component').then((m) => m.IndexComponent) },
-  // { path: 'IMS/CategoryMaster/Create', loadComponent: () => import('../../components/ims-category-master/create/create.component').then((m) => m.CreateComponent) },
-  // { path: 'IMS/CategoryMaster/Edit/:id', loadComponent: () => import('../../components/ims-category-master/create/create.component').then((m) => m.CreateComponent) },
-
-  // { path: 'Admin/ProductMaster/Index', component: Index_ProductMasterComponent, pathMatch: 'full' },
-  // { path: 'Admin/ProductMaster/Create', component: Create_ProductMasterComponent, pathMatch: 'full' },
-  // { path: 'Admin/ProductMaster/Edit/:id', loadComponent: () => import('../../components/product-master/create/create.component').then((m) => m.Create_ProductMasterComponent) },
-
-  // { path: 'Admin/ProductMaster/Index', loadComponent: () => import('../../components/product-master/index/index.component').then((m) => m.Index_ProductMasterComponent) },
   { path: 'admin/state-master/index', loadComponent: () => import('./settings/StateMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'admin/country-master/index', loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/CityMaster/Index', loadComponent: () => import('./settings/CityMaster/index/index.component').then((m) => m.IndexComponent) },
@@ -67,41 +51,7 @@ export const adminRoute: Routes = [
   { path: 'Admin/ConsultantUnitMapping/Index', loadComponent: () => import('./Transactions/ConsultantUnitMapping/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/Kashif/Index', loadComponent: () => import('./settings/Kashif/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/ConsultantUnitMapping/Index', loadComponent: () => import('./Transactions/ConsultantUnitMapping/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/SpecimenMaster/Index', loadComponent: () => import('../LB/Settings/SpecimenMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/AntibioticMaster/Index', loadComponent: () => import('../LB/Settings/AntibioticMater/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/TestMethod/Index', loadComponent: () => import('../LB/Settings/TestMethod/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/TestMethodMapping/Index', loadComponent: () => import('../LB/Settings/TestMethodMapping/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/TestGroupMaster/Index', loadComponent: () => import('../LB/Settings/TestGroupMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/TestGroupMapping/Index', loadComponent: () => import('../LB/Settings/TestGroupMapping/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/OrganismMaster/Index', loadComponent: () => import('../LB/Settings/OrganismMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/OrganismMapping/Index', loadComponent: () => import('../LB/Settings/OrganismMapping/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/ServiceMaster/Index', loadComponent: () => import('../LB/Settings/ServiceMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/ServiceMaster/Create', loadComponent: () => import('../LB/Settings/ServiceMaster/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'LB/ServiceMaster/Edit/:id', loadComponent: () => import('../LB/Settings/ServiceMaster/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'LB/ReportTemplateMaster/Index', loadComponent: () => import('../LB/Settings/ReportTemplate/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/ReportTemplateMaster/Create', loadComponent: () => import('../LB/Settings/ReportTemplate/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'LB/ReportTemplateMaster/Edit/:id', loadComponent: () => import('../LB/Settings/ReportTemplate/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'LB/OutSideLabMaster/Index', loadComponent: () => import('../LB/Settings/OutSideLabMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/OutsideTestMapping/Index', loadComponent: () => import('../LB/Settings/OutsideTestMapping/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/OutsideTestMapping/Create', loadComponent: () => import('../LB/Settings/OutsideTestMapping/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'LB/TestBooking/Create', loadComponent: () => import('../LB/Transactions/TestBooking/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'LB/TestBooking/Index', loadComponent: () => import('../LB/Transactions/TestBooking/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'LB/TestBooking/Edit/:id', loadComponent: () => import('../LB/Transactions/TestBooking/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'LB/TestBooking/Create', loadComponent: () => import('../LB/Transactions/TestBooking/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'LB/ProfileTestMapping/Index', loadComponent: () => import('../LB/Settings/ProfileTestMapping/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'RD/ServiceMaster/Index', loadComponent: () => import('../RD/Settings/ServiceMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'RD/ReportTemplateMaster/Index', loadComponent: () => import('../RD/Settings/ReportTemplate/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'RD/ReportTemplateMaster/Create', loadComponent: () => import('../RD/Settings/ReportTemplate/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'RD/ReportTemplateMaster/Edit/:id', loadComponent: () => import('../RD/Settings/ReportTemplate/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'Admin/PrefixMaster/Index', loadComponent: () => import('./settings/PrefixMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'HR/LoanTypeMaster/Index', loadComponent: () => import('../HR/Settings/LoanTypeMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'HR/EmployeeLoan/Index', loadComponent: () => import('../HR/Transactions/EmployeeLoan/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'HR/EmployeeLoan/Create', loadComponent: () => import('../HR/Transactions/EmployeeLoan/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'HR/EmployeeLoan/Edit/:id', loadComponent: () => import('../HR/Transactions/EmployeeLoan/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'HR/rptEmployeeRegister/Index', loadComponent: () => import('../HR/Reports/rptEmployeeRegister/index/index.component').then((m) => m.IndexComponent) },
   { path: 'admin/export-order/dataview', loadComponent: () => import('./settings/ExportOrder/dataview/dataview.component').then((m) => m.DataviewComponent) },
-  { path: 'admin/export-order/create', loadComponent: () => import('./settings/ExportOrder/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'admin/export-order/edit/:id', loadComponent: () => import('./settings/ExportOrder/create/create.component').then(m => m.CreateComponent) },
-  { path: 'admin/letter-of-credit/index', loadComponent: () => import('./settings/LetterOfCredit/index/index.component').then(m => m.IndexComponent) },
-  { path: 'admin/export-container/index', loadComponent: () => import('./settings/ExportContainer/index/index.component').then(m => m.IndexComponent) }
+  { path: 'admin/export-order/create', loadComponent: () => import('./settings/ExportOrder/create/create.component').then((m) => m.CreateComponent)},
+  { path: 'admin/export-order/edit/:id', loadComponent: () => import('./settings/ExportOrder/create/create.component').then(m => m.CreateComponent)}
 ];
