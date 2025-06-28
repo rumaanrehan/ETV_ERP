@@ -1,15 +1,15 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { FormConfigType } from '../../../../../shared/models/form.model';
-import { LetterOfCreditService } from '../letter-of-credit.service';
-import { FormService } from '../../../../../shared/services/form.service';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { LetterOfCredit } from '../letter-of-credit';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
-import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { ExportOrder, ExportOrder_SelectList, ExportOrderListRequest } from '../../ExportOrder/export-order';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { ExportOrder_SelectList, ExportOrderRequest } from '../../../../ie/transactions/export-order/export-order';
+import { LetterOfCredit } from '../letter-of-credit';
+import { LetterOfCreditService } from '../letter-of-credit.service';
 
 @Component({
   selector: 'app-create',
@@ -29,7 +29,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<LetterOfCredit>;
   
-  exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder>;
+  exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
 
   constructor(
     private pageService: LetterOfCreditService,
@@ -70,7 +70,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     
   loadExportOrder(event: string): void {
     try {
-      const dto: ExportOrderListRequest = {
+      const dto: ExportOrderRequest = {
         ExportOrderNo: event,
         PopulateType: 'AutoSuggest'
       }

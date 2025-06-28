@@ -3,12 +3,12 @@ import { FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { ExportOrderService } from '../ExportOrder/export-order.service';
+import { ExportOrder_SelectList, ExportOrderRequest } from '../../../ie/transactions/export-order/export-order';
+import { ExportOrderService } from '../../../ie/transactions/export-order/export-order.service';
 import { LetterOfCredit, LetterOfCredit_IndexTableFilter, LetterOfCredit_IndexTableList } from './letter-of-credit';
-import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { ExportOrder, ExportOrderListRequest } from '../ExportOrder/export-order';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +21,8 @@ export class LetterOfCreditService {
         private exportOrderService: ExportOrderService
   ) {}
   
-  GetExportOrderList(model: ExportOrderListRequest): Observable<ApiListResponse<ExportOrder>> {
-    return this.exportOrderService.GetExportOrderList(model);
+  GetExportOrderList(model: ExportOrderRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
+    return this.exportOrderService.PopulateList(model);
   }
   
   PopulateGrid(model: DataTableParams<LetterOfCredit_IndexTableFilter>): Observable<ApiPagedListResponse<LetterOfCredit_IndexTableList>> {
@@ -62,7 +62,7 @@ export class LetterOfCreditService {
         label: 'LC No',
         defaultValue: 'NEW'
       },
-      ExportOrders:{
+      ExportOrderID:{
         label: 'Export Order',
         defaultValue: null,
         // validators: [Validators.required],
@@ -99,20 +99,19 @@ export class LetterOfCreditService {
     }
   }
     
-  getExportOrderAutoCompleteDef(formConfig: FormConfigType<LetterOfCredit>, form: FormGroup): AutoCompleteDef<ExportOrder> {
+  getExportOrderAutoCompleteDef(formConfig: FormConfigType<LetterOfCredit>, form: FormGroup): AutoCompleteDef<ExportOrder_SelectList> {
     return {
       type: 'formControl',
       group: form,
-      control: 'ExportOrders',  
-      label: formConfig.ExportOrders.label,  
-      validationMessage: formConfig.ExportOrders.error,  
+      control: 'ExportOrderID',  
+      label: formConfig.ExportOrderID.label,  
+      validationMessage: formConfig.ExportOrderID.error,  
       placeholder: 'Search Export Orders',
       options: [],
-      optionLabel: 'ExportOrder',  
+      optionLabel: 'ExportOrderID',   
       columns: [
         { data: 'ExportOrderNo', label: 'ExportOrderNo', width: '300px' }  
-      ],
-      multiple: true
+      ]
     }
   }
 }

@@ -33,6 +33,16 @@ export interface ExportOrder {
     StatusID: number | null;
 }
 
+export interface ExportOrderRequest {
+    ExportOrderNo?: string | null;
+    PopulateType?: string | null;
+}
+
+export interface ExportOrder_SelectList {
+    ExportOrderID: number;
+    ExportOrderNo: string;
+}
+
 export interface ExportOrderDetail{
     ProductID: number | null;
     ProductName: string | null;

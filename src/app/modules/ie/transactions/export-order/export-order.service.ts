@@ -5,12 +5,12 @@ import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../shared/models/form.model';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrderDetail } from './export-order';
+import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderDetail, ExportOrderRequest } from './export-order';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { ProductMasterTemp } from '../../../ims/product-master/product-master';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
+import { ProductMasterTemp } from '../../../ims/product-master/product-master';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +27,11 @@ export class ExportOrderService {
     return this.companyMasterService.PopulateList(model);
   }
   
+    
+  PopulateList(model: ExportOrderRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
+    return this.apiService.post<ApiListResponse<ExportOrder_SelectList>>(`${this.endpoint}/PopulateList?`, model);
+  }
+
   PopulateGrid(model: DataTableParams<ExportOrder_IndexTableFilter>): Observable<ApiPagedListResponse<ExportOrder_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<ExportOrder_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }

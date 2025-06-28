@@ -1,9 +1,7 @@
-import { ExportOrder } from "../ExportOrder/export-order";
-
 export interface ExportContainer {
     ContainerID: number | null;
     ContainerNo: string | null;
-    ExportOrders: ExportOrder[] | null;
+    ExportOrderID: number | null;
     ContainerType: string | null;
     ShippedDate: Date | null;
     EstimatedArrivalDate: Date | null;

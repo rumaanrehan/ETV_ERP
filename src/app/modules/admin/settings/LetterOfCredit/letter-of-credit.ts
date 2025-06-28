@@ -1,9 +1,7 @@
-import { ExportOrder } from "../ExportOrder/export-order";
-
 export interface LetterOfCredit {
     LCID: number | null;
     LCNo: string | null;
-    ExportOrders: ExportOrder[] | null;
+    ExportOrderID: number | null;
     LCDate: Date | null;
     IssuerBankID: string | null;
     LCAmountFC: number | null;
