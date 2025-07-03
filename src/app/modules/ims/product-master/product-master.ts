@@ -27,7 +27,6 @@ export interface ProductMasterTemp {
   ProductCode: string;
   ProductName: string;
   TaxRate: number;
-
 }
 
 export interface ProductMaster_SelectList {

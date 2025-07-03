@@ -292,7 +292,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               timer: 5000,
             });
             setTimeout(() => {
-              this.router.navigate(['/IMS/ProductMaster']);
+              this.router.navigate(['ims/product-master/index']);
             }, 2000);
           } else {
             this.alertService.showServerResponseAlert(response);

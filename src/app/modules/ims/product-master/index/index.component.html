@@ -13,6 +13,7 @@
 <!-- Table Column Custom Template -->
 <ng-template #productCodeTemplate let-row>
   <span class="table-action-link" (click)="onClickEditDetails(row.ProductID)" style="cursor: pointer;">
+    <!-- {{row | json}} -->
     {{ row.ProductCode }}
   </span>
 </ng-template>
