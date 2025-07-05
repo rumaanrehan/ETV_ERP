@@ -15,4 +15,6 @@ export const imsRoute: Routes = [
   {path: 'ims/genericitem-master/index', loadComponent: () => import('./GenericItemMaster/index/index.component').then((m) => m.IndexComponent) },
   {path: 'ims/uom-master/create', loadComponent: () => import('./UOMMaster/create/create.component').then((m) => m.CreateComponent) },
   {path: 'ims/uom-master/index', loadComponent: () => import('./UOMMaster/index/index.component').then((m) => m.IndexComponent) },
+  {path: 'ims/store-master/create', loadComponent: () => import('./StoreMaster/create/create.component').then((m) => m.CreateComponent) },  
+  {path: 'ims/store-master/index', loadComponent: () => import('./StoreMaster/index/index.component').then((m) => m.IndexComponent) },
 ];

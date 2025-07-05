@@ -44,7 +44,7 @@ export class ProductMasterService {
     itemGroupList: ApiListResponse<ItemGroupMaster_SelectList>;
     itemCategoryList: ApiListResponse<ItemCategoryMaster_SelectList>;
     itemList: ApiListResponse<ItemMaster_SelectList>;
-    manufactBy urerList: ApiListResponse<ManufacturerMaster_SelectList>;
+    manufacturerList: ApiListResponse<ManufacturerMaster_SelectList>;
     uOMList: ApiListResponse<UOMMaster_SelectList>;
     }> {
     return forkJoin({

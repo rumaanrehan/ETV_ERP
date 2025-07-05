@@ -152,9 +152,7 @@ export class CreateComponent {
           else {
             this.alertService.showServerResponseAlert({
               Status: response.Status,
-              Message: response.Message,
-              ValidationErrors: response.ValidationErrors,
-              IsSuccess: undefined
+              Message: response.Message
             });
           }
         }
@@ -177,9 +175,7 @@ export class CreateComponent {
           else {
             this.alertService.showServerResponseAlert({
               Status: response.Status,
-              Message: response.Message,
-              ValidationErrors: response.ValidationErrors,
-              IsSuccess: undefined
+              Message: response.Message
             });
           }
         },

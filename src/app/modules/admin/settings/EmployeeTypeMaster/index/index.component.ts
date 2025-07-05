@@ -1,63 +1,60 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { IndexTableComponent, IndexTableParams } from '../../../../../shared/components/index-table/index-table.component';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { FormValidationService } from '../../../../../shared/services/form-validation.service';
-import { FormService } from '../../../../../shared/services/form.service';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
-import { EmployeeTypeMaster, EmployeeTypeMasterList } from '../employee-type-master';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
+import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
+import { EmployeeTypeMaster, EmployeeTypeMaster_IndexTableFilter, EmployeeTypeMaster_IndexTableList } from '../employee-type-master';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { EmployeeTypeMasterService } from '../employee-type-master.service';
 
 @Component({
   selector: 'app-index',
   standalone: true,
+  imports: [ZDataTable, CreateComponent],
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss'],
-  imports: [IndexTableComponent, CreateComponent, CommonModule],
-  providers: [FormValidationService]
+  styleUrl: './index.component.scss',
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+    @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+    @ViewChild('employeeTypeCodeTemplate', { static: true }) employeeTypeCodeTemplate!: TemplateRef<any>;
+    @ViewChild('employeeTypeIsAllowedOverTimePayTemplate', { static: true }) employeeTypeIsAllowedOverTimePayTemplate!: TemplateRef<any>;
+    @ViewChild('employeeTypeActiveStatusTemplate', { static: true }) employeeTypeActiveStatusTemplate!: TemplateRef<any>;
+    @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+    @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
-
-  @ViewChild('employeeTypeCodeTemplate', { static: true }) employeeTypeCodeTemplate!: TemplateRef<any>;
-  @ViewChild('employeeTypeIsAllowedOverTimePayTemplate', { static: true }) employeeTypeIsAllowedOverTimePayTemplate!: TemplateRef<any>;
-  @ViewChild('employeeTypeActiveStatusTemplate', { static: true }) employeeTypeActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-
-  tableDef!: IndexTableParams<EmployeeTypeMasterList>;
-  tableParameters!: TableLazyLoadEvent;
+  tableDef!: DataTableDef<EmployeeTypeMaster_IndexTableList>;
+  tableEvent!: TableLazyLoadEvent;
 
   constructor(
+    private pageHeaderService: PageHeaderService,
     private pageService: EmployeeTypeMasterService,
     private formService: FormService,
-    private pageHeaderService: PageHeaderService,
-    private alertService: AlertNotificationService,
+    private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
 
     this.tableDef = {
+      tableKey: 'Admin_EmployeeTypeMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: '', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'ManufacturerCode', sortOrder: 1 },
+      filterForm: this.formService.createFormGroup_DataTableFilter<EmployeeTypeMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
     };
-
     this.tableDef.columnDef = [
-      { data: 'EmployeeTypeID', visible: false, orderable: false },
-      { data: 'EmployeeTypeCode', label: 'Code', customTemplate: this.employeeTypeCodeTemplate },
-      { data: 'EmployeeTypeName', label: 'Employee Type Name' },
-      { data: 'IsAllowedOverTimePay', label: 'Is Allowed Overtime Pay', orderable: false, cssClass: 'text-center', customTemplate: this.employeeTypeIsAllowedOverTimePayTemplate },
-      { data: 'ActiveStatus', label: 'Status', cssClass: 'text-center', customTemplate: this.employeeTypeActiveStatusTemplate },
-      { data: '', orderable: false, cssClass: 'text-center', customTemplate: this.actionColTemplate }
+      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
+      { data: 'EmployeeTypeCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.employeeTypeCodeTemplate },
+      { data: 'EmployeeTypeName', label: 'Employee Type Name', filterable: true },
+      { data: 'IsAllowedOvertime', label: 'Is Allowed Overtime', width: "8%", customTemplate: this.employeeTypeIsAllowedOverTimePayTemplate },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.employeeTypeActiveStatusTemplate, },
+      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
 
@@ -66,70 +63,78 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onIndexTableLazyLoad(event: TableLazyLoadEvent) {
-    this.tableParameters = event;
-    this.loadData(this.tableParameters);
+  OnClickPageHeaderAddButton(): void {
+    if (this.createSidebar) {
+      this.createSidebar.openSidebar(false, this.formService.createNullObject<EmployeeTypeMaster>());
+    }
   }
 
-  onCloseSidebar(): void {
-    this.loadData(this.tableParameters);
-  }
-
-  loadData(event: TableLazyLoadEvent) {
+  OnClickEditDetails(EmployeeTypeID: number): void {
     try {
-      this.pageService.PopulateGrid(event)
+      if (this.createSidebar && EmployeeTypeID) {
+        this.pageService.GetDetails(EmployeeTypeID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
+              console.log(response.Data.EmployeeTypeID)
+              this.createSidebar.openSidebar(true, response.Data);
             }
             else {
               this.alertService.showServerResponseAlert(response);
             }
           },
-          complete: () => {
-            this.tableDef.loading = false;
-          }
         });
-    }
-    catch (error) {
-
-    }
-  }
-
-  onClickPageHeaderAddButton(): void {
-    if (this.createSidebar) {
-      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<EmployeeTypeMaster>());
-    }
-  }
-
-  onClickEditDetails(EmployeeTypeID: number, ActiveStatus: boolean) {
-    try {
-      if (this.createSidebar && EmployeeTypeID) {
-        this.pageService.GetDetails(EmployeeTypeID)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                const model: EmployeeTypeMaster = {
-                  ...response.Data
-                };
-                this.createSidebar.openSidebar(ActiveStatus, true, model);
-              }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
       }
     }
     catch (error) {
+
+    }
+  }
+  
+  onCloseSidebar(): void {
+    this.loadData();
+  }
+  
+  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
+    this.tableEvent = event;
+    this.loadData();
+  }
+
+  loadData(): void {
+    try {
+      const model: DataTableParams<EmployeeTypeMaster_IndexTableFilter> = {
+        first: this.tableEvent.first,
+        last: this.tableEvent.last,
+        sortField: this.tableEvent.sortField,
+        sortOrder: this.tableEvent.sortOrder,
+        filters: this.tableDef.filterForm?.value
+      };
+      this.pageService.PopulateGrid(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.tableDef.data = response.Data.Items;
+            this.tableDef.totalRecords = response.Data.TotalRecords;
+          }
+          else {
+            this.tableDef.data = [];
+            this.tableDef.totalRecords = 0;
+            this.alertService.showServerResponseToast(response);
+          }
+        },
+        complete: () => {
+          this.tableDef.loading = false;
+        }
+      });
+    }
+    catch (error) {
+
     }
   }
 
-  onClickDelete(row: any) {
+  onClickDeleteReactivate(row: any): void {
     try {
       const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
@@ -138,33 +143,33 @@ export class IndexComponent implements OnInit, OnDestroy {
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.EmployeeTypeName}</b>"?`,
       })
-        .then(result => {
-          if (result.isConfirmed) {
-            const model: EmployeeTypeMaster = {
-              ...row,
-              ActionType: ActionType,
-              ReasonToUpdate: result.value
-            };
+      .then(result => {
+        if (result.isConfirmed) {
+          const model: EmployeeTypeMaster = {
+            ...row,
+            ActionType: ActionType,
+            ReasonToUpdate: result.value
+          };
 
-            this.pageService.DeleteRecord(model)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: (response) => {
-                  if (response.IsSuccess) {
-                    this.loadData(this.tableParameters);
-                    this.alertService.showAlert({
-                      type: "success",
-                      text: response.Message,
-                      timer: 5000
-                    });
-                  }
-                  else {
-                    this.alertService.showServerResponseAlert(response);
-                  }
-                }
-              });
-          }
-        });
+          this.pageService.DeleteReactivate(model)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.loadData();
+                this.alertService.showAlert({
+                  type: "success",
+                  text: response.Message,
+                  timer: 5000
+                });
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            }
+          });
+        }
+      });
     }
     catch (error) {
 

@@ -1,29 +1,24 @@
-export interface DepartmentMaster {
-  DepartmentID: number | null;
-  DepartmentCode: string | null;
-  DepartmentName: string | null;
-  IsSubDepartment: boolean | null;
-  ShortCode: string | null;
-  DepartmentTypeID: number | null;
-  ParentDepartmentID: number | null;
-  IsAllowedForOP: boolean | null;
-  IsAllowedForIP: boolean | null;
-  DepartmentLocation: string | null;
-  NMC_DepartmentCode: string | null;
-}
-
-export interface DepartmentMasterList {
-  RowID: number;
-  DepartmentID: number;
-  DepartmentCode: string;
-  DepartmentName: string;
-  IsSubDepartment: boolean;
-  ShortCode: string;
-  DepartmentTypeName: string;
-  ParentDepartmentName: string;
-  IsAllowedForOP: boolean;
-  IsAllowedForIP: boolean;
-  DepartmentLocation: string;
-  ActionType: string | null;
-  ActiveStatus: boolean;
-}
+ export interface DepartmentMaster {
+   DepartmentID: number | null;
+   DepartmentCode: string | null;
+   DepartmentName: string | null;
+ } 
+ 
+ export interface DepartmentMaster_IndexTableList {
+   DepartmentID: number | null;
+   DepartmentCode: string | null;
+   DepartmentName: string | null;
+   ActiveStatus: boolean;
+ }
+ 
+ export interface DepartmentMaster_IndexTableFilter {
+   DepartmentCode: string | null;
+   DepartmentName: string | null;
+   ActiveStatusID: number | null;
+ }
+ 
+ export interface DepartmentMaster_SelectList {
+   DepartmentID: number | null;
+   DepartmentName: string | null;
+ }
+ 

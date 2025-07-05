@@ -4,34 +4,40 @@ import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Environment } from '../../../../../environments/environment';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { FormConfigType } from '../../../../shared/models/form.model';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { StateMaster, StateMasterList } from './state-master';
+// import { StateMaster, StateMaster_IndexTableFilter, StateMaster_IndexTableList, StateMaster_SelectList } from './employee-type-master';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { StateMaster, StateMaster_IndexTableFilter, StateMaster_IndexTableList, StateMaster_SelectList } from './state-master';
+// import { StateMaster_IndexTableFilter } from './state-master';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class StateMasterService {
   private apiUrl: string;
-
   constructor(private http: HttpClient) {
     this.apiUrl = Environment.apiUrl;
   }
 
-  //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<StateMaster_IndexTableFilter> {
+    return {
+      StateCode: '',
+      StateName: '',
+      CountryID: 0,
+      ActiveStatusID: 0,
+    }
+  }
+
   getFormConfig(): FormConfigType<StateMaster> {
     return {
       StateID: {
         label: '',
         defaultValue: null,
-        validators: [],
-        validationMessages: {}
       },
       StateCode: {
-        label: 'State Code',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
+        label: 'Code',
+        defaultValue: 'NEW',
       },
       StateName: {
         label: 'State Name',
@@ -39,52 +45,29 @@ export class StateMasterService {
         validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
         validationMessages: {
           required: 'State Name is Required.',
-          maxlength: 'State Name cannot be longer than 50 characters.'
-        },
-        type: 'control'
-      },
-      StateGSTCode: {
-        label: 'State GST Code',
-        defaultValue: null,
-        validators: [Validators.maxLength(2)],
-        validationMessages: {
-          maxlength: 'State GST Code should be maximum two characters.'
-        },
-        type : 'control'
-      },
-      StateISOCode: {
-        label: 'State ISO Code',
-        defaultValue: null,
-        validators: [Validators.maxLength(2)],
-        validationMessages: {
-          maxlength: 'State ISO Code should be maximum two characters.'
+          maxlength: 'State name cannot be longer than 50 characters.'
         },
         type: 'control'
       },
       CountryID: {
-        label: 'Country',
+        label: 'Country Name',
         defaultValue: null,
-        validators: [],
-        validationMessages: {}
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Please select Country.'
+        },
+        type: 'control'
       },
-      IsDefault: {
-        label: 'Is Default',
-        defaultValue: false,
-        validators: [],
-        validationMessages: {}
-      },
-    };
-  }
-  //#endregion
-
-  PopulateList(CountryID?: number, PopulateType?: any): Observable<ApiListResponse<StateMasterList>> {
-    return this.http.post<ApiListResponse<StateMasterList>>(`${this.apiUrl}Admin/StateMaster/PopulateList?CountryID=${CountryID}&PopulateType=${PopulateType}`, {});
+    }
   }
 
-  PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<StateMasterList>> {
-    console.log(tabledata);
-    return this.http.post<ApiPagedListResponse<StateMasterList>>(`${this.apiUrl}Admin/StateMaster/PopulateGrid`, tabledata);
+  PopulateList(PopulateType: string): Observable<ApiListResponse<StateMaster_SelectList>> {
+    return this.http.post<ApiListResponse<StateMaster_SelectList>>(`${this.apiUrl}Admin/StateMaster/PopulateList?PopulateType=${PopulateType}`, {});
   }
+
+  PopulateGrid(model: DataTableParams<StateMaster_IndexTableFilter>): Observable<ApiPagedListResponse<StateMaster_IndexTableList>> {      
+      return this.http.post<ApiPagedListResponse<StateMaster_IndexTableList>>(`${this.apiUrl}Admin/StateMaster/PopulateGrid`, model);
+    }
 
   GetDetails(StateID: number): Observable<ApiDataResponse<StateMaster>> {
     return this.http.post<ApiDataResponse<StateMaster>>(`${this.apiUrl}Admin/StateMaster/GetDetails?StateID=${StateID}`, {});
@@ -95,11 +78,14 @@ export class StateMasterService {
   }
 
   UpdateRecord(model: StateMaster): Observable<ApiResponse> {
+    debugger;
     return this.http.post<ApiResponse>(`${this.apiUrl}Admin/StateMaster/Edit`, model);
   }
 
-  DeleteRecord(model: StateMaster): Observable<ApiResponse> {
+  DeleteReactivate(model: StateMaster): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}Admin/StateMaster/Delete`, model);
   }
-  
+
+
+
 }

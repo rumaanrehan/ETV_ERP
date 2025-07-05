@@ -1,7 +1,8 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+ 
+  <app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
   <div sidebarHeader>
     <h4>Country Master</h4>
-  </div>
+  </div> 
   <div sidebarContent>
     <form [formGroup]="mainForm" (ngSubmit)="onSubmit()" autocomplete="off">
       <hr />
@@ -35,9 +36,9 @@
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <!--{{rowData["CountryCode"]}}
+        {{rowData["CountryCode"]}}
         {{rowData[CountryCode]}}
-        {{rowData.CountryCode}}-->
+        {{rowData.CountryCode}}
         <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" autofocus>
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
@@ -48,3 +49,4 @@
     </div>
   </div>
 </app-form-sidebar>
+ 

@@ -47,12 +47,8 @@
               "./node_modules/apexcharts/dist/apexcharts.min.js",
               "./node_modules/swiper/swiper-bundle.min.js",
               "./node_modules/jquery/dist/jquery.min.js",
-              "./node_modules/datatables.net/js/dataTables.min.js",
-              //"./node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js",
-              //"node_modules/datatables.net-buttons/js/dataTables.buttons.min.js",
-              //"node_modules/datatables.net-buttons/js/buttons.colVis.min.js",
-              "src/assets/libs/appjs.js"//,
-              // "node_modules/quill/dist/quill.js"
+              "./node_modules/datatables.net/js/dataTables.min.js"
+              
             ]
           },
           "configurations": {

@@ -1,40 +1,35 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
-import { ShowValidationTooltipDirective } from '../../../../../shared/layouts/directives/show-validation-tooltip.directive';
-import { FormConfigType, FormErrors, FormValidationMessages } from '../../../../../shared/models/form.model';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { DesignationMaster } from '../designation-master';
 import { DesignationMasterService } from '../designation-master.service';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { InputTextModule } from 'primeng/inputtext';
-import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, CommonModule, ZFormControlsModule],
-  providers: [FormService],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss'],
+  styleUrl: './create.component.scss'
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false;
   form!: FormGroup;
   formConfig!: FormConfigType<DesignationMaster>;
 
   constructor(
     private pageService: DesignationMasterService,
     private formService: FormService,
-    private alertService: AlertNotificationService
+    private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -48,17 +43,15 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(ActiveStatus: boolean, isEditMode: boolean, model: DesignationMaster): void {
+  openSidebar(isEditMode: boolean, model: DesignationMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
-      this.ActiveStatus = ActiveStatus;
     }
-    this.ActiveStatus = ActiveStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
 
-  closeSidebar(): void {
+  onCloseSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
     this.formService.resetFormValue<DesignationMaster>(this.formConfig, this.form);
@@ -67,8 +60,6 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-
-
 
   onSubmit(): void {
     if (this.isSubmitted) return;
@@ -118,7 +109,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.closeSidebar();
+              this.onCloseSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,
@@ -145,7 +136,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.closeSidebar();
+              this.onCloseSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,
@@ -166,3 +157,4 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 }
+

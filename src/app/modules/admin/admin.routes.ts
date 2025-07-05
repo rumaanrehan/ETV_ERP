@@ -20,15 +20,15 @@ export const adminRoute: Routes = [
 
   // { path: 'Admin/ProductMaster/Index', loadComponent: () => import('../../components/product-master/index/index.component').then((m) => m.Index_ProductMasterComponent) },
   { path: 'Admin/StateMaster/Index', loadComponent: () => import('./settings/StateMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'Admin/CountryMaster/Index', loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent) },
+  // { path: 'Admin/CountryMaster/Index', loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/CityMaster/Index', loadComponent: () => import('./settings/CityMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/DesignationMaster/Index', loadComponent: () => import('./settings/DesignationMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/EmployeeTypeMaster/Index', loadComponent: () => import('./settings/EmployeeTypeMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'Admin/DepartmentMaster/Index', loadComponent: () => import('./settings/DepartmentMaster/index/index.component').then((m) => m.IndexComponent) },
+  { path: 'Admin/Index', loadComponent: () => import('./settings/DepartmentMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/DepartmentTypeMaster/Index', loadComponent: () => import('./settings/DepartmentTypeMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/BillCompanyMaster/Index', loadComponent: () => import('./settings/BillCompanyMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/HolidayMaster/Index', loadComponent: () => import('./settings/HolidayMaster/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'Admin/CountryMaster/Index', loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent) },
+  // { path: 'Admin/CountryMaster/Index', loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/RelationshipMaster/Index', loadComponent: () => import('./settings/RelationshipMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/PrefixMaster/Index', loadComponent: () => import('./settings/PrefixMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/RoleMaster/Index', loadComponent: () => import('./settings/RoleMaster/index/index.component').then((m) => m.IndexComponent) },
@@ -42,6 +42,7 @@ export const adminRoute: Routes = [
   { path: 'Admin/RateTypeMaster/Index', loadComponent: () => import('./settings/RateTypeMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/MenuMaster/Index', loadComponent: () => import('./settings/MenuMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/DiscountReasonMaster/Index', loadComponent: () => import('./settings/DiscountReasonMaster/index/index.component').then((m) => m.IndexComponent) },
+  { path: 'Admin/DepartmentMaster/Index', loadComponent: () => import('./settings/DepartmentMaster/index/index.component').then((m) => m.IndexComponent) },
 
   { path: 'Admin/RolePerimssion/Index', loadComponent: () => import('./settings/RolePermission/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/ModuleMaster/Index', loadComponent: () => import('./settings/ModuleMaster/index/index.component').then((m) => m.IndexComponent) },
@@ -52,16 +53,16 @@ export const adminRoute: Routes = [
 
   { path: 'Admin/ConsultantUnitMaster/Index', loadComponent: () => import('./settings/ConsultantUnitMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/PaymentMode/Index', loadComponent: () => import('./settings/PaymentMode/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'Admin/FinYearMaster/Index', loadComponent: () => import('./settings/FinYearMaster/index/index.component').then((m) => m.IndexComponent) },
+  { path: 'admin/financial-year-master/index', loadComponent: () => import('./settings/FinYearMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/WardMaster/Index', loadComponent: () => import('./settings/WardMaster/index/index.component').then((m) => m.IndexComponent) },
 
   { path: 'Admin/DynamicAmountMaster/Index', loadComponent: () => import('./settings/DynamicAmountMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/MusheerKhalid/Index', loadComponent: () => import('./settings/Musheer Khalid/index/index.component').then((m) => m.IndexComponent) },
 
-  { path: 'Admin/EmployeeRegistration/Index', loadComponent: () => import('./Transactions/EmployeeRegistration/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'Admin/EmployeeRegistration/Create', loadComponent: () => import('./Transactions/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
-  // { path: 'Admin/ProductMaster/Create', loadComponent: () => import('./../../components/product-master/create/create.component').then((m) => m.Create_ProductMasterComponent) },//========
-  { path: 'Admin/EmployeeRegistration/Edit/:id', loadComponent: () => import('./Transactions/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
+  { path: 'Admin/EmployeeRegistration/Index', loadComponent: () => import('./settings/EmployeeRegistration/index/index.component').then((m) => m.IndexComponent) },
+  { path: 'Admin/EmployeeRegistration/Create', loadComponent: () => import('./settings/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
+  { path: 'Admin/EmployeeRegistration/Index', loadComponent: () => import('../admin/settings/EmployeeRegistration/index/index.component').then((m) => m.IndexComponent) },//========
+  { path: 'Admin/EmployeeRegistration/Edit/:id', loadComponent: () => import('./settings/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
   { path: 'Admin/ReferredByRegistration/Index', loadComponent: () => import('./Transactions/ReferredByRegistration/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/ConsultantUnitMapping/Index', loadComponent: () => import('./Transactions/ConsultantUnitMapping/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/Kashif/Index', loadComponent: () => import('./settings/Kashif/index/index.component').then((m) => m.IndexComponent) },

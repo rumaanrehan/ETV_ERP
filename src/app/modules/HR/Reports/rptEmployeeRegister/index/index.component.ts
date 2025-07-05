@@ -13,16 +13,17 @@ import { FormService } from "../../../../../shared/services/form.service";
 import { PageHeaderService } from "../../../../../shared/services/page-header.service";
 import { EmployeeRegistrationList } from "../../../../admin/Transactions/EmployeeRegistration/employee-registration";
 import { EmployeeRegistrationService } from "../../../../admin/Transactions/EmployeeRegistration/employee-registration.service";
-import { DepartmentMasterList } from "../../../../admin/settings/DepartmentMaster/department-master";
+// import { DepartmentMasterList } from "../../../../admin/settings/DepartmentMaster/department-master";
 import { DepartmentMasterService } from "../../../../admin/settings/DepartmentMaster/department-master.service";
-import { DesignationMasterList } from "../../../../admin/settings/DesignationMaster/designation-master";
+import { DesignationMaster_SelectList } from "../../../../admin/settings/DesignationMaster/designation-master";
 import { DesignationMasterService } from "../../../../admin/settings/DesignationMaster/designation-master.service";
 import { SelectList } from "../../../../admin/settings/SelectList/select-list";
 import { SelectListService } from "../../../../admin/settings/SelectList/select-list.service";
 import { rptEmployeeRegister, rptEmployeeRegisterDetails } from "../rpt-employee-register";
 import { rptEmployeeRegisterService } from "../rpt-employee-register.service";
 import { EmployeeTypeMasterService } from "../../../../admin/settings/EmployeeTypeMaster/employee-type-master.service";
-import { EmployeeTypeMasterList } from "../../../../admin/settings/EmployeeTypeMaster/employee-type-master";
+import { EmployeeTypeMaster_SelectList } from "../../../../admin/settings/EmployeeTypeMaster/employee-type-master";
+import { DepartmentMaster_SelectList } from "../../../../admin/settings/DepartmentMaster/department-master";
 
 @Component({
   selector: 'app-index',
@@ -45,9 +46,9 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   form!: FormGroup;
   formConfig!: FormConfigType<rptEmployeeRegister>;
-  EmployeeTypeList: EmployeeTypeMasterList[] = []; 
-  DepartmentList: DepartmentMasterList[] = []; 
-  DesignationList: DesignationMasterList[] = []; 
+  EmployeeTypeList: EmployeeTypeMaster_SelectList[] = []; 
+  DepartmentList: DepartmentMaster_SelectList[] = []; 
+  DesignationList: DesignationMaster_SelectList[] = []; 
   DateRangeList: SelectList[] = []; 
   GroupByList: SelectList[] = []; 
   StatusTextList: SelectList[] = []; 
@@ -176,7 +177,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadDepartment(): void {
     try {
-      this.departmentMasterService.PopulateList(1, 'SelectList').subscribe({
+      this.departmentMasterService.PopulateList('SelectList').subscribe({
         next: (response) => {
           if (response.IsSuccess) {
             this.DepartmentList = response.Data.Items;

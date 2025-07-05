@@ -10,7 +10,7 @@ import { FormValidationService } from '../../../../../shared/services/form-valid
 import { FormService } from '../../../../../shared/services/form.service';
 import { ConsultantUnitMasterList } from '../../../settings/ConsultantUnitMaster/consultant-unit-master';
 import { ConsultantUnitMasterService } from '../../../settings/ConsultantUnitMaster/consultant-unit-master.service';
-import { DepartmentMasterList } from '../../../settings/DepartmentMaster/department-master';
+import { DepartmentMaster } from '../../../settings/DepartmentMaster/department-master';
 import { DepartmentMasterService } from '../../../settings/DepartmentMaster/department-master.service';
 import { ConsultantUnitMapping, ConsultantUnitMappingList } from '../../ConsultantUnitMapping/consultant-unit-mapping';
 import { ConsultantUnitMappingService } from '../consultant-unit-mapping.service';
@@ -34,7 +34,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<ConsultantUnitMapping>;
   ConsultantUnitMapping!: ConsultantUnitMapping
-  DepartmentList: DepartmentMasterList[] = [];
+  DepartmentList: DepartmentMaster[] = [];
   ConsultantUnitList: ConsultantUnitMappingList[] = [];
   ConsultantMasterList: ConsultantUnitMasterList[] = [];
   ConsultantUnitMappedList: ConsultantUnitMappingList[] = [];
@@ -70,12 +70,12 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadDepartment(): void {
     try {
-      this.departmentService.PopulateList(0, 'MainDepartment')
+      this.departmentService.PopulateList(0, )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            this.DepartmentList = response.Data.Items;
+            // this.DepartmentList = response.Data.Items;
           }
           else {
             this.DepartmentList = [];

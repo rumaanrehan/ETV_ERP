@@ -70,7 +70,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.alertService.showServerResponseAlert({
               Status: response.Status,
               Message: response.Message,
-              ValidationErrors: response.ValidationErrors,
+              ValidationErrors: response.ValidationErrors
             });
           }
         },
