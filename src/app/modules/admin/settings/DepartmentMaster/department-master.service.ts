@@ -2,21 +2,44 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
+import { Environment } from '../../../../../environments/environment';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
+import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { DepartmentMaster, DepartmentMaster_IndexTableFilter, DepartmentMaster_IndexTableList, DepartmentMaster_SelectList } from './department-master';
-import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DepartmentMaster_IndexTableFilter, DepartmentMaster, DepartmentMaster_SelectList, DepartmentMaster_IndexTableList } from './department-master';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DepartmentMasterService {
-  private apiUrl: string;
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
+  private endpoint: string = 'Admin/DepartmentMaster';
+
+  constructor(private apiService: ApiService) {
+  }
+
+  PopulateList(PopulateType: any): Observable<ApiListResponse<DepartmentMaster_SelectList>> {
+    return this.apiService.post<ApiListResponse<DepartmentMaster_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {});
+  }
+
+  PopulateGrid(model: DataTableParams<DepartmentMaster_IndexTableFilter>): Observable<ApiPagedListResponse<DepartmentMaster_IndexTableList>> {      
+      return this.apiService.post<ApiPagedListResponse<DepartmentMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+    }
+
+  GetDetails(DepartmentID: number): Observable<ApiDataResponse<DepartmentMaster>> {
+    return this.apiService.post<ApiDataResponse<DepartmentMaster>>(`${this.endpoint}/GetDetails?DepartmentID=${DepartmentID}`, {});
+  }
+
+  CreateRecord(model: DepartmentMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
+  }
+
+  UpdateRecord(model: DepartmentMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+  }
+
+  DeleteReactivate(model: DepartmentMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<DepartmentMaster_IndexTableFilter> {
@@ -50,31 +73,4 @@ export class DepartmentMasterService {
      
     }
   }
-
-  PopulateList(PopulateType: any): Observable<ApiListResponse<DepartmentMaster_SelectList>> {
-    return this.http.post<ApiListResponse<DepartmentMaster_SelectList>>(`${this.apiUrl}Admin/DepartmentMaster/PopulateList?PopulateType=${PopulateType}`, {});
-  }
-
-  PopulateGrid(model: DataTableParams<DepartmentMaster_IndexTableFilter>): Observable<ApiPagedListResponse<DepartmentMaster_IndexTableList>> {      
-      return this.http.post<ApiPagedListResponse<DepartmentMaster_IndexTableList>>(`${this.apiUrl}Admin/DepartmentMaster/PopulateGrid`, model);
-    }
-
-  GetDetails(DepartmentID: number): Observable<ApiDataResponse<DepartmentMaster>> {
-    return this.http.post<ApiDataResponse<DepartmentMaster>>(`${this.apiUrl}Admin/DepartmentMaster/GetDetails?DepartmentID=${DepartmentID}`, {});
-  }
-
-  CreateRecord(model: DepartmentMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DepartmentMaster/Create`, model);
-  }
-
-  UpdateRecord(model: DepartmentMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DepartmentMaster/Edit`, model);
-  }
-
-  DeleteReactivate(model: DepartmentMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DepartmentMaster/Delete`, model);
-  }
-
-
-
 }

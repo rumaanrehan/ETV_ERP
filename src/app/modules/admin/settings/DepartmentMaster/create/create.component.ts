@@ -15,7 +15,6 @@ import { DepartmentMasterService } from '../department-master.service';
   imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
-  styleUrl: './create.component.scss'
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

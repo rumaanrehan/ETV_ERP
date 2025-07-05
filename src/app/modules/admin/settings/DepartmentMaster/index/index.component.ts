@@ -14,7 +14,6 @@ import { DepartmentMasterService } from '../department-master.service';
   selector: 'app-index',
   standalone: true,
   imports: [ZDataTable, CreateComponent],
-  imports: [ZDataTable, CreateComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss',
 })
@@ -32,7 +31,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   constructor(
     private pageHeaderService: PageHeaderService,
-    private pageHeaderService: PageHeaderService,
     private pageService: DepartmentMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
@@ -42,7 +40,6 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
 
     this.tableDef = {
-      tableKey: 'Admin_DepartmentMaster_IndexTable',
       tableKey: 'Admin_DepartmentMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'ManufacturerCode', sortOrder: 1 },

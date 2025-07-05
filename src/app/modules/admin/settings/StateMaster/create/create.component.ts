@@ -1,5 +1,3 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
@@ -9,14 +7,14 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { StateMaster } from '../state-master';
 import { StateMasterService } from '../state-master.service';
-import { CountryMaster } from '../../country-master/country-master';
+import { CountryMaster, CountryRequest } from '../../country-master/country-master';
 import { CountryMasterService } from '../../country-master/country-master.service';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 // import { StateMasterService } from '../state-master';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
@@ -74,8 +72,10 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadCountry(): void {
      try {
-     
-        this.countryMasterService.PopulateList('dto')
+      const dto: CountryRequest = {
+        PopulateType: 'SelectList'
+      }
+        this.countryMasterService.PopulateList(dto)
           .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
@@ -128,10 +128,6 @@ export class CreateComponent implements OnInit, OnDestroy {
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-    }
-    catch (error) {
-
-    }
     }
     catch (error) {
 

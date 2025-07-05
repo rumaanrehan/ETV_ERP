@@ -10,20 +10,6 @@ import { EmployeeRegistration, EmployeeRegistrationIndexTableRequest, EmployeeRe
 import { ApiService } from '../../../../core/services/api.service';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
-// import { PrefixMasterService } from '../../settings/prefix-master/prefix-master.service';
-// import { EmployeeTypeMasterService } from '../../settings/employee-type-master/employee-type-master.service';
-// import { RelationshipMasterService } from '../../settings/relationship-master/relationship-master.service';
-// import { DepartmentMasterService } from '../../settings/department-master/department-master.service';
-// import { DesignationMasterService } from '../../settings/designation-master/designation-master.service';
-// import { RoleMasterService } from '../../settings/role-master/role-master.service';
-// import { PrefixMasterSelectListResponse } from '../../settings/prefix-master/prefix-master';
-// import { RelationshipMasterSelectListResponse } from '../../settings/relationship-master/relationship-master';
-// import { EmployeeTypeMasterSelectListResponse } from '../../settings/employee-type-master/employee-type-master';
-// import { DepartmentMasterSelectListResponse } from '../../settings/department-master/department-master';
-// import { DesignationMasterSelectListResponse } from '../../settings/designation-master/designation-master';
-// import { RoleMasterSelectListResponse } from '../../settings/role-master/role-master';
-// import { StateMasterSelectListRequest, StateMasterSelectListResponse } from '../../settings/state-master/state-master';
-// import { StateMasterService } from '../../settings/state-master/state-master.service';
 import { HttpClient } from '@angular/common/http';
 import { Environment } from '../../../../../environments/environment';
 import { CountryMasterService } from '../../settings/country-master/country-master.service';
@@ -35,8 +21,8 @@ import { RelationshipMasterService } from '../RelationshipMaster/relationship-ma
 import { RoleMasterService } from '../RoleMaster/role-master.service';
 import { StateMasterService } from '../StateMaster/state-master.service';
 // import { DesignationMaster_SelectList } from '../DesignationMaster/designation-master';
-import { CountryMaster } from '../country-master/country-master';
-import { StateMaster, StateMaster_SelectList } from '../StateMaster/state-master';
+import { CountryMaster, CountryRequest } from '../country-master/country-master';
+import { StateMaster, State_SelectList } from '../StateMaster/state-master';
 import { DesignationMaster_SelectList } from '../DesignationMaster/designation-master';
 import { DepartmentMaster_SelectList } from '../DepartmentMaster/department-master';
 import { EmployeeTypeMaster_SelectList } from '../EmployeeTypeMaster/employee-type-master';
@@ -87,7 +73,7 @@ export class EmployeeRegistrationService {
     DesignationList: ApiListResponse<DesignationMaster_SelectList>;
     // RoleList: ApiListResponse<RoleMasterSelectListResponse>;
     CountryList: ApiListResponse<CountryMaster>;
-    StateList: ApiListResponse<StateMaster_SelectList>;
+    StateList: ApiListResponse<State_SelectList>;
     // PermanentCountryList: ApiListResponse<CountryMasterSelectListResponse>;
   }> {
     return forkJoin({
@@ -97,7 +83,7 @@ export class EmployeeRegistrationService {
       DepartmentList: this.departmentService.PopulateList({ DepartmentTypeID: 0, PopulateType: "MainDepartment" }),
       DesignationList: this.designationService.PopulateList("SelectList"),
       // RoleList: this.roleMasterService.PopulateList("SelectList"),
-      CountryList: this.countryService.PopulateList("SelectList"),
+      CountryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
       StateList: this.stateService.PopulateList("SelectList"),
     });
   }

@@ -26,7 +26,7 @@ import { EmployeeRegistrationService } from '../employee-registration.service';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { EmployeeRegistration, EmployeeRegistrationFileUpload, EmployeeRegistrationSelectListRequest } from '../employee-registration';
 import { CountryMaster } from '../../country-master/country-master';
-import { StateMaster_SelectList } from '../../StateMaster/state-master';
+import { State_SelectList } from '../../StateMaster/state-master';
 import { EmployeeTypeMaster_SelectList } from '../../EmployeeTypeMaster/employee-type-master';
 import { DepartmentMaster_SelectList } from '../../DepartmentMaster/department-master';
 import { DesignationMaster_SelectList } from '../../DesignationMaster/designation-master';
@@ -57,11 +57,11 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   /** page list */
   countryList: CountryMaster[] = [];
-  stateList: StateMaster_SelectList[] = [];
+  stateList: State_SelectList[] = [];
   defaultCountryID: number | null = null;
   defaultStateID: number | null = null;
   countryPermanentList: CountryMaster[] = [];
-  statePermanentList: StateMaster_SelectList[] = [];
+  statePermanentList: State_SelectList[] = [];
   defaultPermanentCountryID: number | null = null;
   defaultPermanentStateID: number | null = null;
   relationshipList: any[] = [];

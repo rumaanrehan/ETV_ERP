@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { StateMaster, StateMaster_IndexTableFilter, StateMaster_IndexTableList, StateMaster_SelectList } from './state-master';
+import { StateMaster, State_IndexTableFilter, State_IndexTableList, State_SelectList } from './state-master';
 import { HttpClient } from '@angular/common/http';
 import { Environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/api.service';
@@ -16,36 +16,34 @@ export class StateMasterService {
   private endpoint: string = 'Admin/StateMaster';
   
   constructor(private apiService: ApiService) {
+  }  
+
+  PopulateList(PopulateType: string): Observable<ApiListResponse<State_SelectList>> {
+    return this.apiService.post<ApiListResponse<State_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {});
   }
 
-  
-
-  PopulateList(PopulateType: string): Observable<ApiListResponse<StateMaster_SelectList>> {
-    return this.apiService.post<ApiListResponse<StateMaster_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {});
-  }
-
-  PopulateGrid(model: DataTableParams<StateMaster_IndexTableFilter>): Observable<ApiPagedListResponse<StateMaster_IndexTableList>> {      
-      return this.apiService.post<ApiPagedListResponse<StateMaster_IndexTableList>>(`${this.apiUrl}Admin/StateMaster/PopulateGrid`, model);
+  PopulateGrid(model: DataTableParams<State_IndexTableFilter>): Observable<ApiPagedListResponse<State_IndexTableList>> {      
+      return this.apiService.post<ApiPagedListResponse<State_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
     }
 
   GetDetails(StateID: number): Observable<ApiDataResponse<StateMaster>> {
-    return this.apiService.post<ApiDataResponse<StateMaster>>(`${this.apiUrl}Admin/StateMaster/GetDetails?StateID=${StateID}`, {});
+    return this.apiService.post<ApiDataResponse<StateMaster>>(`${this.endpoint}/GetDetails?StateID=${StateID}`, {});
   }
 
   CreateRecord(model: StateMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.apiUrl}Admin/StateMaster/Create`, model);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
   UpdateRecord(model: StateMaster): Observable<ApiResponse> {
     debugger;
-    return this.apiService.post<ApiResponse>(`${this.apiUrl}Admin/StateMaster/Edit`, model);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
   DeleteReactivate(model: StateMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.apiUrl}Admin/StateMaster/Delete`, model);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<StateMaster_IndexTableFilter> {
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<State_IndexTableFilter> {
     return {
       StateCode: '',
       StateName: '',
