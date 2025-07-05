@@ -48,13 +48,6 @@ export class ProductMasterService {
   }
 
   GetMasterDropdownLists(): Observable<{ 
-<<<<<<< HEAD:src/app/modules/IMS/ProductMaster/product-master.service.ts
-    itemGroupList: ApiListResponse<ItemGroupMaster_SelectList>;
-    itemCategoryList: ApiListResponse<ItemCategoryMaster_SelectList>;
-    itemList: ApiListResponse<ItemMaster_SelectList>;
-    manufacturerList: ApiListResponse<ManufacturerMaster_SelectList>;
-    uOMList: ApiListResponse<UOMMaster_SelectList>;
-=======
     itemTypeList: ApiListResponse<ItemType_SelectList>
     // itemGroupList: ApiListResponse<ItemGroup_SelectList>;
     // itemCategoryList: ApiListResponse<ItemCategory_SelectList>;
@@ -62,7 +55,6 @@ export class ProductMasterService {
     manufacturerList: ApiListResponse<Manufacturer_SelectList>;
     uomList: ApiListResponse<UOM_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
->>>>>>> 85b3bc8e88e9c5082bd0229041b6ede72e8ce0b5:src/app/modules/ims/product-master/product-master.service.ts
     }> {
     return forkJoin({
       itemTypeList: this.itemTypeMasterService.PopulateList({PopulateType: "SelectList"} as ItemTypeRequest),
