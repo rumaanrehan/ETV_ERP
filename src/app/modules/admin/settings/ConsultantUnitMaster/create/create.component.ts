@@ -7,7 +7,7 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { DepartmentMaster } from '../../DepartmentMaster/department-master';
+import { DepartmentMaster, DepartmentMaster_SelectList } from '../../DepartmentMaster/department-master';
 import { DepartmentMasterService } from '../../DepartmentMaster/department-master.service';
 import { ConsultantUnitMaster } from '../consultant-unit-master';
 import { ConsultantUnitMasterService } from '../consultant-unit-master.service';
@@ -32,8 +32,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   formConfig!: FormConfigType<ConsultantUnitMaster>;
   departments: DepartmentMaster[] = [];
   defaultDepartmentID: number | null = null;
-  DepartmentsList: DepartmentMaster[] = [];
-  // DepartmentList: import("d:/ETV_ERP.Web/ETV_ERP.Web.Admin/src/app/modules/admin/settings/DepartmentMaster/department-master").DepartmentMaster_SelectList[] | undefined;
+  DepartmentsList: DepartmentMaster_SelectList[] = [];
   constructor(
     private pageService: ConsultantUnitMasterService,
     private departmentService: DepartmentMasterService,
@@ -56,7 +55,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   loadDepartment(): void {
     try
     {
-      this.departmentService.PopulateList(0,)
+      this.departmentService.PopulateList('SelectList')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {

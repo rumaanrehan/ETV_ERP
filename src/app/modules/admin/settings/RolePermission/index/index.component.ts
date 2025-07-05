@@ -12,7 +12,7 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormValidationService } from '../../../../../shared/services/form-validation.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { ModuleMasterList } from '../../ModuleMaster/module-master';
+import { ModuleMaster_SelectList } from '../../ModuleMaster/module-master';
 import { ModuleMasterService } from '../../ModuleMaster/module-master.service';
 import { RoleMaster_SelectList } from '../../RoleMaster/role-master';
 import { RoleMasterService } from '../../RoleMaster/role-master.service';
@@ -30,7 +30,7 @@ import { RolePermissionService } from '../role-permission.service';
 export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   RoleList: RoleMaster_SelectList[] = [];
-  ModuleList: ModuleMasterList[] = [];
+  ModuleList: ModuleMaster_SelectList[] = [];
   isAllCanReadSelected: boolean = false;
   isAllCanCreateSelected: boolean = false;
   isAllCanUpdateSelected: boolean = false;

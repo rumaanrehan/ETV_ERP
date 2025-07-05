@@ -10,7 +10,26 @@ export interface MenuMaster {
   DisplayOrder: string | null;
   IsDeveloperOnly: boolean;
 }
-export interface MenuMasterList {
+export interface MenuMaster_SelectList {
+  ModuleName: string | null;
+  MenuTypeName: string | null;
+  ParentMenuName: string | null;
+  MenuName: string | null;
+  ControllerName: string | null;
+  ActionName: string | null;
+  ActiveStatus: boolean;
+}
+
+export interface MenuMaster_IndexTableFilter {
+  ModuleName: string | null;
+  MenuTypeName: string | null;
+  ParentMenuName: string | null;
+  MenuName: string | null;
+  ControllerName: string | null;
+  ActiveStatusID: number | null;
+}
+
+export interface MenuMaster_IndexTableList {
   RowID: number;
   MenuID: number | null;
   ModuleName: string | null;
@@ -23,4 +42,3 @@ export interface MenuMasterList {
   IsDeveloperOnly: any | null;
   ActiveStatus: boolean;
 }
-

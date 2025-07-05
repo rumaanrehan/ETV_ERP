@@ -41,6 +41,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<TaxSlabMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -71,7 +73,10 @@ export class CreateComponent implements OnInit, OnDestroy {
       next: (response) => {
         listConfigs.forEach(({ targetList }) => {
           if (response[targetList]?.IsSuccess) {
-            (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+            (this[targetList] as any[]) = (response[targetList].Data.Items || []).map(item => ({
+              TaxTypeID: item.iValue,
+              TaxTypeName: item.Text
+            }));
           } else {
             (this[targetList] as StaticList[]) = [];
           }

@@ -8,11 +8,11 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { ModuleMasterList } from '../../ModuleMaster/module-master';
+import { ModuleMaster_SelectList } from '../../ModuleMaster/module-master';
 import { ModuleMasterService } from '../../ModuleMaster/module-master.service';
 import { SelectList } from '../../SelectList/select-list';
 import { SelectListService } from '../../SelectList/select-list.service';
-import { MenuMaster, MenuMasterList } from '../menu-master';
+import { MenuMaster, MenuMaster_SelectList } from '../menu-master';
 import { MenuMasterService } from '../menu-master.service';
  
 @Component({
@@ -32,9 +32,9 @@ export class CreateComponent {
   form!: FormGroup;
   formConfig!: FormConfigType<MenuMaster>;
   MenuTypeList: SelectList[] = [];
-  ModuleList: ModuleMasterList[] = [];
-  GroupMenuList: MenuMasterList[] = [];              
-  ParentMenuList: MenuMasterList[] = [];              
+  ModuleList: ModuleMaster_SelectList[] = [];
+  GroupMenuList: MenuMaster_SelectList[] = [];              
+  ParentMenuList: MenuMaster_SelectList[] = [];              
 
   constructor(
     private pageService: MenuMasterService,

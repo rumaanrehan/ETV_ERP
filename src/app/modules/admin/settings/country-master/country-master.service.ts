@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Environment } from '../../../../../environments/environment';
 import { ApiResponse, ApiTResponse, TResultPagedList } from '../../../../shared/models/api-response';
@@ -13,9 +13,9 @@ export class CountryMasterService {
 
   private apiUrl: string;
 
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
-  }
+  constructor(
+    private apiService: ApiService,
+  ) {}
 
   PopulateList(PopulateType: any): Observable<ApiTResponse<TResultPagedList<CountryMaster>>> {
     return this.http.post<ApiTResponse<TResultPagedList<CountryMaster>>>(`${this.apiUrl}Admin/CountryMaster/PopulateList`, {});

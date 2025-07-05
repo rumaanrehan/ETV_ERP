@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { Environment } from '../../../../../environments/environment';
+import { forkJoin, Observable } from 'rxjs';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { DepartmentMaster, DepartmentMaster_IndexTableFilter, DepartmentMaster_IndexTableList, DepartmentMaster_SelectList } from './department-master';
@@ -39,7 +40,7 @@ export class DepartmentMasterService {
       DepartmentName: {
         label: 'Department Name',
         defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
+        validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
           required: 'Department Name is Required.',
           maxlength: 'Department name cannot be longer than 50 characters.'

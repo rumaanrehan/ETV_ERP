@@ -1,52 +1,74 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Environment } from '../../../../../environments/environment';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { FormConfigType } from '../../../../shared/models/form.model';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { ModuleMaster, ModuleMasterList } from './module-master';
+import { ModuleMaster, ModuleMaster_IndexTableFilter, ModuleMaster_IndexTableList, ModuleMaster_SelectList } from './module-master';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ModuleMasterService {
-  private apiUrl: string;
+  private endpoint = 'Admin/ModuleMaster';
 
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
+  constructor(
+    private apiService: ApiService,
+  ) {}
+
+  PopulateList(populateType: string): Observable<ApiListResponse<ModuleMaster_SelectList>> {
+    return this.apiService.post<ApiListResponse<ModuleMaster_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${populateType}`, {});
+  }
+  
+  PopulateGrid(model: DataTableParams<ModuleMaster_IndexTableFilter>): Observable<ApiPagedListResponse<ModuleMaster_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<ModuleMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
+  GetDetails(ModuleID: number): Observable<ApiDataResponse<ModuleMaster>> {
+    return this.apiService.post<ApiDataResponse<ModuleMaster>>(`${this.endpoint}/GetDetails?StateID=${ModuleID}`, {});
+  }
+
+  CreateRecord(model: ModuleMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
+  }
+
+  UpdateRecord(model: ModuleMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+  }
+
+  DeleteReactivate(model: ModuleMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  }
+  
   //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ModuleMaster_IndexTableFilter> {
+    return {
+      ModuleCode: '',
+      ModuleName: '',
+      DisplayOrder: 0,
+      ActiveStatusID: 0
+    }
+  }
+
   getFormConfig(): FormConfigType<ModuleMaster> {
     return {
       ModuleID: {
         label: '',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {},
-        type: 'control'
+        defaultValue: null
       },
       ModuleCode: {
         label: 'Code',
-        defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(10)],
-        validationMessages: {
-          required: 'Module Area Code is Required.',
-          maxlength: 'Module Area Code be longer than 10 characters.',
-        },
-        type: 'control'
+        defaultValue: "NEW"
       },
       ModuleName: {
         label: 'Module Name',
         defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
+        validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Module Name is Required.',
-          maxlength: 'Module Name cannot be longer than 50 characters.',
-        },
-        type: 'control'
+          required: 'Module Name is Required'
+        }
       },
       ImagePath: {
         label: 'Image Path',
@@ -55,41 +77,15 @@ export class ModuleMasterService {
         validationMessages: {
           required: 'Image Path is Required.',
           maxlength: 'Image Path be longer than 100 characters.',
-        },
-        type: 'control'
+        }
       },
       DisplayOrder: {
         label: 'Display Order',
         defaultValue: null,
         validators: [],
-        validationMessages: {},
-        type: 'control'
+        validationMessages: {}
       },
     };
   }
   //#endregion
-
-  PopulateList(PopulateType: any): Observable<ApiListResponse<ModuleMasterList>> {
-    return this.http.post<ApiListResponse<ModuleMasterList>>(`${this.apiUrl}Admin/ModuleMaster/PopulateList?PopulateType=${PopulateType}`, {});
-  }
-
-  PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<ModuleMasterList>> {
-    return this.http.post<ApiPagedListResponse<ModuleMasterList>>(`${this.apiUrl}Admin/ModuleMaster/PopulateGrid`, tabledata);
-  }
-
-  GetDetails(ModuleID: number): Observable<ApiDataResponse<ModuleMaster>> {
-    return this.http.post<ApiDataResponse<ModuleMaster>>(`${this.apiUrl}Admin/ModuleMaster/GetDetails?ModuleID=${ModuleID}`, {});
-  }
-
-  CreateRecord(model: ModuleMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/ModuleMaster/Create`, model);
-  }
-
-  UpdateRecord(model: ModuleMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/ModuleMaster/Edit`, model);
-  }
-
-  DeleteRecord(model: ModuleMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/ModuleMaster/Delete`, model);
-  }
 }

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
@@ -15,6 +16,7 @@ import { CountryMasterService } from '../../country-master/country-master.servic
 @Component({
   selector: 'app-create',
   standalone: true,
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
@@ -42,6 +44,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<StateMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.loadCountry();
   }
 
@@ -62,6 +65,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
     this.formService.resetFormValue<StateMaster>(this.formConfig, this.form);
+
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -105,8 +109,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.isSubmitted = false;
         return;
       }
-
-      // Handle form submission based on editMode
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
           text: 'Do you really want to Update?',
@@ -130,8 +132,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     catch (error) {
 
     }
-  }
+    }
+    catch (error) {
 
+    }
+  }
+  
   createRecord(model: StateMaster): void {
     try {
       this.pageService.CreateRecord(model)
@@ -158,7 +164,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-
+  
   updateRecord(model: StateMaster): void {
     try {
       this.pageService.UpdateRecord(model)

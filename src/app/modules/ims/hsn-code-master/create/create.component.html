@@ -1,0 +1,45 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">HSN/SAC Master</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-goup">
+       <div class="col-xl-5">
+          <z-span [text]="form.get('HsnCode')?.value" [label]="formConfig.HsnCode.label"></z-span>
+      </div>
+      <div class="col-xl-5">
+        <z-checkbox [group]="form" [control]="'IsServiceAccountCode'" [label]="formConfig.IsServiceAccountCode.label"></z-checkbox>
+      </div>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'Description'" [label]="formConfig.Description.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'SectionName'" [label]="formConfig.SectionName.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'ChapterName'" [label]="formConfig.ChapterName.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'HeadingName'" [label]="formConfig.HeadingName.label"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'TaxSlabID'" [label]="formConfig.TaxSlabID.label" [options]="taxSlabList" [optionLabel]="'Tax Rate'" [optionValue]="'TaxSlabID'">
+        </z-select>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>

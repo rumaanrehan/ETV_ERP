@@ -1,39 +1,39 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
+import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { SelectList } from '../../SelectList/select-list';
-import { SelectListService } from '../../SelectList/select-list.service';
 import { DynamicAmountMaster } from '../dynamic-amount-master';
 import { DynamicAmountMasterService } from '../dynamic-amount-master.service';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, CommonModule, ZFormControlsModule],
-  providers: [FormService],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false;   //for button disabled.
+  activeStatus: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<DynamicAmountMaster>;
-  DynamicAmountTypeList: SelectList[] = [];
+
+  dynamicAmountTypeList: StaticList[] = [];
 
   constructor(
     private pageService: DynamicAmountMasterService,
-    private selectListService: SelectListService,
     private formService: FormService,
     private alertService: AlertNotificationService
   ) { }
@@ -42,7 +42,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<DynamicAmountMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.loadDynamicAmountType('DynamicAmountType');
+    this.loadDropdownList();
   }
   
   ngOnDestroy(): void {
@@ -50,29 +50,43 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDynamicAmountType(FieldName: string) {
-    try {
-      this.selectListService.PopulateList('Admin', 'DynamicAmountMaster', FieldName)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.DynamicAmountTypeList = response.Data.Items;
-            }
-          },
-        });
-    }
-    catch (error) {
-
-    }
+  loadDropdownList() {
+    this.loadStaticLists([
+      { fieldName: 'DynamicAmoutType', targetList: 'dynamicAmountTypeList' },
+    ]);
   }
 
-  openSidebar(ActiveStatus: boolean, isEditMode: boolean, model: DynamicAmountMaster): void {
+  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
+
+    listConfigs.forEach(({ fieldName, targetList }) => {
+      sources[targetList] = this.pageService.GetStaticList({
+        AreaName: 'Admin',
+        ControllerName: 'DynamicAmountMaster',
+        FieldName: fieldName,
+      });
+    });
+
+    forkJoin(sources)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response) => {
+        listConfigs.forEach(({ targetList }) => {
+          if (response[targetList]?.IsSuccess) {
+            (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+          } else {
+            (this[targetList] as StaticList[]) = [];
+          }
+        });
+      },
+    });
+  }
+  
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: DynamicAmountMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
-      this.ActiveStatus = ActiveStatus;
     }
-    this.ActiveStatus = ActiveStatus;
+    this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
@@ -86,15 +100,12 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-
   
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
-    try {
-      // Handle invalid form
+    try{
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -102,24 +113,22 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.isSubmitted = false;
         return;
       }
-
-      // Handle form submission based on editMode
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
+          text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
             const model: DynamicAmountMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
-            this.updateRecord(model);
+            this.updateRecord(this.formService.transformFormData(model));
           }
           else {
             this.isSubmitted = false;
           }
         });
-      }
+      } 
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
@@ -130,27 +139,22 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   createRecord(model: DynamicAmountMaster): void {
-    try {
-      this.pageService.CreateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.closeSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
-          }
-        });
+    try{
+    this.pageService.CreateRecord(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((response) => {
+        if (response.IsSuccess) {
+          this.closeSidebar();
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+        } else {
+          this.alertService.showServerResponseAlert(response);
+        }
+        this.isSubmitted = false;
+      });
     }
     catch (error) {
 
@@ -160,25 +164,25 @@ export class CreateComponent implements OnInit, OnDestroy {
   updateRecord(model: DynamicAmountMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.closeSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: "success",
+              text: response.Message,
+              timer: 5000
+            });
           }
-        });
+          else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
     }
     catch (error) {
 

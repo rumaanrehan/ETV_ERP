@@ -18,9 +18,7 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { CountryMasterList } from '../../../settings/country-master/country-master';
-import { CountryMasterService } from '../../../settings/country-master/country-master.service';
-import { DepartmentMasterList } from '../../../settings/DepartmentMaster/department-master';
+import { CountryMaster_SelectList } from '../../../settings/country-master/country-master';
 import { DepartmentMasterService } from '../../../settings/DepartmentMaster/department-master.service';
 import { DesignationMaster_SelectList } from '../../../settings/DesignationMaster/designation-master';
 import { DesignationMasterService } from '../../../settings/DesignationMaster/designation-master.service';
@@ -34,10 +32,12 @@ import { RoleMaster_SelectList } from '../../../settings/RoleMaster/role-master'
 import { RoleMasterService } from '../../../settings/RoleMaster/role-master.service';
 import { SelectList } from '../../../settings/SelectList/select-list';
 import { SelectListService } from '../../../settings/SelectList/select-list.service';
-import { StateMasterList } from '../../../settings/StateMaster/state-master';
 import { StateMasterService } from '../../../settings/StateMaster/state-master.service';
 import { EmployeeRegistration, EmployeeRegistrationList, FileUpload } from '../employee-registration';
 import { EmployeeRegistrationService } from '../employee-registration.service';
+import { DepartmentMaster_SelectList } from '../../../settings/DepartmentMaster/department-master';
+import { CountryMasterService } from '../../../settings/country-master/country-master.service';
+import { StateMaster_SelectList } from '../../../settings/StateMaster/state-master';
 
 // employee
 
@@ -64,12 +64,12 @@ export class CreateComponent implements OnInit, OnDestroy {
   GenderList: SelectList[] = [];
   MaritalStatusList: SelectList[] = [];
   BloodGroupList: SelectList[] = [];
-  CountryList: CountryMasterList[] = [];
-  StateList: StateMasterList[] = [];
+  CountryList: CountryMaster_SelectList[] = [];
+  StateList: StateMaster_SelectList[] = [];
   defaultCountryID: number | null = null;
   defaultStateID: number | null = null;
-  CountryPermanentList: CountryMasterList[] = [];
-  StatePermanentList: StateMasterList[] = [];
+  CountryPermanentList: CountryMaster_SelectList[] = [];
+  StatePermanentList: StateMaster_SelectList[] = [];
   defaultPermanentCountryID: number | null = null;
   defaultPermanentStateID: number | null = null;
   RelationshipList: RelationshipMasterList[] = [];
@@ -591,7 +591,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         prefix: this.prefixMasterService.PopulateList('SelectList'),
         relationship: this.relationshipService.PopulateList('SelectList'),
         employeeType: this.employeeTypeService.PopulateList('SelectList'),
-        department: this.departmentService.PopulateList(0, 'MainDepartment'),
+        department: this.departmentService.PopulateList('MainDepartment'),
         designation: this.designationService.PopulateList('SelectList'),
         role: this.roleService.PopulateList('SelectList'),
         reportingTo: this.pageService.PopulateList('SelectList'),
@@ -680,23 +680,12 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadState(CountryID: any, isEditMode: boolean = false, selectedStateID: number | null = null): void {
     try {
-      this.stateService.PopulateList(CountryID, 'SelectList')
+      this.stateService.PopulateList('SelectList')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.StateList = response.Data.Items;
-
-              const defaultStateID = isEditMode
-                ? selectedStateID
-                : this.StateList.find(state => state.IsDefault)?.StateID
-                ?? this.StateList[0]?.StateID;
-
-              this.defaultStateID = defaultStateID;
-
-              if (defaultStateID) {
-                this.form.get('EmployeeStateID')?.setValue(defaultStateID);
-              }
             } else {
               this.StateList = [];
             }
@@ -748,22 +737,12 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadPermanentState(CountryID: any, selectedStateID: number | null = null): void {
     try {
-      this.stateService.PopulateList(CountryID, 'SelectList')
+      this.stateService.PopulateList('SelectList')
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.StatePermanentList = response.Data.Items;
-
-              // Set the default state to the first state in the list if no default is found
-              const defaultPermanentStateID = this.StatePermanentList.find(state => state.IsDefault)?.StateID
-                ?? this.StatePermanentList[0]?.StateID;
-
-              this.defaultPermanentStateID = defaultPermanentStateID;
-
-              if (defaultPermanentStateID) {
-                this.form.get('PermanentStateID')?.setValue(defaultPermanentStateID);
-              }
             } else {
               this.StatePermanentList = [];
             }

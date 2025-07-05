@@ -5,14 +5,23 @@ export interface DynamicAmountMaster {
   DynamicAmountTypeID: number | null;
 }
 
-export interface DynamicAmountMasterList {
+export interface DynamicAmountMaster_SelectList {
+  DynamicAmountID: number;
+  DynamicAmountName: string;
+}
+
+export interface DynamicAmountMaster_IndexTableFilter {
+  DynamicAmountCode: string | null;
+  DynamicAmountName: string | null;
+  DynamicAmountTypeName: string | null;
+  ActiveStatusID: number | null;
+}
+
+export interface DynamicAmountMaster_IndexTableList {
   RowID: number;
   DynamicAmountID: number;
   DynamicAmountCode: string;
   DynamicAmountName: string;
   DynamicAmountTypeName: string;
-  ActionType: string | null;
   ActiveStatus: boolean;
 }
-
-

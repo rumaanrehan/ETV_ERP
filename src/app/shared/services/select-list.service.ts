@@ -16,7 +16,6 @@ export class SelectListService {
   }
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
-    console.log(this.apiUrl);
     return this.http.post<ApiListResponse<StaticList>>(`${this.apiUrl}SelectList/GetStaticList`, model);
   }
 

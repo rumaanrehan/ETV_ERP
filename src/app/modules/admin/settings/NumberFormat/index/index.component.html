@@ -3,50 +3,40 @@
     <div class="col-xl-4"></div>
     <div class="col-xl-4 card card-body">
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'ModuleCode'" (onChange)="onModuleChange()" [label]="formConfig.ModuleCode.label" [validationMessage]="formConfig.ModuleCode.error"
-                  [options]="ModuleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleCode'">
-        </z-select>
+        <z-select [group]="form" [control]="'ModuleCode'" (onChange)="onModuleChange()" [label]="formConfig.ModuleCode.label" [options]="moduleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleCode'"></z-select>
       </div>
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'FormatFor'" (onChange)="onFormatForChange()" [label]="formConfig.FormatFor.label" [validationMessage]="formConfig.FormatFor.error"
-                  [options]="FormatForList" [optionLabel]="'Text'" [optionValue]="'Value'">
-        </z-select>
+        <z-select [group]="form" [control]="'FormatFor'" (onChange)="onFormatForChange()" [label]="formConfig.FormatFor.label" [options]="FormatForList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
       </div>
       <div class="col-xl-12 form-group"
-           *ngIf="(['ReceiptVoucherNo', 'RefundVoucherNo'].includes(form.get('FormatFor')?.value) || form.get('ModuleCode')?.value === 'PHR' || form.get('ModuleCode')?.value === 'PCR')">
-        <z-select [group]="form" [control]="'CounterID'" [label]="formConfig.CounterID.label" [validationMessage]="formConfig.CounterID.error" (onChange)="onCounterChange()"
-                  [options]="CounterList" [optionLabel]="'Text'" [optionValue]="'Value'">
-        </z-select>
+        *ngIf="(['ReceiptVoucherNo', 'RefundVoucherNo'].includes(form.get('FormatFor')?.value) || form.get('ModuleCode')?.value === 'PHR' || form.get('ModuleCode')?.value === 'PCR')">
+          <z-select [group]="form" [control]="'CounterID'" [label]="formConfig.CounterID.label" (onChange)="onCounterChange()"[options]="CounterList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
       </div>
       <div class="col-xl-12 form-group" *ngIf="['ServiceInvoiceNo','CreditNoteNo'].includes(form.get('FormatFor')?.value)">
-        <z-select [group]="form" [control]="'BillingSection'" [label]="formConfig.BillingSection.label" [validationMessage]="formConfig.BillingSection.error" (onChange)="onBillingSectionChange()"
-                  [options]="BillingSectionList" [optionLabel]="'Text'" [optionValue]="'Value'">
-        </z-select>
+        <z-select [group]="form" [control]="'BillingSection'" [label]="formConfig.BillingSection.label" (onChange)="onBillingSectionChange()"[options]="BillingSectionList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputnumber [group]="form" [control]="'StartNumber'" [label]="formConfig.StartNumber.label" [validationMessage]="formConfig.StartNumber.error"></z-inputnumber>
+        <z-inputnumber [group]="form" [control]="'StartNumber'" [label]="formConfig.StartNumber.label"></z-inputnumber>
       </div> <div class="col-xl-12 form-group">
-        <z-inputnumber [group]="form" [control]="'WidthOfNumberPart'" [label]="formConfig.WidthOfNumberPart.label" [validationMessage]="formConfig.WidthOfNumberPart.error"></z-inputnumber>
+        <z-inputnumber [group]="form" [control]="'WidthOfNumberPart'" [label]="formConfig.WidthOfNumberPart.label"></z-inputnumber>
       </div>
       <div class="col-xl-12 form-group">
         <z-checkbox [group]="form" [control]="'PrefillZero'" [label]="formConfig.PrefillZero.label"></z-checkbox>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'PrefixFront'" [label]="formConfig.PrefixFront.label" [validationMessage]="formConfig.PrefixFront.error"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'PrefixFront'" [label]="formConfig.PrefixFront.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'PrefixRear'" [label]="formConfig.PrefixRear.label" [validationMessage]="formConfig.PrefixRear.error"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'PrefixRear'" [label]="formConfig.PrefixRear.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'Suffix'" [label]="formConfig.Suffix.label" [validationMessage]="formConfig.Suffix.error"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'Suffix'" [label]="formConfig.Suffix.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-datepicker [group]="form" [control]="'EffectiveFromDate'" [label]="formConfig.EffectiveFromDate.label" [validationMessage]="formConfig.EffectiveFromDate.error"></z-datepicker>
+        <z-datepicker [group]="form" [control]="'EffectiveFromDate'" [label]="formConfig.EffectiveFromDate.label"></z-datepicker>
       </div>
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'RestartType'" [label]="formConfig.RestartType.label" [validationMessage]="formConfig.RestartType.error"
-                  [options]="RestartTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
-        </z-select>
+        <z-select [group]="form" [control]="'RestartType'" [label]="formConfig.RestartType.label" [options]="RestartTypeList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
       </div>
       <div class="row">
         <div class="col-md-4 pe-1">

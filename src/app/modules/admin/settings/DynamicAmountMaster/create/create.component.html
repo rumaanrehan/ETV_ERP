@@ -5,14 +5,13 @@
   <div sidebarContent>
     <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'DynamicAmountCode'" [label]="formConfig.DynamicAmountCode.label"></z-inputtext>
+          <z-span [text]="form.get('DynamicAmountCode')?.value" [label]="formConfig.DynamicAmountCode.label"></z-span>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'DynamicAmountName'" [label]="formConfig.DynamicAmountName.label" [validationMessage]="formConfig.DynamicAmountName.error"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'DynamicAmountName'" [label]="formConfig.DynamicAmountName.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'DynamicAmountTypeID'" [label]="formConfig.DynamicAmountTypeID.label" [validationMessage]="formConfig.DynamicAmountTypeID.error"
-                  [options]="DynamicAmountTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
+        <z-select [group]="form" [control]="'DynamicAmountTypeID'" [label]="formConfig.DynamicAmountTypeID.label" [options]="dynamicAmountTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
         </z-select>
       </div>
     </form>
@@ -20,7 +19,7 @@
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>

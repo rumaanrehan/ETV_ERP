@@ -18,6 +18,32 @@ export class NumberFormatService {
   constructor(private http: HttpClient) {
     this.apiUrl = Environment.apiUrl;
   }
+  //GetDetails(model:NumberFormat): Observable<ApiListResponse<NumberFormatList>> {
+  //  return this.http.post<ApiListResponse<NumberFormatList>>(`${this.apiUrl}Admin/NumberFormat/GetDetails`, model);
+  //}
+
+  //CreateRecord(model: NumberFormat): Observable<ApiResponse> {
+  //  return this.http.post<ApiResponse>(`${this.apiUrl}Admin/NumberFormat/Create`, model);
+  //}
+
+  GetDetails(FormatFor: string, ModuleCode: string, BillingSection?: string, CounterID?: number): Observable<ApiListResponse<NumberFormatList>> {
+    const model = {
+      FormatFor,
+      ModuleCode,
+      BillingSection: { 1: 'OR', 2: 'OP', 3: 'IP', 4: 'LB', 5: 'RD' }[BillingSection || ''],
+      CounterID,
+    };
+    return this.http.post<ApiListResponse<NumberFormatList>>(`${this.apiUrl}Admin/NumberFormat/GetDetails`, model);
+  }
+
+  CreateRecord(model: NumberFormat): Observable<ApiResponse> {
+    const mappedModel = {
+      ...model,
+      RestartType: { 1: 'N', 2: 'D', 3: 'M', 4: 'Y', 5: 'F' }[model.RestartType],
+      BillingSection: model.BillingSection != null ? { 1: 'OR', 2: 'OP', 3: 'IP', 4: 'LB', 5: 'RD' }[model.BillingSection]: null,
+    };
+    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/NumberFormat/Create`, mappedModel);
+  }
 
   getFormConfig(): FormConfigType<NumberFormat> {
     return {
@@ -62,10 +88,10 @@ export class NumberFormatService {
       CounterID: {
         label: 'Counter',
         defaultValue: null,
-        validators: [RequiredIf('FormatFor', Operator.EqualTo, 'RefundVoucherNo' || 'ReceiptVoucherNo')],
-        validationMessages: {
-          requiredIf: 'Please select an option from the Counter List.'},
-        type: 'control'
+        // validators: [RequiredIf('FormatFor', Operator., ['RefundVoucherNo', 'ReceiptVoucherNo'])],
+        // validationMessages: {
+        //   requiredIf: 'Please select an option from the Counter List.'},
+        // type: 'control'
       },
       StartNumber: {
         label: 'Start Number',
@@ -129,32 +155,4 @@ export class NumberFormatService {
       },
     }
   }
-
-  //GetDetails(model:NumberFormat): Observable<ApiListResponse<NumberFormatList>> {
-  //  return this.http.post<ApiListResponse<NumberFormatList>>(`${this.apiUrl}Admin/NumberFormat/GetDetails`, model);
-  //}
-
-  //CreateRecord(model: NumberFormat): Observable<ApiResponse> {
-  //  return this.http.post<ApiResponse>(`${this.apiUrl}Admin/NumberFormat/Create`, model);
-  //}
-
-  GetDetails(FormatFor: string, ModuleCode: string, BillingSection?: string, CounterID?: number): Observable<ApiListResponse<NumberFormatList>> {
-    const model = {
-      FormatFor,
-      ModuleCode,
-      BillingSection: { 1: 'OR', 2: 'OP', 3: 'IP', 4: 'LB', 5: 'RD' }[BillingSection || ''],
-      CounterID,
-    };
-    return this.http.post<ApiListResponse<NumberFormatList>>(`${this.apiUrl}Admin/NumberFormat/GetDetails`, model);
-  }
-
-  CreateRecord(model: NumberFormat): Observable<ApiResponse> {
-    const mappedModel = {
-      ...model,
-      RestartType: { 1: 'N', 2: 'D', 3: 'M', 4: 'Y', 5: 'F' }[model.RestartType],
-      BillingSection: model.BillingSection != null ? { 1: 'OR', 2: 'OP', 3: 'IP', 4: 'LB', 5: 'RD' }[model.BillingSection]: null,
-    };
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/NumberFormat/Create`, mappedModel);
-  }
-
 }

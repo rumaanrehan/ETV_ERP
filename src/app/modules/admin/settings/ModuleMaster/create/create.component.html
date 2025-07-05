@@ -5,13 +5,13 @@
   <div sidebarContent>
     <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ModuleCode'" [label]="formConfig.ModuleCode.label" [validationMessage]="formConfig.ModuleCode.error"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'ModuleCode'" [label]="formConfig.ModuleCode.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ModuleName'" [label]="formConfig.ModuleName.label" [validationMessage]="formConfig.ModuleName.error"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'ModuleName'" [label]="formConfig.ModuleName.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ImagePath'" [label]="formConfig.ImagePath.label" [validationMessage]="formConfig.ImagePath.error"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'ImagePath'" [label]="formConfig.ImagePath.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
         <z-inputtext [group]="form" [control]="'DisplayOrder'" [label]="formConfig.DisplayOrder.label"></z-inputtext>
@@ -21,7 +21,7 @@
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>
@@ -31,4 +31,3 @@
     </div>
   </div>
 </app-form-sidebar>
-

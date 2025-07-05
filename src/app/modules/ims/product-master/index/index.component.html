@@ -1,0 +1,205 @@
+<!-- Page Header Action Button Template -->
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
+      class="pi pi-plus"></i>&nbsp;Add Product</button>
+</ng-template>
+
+<!-- Index Table Component -->
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)">
+  </z-datatable>
+</div>
+
+<!-- Table Column Custom Template -->
+<ng-template #productCodeTemplate let-row>
+  <span class="table-action-link" (click)="onClickEditDetails(row.ProductID)" style="cursor: pointer;">
+    <!-- {{row | json}} -->
+    {{ row.ProductCode }}
+  </span>
+</ng-template>
+<!-- 
+<ng-template #productNameTemplate let-row>
+  (click)="onClickEditDetails(row.ProductName, row.ActiveStatus)"
+  <span
+    style="
+      cursor: pointer;
+      margin-right: 10px;
+      max-width: 200px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.ProductName }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #productCategoryTemplate let-row>
+  (click)="onClickEditDetails(row.ProductCategory, row.ActiveStatus)"
+  <span
+    style="
+      cursor: pointer;
+      margin-right: 10px;
+      max-width: 150px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.ProductCategory }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #statusTemplate let-row>
+  <span
+    class="badge {{
+      row.isActive ? 'bg-outline-success' : 'bg-outline-danger'
+    }}"
+    style="margin-right: 10px"
+  >
+    {{ row.isActive ? "Active" : "Inactive" }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #productDescriptionTemplate let-row>
+  <span
+    style="
+      margin-right: 10px;
+      max-width: 250px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.ProductDescription }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #unitTemplate let-row>
+  <span
+    style="
+      margin-right: 10px;
+      max-width: 100px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.Unit }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #manufacturerIdTemplate let-row>
+  <span
+    style="
+      margin-right: 10px;
+      max-width: 150px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.ManufacturerID }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #unitPriceTemplate let-row>
+  <span
+    class="text-right"
+    style="
+      margin-right: 10px;
+      max-width: 100px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.UnitPrice }}
+  </span> -->
+<!-- </ng-template>
+
+<ng-template #costPriceTemplate let-row>
+  <span
+    class="text-right"
+    style="
+      margin-right: 10px;
+      max-width: 100px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.CostPrice }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #purTaxRateTemplate let-row>
+  <span
+    style="
+      margin-right: 10px;
+      max-width: 100px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.PurTaxRate }}%
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #reorderQtyTemplate let-row>
+  <span
+    style="
+      margin-right: 10px;
+      max-width: 100px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.ReorderQty }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #netWeightTemplate let-row>
+  <span
+    style="
+      margin-right: 10px;
+      max-width: 100px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.NetWeight }}
+  </span>
+</ng-template> -->
+<!-- 
+<ng-template #grossWeightTemplate let-row>
+  <span
+    style="
+      margin-right: 10px;
+      max-width: 100px;
+      display: inline-block;
+      overflow-x: auto;
+      white-space: nowrap;
+    "
+  >
+    {{ row.GrossWeight }}
+  </span>
+</ng-template> -->
+
+<ng-template #productActiveStatusTemplate let-row>
+  <span class="table-row-status">
+    <i class="pi pi-circle-fill text-{{ row.StatusText == 'Open' ? 'success' : row.StatusText == 'Closed' ? 'secondary' : 'danger' }}"></i>
+    {{ row.StatusText }}
+  </span>
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+  <div class="d-flex justify-content-end" *ngIf="row.StatusText == 'Open'">
+      <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+          (click)="onClickDeleteReactivate(row)"><i class="pi pi-times-circle"></i>
+      </span>
+  </div>
+</ng-template>

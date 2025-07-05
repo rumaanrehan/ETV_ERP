@@ -15,6 +15,7 @@ import { DepartmentMasterService } from '../department-master.service';
   imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
+  styleUrl: './create.component.scss'
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -56,6 +57,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.isEditMode = false;
     this.formService.resetFormValue<DepartmentMaster>(this.formConfig, this.form);
 
+
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
@@ -67,7 +69,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.isSubmitted = true;
 
     try {
-      // Handle invalid form
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -75,8 +76,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.isSubmitted = false;
         return;
       }
-
-      // Handle form submission based on editMode
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
           text: 'Do you really want to Update?',
@@ -86,7 +85,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
-            this.updateRecord(model);
+            this.updateRecord(this.formService.transformFormData(model));
           }
           else {
             this.isSubmitted = false;
@@ -101,7 +100,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-
+  
   createRecord(model: DepartmentMaster): void {
     try {
       this.pageService.CreateRecord(model)
@@ -115,6 +114,9 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000
               });
+              setTimeout(() => {
+                this.ngOnInit();
+              }, 2000);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -128,7 +130,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-
+  
   updateRecord(model: DepartmentMaster): void {
     try {
       this.pageService.UpdateRecord(model)

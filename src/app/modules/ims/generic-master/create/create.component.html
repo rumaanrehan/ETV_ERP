@@ -1,0 +1,42 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+    <div sidebarHeader>
+        <h5 class="text-white">Item/Generic Master</h5>
+    </div>
+    <div sidebarContent>
+        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+            <div class="col-xl-12 form-group">
+                <z-span [text]="form.get('GenericCode')?.value" [label]="formConfig.GenericCode.label"></z-span>
+            </div>
+            <div class="col-xl-12 form-group">
+              <z-select [group]="form" [control]="'ItemTypeID'" [label]="formConfig.ItemTypeID.label"
+              [validationMessage]="formConfig.ItemTypeID.error" [optionLabel]="'ItemTypeName'" [optionValue]="'ItemTypeID'" [options]="itemTypeList" (onChange)="onChange_ItemType()">
+              </z-select>
+            </div>
+            <div class="col-xl-12 form-group">
+              <z-select [group]="form" [control]="'ItemGroupID'" [label]="formConfig.ItemGroupID.label"
+              [validationMessage]="formConfig.ItemGroupID.error" [optionLabel]="'ItemGroupName'" [optionValue]="'ItemGroupID'" [options]="itemGroupList" (onChange)="onChange_ItemGroup()">
+              </z-select>
+            </div>
+            <div class="col-xl-12 form-group">
+              <z-select [group]="form" [control]="'ItemCategoryID'" [label]="formConfig.ItemCategoryID.label"
+              [validationMessage]="formConfig.ItemCategoryID.error" [optionLabel]="'ItemCategoryName'" [optionValue]="'ItemCategoryID'" [options]="itemCategoryList">
+              </z-select>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'GenericName'" [label]="formConfig.GenericName.label"></z-inputtext>
+            </div>
+        </form>
+    </div>
+    <div sidebarFooter>
+        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+            <div class="col-md-6 pe-1">
+                <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
+                    {{ isEditMode ? "Update" : "Save" }}
+                </button>
+            </div>
+            <div class="col-md-6 ps-1">
+                <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</app-form-sidebar>

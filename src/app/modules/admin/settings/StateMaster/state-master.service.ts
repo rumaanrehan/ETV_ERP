@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Environment } from '../../../../../environments/environment';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 // import { StateMaster, StateMaster_IndexTableFilter, StateMaster_IndexTableList, StateMaster_SelectList } from './employee-type-master';
@@ -42,7 +43,7 @@ export class StateMasterService {
       StateName: {
         label: 'State Name',
         defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
+        validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
           required: 'State Name is Required.',
           maxlength: 'State name cannot be longer than 50 characters.'
