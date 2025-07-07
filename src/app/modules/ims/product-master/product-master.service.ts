@@ -18,7 +18,7 @@ import { Manufacturer_SelectList, ManufacturerRequest } from '../manufacturer-ma
 import { ManufacturerMasterService } from '../manufacturer-master/manufacturer-master.service';
 import { UOM_SelectList, UOMRequest } from '../uom-master/uom-master';
 import { UOMMasterService } from '../uom-master/uom-master.service';
-import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from './product-master';
+import { Product_SelectList, ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList, ProductRequest } from './product-master';
 import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
 import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../admin/settings/TaxSlabMaster/tax-slab-master';
@@ -77,6 +77,10 @@ export class ProductMasterService {
 
   loadGeneric(model: GenericRequest): Observable<ApiListResponse<Generic_SelectList>> {
     return this.genericMasterService.PopulateList(model)
+  }
+
+  PopulateList(model: ProductRequest): Observable<ApiListResponse<Product_SelectList>> {
+    return this.apiService.post<ApiListResponse<Product_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<ProductMaster_IndexTableFilter>): Observable<ApiPagedListResponse<ProductMaster_IndexTableList>> {

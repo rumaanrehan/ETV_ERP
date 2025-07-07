@@ -10,7 +10,8 @@ import { Operator, RequiredIf } from '../../../../shared/validators/required-if.
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { ProductMasterTemp } from '../../../ims/product-master/product-master';
+import { Product_SelectList, ProductMaster, ProductRequest } from '../../../ims/product-master/product-master';
+import { ProductMasterService } from '../../../ims/product-master/product-master.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,13 +21,17 @@ export class ExportOrderService {
 
   constructor(
     private apiService: ApiService,
-    private companyMasterService: CompanyMasterService
+    private companyMasterService: CompanyMasterService,
+    private productMasterService: ProductMasterService,
   ) { }
 
   GetCompanyList(model: CompanyRequest): Observable<ApiListResponse<Company_SelectList>> {
     return this.companyMasterService.PopulateList(model);
   }
   
+  GetProductList(model: ProductRequest): Observable<ApiListResponse<Product_SelectList>> {
+    return this.productMasterService.PopulateList(model);
+  }
     
   PopulateList(model: ExportOrderRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
     return this.apiService.post<ApiListResponse<ExportOrder_SelectList>>(`${this.endpoint}/PopulateList?`, model);
@@ -326,7 +331,7 @@ export class ExportOrderService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<ExportOrderDetail>, form: FormGroup): AutoCompleteDef<ProductMasterTemp> {
+  getProductMasterAutoCompleteDef(formConfig: FormConfigType<ExportOrderDetail>, form: FormGroup): AutoCompleteDef<ProductMaster> {
     return {
       type: 'formControl',
       group: form,

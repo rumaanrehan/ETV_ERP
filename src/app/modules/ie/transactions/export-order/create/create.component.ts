@@ -13,7 +13,7 @@ import { ExportOrderService } from '../export-order.service';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { ZAutoComplete1Component } from "../../../../../shared/components/z-form-controls/z-auto-complete/z-auto-complete.component";
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { ProductMaster, ProductMasterTemp } from '../../../../ims/product-master/product-master';
+import { Product_SelectList, ProductMaster, ProductMasterTemp, ProductRequest } from '../../../../ims/product-master/product-master';
 import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../settings/company-master/company-master';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
 
@@ -38,8 +38,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   customerList: Company_SelectList[] = []
 
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
-  // productMasterAutoCompleteDef!: AutoCompleteDef<ProductMasterTemp>;
-  productAutoCompleteDefs: AutoCompleteDef<ProductMasterTemp>[] = [];
+  productAutoCompleteDefs: AutoCompleteDef<Product_SelectList>[] = [];
 
   currencyList: StaticList[] = [
     { Text: 'USD - US Dollar', iValue: 1, cValue: 'USD - US Dollar' },
@@ -65,13 +64,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     { Text: 'Ready to Ship', iValue: 2, cValue: '' }
   ];
 
-  productList: ProductMasterTemp[] = [
-    { ProductID: 1, ProductName: 'Shoes', ProductCode: 'SH001', TaxRate: 5 },
-    { ProductID: 2, ProductName: 'Slippers', ProductCode: 'SH002', TaxRate: 12 },
-    { ProductID: 3, ProductName: 'Water', ProductCode: 'SH003', TaxRate: 18  },
-    { ProductID: 4, ProductName: 'Attar', ProductCode: 'SH004', TaxRate: 18 },
-    { ProductID: 5, ProductName: 'Perfume', ProductCode: 'SH005', TaxRate: 18 },
-  ];
+  // productList: ProductMasterTemp[] = [
+  //   { ProductID: 1, ProductName: 'Shoes', ProductCode: 'SH001', TaxRate: 5 },
+  //   { ProductID: 2, ProductName: 'Slippers', ProductCode: 'SH002', TaxRate: 12 },
+  //   { ProductID: 3, ProductName: 'Water', ProductCode: 'SH003', TaxRate: 18  },
+  //   { ProductID: 4, ProductName: 'Attar', ProductCode: 'SH004', TaxRate: 18 },
+  //   { ProductID: 5, ProductName: 'Perfume', ProductCode: 'SH005', TaxRate: 18 },
+  // ];
 
   portList: Port_SelectList[] = [
     {PortID: 1, PortName: 'Port of Los Angeles'},
@@ -154,28 +153,24 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadCompany(event: string): any {
     try {
-      const filterValue = event.toLowerCase();
-      this.companyMasterAutoCompleteDef.options = this.customerList.filter(customer =>
-        customer.CompanyName.toLowerCase().includes(filterValue)
-      );
       const dto: CompanyRequest = {
         CompanyTypeID: 1,
         CompanyName: event,
         PopulateType: 'AutoSuggest'
       }
       this.pageService.GetCompanyList(dto)
-        .pipe(takeUntil(this.destroy$)).subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.companyMasterAutoCompleteDef.options = response.Data.Items;
-            } else {
-              this.companyMasterAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.companyMasterAutoCompleteDef.options = response.Data.Items;
+          } else {
+            this.companyMasterAutoCompleteDef.options = [];
+            if (response.Message != "Record not found.") {
+              this.alertService.showServerResponseAlert(response);
             }
-          },
-        });
+          }
+        },
+      });
     } catch (error) {
 
     }
@@ -183,19 +178,29 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadProduct(event: string, index: number): void {
     try {
-      const filterValue = event.toLowerCase();
-
-      const options = this.productList.filter(product =>
-        product.ProductName.toLowerCase().includes(filterValue)
-      );
-
-      this.productAutoCompleteDefs[index].options = options;
+      const dto: ProductRequest = {
+        ProductName: event,
+        PopulateType: 'AutoSuggest'
+      }
+      this.pageService.GetProductList(dto)
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.productAutoCompleteDefs[index].options = response.Data.Items;
+          } else {
+            this.productAutoCompleteDefs[index].options = [];
+            if (response.Message != "Record not found.") {
+              this.alertService.showServerResponseAlert(response);
+            }
+          }
+        },
+      });
     } catch (error) {
     }
   }
 
-  OnSelect_Product(event: ProductMasterTemp, index: number ): void {
-    this.productListArray.at(index).patchValue({ProductID: event.ProductID, ProductName: event.ProductName, TaxRate: event.TaxRate});
+  OnSelect_Product(event: Product_SelectList, index: number ): void {
+    this.productListArray.at(index).patchValue({ProductID: event.ProductID, ProductName: event.ProductName, TaxRate: event.PurTaxRate});
   }
 
   productCalculation(index: number): void {
@@ -210,10 +215,10 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     group.patchValue({
       TaxAmountBC: (rate * taxRate / 100) * quantity,
-      TaxAmountFC: taxAmountBC * exchangeRate,
-      RatePerUnitFC: rate * exchangeRate,
+      TaxAmountFC: taxAmountBC / exchangeRate,
+      RatePerUnitFC: rate / exchangeRate,
       TotalAmountBC: quantity * rate,
-      TotalAmountFC: totalAmountBC * exchangeRate
+      TotalAmountFC: totalAmountBC / exchangeRate
     }, { emitEvent: false });
 
     this.form.patchValue({

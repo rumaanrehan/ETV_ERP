@@ -29,9 +29,10 @@ export interface ProductMasterTemp {
   TaxRate: number;
 }
 
-export interface ProductMaster_SelectList {
+export interface Product_SelectList {
   ProductID: number | null;
   ProductName: string | null;
+  PurTaxRate: number | null;
 }
 
 export interface ProductMaster_IndexTableFilter {
@@ -57,4 +58,10 @@ export interface ProductMaster_IndexTableList {
   UOMName: string;
   UnitPrice: number;
   ActiveStatus: boolean;
+}
+
+export interface ProductRequest {
+  ProductCode?: string | null;
+  ProductName?: string | null;
+  PopulateType?: string | null;
 }

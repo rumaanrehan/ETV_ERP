@@ -1,142 +1,114 @@
-<ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()">
-    <i class="pi pi-arrow-left"></i>&nbsp;Back</button>
-</ng-template>
-
-
-<div class="col-xl-12">
-  <div class="col-xl-12 page-content">
-    <div class="col-xl-12 page-content-scrollable">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-        <div class="col-xl-10 card m-auto mb-2">
-          <div class="card-body">
-            <div class="horizontal-form">
-              <div class="row">
-                <div class="col-12 col-xl-2 form-group px-2">
-                  <z-span [text]="form.get('ProductCode')?.value" [label]="formConfig.ProductCode.label"></z-span>
-                </div>
-                <div class="col-1"></div>
-                <div class="col-12 col-xl-3 form-group px-2">
-                  <z-select [group]="form" [control]="'ItemTypeID'" [label]="formConfig.ItemTypeID.label"
-                    [validationMessage]="formConfig.ItemTypeID.error" [optionLabel]="'ItemTypeName'"
-                    [optionValue]="'ItemTypeID'" [options]="itemTypeList" (onChange)="onChange_ItemType()">
-                  </z-select>
-                </div>
-                <div class="col-12 col-xl-3 form-group px-2">
-                  <z-select [group]="form" [control]="'ItemGroupID'" [label]="formConfig.ItemGroupID.label"
-                    [validationMessage]="formConfig.ItemGroupID.error" [optionLabel]="'ItemGroupName'"
-                    [optionValue]="'ItemGroupID'" [options]="itemGroupList"
-                    (onChange)="onChange_ItemGroup()"></z-select>
-                </div>
-                <div class="col-12 col-xl-3 form-group px-2">
-                  <z-select [group]="form" [control]="'ItemCategoryID'" [label]="formConfig.ItemCategoryID.label"
-                    [validationMessage]="formConfig.ItemCategoryID.error" [optionLabel]="'ItemCategoryName'"
-                    [optionValue]="'ItemCategoryID'" [options]="itemCategoryList"
-                    (onChange)="onChange_ItemCategory()">
-                  </z-select>
-                </div>
-                <div class="col-12 col-xl-3 form-group px-2">
-                  <z-inputtext [group]="form" [control]="'ProductName'" [label]="formConfig.ProductName.label"
-                    [validationMessage]="formConfig.ProductName.error">
-                  </z-inputtext>
-                </div>
-                <div class="col-3"></div>
-                <div class="col-12 col-xl-3 form-group px-2">
-                  <z-select [group]="form" [control]="'GenericID'" [label]="formConfig.GenericID.label"
-                    [validationMessage]="formConfig.GenericID.error" [optionLabel]="'GenericName'"
-                    [optionValue]="'GenericID'" [options]="genericList">
-                  </z-select>
-                </div>
-                <div class="col-12 col-xl-3 form-group px-2">
-                  <z-select [group]="form" [control]="'ManufacturerID'" [label]="formConfig.ManufacturerID.label"
-                    [validationMessage]="formConfig.ManufacturerID.error" [optionLabel]="'ManufacturerName'"
-                    [optionValue]="'ManufacturerID'" [options]="manufacturerList">
-                  </z-select>
-                </div>
-                <div class="col-12 col-xl-3 form-group px-2">
-                  <z-select [group]="form" [control]="'UOMID'" [label]="formConfig.UOMID.label"
-                    [validationMessage]="formConfig.UOMID.error" [optionLabel]="'UOMName'" [optionValue]="'UOMID'"
-                    [options]="uomList">
-                  </z-select>
-                </div>
-                <div class="col-12 col-xl-2 form-group px-2">
-                  <z-inputnumber [group]="form" [control]="'Unit'" [label]="formConfig.Unit.label"
-                    [validationMessage]="formConfig.Unit.error">
-                  </z-inputnumber>
-                </div>
-                <div class="col-1"></div>
-                <div class="col-12 col-xl-6 form-group px-2">
-                  <z-inputtext [group]="form" [control]="'HSCode'" [label]="formConfig.HSCode.label"
-                    [validationMessage]="formConfig.HSCode.error">
-                  </z-inputtext>
-                </div>
-                <div class="col-xl-6 form-group row align-items-center ps-2">
-                  <label class="col-xl-3 form-label">Purchase Tax:</label>
-                  <div class="col-xl-9 row">
-                    <div class="col-xl-6 px-2">
-                      <z-select [group]="form" [control]="'PurTaxOn'" [label]="formConfig.PurTaxOn.label"
-                        [validationMessage]="formConfig.PurTaxOn.error" [optionLabel]="'Text'" [optionValue]="'iValue'"
-                        [options]="purTaxOnList">
-                      </z-select>
-                    </div>
-                    <div class="col-xl-6 px-2">
-                      <z-select [group]="form" [control]="'TaxSlabID'" [label]="formConfig.TaxSlabID.label"
-                        [validationMessage]="formConfig.ProductName.error" [optionLabel]="'TaxSlabName'"
-                        [optionValue]="'TaxSlabID'" [options]="taxSlabList">
-                      </z-select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-xl-6 form-group row align-items-center ps-2">
-                  <div class="col-xl-12">
-                    <z-checkbox [group]="form" [control]="'IsApprovalRequiredToPurchase'"
-                      [label]="formConfig.IsApprovalRequiredToPurchase.label">
-                    </z-checkbox>
-                  </div>
-                </div>
-                <div class="col-xl-6 form-group row align-items-center ps-2">
-                  <label class="col-xl-3 form-label">Reorder Level:</label>
-                  <div class="col-xl-9 row">
-                    <div class="col-xl-6 px-2">
-                      <z-inputnumber [group]="form" [control]="'ReorderLevel'" [label]="formConfig.ReorderLevel.label"
-                        [validationMessage]="formConfig.ReorderLevel.error">
-                      </z-inputnumber>
-                    </div>
-                    <div class="col-xl-6 px-2">
-                      <z-inputnumber [group]="form" [control]="'ReorderQty'" [label]="formConfig.ReorderQty.label"
-                        [validationMessage]="formConfig.ReorderQty.error">
-                      </z-inputnumber>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-xl-6 form-group row align-items-center ps-2">
-                  <div class="col-xl-12">
-                    <z-checkbox [group]="form" [control]="'IsApprovalRequiredToIssue'"
-                      [label]="formConfig.IsApprovalRequiredToIssue.label">
-                    </z-checkbox>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+        <h5 class="text-white">Product Master</h5>
+    </div>
+  <div sidebarContent>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+          <z-span [text]="form.get('ProductCode')?.value" [label]="formConfig.ProductCode.label"></z-span>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'ItemTypeID'" [label]="formConfig.ItemTypeID.label"
+          [validationMessage]="formConfig.ItemTypeID.error" [optionLabel]="'ItemTypeName'"
+          [optionValue]="'ItemTypeID'" [options]="itemTypeList" (onChange)="onChange_ItemType()">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'ItemGroupID'" [label]="formConfig.ItemGroupID.label"
+          [validationMessage]="formConfig.ItemGroupID.error" [optionLabel]="'ItemGroupName'"
+          [optionValue]="'ItemGroupID'" [options]="itemGroupList"
+          (onChange)="onChange_ItemGroup()"></z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'ItemCategoryID'" [label]="formConfig.ItemCategoryID.label"
+          [validationMessage]="formConfig.ItemCategoryID.error" [optionLabel]="'ItemCategoryName'"
+          [optionValue]="'ItemCategoryID'" [options]="itemCategoryList"
+          (onChange)="onChange_ItemCategory()">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'ProductName'" [label]="formConfig.ProductName.label"
+          [validationMessage]="formConfig.ProductName.error">
+        </z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'GenericID'" [label]="formConfig.GenericID.label"
+          [validationMessage]="formConfig.GenericID.error" [optionLabel]="'GenericName'"
+          [optionValue]="'GenericID'" [options]="genericList">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'ManufacturerID'" [label]="formConfig.ManufacturerID.label"
+          [validationMessage]="formConfig.ManufacturerID.error" [optionLabel]="'ManufacturerName'"
+          [optionValue]="'ManufacturerID'" [options]="manufacturerList">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'UOMID'" [label]="formConfig.UOMID.label"
+          [validationMessage]="formConfig.UOMID.error" [optionLabel]="'UOMName'" [optionValue]="'UOMID'"
+          [options]="uomList">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputnumber [group]="form" [control]="'Unit'" [label]="formConfig.Unit.label"
+          [validationMessage]="formConfig.Unit.error">
+        </z-inputnumber>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'HSCode'" [label]="formConfig.HSCode.label"
+          [validationMessage]="formConfig.HSCode.error">
+        </z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group d-flex align-items-center">
+        <label class="col-xl-3 form-label">Purchase Tax:</label>
+        <div class="col-xl-4 px-2">
+          <z-select [group]="form" [control]="'PurTaxOn'" [label]="formConfig.PurTaxOn.label"
+            [validationMessage]="formConfig.PurTaxOn.error" [optionLabel]="'Text'" [optionValue]="'iValue'"
+            [options]="purTaxOnList">
+          </z-select>
         </div>
-      </form>
-    </div>
-  </div>
-  <div class="page-action-panel">
-    <div class="col-xl-4"></div>
-    <div class="col-xl-4"></div>
-    <div class="col-xl-4">
-      <div class="col-xl-3 px-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()">
-          {{ isEditMode ? "Update" : "Save" }}
-        </button>
+        <div class="col-xl-5 px-2">
+          <z-select [group]="form" [control]="'TaxSlabID'" [label]="formConfig.TaxSlabID.label"
+            [validationMessage]="formConfig.ProductName.error" [optionLabel]="'TaxSlabName'"
+            [optionValue]="'TaxSlabID'" [options]="taxSlabList">
+          </z-select>
+        </div>
       </div>
-      <div class="col-xl-3 px-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="resetForm()">
-          Reset
-        </button>
+      <div class="col-xl-12 form-group d-flex align-items-center">
+        <label class="col-xl-3 form-label">Reorder Level:</label>
+        <div class="col-xl-4 px-2">
+            <z-inputnumber [group]="form" [control]="'ReorderLevel'" [label]="formConfig.ReorderLevel.label"
+              [validationMessage]="formConfig.ReorderLevel.error">
+            </z-inputnumber>
+          </div>
+          <div class="col-xl-5 px-2">
+            <z-inputnumber [group]="form" [control]="'ReorderQty'" [label]="formConfig.ReorderQty.label"
+              [validationMessage]="formConfig.ReorderQty.error">
+            </z-inputnumber>
+          </div>
       </div>
-    </div>
+      <div class="col-xl-12 form-group">
+        <z-checkbox [group]="form" [control]="'IsApprovalRequiredToPurchase'"
+          [label]="formConfig.IsApprovalRequiredToPurchase.label">
+        </z-checkbox>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-checkbox [group]="form" [control]="'IsApprovalRequiredToIssue'"
+          [label]="formConfig.IsApprovalRequiredToIssue.label">
+        </z-checkbox>
+      </div>
+    </form>
   </div>
-</div>
+  <div sidebarFooter>
+      <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+          <div class="col-md-6 pe-1">
+              <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
+                  {{ isEditMode ? "Update" : "Save" }}
+              </button>
+          </div>
+          <div class="col-md-6 ps-1">
+              <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+          </div>
+      </div>
+  </div>
+</app-form-sidebar>
