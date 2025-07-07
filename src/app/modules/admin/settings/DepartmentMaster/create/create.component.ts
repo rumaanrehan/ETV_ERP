@@ -6,44 +6,36 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { DepartmentMaster, DepartmentMaster_SelectList } from '../department-master';
+import { DepartmentMaster } from '../department-master';
 import { DepartmentMasterService } from '../department-master.service';
-import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [CommonModule, FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
-  
+
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  activeStatus: boolean = false;
-  isSubDepartment: boolean = true;
-  
   form!: FormGroup;
   formConfig!: FormConfigType<DepartmentMaster>;
-
-  parentDepartmentList: DepartmentMaster_SelectList[] = [];
 
   constructor(
     private pageService: DepartmentMasterService,
     private formService: FormService,
-    private alertService: AlertNotificationService
+    private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<DepartmentMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -51,31 +43,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList(): void{
-    this.pageService.GetMasterDropdownLists()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          if(data.parentDepartmentList.IsSuccess) {
-            this.parentDepartmentList = data.parentDepartmentList.Data.Items;
-          }
-        }
-    });
-  }
-
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: DepartmentMaster): void {
+  openSidebar(isEditMode: boolean, model: DepartmentMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
-    this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
 
-  closeSidebar(): void {
+  onCloseSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
     this.formService.resetFormValue<DepartmentMaster>(this.formConfig, this.form);
+
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -127,6 +107,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              this.onCloseSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,
@@ -144,8 +125,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-    }
-    catch (error) {
+    } catch (error) {
 
     }
   }
@@ -157,7 +137,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.closeSidebar();
+              this.onCloseSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,
@@ -178,3 +158,4 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 }
+

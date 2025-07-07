@@ -1,8 +1,3 @@
-<!-- Page Header Action Button Template -->
-<ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add Country</button>
-</ng-template>
-
 <!-- Index Table Component -->
 <div class="col-xl-12 index-page-content">
   <z-datatable [tableDef]="tableDef"
@@ -11,10 +6,6 @@
 </div>
 
 <!-- Table Column Custom Template -->
-<ng-template #countryCodeTemplate let-row>
-    <span class="table-action-link" (click)="onClickEditDetails(row.CountryID, row.ActiveStatus)" style="cursor: pointer;">{{ row.CountryCode }}</span>
-</ng-template>
-
 <ng-template #countryIsDefaultTemplate let-row>
   <span class="badge rounded-pill {{ row.IsDefault ? 'bg-outline-success' : 'bg-outline-dark' }}">
     {{ row.IsDefault ? 'Yes' : 'No' }}
@@ -22,8 +13,9 @@
 </ng-template>
 
 <ng-template #countryActiveStatusTemplate let-row>
-  <span class="badge {{ row.ActiveStatus ? 'bg-outline-success' : 'bg-outline-danger' }}">
-    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  <span class="table-row-status">
+    <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
+    {{ row.ActiveStatus ? 'Active'  : 'Inactive' }}
   </span>
 </ng-template>
 
@@ -32,5 +24,3 @@
     <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
   </div>
 </ng-template>
-
-<app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>

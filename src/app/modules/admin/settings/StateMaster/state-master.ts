@@ -1,33 +1,34 @@
 export interface StateMaster {
   StateID: number | null;
   StateCode: string | null;
-  CountryID: number | null;
   StateName: string | null;
-  StateISOCode: string | null;
-  StateGSTCode: string | null;
-  IsDefault: boolean | null;
+  CountryID: number | null;
+} 
+
+export interface State_SelectList {
+  StateID: number | null;
+  StateName: string | null;
+  CountryID: number | null;
 }
 
-export interface StateMaster_SelectList {
-  StateID: number;
-  StateName: string;
-}
-
-export interface StateMaster_IndexTableFilter {
-  StateCode: string;
-  StateName: string;
-  CountryName: string;
-  ActiveStatusID: number;
-}
-
-export interface StateMaster_IndexTableList {
-  RowID: number;
-  StateID: number;
-  StateCode: string;
-  StateName: string;
-  StateGSTCode: string;
-  StateISOCode: string;
-  CountryName: string;
-  IsDefault: string;
+export interface State_IndexTableList {
+  StateID: number | null;
+  StateCode: string | null;
+  StateName: string | null;
+  CountryName: string | null;
   ActiveStatus: boolean;
+}
+
+export interface State_IndexTableFilter {
+  StateCode: string | null;
+  StateName: string | null;
+  CountryID: number | null;
+  ActiveStatusID: number | null;
+}
+
+export interface StateRequest {
+  CountryID?: number | null;
+  StateCode?: string | null;
+  StateName?: string | null;
+  PopulateType?: string | null;
 }

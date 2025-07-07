@@ -701,3 +701,21 @@ span{
 .input-group  {
   flex-grow: 1;
 }
+
+
+
+// Dataview
+
+.p-dataview-content {
+    height: calc(100vh - 203px);
+    overflow-y: scroll;
+}
+
+.p-dataview-header {
+    padding: 0;
+    border-bottom: none;
+}
+
+.p-dataview .pi.pi-times {
+    padding: 0;
+}

@@ -1,8 +1,12 @@
+import { ItemTypeMaster } from "../../modules/ims/item-type-master/item-type-master";
+
 export interface ItemGroup {
     ItemGroupID: number | null;
     ItemGroupCode: string | null;
     ItemGroupName: string | null;
     ActiveStatus: boolean;
+
+    ItemType?: ItemTypeMaster | null;
 }
 
 export interface ItemGroup_IndexTableList {

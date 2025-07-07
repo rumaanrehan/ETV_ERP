@@ -1,8 +1,8 @@
 export interface TaxSlabMaster {
   TaxSlabID: number | null;
   TaxSlabCode: string | null;
-  TaxTypeID: number | null;
   TaxSlabName: string | null;
+  TaxTypeID: number | null;
   TaxRate: number | null;
 }
 
@@ -26,4 +26,9 @@ export interface TaxSlab_IndexTableList {
   TaxTypeID: number | null;
   TaxRate: number | null;
   ActiveStatus: boolean | null;
+}
+
+export interface TaxSlabRequest {
+  TaxSlabID?: number | null;
+  PopulateType: string | null;
 }

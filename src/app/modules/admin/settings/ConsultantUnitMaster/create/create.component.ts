@@ -60,7 +60,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.DepartmentsList = response.Data.Items;
+              // this.DepartmentList = response.Data.Items;
             }
             else {
               this.DepartmentsList = [];

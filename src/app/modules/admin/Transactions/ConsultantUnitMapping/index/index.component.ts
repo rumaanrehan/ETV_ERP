@@ -75,7 +75,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            this.DepartmentList = response.Data.Items;
+            // this.DepartmentList = response.Data.Items;
           }
           else {
             this.DepartmentList = [];

@@ -8,12 +8,12 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { CountryMaster_SelectList } from '../../country-master/country-master';
 import { CountryMasterService } from '../../country-master/country-master.service';
 import { StateMasterService } from '../../StateMaster/state-master.service';
 import { BillCompanyMaster } from '../bill-company-master';
 import { BillCompanyMasterService } from '../bill-company-master.service';
-import { StateMaster_SelectList } from '../../StateMaster/state-master';
+import { State_SelectList } from '../../StateMaster/state-master';
+import { Country_SelectList, CountryRequest } from '../../country-master/country-master';
 
 @Component({
   selector: 'app-create',
@@ -34,8 +34,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   ActiveStatus: boolean = false;  //For Button Disabled.
   form!: FormGroup;
   formConfig!: FormConfigType<BillCompanyMaster>;
-  CountryList: CountryMaster_SelectList[] = [];
-  StateList: StateMaster_SelectList[] = [];
+  CountryList: Country_SelectList[] = [];
+  StateList: State_SelectList[] = [];
   defaultCountryID: number | null = null;
   defaultStateID: number | null = null;
 
@@ -77,20 +77,19 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadCountry(): void {
     try {
-      this.countryService.PopulateList('SelectList')
+      this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
             this.CountryList = response.Data.Items;
-            this.defaultCountryID = this.CountryList.find(country => country.IsDefault)?.CountryID ?? this.CountryList[0].CountryID;
+            this.defaultCountryID = this.CountryList.find(country => true)?.CountryID ?? this.CountryList[0].CountryID;
             this.form.get('BillCompanyCountryID')?.setValue(this.defaultCountryID);
             this.loadState();
           } else {
             this.CountryList = [];
-            this.alertService.showServerResponseAlert({
+            this.alertService.showServerResponseAlert( {
               Status: response.Status,
-              Message: response.Message,
-              ValidationErrors: response.ValidationErrors
+              Message: response.Message
             });
           }
         },

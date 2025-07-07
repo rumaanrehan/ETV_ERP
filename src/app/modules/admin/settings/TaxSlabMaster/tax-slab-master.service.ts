@@ -8,7 +8,7 @@ import { DataTableFilterFormConfigType, FormConfigType } from '../../../../share
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { TaxSlab_IndexTableFilter, TaxSlab_IndexTableList, TaxSlab_SelectList, TaxSlabMaster } from './tax-slab-master';
+import { TaxSlab_IndexTableFilter, TaxSlab_IndexTableList, TaxSlab_SelectList, TaxSlabMaster, TaxSlabRequest } from './tax-slab-master';
 
 @Injectable({
   providedIn: 'root'
@@ -25,12 +25,11 @@ export class TaxSlabMasterService {
     return this.selectListService.GetStaticList(model);
   }
     
-  PopulateList(PopulateType: any): Observable<ApiListResponse<TaxSlab_SelectList>> {
-    return this.apiService.post<ApiListResponse<TaxSlab_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {});
+  PopulateList(model: TaxSlabRequest): Observable<ApiListResponse<TaxSlab_SelectList>> {
+    return this.apiService.post<ApiListResponse<TaxSlab_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<TaxSlab_IndexTableFilter>): Observable<ApiPagedListResponse<TaxSlab_IndexTableList>> {
-    console.log("Fetching List From TaxSlabMasterService");
     return this.apiService.post<ApiPagedListResponse<TaxSlab_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 

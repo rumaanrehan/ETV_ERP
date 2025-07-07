@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
@@ -13,25 +12,24 @@ import { EmployeeTypeMasterService } from '../employee-type-master.service';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent,ReactiveFormsModule,CommonModule,ZFormControlsModule],
-  providers: [FormService],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss'],
+  styleUrl: './create.component.scss'
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false; //for button disabled.
   form!: FormGroup;
   formConfig!: FormConfigType<EmployeeTypeMaster>;
 
   constructor(
     private pageService: EmployeeTypeMasterService,
     private formService: FormService,
-    private alertService: AlertNotificationService
+    private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -45,17 +43,15 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(ActiveStatus: boolean, isEditMode: boolean, model: EmployeeTypeMaster): void {
+  openSidebar(isEditMode: boolean, model: EmployeeTypeMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
-      this.ActiveStatus = ActiveStatus;
     }
-    this.ActiveStatus = ActiveStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
 
-  closeSidebar(): void {
+  onCloseSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
     this.formService.resetFormValue<EmployeeTypeMaster>(this.formConfig, this.form);
@@ -113,7 +109,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.closeSidebar();
+              this.onCloseSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,
@@ -128,8 +124,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-    }
-    catch (error) {
+    } catch (error) {
 
     }
   }
@@ -141,7 +136,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.closeSidebar();
+              this.onCloseSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,
@@ -162,3 +157,4 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 }
+

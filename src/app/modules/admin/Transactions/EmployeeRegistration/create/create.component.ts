@@ -20,7 +20,7 @@ import { PageHeaderService } from '../../../../../shared/services/page-header.se
 import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { CountryMaster_SelectList } from '../../../settings/country-master/country-master';
 import { DepartmentMasterService } from '../../../settings/DepartmentMaster/department-master.service';
-import { DesignationMasterList } from '../../../settings/DesignationMaster/designation-master';
+import { DesignationMaster_SelectList } from '../../../settings/DesignationMaster/designation-master';
 import { DesignationMasterService } from '../../../settings/DesignationMaster/designation-master.service';
 import { EmployeeTypeMasterList } from '../../../settings/EmployeeTypeMaster/employee-type-master';
 import { EmployeeTypeMasterService } from '../../../settings/EmployeeTypeMaster/employee-type-master.service';
@@ -75,8 +75,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   RelationshipList: RelationshipMasterList[] = [];
   CategoryList: SelectList[] = [];
   EmployeeTypeList: EmployeeTypeMasterList[] = [];
-  DepartmentList: DepartmentMaster_SelectList[] = [];
-  DesignationList: DesignationMasterList[] = [];
+  DepartmentList: DepartmentMasterList[] = [];
+  DesignationList: DesignationMaster_SelectList[] = [];
   SignatoryAreaList: SelectList[] = [];
   RoleList: RoleMaster_SelectList[] = [];
   ReportingToList: EmployeeRegistrationList[] = [];
@@ -403,6 +403,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                   Status: response.Status,
                   Message: response.Message,
                   ValidationErrors: response.ValidationErrors,
+                  IsSuccess: undefined
                 });
               }
             },
@@ -477,7 +478,8 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.alertService.showServerResponseAlert({
                 Status: response.Status,
                 Message: response.Message,
-                ValidationErrors: response.ValidationErrors
+                ValidationErrors: response.ValidationErrors,
+                IsSuccess: undefined
               });
             }
           },
@@ -573,6 +575,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 Status: response.Status,
                 Message: response.Message,
                 ValidationErrors: response.ValidationErrors,
+                IsSuccess: undefined
               });
             }
           },
@@ -665,7 +668,8 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.alertService.showServerResponseAlert({
                 Status: response.Status,
                 Message: response.Message,
-                ValidationErrors: response.ValidationErrors
+                ValidationErrors: response.ValidationErrors,
+                IsSuccess: undefined
               });
             }
           },
@@ -721,7 +725,8 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.alertService.showServerResponseAlert({
                 Status: response.Status,
                 Message: response.Message,
-                ValidationErrors: response.ValidationErrors
+                ValidationErrors: response.ValidationErrors,
+                IsSuccess: undefined
               });
             }
           },

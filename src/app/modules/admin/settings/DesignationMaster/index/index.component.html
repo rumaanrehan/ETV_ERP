@@ -1,24 +1,32 @@
+<!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+  <button class="btn btn-primary btn-page-header" (click)="OnClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add Designation</button>
 </ng-template>
-
-<app-index-table [tableDef]="tableDef"
-                 (lazyLoad)="onIndexTableLazyLoad($event)">
-</app-index-table>
+  
+<!-- Index Table Component -->
+<div style="overflow-x: auto">
+  <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)"></z-datatable>
+</div>
 
 <ng-template #designationCodeTemplate let-row>
-  <span class="fw-bold font-blue" (click)="onClickEditDetails(row.DesignationID,row.ActiveStatus)" style="cursor: pointer;">{{ row.DesignationCode }}</span>
+  <span class="table-action-link" (click)="OnClickEditDetails(row.DesignationID)" style="cursor: pointer;">{{ row.DesignationCode }}</span>
 </ng-template>
 
+<ng-template #designationIsAllowedOverTimePayTemplate let-row>
+  <span class="{{ row.IsAllowedOvertime ? 'text-success' : 'text-danger' }}">
+    <i class="pi {{ row.IsAllowedOvertime ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
+  </span>
+</ng-template>
 <ng-template #designationActiveStatusTemplate let-row>
-  <span class="badge {{ row.ActiveStatus ? 'bg-outline-success' : 'bg-outline-danger' }}">
+  <span class="table-row-status">
+    <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
     {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
   </span>
 </ng-template>
 
 <ng-template #actionColTemplate let-row>
   <div class="hstack gap-2 fs-15 justify-content-end">
-    <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)"><i class="ri-delete-bin-line"></i></span>
+    <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDeleteReactivate(row)"><i class="ri-delete-bin-line"></i></span>
   </div>
 </ng-template>
 

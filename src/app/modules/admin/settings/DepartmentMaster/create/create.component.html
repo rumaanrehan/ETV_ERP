@@ -1,39 +1,26 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+ <app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
   <div sidebarHeader>
     <h5 class="text-white">Department Master</h5>
   </div>
   <div sidebarContent>
     <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="col-xl-12 form-group">
-        <z-span [text]="form.get('DepartmentCode')?.value" [label]="formConfig.DepartmentCode.label"></z-span>
+        <z-inputtext [group]="form" control="DepartmentCode" [label]="formConfig.DepartmentCode.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'DepartmentName'" [label]="formConfig.DepartmentName.label"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ShortCode'" [label]="formConfig.ShortCode.label" ></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputswitch [group]="form" [control]="'IsSubDepartment'" [label]="formConfig.IsSubDepartment.label"></z-inputswitch>
-      </div>
-      <div class="col-xl-12 form-group" *ngIf="form.get('IsSubDepartment')?.value">
-        <z-select [group]="form" [control]="'ParentDepartmentID'" [label]="formConfig.ParentDepartmentID.label"
-          [optionLabel]="'ParentDepartmentName'" [optionValue]="'ParentDepartmentID'" [options]="parentDepartmentList">
-        </z-select>
+        <z-inputtext [group]="form" control="DepartmentName" [label]="formConfig.DepartmentName.label" [validationMessage]="formConfig.DepartmentName.error"></z-inputtext>
       </div>
     </form>
   </div>
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
-          {{ isEditMode ? "Update" : "Save" }}
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="form.get('ActiveStatus')?.value == false">
+          {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>
       <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">
-          Cancel
-        </button>
+        <button type="button" class="btn btn-md btn-light w-100" (click)="onCloseSidebar()">Cancel</button>
       </div>
     </div>
   </div>

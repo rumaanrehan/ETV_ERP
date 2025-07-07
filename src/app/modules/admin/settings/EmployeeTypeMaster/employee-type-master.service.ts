@@ -4,34 +4,37 @@ import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Environment } from '../../../../../environments/environment';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { FormConfigType } from '../../../../shared/models/form.model';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { EmployeeTypeMaster, EmployeeTypeMasterList } from './employee-type-master';
+import { EmployeeTypeMaster, EmployeeTypeMaster_IndexTableFilter, EmployeeTypeMaster_IndexTableList, EmployeeTypeMaster_SelectList } from './employee-type-master';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class EmployeeTypeMasterService {
   private apiUrl: string;
-
   constructor(private http: HttpClient) {
     this.apiUrl = Environment.apiUrl;
   }
 
-  //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<EmployeeTypeMaster_IndexTableFilter> {
+    return {
+      EmployeeTypeCode: '',
+      EmployeeTypeName: '',
+      ActiveStatusID: 0,
+    }
+  }
+
   getFormConfig(): FormConfigType<EmployeeTypeMaster> {
     return {
       EmployeeTypeID: {
         label: '',
         defaultValue: null,
-        validators: [],
-        validationMessages: {}
       },
       EmployeeTypeCode: {
-        label: 'Employee Type Code',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
+        label: 'Code',
+        defaultValue: 'NEW',
       },
       EmployeeTypeName: {
         label: 'Employee Type Name',
@@ -39,27 +42,24 @@ export class EmployeeTypeMasterService {
         validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
         validationMessages: {
           required: 'Employee Type Name is Required.',
-          maxlength: 'Employee Type Name cannot be longer than 50 characters.'
+          maxlength: 'Employee Type name cannot be longer than 50 characters.'
         },
         type: 'control'
       },
-      IsAllowedOverTimePay: {
-        label: 'Is Allowed Over Time Pay',
-        defaultValue: false,
-        validators: [],
-        validationMessages: {}
-      },
-    };
-  }
-  //#endregion
-
-  PopulateList(PopulateType: any): Observable<ApiListResponse<EmployeeTypeMasterList>> {
-    return this.http.post<ApiListResponse<EmployeeTypeMasterList>>(`${this.apiUrl}Admin/EmployeeTypeMaster/PopulateList?PopulateType=${PopulateType}`, {});
+      IsAllowedOvertime:{
+        label: 'Is Allowed Overtime',
+        defaultValue: null,
+      }
+    }
   }
 
-  PopulateGrid(tabledata: any): Observable<ApiPagedListResponse<EmployeeTypeMasterList>> {
-    return this.http.post<ApiPagedListResponse<EmployeeTypeMasterList>>(`${this.apiUrl}Admin/EmployeeTypeMaster/PopulateGrid`, tabledata);
+  PopulateList(PopulateType: string): Observable<ApiListResponse<EmployeeTypeMaster_SelectList>> {
+    return this.http.post<ApiListResponse<EmployeeTypeMaster_SelectList>>(`${this.apiUrl}Admin/EmployeeTypeMaster/PopulateList?PopulateType=${PopulateType}`, {});
   }
+
+  PopulateGrid(model: DataTableParams<EmployeeTypeMaster_IndexTableFilter>): Observable<ApiPagedListResponse<EmployeeTypeMaster_IndexTableList>> {      
+      return this.http.post<ApiPagedListResponse<EmployeeTypeMaster_IndexTableList>>(`${this.apiUrl}Admin/EmployeeTypeMaster/PopulateGrid`, model);
+    }
 
   GetDetails(EmployeeTypeID: number): Observable<ApiDataResponse<EmployeeTypeMaster>> {
     return this.http.post<ApiDataResponse<EmployeeTypeMaster>>(`${this.apiUrl}Admin/EmployeeTypeMaster/GetDetails?EmployeeTypeID=${EmployeeTypeID}`, {});
@@ -70,10 +70,14 @@ export class EmployeeTypeMasterService {
   }
 
   UpdateRecord(model: EmployeeTypeMaster): Observable<ApiResponse> {
+    debugger;
     return this.http.post<ApiResponse>(`${this.apiUrl}Admin/EmployeeTypeMaster/Edit`, model);
   }
 
-  DeleteRecord(model: EmployeeTypeMaster): Observable<ApiResponse> {
+  DeleteReactivate(model: EmployeeTypeMaster): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}Admin/EmployeeTypeMaster/Delete`, model);
   }
+
+
+
 }

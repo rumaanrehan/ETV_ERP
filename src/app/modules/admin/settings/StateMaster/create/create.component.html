@@ -1,39 +1,31 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+ <app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
   <div sidebarHeader>
     <h5 class="text-white">State Master</h5>
   </div>
   <div sidebarContent>
     <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-       <div class="col-xl-12 form-group">
-          <z-span [text]="form.get('StateCode')?.value" [label]="formConfig.StateCode.label"></z-span>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" control="StateCode" [label]="formConfig.StateCode.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label" [options]="countryList" [optionLabel]="'CountryName'" [optionValue]="'CountryID'">
-        </z-select>
+        <z-inputtext [group]="form" control="StateName" [label]="formConfig.StateName.label" [validationMessage]="formConfig.StateName.error"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'StateName'" [label]="formConfig.StateName.label"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'StateISOCode'" [label]="formConfig.StateISOCode.label"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'StateGSTCode'" [label]="formConfig.StateGSTCode.label"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-checkbox [group]="form" [control]="'IsDefault'" [label]="formConfig.IsDefault.label"></z-checkbox>
+          <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label" [validationMessage]="formConfig.CountryID.error"
+          [options]="countryList" [optionLabel]="'CountryName'" [optionValue]="'CountryID'">
+          </z-select>
       </div>
     </form>
   </div>
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="form.get('ActiveStatus')?.value == false">
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>
       <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+        <button type="button" class="btn btn-md btn-light w-100" (click)="onCloseSidebar()">Cancel</button>
       </div>
     </div>
   </div>

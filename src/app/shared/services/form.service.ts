@@ -92,7 +92,6 @@ export class FormService {
   }
 
   resetFormValue<T>(formConfig: FormConfigType<T>, form: FormGroup): void{
-    console.log("yaha aaya hjun");
     form.reset(
       Object.fromEntries(
         Object.keys(formConfig).map(key => {
