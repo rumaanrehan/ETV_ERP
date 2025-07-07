@@ -8,4 +8,5 @@ export const imsRoute: Routes = [
   {path: 'ims/uom-master/index', loadComponent: () => import('./UOMMaster/index/index.component').then((m) => m.IndexComponent) },
   {path: 'ims/manufacturer-master/index', loadComponent: () => import('./Manufacturer-Master/index/index.component').then((m) => m.IndexComponent) },
   {path: 'ims/hsn-sac-master/index', loadComponent: () => import('./HsnSacMaster/index/index.component').then((m) => m.IndexComponent) },
+  {path: 'ims/port-master/index', loadComponent: () => import('./PortMaster/index/index.component').then((m) => m.IndexComponent) },
 ];
