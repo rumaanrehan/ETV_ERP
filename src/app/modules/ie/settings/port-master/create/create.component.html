@@ -1,0 +1,39 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Port Master</h5>
+  </div>
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-span [text]="form.get('PortCode')?.value" [label]="formConfig.PortCode.label"></z-span>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'PortName'" [label]="formConfig.PortName.label" [validationMessage]="formConfig.PortName.error"></z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'PortTypeID'" [label]="formConfig.PortTypeID.label" [validationMessage]="formConfig.PortTypeID.error"
+          [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="portTypeList">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label" [validationMessage]="formConfig.CountryID.error"
+          [optionLabel]="'CountryName'" [optionValue]="'CountryID'" [options]="countryList">
+        </z-select>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
+          {{ isEditMode ? "Update" : "Save" }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>

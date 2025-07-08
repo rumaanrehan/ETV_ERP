@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
@@ -19,20 +19,24 @@ import { ItemGroup_SelectList, ItemGroupRequest } from '../../item-group-master/
 import { Generic_SelectList, GenericRequest } from '../../generic-master/generic-master';
 import { ItemType_SelectList } from '../../item-type-master/item-type-master';
 import { TaxSlab_SelectList } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
+import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, FormSidebarComponent],
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-
+  @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+  
+  isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+  activeStatus: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<ProductMaster>;
 
@@ -58,12 +62,11 @@ export class CreateComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<ProductMaster>( this.formConfig );
     this.formService.initializeFormValidationMessage( this.formConfig, this.form );
 
-    this.getDetails();
+    // this.getDetails();
     this.loadDropdownList();
   }
 
@@ -82,9 +85,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     .subscribe({
       next: (data) => {
         this.itemTypeList = data.itemTypeList.Data.Items;
-        // this.itemGroupList = data.itemGroupList.Data.Items;
-        // this.itemCategoryList = data.itemCategoryList.Data.Items;
-        // this.genericList = data.itemList.Data.Items;
         this.manufacturerList = data.manufacturerList.Data.Items;
         this.uomList = data.uomList.Data.Items;
         this.taxSlabList = data.taxSlabList.Data.Items;
@@ -117,16 +117,30 @@ export class CreateComponent implements OnInit, OnDestroy {
       },
     });
   }
-
-  onClickPageHeaderAddButton(): void {
-    try {
-      this.router.navigate(['/ims/product-master/index']);
-    } catch (error) {}
-  }
-
-  resetForm(): void {
-    this.formService.resetFormValue<ProductMaster>(this.formConfig, this.form);
-  }
+  
+  
+  
+    openSidebar(activeStatus: boolean, isEditMode: boolean, model: ProductMaster): void {
+      if (isEditMode && model) {
+        // this.loadItemGroup(model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID!);
+        // this.loadItemCategory(model.ItemCategory?.ItemGroup?.ItemGroupID!);
+        this.isEditMode = isEditMode;
+      }
+      this.activeStatus = activeStatus;
+      this.form.patchValue(model);
+      // this.form.patchValue({ItemTypeID: model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID, ItemGroupID: model.ItemCategory?.ItemGroup?.ItemGroupID});
+      this.isFormSidebarVisible = true;
+    }
+    
+    closeSidebar(): void {
+      this.isFormSidebarVisible = false;
+      this.isEditMode = false;
+      this.formService.resetFormValue<ProductMaster>(this.formConfig, this.form);
+  
+      setTimeout(() => {
+        this.closeSidebarEvent.emit();
+      }, 1);
+    }
 
   onChange_ItemType(): void{
     this.itemGroupList = [];
@@ -214,7 +228,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    try {
+    try{
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -223,22 +237,21 @@ export class CreateComponent implements OnInit, OnDestroy {
         return;
       }
       if (this.isEditMode) {
-        this.alertService
-          .showConfirmationWithInput({
-            text: 'Do you really want to Update?',
-          })
-          .then((result) => {
-            if (result.isConfirmed) {
-              const model: ProductMaster = {
-                ...this.formService.transformFormData(this.form.value),
-                ReasonToUpdate: result.value,
-              };
-              this.updateRecord(model);
-            } else {
-              this.isSubmitted = false;
-            }
-          });
-      }
+        this.alertService.showConfirmationWithInput({
+          text: 'Do you really want to update?',
+        }).then(result => {
+          if (result.isConfirmed) {
+            const model: ProductMaster = {
+              ...this.formService.transformFormData(this.form.value),
+              ReasonToUpdate: result.value
+            };
+            this.updateRecord(this.formService.transformFormData(model));
+          }
+          else {
+            this.isSubmitted = false;
+          }
+        });
+      } 
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
@@ -247,60 +260,51 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-
+    
   createRecord(model: ProductMaster): void {
-    try {
-      this.pageService
-      .CreateRecord(model)
+    try{
+    this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000,
-            });
-            setTimeout(() => {
-              this.ngOnInit();
-            }, 2000);
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        },
+      .subscribe((response) => {
+        if (response.IsSuccess) {
+          this.closeSidebar();
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+        } else {
+          this.alertService.showServerResponseAlert(response);
+        }
+        this.isSubmitted = false;
       });
     }
     catch (error) {
 
     }
   }
-
+    
   updateRecord(model: ProductMaster): void {
     try {
-      this.pageService
-      .UpdateRecord(model)
+      this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
+            this.closeSidebar();
             this.alertService.showAlert({
-              type: 'success',
+              type: "success",
               text: response.Message,
-              timer: 5000,
+              timer: 5000
             });
-            setTimeout(() => {
-              this.router.navigate(['ims/product-master/index']);
-            }, 2000);
-          } else {
+          }
+          else {
             this.alertService.showServerResponseAlert(response);
           }
         },
         complete: () => {
           this.isSubmitted = false;
-        },
+        }
       });
     }
     catch (error) {
@@ -308,29 +312,29 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDetails(): void {
-    this.route.params.subscribe((params) => {
-      const ProductID = +params['id'];
-      if (ProductID) {
-        this.isEditMode = true;
-        try {
-          this.pageService
-          .GetDetails(ProductID)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.form.patchValue(response.Data);
-              } else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
-        }
-        catch (error) {
+  // getDetails(): void {
+  //   this.route.params.subscribe((params) => {
+  //     const ProductID = +params['id'];
+  //     if (ProductID) {
+  //       this.isEditMode = true;
+  //       try {
+  //         this.pageService
+  //         .GetDetails(ProductID)
+  //         .pipe(takeUntil(this.destroy$))
+  //         .subscribe({
+  //           next: (response) => {
+  //             if (response.IsSuccess) {
+  //               this.form.patchValue(response.Data);
+  //             } else {
+  //               this.alertService.showServerResponseAlert(response);
+  //             }
+  //           },
+  //         });
+  //       }
+  //       catch (error) {
 
-        }
-      }
-    });
-  }
+  //       }
+  //     }
+  //   });
+  // }
 }

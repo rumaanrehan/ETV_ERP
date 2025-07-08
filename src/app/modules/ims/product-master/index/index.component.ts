@@ -9,11 +9,12 @@ import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from '../product-master';
 import { ProductMasterService } from '../product-master.service';
+import { CreateComponent } from '../create/create.component';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [CommonModule, ZDataTable],
+  imports: [CommonModule, ZDataTable, CreateComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss'
 })
@@ -23,6 +24,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('productCodeTemplate', { static: true }) productCodeTemplate!: TemplateRef<any>;
   @ViewChild('productActiveStatusTemplate', { static: true }) productActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
   tableDef!: DataTableDef<ProductMaster_IndexTableList>;
   tableEvent!: DataTableLazyLoadEvent;
@@ -67,14 +69,36 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onClickPageHeaderAddButton() {
-    this.router.navigate(['ims/product-master/create']);
+  onClickPageHeaderAddButton(): void {
+    if (this.createSidebar) {
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<ProductMaster>());
+    }
   }
 
-  onClickEditDetails(productID: number) {
-    if (productID) {
-      this.router.navigate([`ims/product-master/edit/${productID}`]);
+  onClickEditDetails(productID: number, activeStatus: boolean): void {
+    try {
+      if (this.createSidebar && productID) {
+        this.pageService.GetDetails(productID)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.createSidebar.openSidebar(activeStatus, true, response.Data);
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+        });
+      }
     }
+    catch (error) {
+
+    }
+  }
+
+  onCloseSidebar(): void {
+    this.loadData();
   }
 
   onIndexTableLazyLoad(event: DataTableLazyLoadEvent) {

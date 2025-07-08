@@ -49,7 +49,6 @@ export class IndexComponent implements OnInit, OnDestroy {
         this.tableDef.columnDef = [
             { data: 'CountryID', visible: false, orderable: false },
             { data: 'CountryCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%" },
-            { data: 'CountryCode', filterable: true, label: 'Code' },
             { data: 'CountryName', filterable: true, label: 'Country Name' },
             { data: 'CountryISOCode', filterable: true, label: 'ISO Code', orderable: false},
             { data: 'ActiveStatus', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.countryActiveStatusTemplate},
