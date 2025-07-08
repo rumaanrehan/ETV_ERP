@@ -7,7 +7,7 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { DepartmentMaster, DepartmentMaster_SelectList } from '../../DepartmentMaster/department-master';
+import { DepartmentMaster, DepartmentRequest, Department_SelectList } from '../../DepartmentMaster/department-master';
 import { DepartmentMasterService } from '../../DepartmentMaster/department-master.service';
 import { ConsultantUnitMaster } from '../consultant-unit-master';
 import { ConsultantUnitMasterService } from '../consultant-unit-master.service';
@@ -32,7 +32,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   formConfig!: FormConfigType<ConsultantUnitMaster>;
   departments: DepartmentMaster[] = [];
   defaultDepartmentID: number | null = null;
-  DepartmentsList: DepartmentMaster_SelectList[] = [];
+  DepartmentsList: Department_SelectList[] = [];
   constructor(
     private pageService: ConsultantUnitMasterService,
     private departmentService: DepartmentMasterService,
@@ -55,7 +55,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   loadDepartment(): void {
     try
     {
-      this.departmentService.PopulateList('SelectList')
+      const dto: DepartmentRequest = {
+        PopulateType: 'SelectList'
+      }
+      this.departmentService.PopulateList(dto)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {

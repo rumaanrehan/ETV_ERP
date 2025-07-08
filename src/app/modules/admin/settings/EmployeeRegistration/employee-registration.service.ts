@@ -22,10 +22,10 @@ import { RoleMasterService } from '../RoleMaster/role-master.service';
 import { StateMasterService } from '../StateMaster/state-master.service';
 // import { DesignationMaster_SelectList } from '../DesignationMaster/designation-master';
 import { CountryMaster, CountryRequest } from '../country-master/country-master';
-import { StateMaster, State_SelectList } from '../StateMaster/state-master';
+import { StateMaster, StateRequest, State_SelectList } from '../StateMaster/state-master';
 import { DesignationMaster_SelectList } from '../DesignationMaster/designation-master';
-import { DepartmentMaster_SelectList } from '../DepartmentMaster/department-master';
-import { EmployeeTypeMaster_SelectList } from '../EmployeeTypeMaster/employee-type-master';
+import { Department_SelectList } from '../DepartmentMaster/department-master';
+import { EmployeeType_SelectList, EmployeeTypeRequest } from '../EmployeeTypeMaster/employee-type-master';
 // import { CountryMasterSelectListResponse } from '../../settings/country-master/country-master';
 
 
@@ -68,8 +68,8 @@ export class EmployeeRegistrationService {
   GetMasterDropdownLists(): Observable<{
     // PrefixList: ApiListResponse<PrefixMasterSelectListResponse>;
     // RelationshipList: ApiListResponse<RelationshipMasterSelectListResponse>;
-    EmployeeTypeList: ApiListResponse<EmployeeTypeMaster_SelectList>;
-    DepartmentList: ApiListResponse<DepartmentMaster_SelectList>;
+    EmployeeTypeList: ApiListResponse<EmployeeType_SelectList>;
+    DepartmentList: ApiListResponse<Department_SelectList>;
     DesignationList: ApiListResponse<DesignationMaster_SelectList>;
     // RoleList: ApiListResponse<RoleMasterSelectListResponse>;
     CountryList: ApiListResponse<CountryMaster>;
@@ -79,12 +79,12 @@ export class EmployeeRegistrationService {
     return forkJoin({
       // PrefixList: this.prefixMasterService.PopulateList("SelectList"),
       // RelationshipList: this.relationshipService.PopulateList("SelectList"),
-      EmployeeTypeList: this.employeeTypeService.PopulateList("SelectList"),
-      DepartmentList: this.departmentService.PopulateList({ DepartmentTypeID: 0, PopulateType: "MainDepartment" }),
+      EmployeeTypeList: this.employeeTypeService.PopulateList({PopulateType: 'SelectList'} as EmployeeTypeRequest),
+      DepartmentList: this.departmentService.PopulateList({ DepartmentID: 0, PopulateType: "MainDepartment" }),
       DesignationList: this.designationService.PopulateList("SelectList"),
       // RoleList: this.roleMasterService.PopulateList("SelectList"),
       CountryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
-      StateList: this.stateService.PopulateList("SelectList"),
+      StateList: this.stateService.PopulateList({PopulateType: 'SelectList'} as StateRequest),
     });
   }
 

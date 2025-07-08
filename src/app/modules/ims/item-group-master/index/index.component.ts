@@ -8,7 +8,7 @@ import { AlertNotificationService } from '../../../../shared/services/alert-noti
 import { FormService } from '../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
-import { ItemGroupMaster, ItemGroup_IndexTableFilter, ItemGroup_IndexTableList } from '../item-group-master';
+import { ItemGroup_IndexTableFilter, ItemGroup_IndexTableList, ItemGroupMaster } from '../item-group-master';
 import { ItemGroupMasterService } from '../item-group-master.service';
 
 @Component({

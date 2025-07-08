@@ -12,7 +12,7 @@ import { CountryMasterService } from '../../country-master/country-master.servic
 import { StateMasterService } from '../../StateMaster/state-master.service';
 import { BillCompanyMaster } from '../bill-company-master';
 import { BillCompanyMasterService } from '../bill-company-master.service';
-import { State_SelectList } from '../../StateMaster/state-master';
+import { State_SelectList, StateRequest } from '../../StateMaster/state-master';
 import { Country_SelectList, CountryRequest } from '../../country-master/country-master';
 
 @Component({
@@ -102,7 +102,10 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadState(): void {
     try {
-      this.stateService.PopulateList('SelectList').subscribe({
+      const dto: StateRequest = {
+        PopulateType: 'SelectList'
+      }
+      this.stateService.PopulateList(dto).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
             this.StateList = response.Data.Items;

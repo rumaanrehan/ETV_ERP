@@ -1,30 +1,37 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { Department_IndexTableFilter, Department_IndexTableList, Department_SelectList, DepartmentMaster, DepartmentRequest } from './department-master';
 import { ApiService } from '../../../../core/services/api.service';
-import { Environment } from '../../../../../environments/environment';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
+import { EmployeeType_IndexTableFilter, EmployeeTypeMaster } from '../EmployeeTypeMaster/employee-type-master';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { DepartmentMaster_IndexTableFilter, DepartmentMaster, DepartmentMaster_SelectList, DepartmentMaster_IndexTableList } from './department-master';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class DepartmentMasterService {
-  private endpoint: string = 'Admin/DepartmentMaster';
+  DeleteRecord(model: EmployeeTypeMaster) {
+    throw new Error('Method not implemented.');
+  }
+  private endpoint = 'Admin/DepartmentMaster';
 
-  constructor(private apiService: ApiService) {
+  constructor(
+    private apiService: ApiService,
+  ) {}
+
+  
+
+  PopulateList(model: DepartmentRequest): Observable<ApiListResponse<Department_SelectList>> {
+    return this.apiService.post<ApiListResponse<Department_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
-  PopulateList(PopulateType: any): Observable<ApiListResponse<DepartmentMaster_SelectList>> {
-    return this.apiService.post<ApiListResponse<DepartmentMaster_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${PopulateType}`, {});
+  PopulateGrid(model: DataTableParams<Department_IndexTableFilter>): Observable<ApiPagedListResponse<Department_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<Department_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
-
-  PopulateGrid(model: DataTableParams<DepartmentMaster_IndexTableFilter>): Observable<ApiPagedListResponse<DepartmentMaster_IndexTableList>> {      
-      return this.apiService.post<ApiPagedListResponse<DepartmentMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
-    }
 
   GetDetails(DepartmentID: number): Observable<ApiDataResponse<DepartmentMaster>> {
     return this.apiService.post<ApiDataResponse<DepartmentMaster>>(`${this.endpoint}/GetDetails?DepartmentID=${DepartmentID}`, {});
@@ -42,10 +49,13 @@ export class DepartmentMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<DepartmentMaster_IndexTableFilter> {
+  //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Department_IndexTableFilter> {
     return {
       DepartmentCode: '',
       DepartmentName: '',
+      ShortCode: '',
+      DepartmentTypeID: 0,
       ActiveStatusID: 0,
     }
   }
@@ -56,19 +66,25 @@ export class DepartmentMasterService {
         label: '',
         defaultValue: null,
       },
-      DepartmentCode: {
-        label: 'Code',
-        defaultValue: 'NEW',
+     DepartmentCode: {
+        label: 'Department Code',
+        defaultValue: 'NEW'
+      },
+      DepartmentTypeID: {
+        label: 'Department Type',
+        defaultValue: null,
       },
       DepartmentName: {
         label: 'Department Name',
         defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Department Name is Required.',
-          maxlength: 'Department name cannot be longer than 50 characters.'
-        },
-        type: 'control'
+          required: 'Department Name is required'
+        }
+      },
+      ShortCode: {
+        label: 'Short Code',
+        defaultValue: 'NEW'
       },
      
     }

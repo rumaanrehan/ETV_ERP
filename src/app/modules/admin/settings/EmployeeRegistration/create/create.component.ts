@@ -27,8 +27,8 @@ import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { EmployeeRegistration, EmployeeRegistrationFileUpload, EmployeeRegistrationSelectListRequest } from '../employee-registration';
 import { CountryMaster } from '../../country-master/country-master';
 import { State_SelectList } from '../../StateMaster/state-master';
-import { EmployeeTypeMaster_SelectList } from '../../EmployeeTypeMaster/employee-type-master';
-import { DepartmentMaster_SelectList } from '../../DepartmentMaster/department-master';
+import { EmployeeType_SelectList } from '../../EmployeeTypeMaster/employee-type-master';
+import { Department_SelectList } from '../../DepartmentMaster/department-master';
 import { DesignationMaster_SelectList } from '../../DesignationMaster/designation-master';
 // import { WithPagePermissions } from '../../../../../core/base/with-page-permissions';
 
@@ -65,13 +65,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   defaultPermanentCountryID: number | null = null;
   defaultPermanentStateID: number | null = null;
   relationshipList: any[] = [];
-  employeeTypeList: EmployeeTypeMaster_SelectList[] = [];
-  departmentList: DepartmentMaster_SelectList[] = [];
+  employeeTypeList: EmployeeType_SelectList[] = [];
+  departmentList: Department_SelectList[] = [];
   designationList: DesignationMaster_SelectList[] = [];
   // roleList: any[] = [];
   // reportingToList: EmployeeRegistrationSelectListRequest[] = [];
 
-  /** selectlist */
+  /** selectlist */       
   // genderList: StaticList[] = [];
   // maritalStatusList: StaticList[] = [];
   // bloodGroupList: StaticList[] = [];

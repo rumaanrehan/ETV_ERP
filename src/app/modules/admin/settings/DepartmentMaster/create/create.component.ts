@@ -4,10 +4,23 @@ import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../../shared/services/form.service';
-import { DepartmentMaster } from '../department-master';
+import { Department_SelectList, DepartmentMaster } from '../department-master';
 import { DepartmentMasterService } from '../department-master.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+// import { EmployeeType_SelectList, EmployeeTypeMaster } from '../employee-type-master';
+// import { FormConfigType } from '../../../../../shared/models/form.model';
+// import { EmployeeTypeMasterService } from '../employee-type-master.service';
+// import { FormService } from '../../../../../shared/services/form.service';
+// import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+// import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
+// import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
+// import { FormConfigType } from '../../../../shared/models/form.model';
+// import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
+// import { FormService } from '../../../../shared/services/form.service';
+// import { EmployeeType_SelectList } from '../../item-type-master/item-type-master';
+// import { EmployeeTypeMaster } from '../item-group-master';
+// import { EmployeeTypeMasterService } from '../item-group-master.service';
 
 @Component({
   selector: 'app-create',
@@ -23,8 +36,26 @@ export class CreateComponent implements OnInit, OnDestroy {
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+  activeStatus: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<DepartmentMaster>;
+
+  EmployeeTypeList: Department_SelectList[] = []
+  // DepartmentTypeList: Department_SelectList[] = []
+
+  departmentTypeList: any[] = [
+  { DepartmentTypeID: 1, DepartmentTypeName: 'Human Resources' },
+  { DepartmentTypeID: 2, DepartmentTypeName: 'Finance' },
+  { DepartmentTypeID: 3, DepartmentTypeName: 'Engineering' },
+  { DepartmentTypeID: 4, DepartmentTypeName: 'Marketing' },
+  { DepartmentTypeID: 5, DepartmentTypeName: 'Sales' },
+];
+
+
+
+
+ 
 
   constructor(
     private pageService: DepartmentMasterService,
@@ -36,6 +67,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<DepartmentMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    // this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -43,31 +75,40 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(isEditMode: boolean, model: DepartmentMaster): void {
+  // loadDropdownList(): void  {
+  //   this.pageService.GetMasterDropdownLists()
+  //   .pipe(takeUntil(this.destroy$))
+  //   .subscribe({
+  //     next: (data) => {
+  //       this.EmployeeTypeList = data.DepartmentList.Data.Items;
+  //     },
+  //   });
+  // }
+
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: DepartmentMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
+    this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
 
-  onCloseSidebar(): void {
+  closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
     this.formService.resetFormValue<DepartmentMaster>(this.formConfig, this.form);
-
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-
+  
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
-    try {
+    try{
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -77,7 +118,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
+          text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
             const model: DepartmentMaster = {
@@ -90,34 +131,30 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-      }
+      } 
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-    }
-    catch (error) {
+   }
+   catch (error) {
 
-    }
+   }
   }
   
-  createRecord(model: DepartmentMaster): void {
-    try {
+   createRecord(model: DepartmentMaster): void {
+      try{
       this.pageService.CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.onCloseSidebar();
+              this.closeSidebar();
               this.alertService.showAlert({
-                type: "success",
+                type: 'success',
                 text: response.Message,
-                timer: 5000
+                timer: 5000,
               });
-              setTimeout(() => {
-                this.ngOnInit();
-              }, 2000);
-            }
-            else {
+            } else {
               this.alertService.showServerResponseAlert(response);
             }
           },
@@ -125,37 +162,38 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-    } catch (error) {
-
-    }
-  }
+      }
+      catch (error) {
   
+      }
+    }
+
   updateRecord(model: DepartmentMaster): void {
-    try {
-      this.pageService.UpdateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.onCloseSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
-          }
-        });
-    }
-    catch (error) {
-
-    }
-  }
-}
-
+     try {
+       this.pageService.UpdateRecord(model)
+       .pipe(takeUntil(this.destroy$))
+       .subscribe({
+         next: (response) => {
+           if (response.IsSuccess) {
+             this.closeSidebar();
+             this.alertService.showAlert({
+               type: "success",
+               text: response.Message,
+               timer: 5000
+             });
+           }
+           else {
+             this.alertService.showServerResponseAlert(response);
+           }
+         },
+         complete: () => {
+           this.isSubmitted = false;
+         }
+       });
+     }
+     catch (error) {
+ 
+     }
+   }
+ }
+ 

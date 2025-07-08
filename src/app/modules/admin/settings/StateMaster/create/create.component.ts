@@ -1,16 +1,15 @@
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
-import { FormConfigType } from '../../../../../shared/models/form.model';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../../shared/services/form.service';
 import { StateMaster } from '../state-master';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { ItemType_SelectList } from '../../../../ims/item-type-master/item-type-master';
 import { StateMasterService } from '../state-master.service';
-import { CountryMaster, CountryRequest } from '../../country-master/country-master';
-import { CountryMasterService } from '../../country-master/country-master.service';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-// import { StateMasterService } from '../state-master';
+import { FormService } from '../../../../../shared/services/form.service';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { Country_SelectList } from '../../country-master/country-master';
 
 @Component({
   selector: 'app-create',
@@ -26,14 +25,15 @@ export class CreateComponent implements OnInit, OnDestroy {
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+  activeStatus: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<StateMaster>;
 
-  countryList: CountryMaster [] = [];
+  countryList: Country_SelectList[] = [];
 
   constructor(
     private pageService: StateMasterService,
-    private countryMasterService: CountryMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
   ) { }
@@ -42,8 +42,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<StateMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.loadCountry();
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -51,57 +50,40 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(isEditMode: boolean, model: StateMaster): void {
+  loadDropdownList(): void  {
+    this.pageService.GetMasterDropdownLists()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.countryList = data.countryList.Data.Items;
+      },
+    });
+  }
+
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: StateMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
+    this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
 
-  onCloseSidebar(): void {
+  closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
     this.formService.resetFormValue<StateMaster>(this.formConfig, this.form);
-
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-
-  loadCountry(): void {
-     try {
-      const dto: CountryRequest = {
-        PopulateType: 'SelectList'
-      }
-        this.countryMasterService.PopulateList(dto)
-          .pipe(takeUntil(this.destroy$)).subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.countryList = response.Data.Items;
-              console.log(response.Data.Items);
-              console.log(this.countryList);
-            }
-            else {
-              this.countryList = [];
-              this.alertService.showServerResponseToast(response);
-            }
-          }
-        })
-    } catch (error) {
-
-    }
   
-  }
-
   onSubmit(): void {
     if (this.isSubmitted) return;
 
-    this.isSubmitted = true; 
-
-    try {
-      // Handle invalid form
+    this.isSubmitted = true;
+    try{
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -111,52 +93,52 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
+          text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
             const model: StateMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
-            this.updateRecord(model);
+            this.updateRecord(this.formService.transformFormData(model));
           }
           else {
             this.isSubmitted = false;
           }
         });
-      }
+      } 
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-    }
-    catch (error) {
+   }
+   catch (error) {
 
-    }
+   }
   }
   
   createRecord(model: StateMaster): void {
-    try {
-      this.pageService.CreateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.onCloseSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
+    try{
+    this.pageService.CreateRecord(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: 'success',
+              text: response.Message,
+              timer: 5000,
+            });
+          } else {
+            this.alertService.showServerResponseAlert(response);
           }
-        });
-    } catch (error) {
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
+    }
+    catch (error) {
 
     }
   }
@@ -164,29 +146,28 @@ export class CreateComponent implements OnInit, OnDestroy {
   updateRecord(model: StateMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.onCloseSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: "success",
+              text: response.Message,
+              timer: 5000
+            });
           }
-        });
+          else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
     }
     catch (error) {
 
     }
   }
 }
-

@@ -1,35 +1,36 @@
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
 import { CreateComponent } from '../create/create.component';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-// import { stateMaster, State_IndexTableFilter, State_IndexTableList } from '../employee-type-master';
+import { DataTableFilterList } from '../../../../../shared/models/select-list';
+import { State_IndexTableFilter, State_IndexTableList, StateMaster } from '../state-master';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { FormService } from '../../../../../shared/services/form.service';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { StateMaster, State_IndexTableFilter, State_IndexTableList } from '../state-master';
 import { StateMasterService } from '../state-master.service';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-// import { stateMasterService } from '../employee-type-master.service';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+
 
 @Component({
   selector: 'app-index',
   standalone: true,
   imports: [ZDataTable, CreateComponent],
   templateUrl: './index.component.html',
-  styleUrl: './index.component.scss',
+  styleUrl: './index.component.scss'
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-    @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-    @ViewChild('stateCodeTemplate', { static: true }) stateCodeTemplate!: TemplateRef<any>;
-    @ViewChild('stateIsAllowedOverTimePayTemplate', { static: true }) stateIsAllowedOverTimePayTemplate!: TemplateRef<any>;
-    @ViewChild('stateActiveStatusTemplate', { static: true }) stateActiveStatusTemplate!: TemplateRef<any>;
-    @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-    @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
+  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('stateCodeTemplate', { static: true }) stateCodeTemplate!: TemplateRef<any>;
+  @ViewChild('stateActiveStatusTemplate', { static: true }) stateActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
   tableDef!: DataTableDef<State_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
+
+  itemTypeFilterList: DataTableFilterList[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -40,7 +41,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-
     this.tableDef = {
       tableKey: 'Admin_StateMaster_IndexTable',
       columnDef: [],
@@ -54,7 +54,9 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'StateCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.stateCodeTemplate },
       { data: 'StateName', label: 'State Name', filterable: true },
-      { data: 'CountryName', label: 'Country Name', filterable: true, filterType: 'select', filterKey: 'CountryID', cssClass: 'text-center', width: "10%" },
+      { data: 'CountryName', label: 'Country Name', filterable: true, filterType: 'select', filterKey: 'CountryID', width: "10%" },
+      { data: 'StateGSTCode', label: 'State GST Code', orderable: false, width: "10%" },
+      { data: 'StateISOCode', label: 'State ISO Code', orderable: false, width: "10%" },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.stateActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
@@ -65,13 +67,13 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  OnClickPageHeaderAddButton(): void {
+  onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
-      this.createSidebar.openSidebar(false, this.formService.createNullObject<StateMaster>());
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<StateMaster>());
     }
   }
 
-  OnClickEditDetails(StateID: number): void {
+  onClickEditDetails(StateID: number, activeStatus: boolean): void {
     try {
       if (this.createSidebar && StateID) {
         this.pageService.GetDetails(StateID)
@@ -79,7 +81,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.createSidebar.openSidebar(true, response.Data);
+              this.createSidebar.openSidebar(activeStatus, true, response.Data);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -92,11 +94,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     }
   }
-  
+
   onCloseSidebar(): void {
     this.loadData();
   }
-  
+
   onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
     this.tableEvent = event;
     this.loadData();
