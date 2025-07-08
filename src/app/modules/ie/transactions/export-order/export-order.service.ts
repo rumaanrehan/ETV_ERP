@@ -10,8 +10,8 @@ import { Operator, RequiredIf } from '../../../../shared/validators/required-if.
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { Product_SelectList, ProductMaster, ProductRequest } from '../../../ims/product-master/product-master';
-import { ProductMasterService } from '../../../ims/product-master/product-master.service';
+import { ProductRequest, Product_SelectList, ProductMaster } from '../../../ims/settings/product-master/product-master';
+import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 
 @Injectable({
   providedIn: 'root'

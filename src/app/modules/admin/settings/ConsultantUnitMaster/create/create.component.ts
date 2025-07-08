@@ -7,10 +7,10 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { DepartmentMaster, DepartmentRequest, Department_SelectList } from '../../DepartmentMaster/department-master';
-import { DepartmentMasterService } from '../../DepartmentMaster/department-master.service';
 import { ConsultantUnitMaster } from '../consultant-unit-master';
 import { ConsultantUnitMasterService } from '../consultant-unit-master.service';
+import { Department_SelectList, DepartmentMaster, DepartmentRequest } from '../../department-master/department-master';
+import { DepartmentMasterService } from '../../department-master/department-master.service';
 
 @Component({
   selector: 'app-create',

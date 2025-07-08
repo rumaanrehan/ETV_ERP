@@ -1,146 +1,117 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { Subject, takeUntil } from 'rxjs';
+import { ItemCategoryMaster } from '../item-category-master';
+import { ItemCategoryMasterService } from '../item-category-master.service';
+import { ItemType_SelectList } from '../../item-type-master/item-type-master';
+import { ItemGroup_SelectList, ItemGroupRequest } from '../../item-group-master/item-group-master';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { CountryMasterService } from '../../country-master/country-master.service';
-import { BillCompanyMaster } from '../bill-company-master';
-import { BillCompanyMasterService } from '../bill-company-master.service';
-import { Country_SelectList, CountryRequest } from '../../country-master/country-master';
-import { State_SelectList, StateRequest } from '../../StateMaster_temp/state-master';
-import { StateMasterService } from '../../StateMaster_temp/state-master.service';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, CommonModule, DropdownModule, ZFormControlsModule],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   providers: [FormService],
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss'],
+  styleUrl: './create.component.scss',
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
 
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false;  //For Button Disabled.
+  activeStatus: boolean = false;
+  
   form!: FormGroup;
-  formConfig!: FormConfigType<BillCompanyMaster>;
-  CountryList: Country_SelectList[] = [];
-  StateList: State_SelectList[] = [];
-  defaultCountryID: number | null = null;
-  defaultStateID: number | null = null;
+  formConfig!: FormConfigType<ItemCategoryMaster>;
+
+  itemTypeList: ItemType_SelectList[] = [];
+  itemGroupList: ItemGroup_SelectList[] = [];
 
   constructor(
-    private pageService: BillCompanyMasterService,
-    private countryService: CountryMasterService,
-    private stateService: StateMasterService,
+    private pageService: ItemCategoryMasterService,
     private formService: FormService,
-    private alertService: AlertNotificationService
-  ) { }
+    private alertService: AlertNotificationService,
+  ) {}
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<BillCompanyMaster>(this.formConfig);
+    this.form = this.formService.createFormGroup<ItemCategoryMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.loadCountry();
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  openSidebar(ActiveStatus: boolean, isEditMode: boolean, model: BillCompanyMaster): void {
-    this.isEditMode = isEditMode;
-    this.ActiveStatus = ActiveStatus;
-
-    if (!isEditMode) {
-      model.BillCompanyCountryID = this.defaultCountryID;
-      model.BillCompanyStateID = this.defaultStateID;
-    }
-    this.loadState();
-    this.form.patchValue({
-      ...model,
-      BillCompanyCountryID: model.BillCompanyCountryID,
+  
+  loadDropdownList(): void{
+    this.pageService.GetMasterDropdownLists()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          if(data.itemTypeMasterList.IsSuccess) {
+            this.itemTypeList = data.itemTypeMasterList.Data.Items;
+          }
+        }
     });
+  }
+
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ItemCategoryMaster): void {
+    if (isEditMode && model) {
+      this.isEditMode = isEditMode;
+    }
+    this.activeStatus = activeStatus;
+    this.form.patchValue(model);
     this.isFormSidebarVisible = true;
-  }
-
-  loadCountry(): void {
-    try {
-      this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.CountryList = response.Data.Items;
-            this.defaultCountryID = this.CountryList.find(country => true)?.CountryID ?? this.CountryList[0].CountryID;
-            this.form.get('BillCompanyCountryID')?.setValue(this.defaultCountryID);
-            this.loadState();
-          } else {
-            this.CountryList = [];
-            this.alertService.showServerResponseAlert( {
-              Status: response.Status,
-              Message: response.Message
-            });
-          }
-        },
-      });
-    }
-    catch (error) {
-
-    }
-  }
-
-  loadState(): void {
-    try {
-      const dto: StateRequest = {
-        PopulateType: 'SelectList'
-      }
-      this.stateService.PopulateList(dto).subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.StateList = response.Data.Items;
-          } else {
-            this.StateList = [];
-          }
-        },
-      });
-    } catch (error) {}
-  }
-
-  onCountryChange(event: DropdownChangeEvent): void {
-    const CountryID = this.form.get('BillCompanyCountryID')?.value;
-    if (CountryID) {
-      this.loadState();
-    } else {
-      this.StateList = [];
-    }
   }
 
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<BillCompanyMaster>(this.formConfig, this.form);
+    this.formService.resetFormValue<ItemCategoryMaster>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
   }
 
+  onChange_ItemType(): void {
+    this.loadItemGroup();
+  }
+
+  loadItemGroup(): void {
+    const itemTypeID = this.form.value.ItemTypeID;
+    if(itemTypeID){
+      const dto: ItemGroupRequest = {
+        ItemTypeID: itemTypeID,
+        PopulateType: "SelectList"
+      }
+      this.pageService.LoadItemGroup(dto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.itemGroupList = response.Data.Items;
+          } else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        }
+      });
+    }
+  }
+
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
     try {
       // Handle invalid form
       if (this.form.invalid) {
@@ -157,11 +128,11 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to Update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: BillCompanyMaster = {
+            const model: ItemCategoryMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
-            this.updateRecord(model);
+            this.updateRecord(this.formService.transformFormData(model));
           }
           else {
             this.isSubmitted = false;
@@ -176,8 +147,8 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-
-  createRecord(model: BillCompanyMaster): void {
+  
+  createRecord(model: ItemCategoryMaster): void {
     try {
       this.pageService.CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
@@ -190,6 +161,9 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000
               });
+              setTimeout(() => {
+                this.ngOnInit();
+              }, 2000);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -205,7 +179,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateRecord(model: BillCompanyMaster): void {
+  updateRecord(model: ItemCategoryMaster): void {
     try {
       this.pageService.UpdateRecord(model)
         .pipe(takeUntil(this.destroy$))

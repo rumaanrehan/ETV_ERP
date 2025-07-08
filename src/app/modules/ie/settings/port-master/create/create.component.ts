@@ -8,7 +8,6 @@ import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { ItemGroup_SelectList } from '../../../../ims/item-group-master/item-group-master';
 import { PortMaster } from '../port-master';
 import { PortMasterService } from '../port-master.service';
 import { Country_SelectList, CountryMaster } from '../../../../admin/settings/country-master/country-master';

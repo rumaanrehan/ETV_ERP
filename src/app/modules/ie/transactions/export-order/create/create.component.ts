@@ -13,9 +13,9 @@ import { ExportOrderService } from '../export-order.service';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { ZAutoComplete1Component } from "../../../../../shared/components/z-form-controls/z-auto-complete/z-auto-complete.component";
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { Product_SelectList, ProductMaster, ProductMasterTemp, ProductRequest } from '../../../../ims/product-master/product-master';
 import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../settings/company-master/company-master';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
+import { Product_SelectList, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 
 @Component({
   selector: 'app-create',
