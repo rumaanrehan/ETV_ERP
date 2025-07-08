@@ -30,8 +30,6 @@ export class IndexComponent implements OnInit, OnDestroy {
   tableDef!: DataTableDef<State_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
 
-  itemTypeFilterList: DataTableFilterList[] = [];
-
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: StateMasterService,
@@ -54,9 +52,9 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'StateCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.stateCodeTemplate },
       { data: 'StateName', label: 'State Name', filterable: true },
-      { data: 'CountryName', label: 'Country Name', filterable: true, filterType: 'select', filterKey: 'CountryID', width: "10%" },
       { data: 'StateGSTCode', label: 'State GST Code', orderable: false, width: "10%" },
       { data: 'StateISOCode', label: 'State ISO Code', orderable: false, width: "10%" },
+      { data: 'CountryName', label: 'Country Name', filterable: true, width: "10%" },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.stateActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
@@ -73,10 +71,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(StateID: number, activeStatus: boolean): void {
+  onClickEditDetails(stateID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && StateID) {
-        this.pageService.GetDetails(StateID)
+      if (this.createSidebar && stateID) {
+        this.pageService.GetDetails(stateID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {

@@ -12,8 +12,8 @@ import { CountryMasterService } from '../../country-master/country-master.servic
 import { BillCompanyMaster } from '../bill-company-master';
 import { BillCompanyMasterService } from '../bill-company-master.service';
 import { Country_SelectList, CountryRequest } from '../../country-master/country-master';
-import { State_SelectList, StateRequest } from '../../StateMaster_temp/state-master';
-import { StateMasterService } from '../../StateMaster_temp/state-master.service';
+import { State_SelectList, StateRequest } from '../../state-master/state-master';
+import { StateMasterService } from '../../state-master/state-master.service';
 
 @Component({
   selector: 'app-create',

@@ -18,12 +18,6 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { CountryMaster_SelectList } from '../../../settings/country-master/country-master';
-import { DepartmentMasterService } from '../../../settings/DepartmentMaster/department-master.service';
-import { DesignationMaster_SelectList } from '../../../settings/DesignationMaster/designation-master';
-import { DesignationMasterService } from '../../../settings/DesignationMaster/designation-master.service';
-import { EmployeeTypeMasterList } from '../../../settings/EmployeeTypeMaster/employee-type-master';
-import { EmployeeTypeMasterService } from '../../../settings/EmployeeTypeMaster/employee-type-master.service';
 import { PrefixMasterList } from '../../../settings/PrefixMaster/prefix-master';
 import { PrefixMasterService } from '../../../settings/PrefixMaster/prefix-master.service';
 import { RelationshipMasterList } from '../../../settings/RelationshipMaster/relationship-master';
@@ -32,12 +26,18 @@ import { RoleMaster_SelectList } from '../../../settings/RoleMaster/role-master'
 import { RoleMasterService } from '../../../settings/RoleMaster/role-master.service';
 import { SelectList } from '../../../settings/SelectList/select-list';
 import { SelectListService } from '../../../settings/SelectList/select-list.service';
-import { StateMasterService } from '../../../settings/StateMaster/state-master.service';
 import { EmployeeRegistration, EmployeeRegistrationList, FileUpload } from '../employee-registration';
 import { EmployeeRegistrationService } from '../employee-registration.service';
-import { DepartmentMaster_SelectList } from '../../../settings/DepartmentMaster/department-master';
 import { CountryMasterService } from '../../../settings/country-master/country-master.service';
-import { StateMaster_SelectList } from '../../../settings/StateMaster/state-master';
+import { DepartmentMasterService } from '../../../settings/department-master/department-master.service';
+import { DesignationMaster_SelectList } from '../../../settings/designation-master/designation-master';
+import { DesignationMasterService } from '../../../settings/designation-master/designation-master.service';
+import { EmployeeTypeMasterService } from '../../../settings/employee-type-master/employee-type-master.service';
+import { StateMasterService } from '../../../settings/state-master/state-master.service';
+import { Country_SelectList } from '../../../settings/country-master/country-master';
+import { State_SelectList } from '../../../settings/state-master/state-master';
+import { EmployeeType_SelectList } from '../../../settings/employee-type-master/employee-type-master';
+import { Department_SelectList } from '../../../settings/department-master/department-master';
 
 // employee
 
@@ -64,18 +64,18 @@ export class CreateComponent implements OnInit, OnDestroy {
   GenderList: SelectList[] = [];
   MaritalStatusList: SelectList[] = [];
   BloodGroupList: SelectList[] = [];
-  CountryList: CountryMaster_SelectList[] = [];
-  StateList: StateMaster_SelectList[] = [];
+  CountryList: Country_SelectList[] = [];
+  StateList: State_SelectList[] = [];
   defaultCountryID: number | null = null;
   defaultStateID: number | null = null;
-  CountryPermanentList: CountryMaster_SelectList[] = [];
-  StatePermanentList: StateMaster_SelectList[] = [];
+  CountryPermanentList: Country_SelectList[] = [];
+  StatePermanentList: State_SelectList[] = [];
   defaultPermanentCountryID: number | null = null;
   defaultPermanentStateID: number | null = null;
   RelationshipList: RelationshipMasterList[] = [];
   CategoryList: SelectList[] = [];
-  EmployeeTypeList: EmployeeTypeMasterList[] = [];
-  DepartmentList: DepartmentMasterList[] = [];
+  EmployeeTypeList: EmployeeType_SelectList[] = [];
+  DepartmentList: Department_SelectList[] = [];
   DesignationList: DesignationMaster_SelectList[] = [];
   SignatoryAreaList: SelectList[] = [];
   RoleList: RoleMaster_SelectList[] = [];
@@ -399,12 +399,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 this.loadState(model.EmployeeCountryID, true, model.EmployeeStateID);
                // this.loadPermanentState(model.PermanentCountryID, model.PermanentStateID);
               } else {
-                this.alertService.showServerResponseAlert({
-                  Status: response.Status,
-                  Message: response.Message,
-                  ValidationErrors: response.ValidationErrors,
-                  IsSuccess: undefined
-                });
+                this.alertService.showServerResponseAlert(response);
               }
             },
           );
@@ -475,12 +470,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.forms.get('File')?.reset();
               this.visible = false;
             } else {
-              this.alertService.showServerResponseAlert({
-                Status: response.Status,
-                Message: response.Message,
-                ValidationErrors: response.ValidationErrors,
-                IsSuccess: undefined
-              });
+              this.alertService.showServerResponseAlert(response);
             }
           },
         });
@@ -571,12 +561,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             if (response.IsSuccess) {
               (this[targetList] as SelectList[]) = response.Data.Items;
             } else {
-              this.alertService.showServerResponseAlert({
-                Status: response.Status,
-                Message: response.Message,
-                ValidationErrors: response.ValidationErrors,
-                IsSuccess: undefined
-              });
+              this.alertService.showServerResponseAlert(response);
             }
           },
         });
@@ -590,8 +575,8 @@ export class CreateComponent implements OnInit, OnDestroy {
       forkJoin({
         prefix: this.prefixMasterService.PopulateList('SelectList'),
         relationship: this.relationshipService.PopulateList('SelectList'),
-        employeeType: this.employeeTypeService.PopulateList('SelectList'),
-        department: this.departmentService.PopulateList('MainDepartment'),
+        // employeeType: this.employeeTypeService.PopulateList('SelectList'),
+        // department: this.departmentService.PopulateList('MainDepartment'),
         designation: this.designationService.PopulateList('SelectList'),
         role: this.roleService.PopulateList('SelectList'),
         reportingTo: this.pageService.PopulateList('SelectList'),
@@ -608,12 +593,12 @@ export class CreateComponent implements OnInit, OnDestroy {
             if (response.relationship.IsSuccess) {
               this.RelationshipList = response.relationship.Data.Items;
             }
-            if (response.employeeType.IsSuccess) {
-              this.EmployeeTypeList = response.employeeType.Data.Items;
-            }
-            if (response.department.IsSuccess) {
-              this.DepartmentList = response.department.Data.Items;
-            }
+            // if (response.employeeType.IsSuccess) {
+            //   this.EmployeeTypeList = response.employeeType.Data.Items;
+            // }
+            // if (response.department.IsSuccess) {
+            //   this.DepartmentList = response.department.Data.Items;
+            // }
             if (response.designation.IsSuccess) {
               this.DesignationList = response.designation.Data.Items;
             }
@@ -648,49 +633,49 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadCountry(): void {
     try {
-      this.countryService.PopulateList('SelectList')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.CountryList = response.Data.Items;
+      // this.countryService.PopulateList('SelectList')
+      //   .pipe(takeUntil(this.destroy$))
+      //   .subscribe({
+      //     next: (response) => {
+      //       if (response.IsSuccess) {
+      //         this.CountryList = response.Data.Items;
 
-              this.defaultCountryID = this.isEditMode
-                ? this.form.get('EmployeeCountryID')?.value
-                : this.CountryList.find(country => country.IsDefault)?.CountryID
-                ?? this.CountryList[0].CountryID;
+      //         this.defaultCountryID = this.isEditMode
+      //           ? this.form.get('EmployeeCountryID')?.value
+      //           : this.CountryList.find(country => country.IsDefault)?.CountryID
+      //           ?? this.CountryList[0].CountryID;
 
-              this.form.get('EmployeeCountryID')?.setValue(this.defaultCountryID);
+      //         this.form.get('EmployeeCountryID')?.setValue(this.defaultCountryID);
 
-              this.loadState(this.defaultCountryID, this.isEditMode, this.form.get('EmployeeStateID')?.value);
-            } else {
-              this.CountryList = [];
-              this.alertService.showServerResponseAlert({
-                Status: response.Status,
-                Message: response.Message,
-                ValidationErrors: response.ValidationErrors,
-                IsSuccess: undefined
-              });
-            }
-          },
-        });
+      //         this.loadState(this.defaultCountryID, this.isEditMode, this.form.get('EmployeeStateID')?.value);
+      //       } else {
+      //         this.CountryList = [];
+      //         this.alertService.showServerResponseAlert({
+      //           Status: response.Status,
+      //           Message: response.Message,
+      //           ValidationErrors: response.ValidationErrors,
+      //           IsSuccess: undefined
+      //         });
+      //       }
+      //     },
+      //   });
     } catch (error) {
     }
   }
 
   loadState(CountryID: any, isEditMode: boolean = false, selectedStateID: number | null = null): void {
     try {
-      this.stateService.PopulateList('SelectList')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.StateList = response.Data.Items;
-            } else {
-              this.StateList = [];
-            }
-          },
-        });
+      // this.stateService.PopulateList('SelectList')
+      //   .pipe(takeUntil(this.destroy$))
+      //   .subscribe({
+      //     next: (response) => {
+      //       if (response.IsSuccess) {
+      //         this.StateList = response.Data.Items;
+      //       } else {
+      //         this.StateList = [];
+      //       }
+      //     },
+      //   });
     } catch (error) {
     }
   }
@@ -707,47 +692,47 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadPermanentCountry(): void {
     try {
-      this.countryService.PopulateList('SelectList')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.CountryPermanentList = response.Data.Items;
+      // this.countryService.PopulateList('SelectList')
+      //   .pipe(takeUntil(this.destroy$))
+      //   .subscribe({
+      //     next: (response) => {
+      //       if (response.IsSuccess) {
+      //         this.CountryPermanentList = response.Data.Items;
 
-              // Set the default country to the first country in the list if no default is found
-              this.defaultPermanentCountryID = this.CountryPermanentList.find(country => country.IsDefault)?.CountryID
-                ?? this.CountryPermanentList[0].CountryID;
+      //         // Set the default country to the first country in the list if no default is found
+      //         this.defaultPermanentCountryID = this.CountryPermanentList.find(country => country.IsDefault)?.CountryID
+      //           ?? this.CountryPermanentList[0].CountryID;
 
-              this.form.get('PermanentCountryID')?.setValue(this.defaultPermanentCountryID);
-              this.loadPermanentState(this.defaultPermanentCountryID);
-            } else {
-              this.CountryPermanentList = [];
-              this.alertService.showServerResponseAlert({
-                Status: response.Status,
-                Message: response.Message,
-                ValidationErrors: response.ValidationErrors,
-                IsSuccess: undefined
-              });
-            }
-          },
-        });
+      //         this.form.get('PermanentCountryID')?.setValue(this.defaultPermanentCountryID);
+      //         this.loadPermanentState(this.defaultPermanentCountryID);
+      //       } else {
+      //         this.CountryPermanentList = [];
+      //         this.alertService.showServerResponseAlert({
+      //           Status: response.Status,
+      //           Message: response.Message,
+      //           ValidationErrors: response.ValidationErrors,
+      //           IsSuccess: undefined
+      //         });
+      //       }
+      //     },
+      //   });
     } catch (error) {
     }
   }
 
   loadPermanentState(CountryID: any, selectedStateID: number | null = null): void {
     try {
-      this.stateService.PopulateList('SelectList')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.StatePermanentList = response.Data.Items;
-            } else {
-              this.StatePermanentList = [];
-            }
-          },
-        });
+      // this.stateService.PopulateList('SelectList')
+      //   .pipe(takeUntil(this.destroy$))
+      //   .subscribe({
+      //     next: (response) => {
+      //       if (response.IsSuccess) {
+      //         this.StatePermanentList = response.Data.Items;
+      //       } else {
+      //         this.StatePermanentList = [];
+      //       }
+      //     },
+      //   });
     } catch (error) {
     }
   }

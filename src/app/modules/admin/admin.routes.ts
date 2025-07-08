@@ -44,13 +44,9 @@ export const adminRoute: Routes = [
   { path: 'Admin/MusheerKhalid/Index', loadComponent: () => import('./settings/Musheer Khalid/index/index.component').then((m) => m.IndexComponent) },
 
   { path: 'Admin/EmployeeRegistration/Index', loadComponent: () => import('./transactions/EmployeeRegistration/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'Admin/EmployeeRegistration/Create', loadComponent: () => import('./settings/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'Admin/EmployeeRegistration/Index', loadComponent: () => import('../admin/settings/EmployeeRegistration/index/index.component').then((m) => m.IndexComponent) },//========
-  { path: 'Admin/EmployeeRegistration/Edit/:id', loadComponent: () => import('./settings/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
-  { path: 'Admin/ReferredByRegistration/Index', loadComponent: () => import('./Transactions/ReferredByRegistration/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'Admin/ConsultantUnitMapping/Index', loadComponent: () => import('./Transactions/ConsultantUnitMapping/index/index.component').then((m) => m.IndexComponent) },
+  { path: 'Admin/EmployeeRegistration/Create', loadComponent: () => import('./transactions/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
+  { path: 'Admin/EmployeeRegistration/Index', loadComponent: () => import('./transactions/EmployeeRegistration/index/index.component').then((m) => m.IndexComponent) },//========
+  { path: 'Admin/EmployeeRegistration/Edit/:id', loadComponent: () => import('./transactions/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
   { path: 'Admin/Kashif/Index', loadComponent: () => import('./settings/Kashif/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'Admin/ConsultantUnitMapping/Index', loadComponent: () => import('./Transactions/ConsultantUnitMapping/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'admin/export-container/index', loadComponent: () => import('./settings/ExportContainer/index/index.component').then((m) => m.IndexComponent) },
   { path: 'admin/letter-of-credit/index', loadComponent: () => import('./settings/LetterOfCredit/index/index.component').then((m) => m.IndexComponent) }
 ];

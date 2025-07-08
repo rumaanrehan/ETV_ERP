@@ -5,7 +5,6 @@ import { FormSidebarComponent } from '../../../../../shared/components/form-side
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { StateMaster } from '../state-master';
 import { FormConfigType } from '../../../../../shared/models/form.model';
-import { ItemType_SelectList } from '../../../../ims/item-type-master/item-type-master';
 import { StateMasterService } from '../state-master.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';

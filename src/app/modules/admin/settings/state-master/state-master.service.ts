@@ -37,8 +37,8 @@ export class StateMasterService {
     return this.apiService.post<ApiPagedListResponse<State_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(StateID: number): Observable<ApiDataResponse<StateMaster>> {
-    return this.apiService.post<ApiDataResponse<StateMaster>>(`${this.endpoint}/GetDetails?StateID=${StateID}`, {});
+  GetDetails(stateID: number): Observable<ApiDataResponse<StateMaster>> {
+    return this.apiService.post<ApiDataResponse<StateMaster>>(`${this.endpoint}/GetDetails?StateID=${stateID}`, {});
   }
 
   CreateRecord(model: StateMaster): Observable<ApiResponse> {
@@ -58,7 +58,7 @@ export class StateMasterService {
     return {
       StateCode: '',
       StateName: '',
-      CountryID: 0,
+      CountryName: '',
       ActiveStatusID: 0
     }
   }
@@ -86,7 +86,7 @@ export class StateMasterService {
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: 'Please Select Country List'
+          required: 'Country is required'
         }
       },
       StateGSTCode:{

@@ -18,7 +18,7 @@ import { EmployeeRegistrationService } from '../employee-registration.service';
   standalone: true,
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  imports: [IndexTableComponent, CreateComponent, CommonModule],
+  imports: [IndexTableComponent, CommonModule],
   providers: [FormValidationService, DatePipe]
 })
 
