@@ -6,7 +6,7 @@
   <div sidebarContent>
     <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="col-xl-12 form-group">
-        <z-span [text]="form.get('PaymentNo')?.value" [label]="formConfig.PaymentNo.label"></z-span>
+        <z-span [text]="form.get('ExportOrderPaymentNo')?.value" [label]="formConfig.ExportOrderPaymentNo.label"></z-span>
       </div>
       <div class="col-xl-12 form-group">
         <z-inputtext [group]="form" [control]="'PaymentRefNo'" [label]="formConfig.PaymentRefNo.label" [validationMessage]="formConfig.PaymentRefNo.error"></z-inputtext>

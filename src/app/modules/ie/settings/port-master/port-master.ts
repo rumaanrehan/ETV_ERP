@@ -3,28 +3,34 @@ export interface PortMaster {
   PortCode: string | null;
   PortName: string | null;
   PortTypeID: number | null;
-  
+  CountryID: number | null;
 }
 
-export interface PortMaster_SelectList {
+export interface Port_SelectList {
   PortID: number | null;
   PortName: string | null;
-  PortTypeID: string | null;
 }
 
-export interface PortMaster_IndexFilter {
+export interface Port_IndexFilter {
   PortCode: string;
   PortName: string;
-  PortTypeID: string;
+  PortTypeID: number;
+  CountryName: string;
   ActiveStatusID: number | null;
 }
-export interface PortMaster_IndexList {
+
+export interface Port_IndexList {
   RowID: number;
-  PortTypeID: number;
+  PortID: number;
   PortCode: string;
   PortName: string;
   PortTypeName: string;
+  CountryName: string;
   ActiveStatus: boolean;
 }
 
-
+export interface PortRequest {
+  PortCode?: string | null;
+  PortName?: string | null;
+  PopulateType?: string | null;
+}

@@ -1,16 +1,18 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
-import { ItemGroup_SelectList } from '../../../../components/Item-Group/item-group';
-import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
-import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
-import { FormConfigType } from '../../../../shared/models/form.model';
-import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../shared/services/form.service';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
+import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { StaticList } from '../../../../../shared/models/select-list';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { ItemGroup_SelectList } from '../../../../ims/item-group-master/item-group-master';
 import { PortMaster } from '../port-master';
 import { PortMasterService } from '../port-master.service';
-import { StaticList } from '../../../../shared/models/select-list';
+import { Country_SelectList, CountryMaster } from '../../../../admin/settings/country-master/country-master';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 
 @Component({
   selector: 'app-create',
@@ -21,17 +23,6 @@ import { StaticList } from '../../../../shared/models/select-list';
   styleUrl: './create.component.scss',
 })
 export class CreateComponent implements OnInit, OnDestroy {
-portList: StaticList[] = [
-    {iValue:1, Text:'Airport', cValue:''},
-    {iValue:2, Text:'Seaport', cValue:''},
-    {iValue:3, Text:'TransPort', cValue:''},
-    {iValue:4, Text:'', cValue:''},
-    {iValue:5, Text:'Seaport', cValue:''},
-
-  ];
-onCancel() {
-throw new Error('Method not implemented.');
-}
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
 
@@ -42,8 +33,9 @@ throw new Error('Method not implemented.');
   
   form!: FormGroup;
   formConfig!: FormConfigType<PortMaster>;
-
-  itemGroupList: ItemGroup_SelectList[] = [];
+  
+  countryList: Country_SelectList[] = [];
+  portTypeList: StaticList[] = [];
 
   constructor(
     private pageService: PortMasterService,
@@ -62,16 +54,43 @@ throw new Error('Method not implemented.');
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
-  loadDropdownList(): void{
+
+  loadDropdownList(): void  {
+    this.loadStaticLists([
+      { fieldName: 'PortTypeID', targetList: 'portTypeList' },
+    ]);
     this.pageService.GetMasterDropdownLists()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          if(data.itemGroupList.IsSuccess) {
-            this.itemGroupList = data.itemGroupList.Data.Items;
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.countryList = data.countryList.Data.Items;
+      },
+    });
+  }
+
+  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
+
+    listConfigs.forEach(({ fieldName, targetList }) => {
+      sources[targetList] = this.pageService.GetStaticList({
+        AreaName: 'IE',
+        ControllerName: 'PortMaster',
+        FieldName: fieldName,
+      });
+    });
+
+    forkJoin(sources)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response) => {
+        listConfigs.forEach(({ targetList }) => {
+          if (response[targetList]?.IsSuccess) {
+            (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+          } else {
+            (this[targetList] as StaticList[]) = [];
           }
-        }
+        });
+      },
     });
   }
 
@@ -120,7 +139,6 @@ throw new Error('Method not implemented.');
               ReasonToUpdate: result.value
             };
             this.updateRecord(this.formService.transformFormData(model));
-            console.log(model)
           }
           else {
             this.isSubmitted = false;
@@ -137,13 +155,13 @@ throw new Error('Method not implemented.');
   }
   
   createRecord(model: PortMaster): void {
-    console.log(model);
     try {
       this.pageService.CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              this.closeSidebar();
               this.alertService.showAlert({
                 type: "success",
                 text: response.Message,
@@ -159,7 +177,6 @@ throw new Error('Method not implemented.');
           },
           complete: () => {
             this.isSubmitted = false;
-           
           }
         });
     }

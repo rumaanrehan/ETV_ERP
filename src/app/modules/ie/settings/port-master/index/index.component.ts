@@ -1,16 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatable.component';
-import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { FormValidationService } from '../../../../shared/services/form-validation.service';
-import { FormService } from '../../../../shared/services/form.service';
-import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
-import { PortMaster, PortMaster_IndexFilter, PortMaster_IndexList } from '../port-master';
+import { PortMaster, Port_IndexFilter, Port_IndexList } from '../port-master';
 import { PortMasterService } from '../port-master.service';
-
+import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormValidationService } from '../../../../../shared/services/form-validation.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 
 @Component({
   selector: 'app-index',
@@ -23,12 +22,12 @@ import { PortMasterService } from '../port-master.service';
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('itemCategoryCodeTemplate', { static: true }) PortCodeTemplate!: TemplateRef<any>;
-  @ViewChild('itemCategoryActiveStatusTemplate', { static: true }) itemCategoryActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('portCodeTemplate', { static: true }) portCodeTemplate!: TemplateRef<any>;
+  @ViewChild('portActiveStatusTemplate', { static: true }) portActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<PortMaster_IndexList>;
+  tableDef!: DataTableDef<Port_IndexList>;
   tableEvent!: DataTableLazyLoadEvent;
 
   constructor(
@@ -41,10 +40,10 @@ export class IndexComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.tableDef = {
-      tableKey: 'IMS_PortMaster_IndexTable',
+      tableKey: 'IE_PortMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'Portcode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<PortMaster_IndexFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      filterForm: this.formService.createFormGroup_DataTableFilter<Port_IndexFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false,
@@ -53,10 +52,11 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN',  width: "5%", hideVisToggle: true, orderable: false },
       { data: 'PortID', visible: false, hideVisToggle: true, orderable: false },
-      { data: 'PortCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.PortCodeTemplate },
+      { data: 'PortCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.portCodeTemplate },
       { data: 'PortName', label: 'Port Name', filterable: true },
-      { data: 'PortTypeName', label: ' Port Type', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.itemCategoryActiveStatusTemplate },
+      { data: 'PortTypeName', label: ' Port Type', filterable: true, filterType: 'select', filterKey: 'PortTypeID' },
+      { data: 'CountryName', label: ' Country', orderable: false, filterable: true },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.portActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false,  cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
     ];
   }
@@ -72,12 +72,11 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(PortID: number, activeStatus: boolean) {
-    console.log(PortID)
+  onClickEditDetails(portID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && PortID) {
+      if (this.createSidebar && portID) {
         this.pageService
-          .GetDetails(PortID)
+          .GetDetails(portID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
@@ -107,47 +106,42 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData() {
     try {
-      const model: DataTableParams<PortMaster_IndexFilter> = {
+      const model: DataTableParams<Port_IndexFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
         sortOrder: this.tableEvent.sortOrder,
         filters: this.tableDef.filterForm?.value,
       };
-      this.pageService
-        .PopulateGrid(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
-            } else {
-              this.tableDef.data = [];
-              this.tableDef.totalRecords = 0;
-              this.alertService.showServerResponseToast(response);
-            }
-          },
-          complete: () => {
-            this.tableDef.loading = false;
-          },
-        });
+      this.pageService.PopulateGrid(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.tableDef.data = response.Data.Items;
+            this.tableDef.totalRecords = response.Data.TotalRecords;
+          } else {
+            this.tableDef.data = [];
+            this.tableDef.totalRecords = 0;
+            this.alertService.showServerResponseToast(response);
+          }
+        },
+        complete: () => {
+          this.tableDef.loading = false;
+        },
+      });
     } catch (error) {}
     
   }
 
   onClickDeleteReactivate(row: any) {
-    console.log(row)
     try {
       const ActionType = row.ActiveStatus ? 'Delete' : 'Reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
       this.alertService.showConfirmationWithInput({
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.PortName}</b>"?`,
-
-      })
-
-      .then((result) => {
+      }).then((result) => {
         if (result.isConfirmed) {
           const model: PortMaster = {
             ...row,

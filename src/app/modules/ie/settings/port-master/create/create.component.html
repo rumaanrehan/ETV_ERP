@@ -8,11 +8,16 @@
         <z-span [text]="form.get('PortCode')?.value" [label]="formConfig.PortCode.label"></z-span>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'PortName'" [label]="formConfig.PortName.label"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'PortName'" [label]="formConfig.PortName.label" [validationMessage]="formConfig.PortName.error"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'PortTypeID'" [label]="formConfig.PortTypeID.label"
-          [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="portList">
+        <z-select [group]="form" [control]="'PortTypeID'" [label]="formConfig.PortTypeID.label" [validationMessage]="formConfig.PortTypeID.error"
+          [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="portTypeList">
+        </z-select>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label" [validationMessage]="formConfig.CountryID.error"
+          [optionLabel]="'CountryName'" [optionValue]="'CountryID'" [options]="countryList">
         </z-select>
       </div>
     </form>

@@ -12,12 +12,12 @@
 </div>
 
 <!-- Table Column Custom Template -->
-<ng-template #itemCategoryCodeTemplate let-row>
+<ng-template #portCodeTemplate let-row>
   <span class="table-action-link" (click)="onClickEditDetails(row.PortID, row.ActiveStatus)" 
   style="cursor: pointer;">{{ row.PortCode }}</span>
 </ng-template>
 
-<ng-template #itemCategoryActiveStatusTemplate let-row>
+<ng-template #portActiveStatusTemplate let-row>
   <span class="table-row-status">
     <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
     {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
