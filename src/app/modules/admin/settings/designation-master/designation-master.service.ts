@@ -1,28 +1,58 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { Environment } from '../../../../../environments/environment';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
+import { forkJoin, Observable } from 'rxjs';
+import { CountryMasterService } from '../country-master/country-master.service';
+// import { State_IndexTableFilter, State_IndexTableList, State_SelectList, StateMaster, StateRequest } from './state-master';
+import { Country_SelectList, CountryRequest } from '../country-master/country-master';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { DesignationMaster, DesignationMaster_IndexTableFilter, DesignationMaster_IndexTableList, DesignationMaster_SelectList } from './designation-master';
+import { ApiService } from '../../../../core/services/api.service';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
+import { DesignationRequest, Designation_SelectList, Designation_IndexTableFilter, Designation_IndexTableList, DesignationMaster } from './designation-master';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DesignationMasterService {
-  private apiUrl: string;
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
+  private endpoint = 'Admin/DesignationMaster';
+
+  constructor(
+    private apiService: ApiService,
+  ) {}
+
+ 
+
+  PopulateList(model: DesignationRequest): Observable<ApiListResponse<Designation_SelectList>> {
+    return this.apiService.post<ApiListResponse<Designation_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<DesignationMaster_IndexTableFilter> {
+  PopulateGrid(model: DataTableParams<Designation_IndexTableFilter>): Observable<ApiPagedListResponse<Designation_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<Designation_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  }
+
+  GetDetails(DesignationID: number): Observable<ApiDataResponse<DesignationMaster>> {
+    return this.apiService.post<ApiDataResponse<DesignationMaster>>(`${this.endpoint}/GetDetails?DesignationID=${DesignationID}`, {});
+  }
+
+  CreateRecord(model: DesignationMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
+  }
+
+  UpdateRecord(model: DesignationMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+  }
+
+  DeleteReactivate(model: DesignationMaster): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  }
+
+  //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Designation_IndexTableFilter> {
     return {
       DesignationCode: '',
       DesignationName: '',
-      ActiveStatusID: 0,
+      ActiveStatusID: 0
     }
   }
 
@@ -33,44 +63,19 @@ export class DesignationMasterService {
         defaultValue: null,
       },
       DesignationCode: {
-        label: 'Code',
-        defaultValue: 'NEW',
+        label: 'Designation Code',
+        defaultValue: 'NEW'
       },
       DesignationName: {
         label: 'Designation Name',
         defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
+        validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Designation Name is Required.',
-          maxlength: 'Designation Name cannot be longer than 50 characters.'
-        },
-        type: 'control'
+          required: 'Designation Name is required'
+        }
       },
+     
+      
     }
-  }
-
-  PopulateList(PopulateType: string): Observable<ApiListResponse<DesignationMaster_SelectList>> {
-    return this.http.post<ApiListResponse<DesignationMaster_SelectList>>(`${this.apiUrl}Admin/DesignationMaster/PopulateList?PopulateType=${PopulateType}`, {});
-  }
-
-  PopulateGrid(model: DataTableParams<DesignationMaster_IndexTableFilter>): Observable<ApiPagedListResponse<DesignationMaster_IndexTableList>> {      
-      return this.http.post<ApiPagedListResponse<DesignationMaster_IndexTableList>>(`${this.apiUrl}Admin/DesignationMaster/PopulateGrid`, model);
-    }
-
-  GetDetails(DesignationID: number): Observable<ApiDataResponse<DesignationMaster>> {
-    return this.http.post<ApiDataResponse<DesignationMaster>>(`${this.apiUrl}Admin/DesignationMaster/GetDetails?DesignationID=${DesignationID}`, {});
-  }
-
-  CreateRecord(model: DesignationMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DesignationMaster/Create`, model);
-  }
-
-  UpdateRecord(model: DesignationMaster): Observable<ApiResponse> {
-    debugger;
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DesignationMaster/Edit`, model);
-  }
-
-  DeleteReactivate(model: DesignationMaster): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/DesignationMaster/Delete`, model);
   }
 }

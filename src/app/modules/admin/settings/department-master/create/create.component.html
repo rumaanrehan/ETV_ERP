@@ -7,27 +7,19 @@
             <div class="col-xl-12 form-group">
                 <z-span [text]="form.get('DepartmentCode')?.value" [label]="formConfig.DepartmentCode.label"></z-span>
             </div>
-             <!-- <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" control="DepartmentType" [label]="formConfig.DepartmentType.label" [validationMessage]="formConfig.DepartmentType.error"></z-inputtext>
-      </div> -->
-
-       <div class="col-xl-12 form-group">
-                  <z-select [group]="form" [control]="'DepartmentTypeID'" [label]="formConfig.DepartmentTypeID.label"
-                    [validationMessage]="formConfig.DepartmentTypeID.error" [options]="departmentTypeList"
-                    [optionLabel]="'DepartmentTypeName'" [optionValue]="'DepartmentTypeID'">
-                  </z-select>
-                </div>
-          
-             <div class="row">
-  <div class="col-xl-6 col-lg-6 col-md-6 form-group d-inline-block">
-    <z-inputtext [group]="form" [control]="'DepartmentName'" [label]="formConfig.DepartmentName.label"></z-inputtext>
-  </div>
-
-  <div class="col-xl-6 col-lg-6 col-md-6 form-group d-inline-block">
-    <z-inputtext [group]="form" [control]="'ShortCode'" [label]="formConfig.ShortCode.label"></z-inputtext>
-  </div>
-</div>
-</form>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'DepartmentName'" [label]="formConfig.DepartmentName.label"></z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'ShortCode'" [label]="formConfig.ShortCode.label"></z-inputtext>
+            </div>
+           
+            <div class="col-xl-12 form-group">
+              <z-select [group]="form" [control]="'DepartmentTypeID'" [label]="formConfig.DepartmentTypeID.label"
+              [validationMessage]="formConfig.DepartmentTypeID.error" [optionLabel]="'DepartmentType'" [optionValue]="'DepartmentTypeID'" [options]="departmentList">
+              </z-select>
+            </div>
+        </form>
     </div>
     <div sidebarFooter>
         <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">

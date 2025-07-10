@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
-import { CreateComponent } from '../create/create.component';
 import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeTypeMaster } from '../employee-type-master';
-import { DataTableFilterList } from '../../../../../shared/models/select-list';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { EmployeeTypeMasterService } from '../employee-type-master.service';
-import { FormService } from '../../../../../shared/services/form.service';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { CreateComponent } from '../create/create.component';
+import { EmployeeTypeMasterService } from '../employee-type-master.service';
+import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeTypeMaster } from '../employee-type-master';
+
 
 @Component({
   selector: 'app-index',
@@ -21,15 +21,14 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('EmployeeTypeCodeTemplate', { static: true }) employeeTypeCodeTemplate!: TemplateRef<any>;
-  @ViewChild('EmployeeTypeActiveStatusTemplate', { static: true }) employeeTypeActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('employeeTypeCodeTemplate', { static: true }) employeeTypeCodeTemplate!: TemplateRef<any>;
+  @ViewChild('employeeTypeIsAllowedOverTimeTemplate', { static: true }) employeeTypeIsAllowedOverTimeTemplate!: TemplateRef<any>;
+  @ViewChild('employeeTypeActiveStatusTemplate', { static: true }) employeeTypeActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
   tableDef!: DataTableDef<EmployeeType_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
-
-  itemTypeFilterList: DataTableFilterList[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -53,8 +52,8 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'EmployeeTypeCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.employeeTypeCodeTemplate },
       { data: 'EmployeeTypeName', label: 'Employee Type Name', filterable: true },
+      { data: 'IsAllowedOverTime', label: 'IS Allowed Over Time', customTemplate: this.employeeTypeIsAllowedOverTimeTemplate },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.employeeTypeActiveStatusTemplate },
-
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -70,10 +69,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(EmployeeTypeID: number, activeStatus: boolean): void {
+  onClickEditDetails(employeeTypeID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && EmployeeTypeID) {
-        this.pageService.GetDetails(EmployeeTypeID)
+      if (this.createSidebar && employeeTypeID) {
+        this.pageService.GetDetails(employeeTypeID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -135,44 +134,44 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   onClickDeleteReactivate(row: any): void {
-      try {
-        const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
-        const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
-  
-        this.alertService.showConfirmationWithInput({
-          inputPlaceholder: inputPlaceholder,
-          text: `Do you really want to ${ActionType} the "<b>${row.EmployeeName}</b>"?`,
-        })
-        .then(result => {
-          if (result.isConfirmed) {
-            const model: EmployeeTypeMaster = {
-              ...row,
-              ActionType: ActionType,
-              ReasonToUpdate: result.value
-            };
-  
-            this.pageService.DeleteReactivate(model)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  this.loadData();
-                  this.alertService.showAlert({
-                    type: "success",
-                    text: response.Message,
-                    timer: 5000
-                  });
-                }
-                else {
-                  this.alertService.showServerResponseAlert(response);
-                }
+    try {
+      const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
+      const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
+
+      this.alertService.showConfirmationWithInput({
+        inputPlaceholder: inputPlaceholder,
+        text: `Do you really want to ${ActionType} the "<b>${row.EmployeeName}</b>"?`,
+      })
+      .then(result => {
+        if (result.isConfirmed) {
+          const model: EmployeeTypeMaster = {
+            ...row,
+            ActionType: ActionType,
+            ReasonToUpdate: result.value
+          };
+
+          this.pageService.DeleteReactivate(model)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.loadData();
+                this.alertService.showAlert({
+                  type: "success",
+                  text: response.Message,
+                  timer: 5000
+                });
               }
-            });
-          }
-        });
-      }
-      catch (error) {
-  
-      }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            }
+          });
+        }
+      });
     }
+    catch (error) {
+
+    }
+  }
 }
