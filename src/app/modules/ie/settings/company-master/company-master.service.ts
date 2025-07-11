@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
-import { Company_IndexTableFilter, Company_IndexTableList, Company_SelectList, CompanyMaster, CompanyRequest } from './company-master';
-import { Observable } from 'rxjs';
+import { Company_IndexTableFilter, Company_IndexTableList, Company_SelectList, CompanyMaster, CompanyRequest, State_SelectList } from './company-master';
+import { forkJoin, Observable } from 'rxjs';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { Validators } from '@angular/forms';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
+import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
+import { Country_SelectList, CountryMaster, CountryRequest } from '../../../admin/settings/country-master/country-master';
+import { StateRequest } from '../../../admin/settings/state-master/state-master';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +20,20 @@ export class CompanyMasterService {
   
   constructor(
     private apiService: ApiService,
+    private countryService: CountryMasterService,
+    
   ) {}
 
+    GetMasterDropdownLists(): Observable<{  
+      CountryList: ApiListResponse<Country_SelectList>;
+      
+      }> {
+   return forkJoin({
+      CountryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
+
+
+    });
+  }
   PopulateList(model: CompanyRequest): Observable<ApiListResponse<Company_SelectList>> {
     return this.apiService.post<ApiListResponse<Company_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }
@@ -49,7 +64,7 @@ export class CompanyMasterService {
       CompanyCode: '',
       CompanyName: '',
       CompanyTypeID: null,
-      ActiveStatusID: 0
+      ActiveStatusID: 0 
     }
   }
 
@@ -77,6 +92,14 @@ export class CompanyMasterService {
         validators: [Validators.required],
         validationMessages: {
           required: 'Company Type is required'
+        }
+      },
+      CountryID: {
+        label: 'Country',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Country is required'
         }
       },
       StateID: {
