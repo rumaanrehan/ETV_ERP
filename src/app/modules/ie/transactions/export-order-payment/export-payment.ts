@@ -1,6 +1,6 @@
 export interface ExportOrderPayment {
-  ExportOrderPaymentID: number | null;
-  ExportOrderPaymentNo: string | null;
+  PaymentID: number | null;
+  PaymentNo: string | null;
   PaymentRefNo: string | null;
   PaymentAmountFC: number | null;
   // PaymentAmountBC: number | null;
@@ -8,28 +8,28 @@ export interface ExportOrderPayment {
 }
 
 export interface ExportOrderPayment_IndexTableList {
-  ExportOrderPaymentID: number;
-  ExportOrderPaymentNo: string;
+  PaymentID: number;
+  PaymentNo: string;
   PaymentRefNo: string;
   PaymentAmountFC: number;
   PaymentDate: string;
-  IsCanceled: boolean;
+  ActiveStatus: boolean;
 }
 
 export interface ExportOrderPayment_IndexTableFilter {
-  ExportOrderPaymentNo: string | null;
+  PaymentNo: string | null;
   PaymentRefNo: string | null;
-  // PaymentDate: string | null;
-  IsCanceled: boolean | null;
+  PaymentDate: string | null;
+  IsCanceled: number | null;
 }
 
 export interface ExportOrderPayment_SelectList {
-  ExportOrderPaymentID: number | null;
-  ExportOrderPaymentNo: string | null;
+  PaymentID: number | null;
+  PaymentNo: string | null;
 }
 
 export interface ExportOrderPaymentRequest {
-  ExportOrderPaymentNo?: string | null;
+  PaymentNo?: string | null;
   PaymentRefNo?: string | null;
   PopulateType?: string | null;
 }
