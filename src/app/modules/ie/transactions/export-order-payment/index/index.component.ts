@@ -57,7 +57,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'PaymentRefNo', label: 'Reference No', filterable: true },
       { data: 'PaymentAmountFC', label: 'Amount (FC)', filterable: false },
       { data: 'PaymentDate', label: 'Payment Date', filterable: false },
-      { data: 'IsCanceled', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', customTemplate: this.statusTemplate, width: '10%' },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', customTemplate: this.statusTemplate, width: '10%' },
       { data: '', hideVisToggle: true, orderable: false, width: '3%', customTemplate: this.actionColTemplate },
     ];
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
-import { ExportOrderPayment, ExportOrderPayment_IndexTableFilter, ExportOrderPayment_IndexTableList, ExportOrderPaymentRequest } from './export-payment';
+import { ExportOrderPayment, ExportOrderPayment_IndexTableFilter, ExportOrderPayment_IndexTableList, ExportOrderPayment_SelectList, ExportOrderPaymentRequest } from './export-payment';
 import { Observable } from 'rxjs';
 import { ExportOrder_SelectList } from '../export-order/export-order';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -19,16 +19,16 @@ export class ExportOrderPaymentService {
     private apiService: ApiService,
   ) { }
 
-  PopulateList(model: ExportOrderPaymentRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
-    return this.apiService.post<ApiListResponse<ExportOrder_SelectList>>(`${this.endpoint}/PopulateList`, model);
+  PopulateList(model: ExportOrderPaymentRequest): Observable<ApiListResponse<ExportOrderPayment_SelectList>> {
+    return this.apiService.post<ApiListResponse<ExportOrderPayment_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<ExportOrderPayment_IndexTableFilter>): Observable<ApiPagedListResponse<ExportOrderPayment_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<ExportOrderPayment_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
-
-  GetDetails(exportOrderPaymentID: number): Observable<ApiDataResponse<ExportOrderPayment>> {
-    return this.apiService.post<ApiDataResponse<ExportOrderPayment>>(`${this.endpoint}/GetDetails?ExportOrderPaymentID=${exportOrderPaymentID}`, {});
+  
+  GetDetails(PaymentID: number): Observable<ApiDataResponse<ExportOrderPayment>> {
+    return this.apiService.post<ApiDataResponse<ExportOrderPayment>>(`${this.endpoint}/GetDetails?PaymentID=${PaymentID}`, {});
   }
 
   CreateRecord(model: ExportOrderPayment): Observable<ApiResponse> {
@@ -46,20 +46,20 @@ export class ExportOrderPaymentService {
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ExportOrderPayment_IndexTableFilter> {
     return {
-      ExportOrderPaymentNo: '',
+      PaymentNo: '',
       PaymentRefNo: '',
-      // PaymentDate: 0,
-      IsCanceled: false
+      PaymentDate: null,
+      IsCanceled: 0
     }
   }
 
   getFormConfig(): FormConfigType<ExportOrderPayment> {
     return {
-      ExportOrderPaymentID: {
+        PaymentID: {
         label: '',
         defaultValue: null,
       },
-      ExportOrderPaymentNo: {
+        PaymentNo: {
         label: 'Export Order Payment No',
         defaultValue: 'NEW'
       },
@@ -80,7 +80,7 @@ export class ExportOrderPaymentService {
         }
       },
       PaymentAmountFC: {
-        label: 'Payment Amount (FC)',
+        label: 'Payment Amount (FC)', 
         defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
