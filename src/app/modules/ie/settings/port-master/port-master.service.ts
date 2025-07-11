@@ -7,7 +7,6 @@ import { DataTableParams } from '../../../../shared/components/z-datatable/z-dat
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { ItemGroupMasterService } from '../../../ims/item-group-master/item-group-master.service';
 import { Country_SelectList, CountryRequest } from '../../../admin/settings/country-master/country-master';
 import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';

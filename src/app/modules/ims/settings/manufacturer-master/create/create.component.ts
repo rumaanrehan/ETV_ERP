@@ -1,19 +1,13 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
-import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
-import { FormConfigType } from '../../../../shared/models/form.model';
-import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../shared/services/form.service';
-import { ItemType_SelectList } from '../../item-type-master/item-type-master';
-import { ItemGroupMasterService } from '../item-group-master.service';
-import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMasterService } from '../item-group-master.service';
-// import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMasterService } from '../item-group-master.service';
-
+import { ManufacturerMaster } from '../manufacturer-master';
+import { ManufacturerMasterService } from '../manufacturer-master.service';
+import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
 
 @Component({
   selector: 'app-create',
@@ -32,21 +26,18 @@ export class CreateComponent implements OnInit, OnDestroy {
   activeStatus: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<ItemGroupMaster>;
-
-  itemTypeList: ItemType_SelectList[] = [];
+  formConfig!: FormConfigType<ManufacturerMaster>;
 
   constructor(
-    private pageService: ItemGroupMasterService,
+    private pageService: ManufacturerMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ItemGroupMaster>(this.formConfig);
+    this.form = this.formService.createFormGroup<ManufacturerMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -54,17 +45,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList(): void  {
-    this.pageService.GetMasterDropdownLists()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        this.itemTypeList = data.itemTypeList.Data.Items;
-      },
-    });
-  }
-
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ItemGroupMaster): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ManufacturerMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
@@ -76,7 +57,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<ItemGroupMaster>(this.formConfig, this.form);
+    this.formService.resetFormValue<ManufacturerMaster>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -96,15 +77,11 @@ export class CreateComponent implements OnInit, OnDestroy {
         return;
       }
       if (this.isEditMode) {
-        this.alertService.showConfirmationWithInput({
+        this.alertService.showConfirmation({
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: ItemGroupMaster = {
-              ...this.formService.transformFormData(this.form.value),
-              ReasonToUpdate: result.value
-            };
-            this.updateRecord(this.formService.transformFormData(model));
+            this.updateRecord(this.formService.transformFormData(this.form.value));
           }
           else {
             this.isSubmitted = false;
@@ -120,26 +97,22 @@ export class CreateComponent implements OnInit, OnDestroy {
    }
   }
   
-  createRecord(model: ItemGroupMaster): void {
+  createRecord(model: ManufacturerMaster): void {
     try{
-    this.pageService.CreateRecord(model)
+      this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000,
-            });
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
+      .subscribe((response) => {
+        if (response.IsSuccess) {
+          this.closeSidebar();
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+        } else {
+          this.alertService.showServerResponseAlert(response);
         }
+        this.isSubmitted = false;
       });
     }
     catch (error) {
@@ -147,7 +120,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: ItemGroupMaster): void {
+  updateRecord(model: ManufacturerMaster): void {
     try {
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))

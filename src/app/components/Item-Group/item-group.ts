@@ -1,4 +1,4 @@
-import { ItemTypeMaster } from "../../modules/ims/item-type-master/item-type-master";
+import { ItemTypeMaster } from "../../modules/ims/settings/item-type-master/item-type-master";
 
 export interface ItemGroup {
     ItemGroupID: number | null;

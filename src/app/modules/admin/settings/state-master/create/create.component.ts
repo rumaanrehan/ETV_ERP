@@ -1,19 +1,14 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
-import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
-import { FormConfigType } from '../../../../shared/models/form.model';
-import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../shared/services/form.service';
-import { ItemType_SelectList } from '../../item-type-master/item-type-master';
-import { ItemGroupMasterService } from '../item-group-master.service';
-import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMasterService } from '../item-group-master.service';
-// import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMasterService } from '../item-group-master.service';
-
+import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { StateMaster } from '../state-master';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { StateMasterService } from '../state-master.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { Country_SelectList } from '../../country-master/country-master';
 
 @Component({
   selector: 'app-create',
@@ -32,19 +27,19 @@ export class CreateComponent implements OnInit, OnDestroy {
   activeStatus: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<ItemGroupMaster>;
+  formConfig!: FormConfigType<StateMaster>;
 
-  itemTypeList: ItemType_SelectList[] = [];
+  countryList: Country_SelectList[] = [];
 
   constructor(
-    private pageService: ItemGroupMasterService,
+    private pageService: StateMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ItemGroupMaster>(this.formConfig);
+    this.form = this.formService.createFormGroup<StateMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.loadDropdownList();
   }
@@ -59,12 +54,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data) => {
-        this.itemTypeList = data.itemTypeList.Data.Items;
+        this.countryList = data.countryList.Data.Items;
       },
     });
   }
 
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ItemGroupMaster): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: StateMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
@@ -76,7 +71,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<ItemGroupMaster>(this.formConfig, this.form);
+    this.formService.resetFormValue<StateMaster>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -100,7 +95,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: ItemGroupMaster = {
+            const model: StateMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
@@ -120,7 +115,7 @@ export class CreateComponent implements OnInit, OnDestroy {
    }
   }
   
-  createRecord(model: ItemGroupMaster): void {
+  createRecord(model: StateMaster): void {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
@@ -147,7 +142,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: ItemGroupMaster): void {
+  updateRecord(model: StateMaster): void {
     try {
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))

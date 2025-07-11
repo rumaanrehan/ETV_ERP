@@ -1,52 +1,49 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
-import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
-import { FormConfigType } from '../../../../shared/models/form.model';
-import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../shared/services/form.service';
-import { ItemType_SelectList } from '../../item-type-master/item-type-master';
-import { ItemGroupMasterService } from '../item-group-master.service';
-import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMasterService } from '../item-group-master.service';
-// import { ItemGroupMaster } from '../item-group-master';
-// import { ItemGroupMasterService } from '../item-group-master.service';
-
+import { HsnSacMaster } from '../hsn-sac-master';
+import { HsnSacMasterService } from '../hsn-sac-master.service';
+import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
+import { TaxSlabMasterService } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master.service';
 
 @Component({
   selector: 'app-create',
   standalone: true,
   imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './create.component.html',
-  styleUrl: './create.component.scss'
+  styleUrls: ['./create.component.scss']
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
-
+  
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   activeStatus: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<ItemGroupMaster>;
+  formConfig!: FormConfigType<HsnSacMaster>;
 
-  itemTypeList: ItemType_SelectList[] = [];
+  taxSlabList: TaxSlab_SelectList[] = [];
 
   constructor(
-    private pageService: ItemGroupMasterService,
+    private pageService: HsnSacMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
-  ) { }
+    private taxSlabService: TaxSlabMasterService
+  ) {}
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ItemGroupMaster>(this.formConfig);
+    this.form = this.formService.createFormGroup<HsnSacMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.loadDropdownList();
+    this.loadTaxSlab();
   }
 
   ngOnDestroy(): void {
@@ -54,29 +51,37 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList(): void  {
-    this.pageService.GetMasterDropdownLists()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        this.itemTypeList = data.itemTypeList.Data.Items;
-      },
-    });
+  loadTaxSlab(): void {
+    try {
+      const dto: TaxSlabRequest = {
+        PopulateType: "SelectList"
+      }
+      this.taxSlabService.PopulateList(dto).subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.taxSlabList = response.Data.Items;
+            console.log(response.Data.Items);
+          } else {
+            this.taxSlabList = [];
+          }
+        },
+      });
+    } catch (error) {}
   }
 
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ItemGroupMaster): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: HsnSacMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
     this.activeStatus = activeStatus;
-    this.form.patchValue(model);
+    this.form.patchValue(model)
     this.isFormSidebarVisible = true;
   }
 
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<ItemGroupMaster>(this.formConfig, this.form);
+    this.formService.resetFormValue<HsnSacMaster>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -100,7 +105,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: ItemGroupMaster = {
+            const model: HsnSacMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
@@ -114,32 +119,28 @@ export class CreateComponent implements OnInit, OnDestroy {
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-   }
-   catch (error) {
+    }
+    catch (error) {
 
-   }
+    }
   }
   
-  createRecord(model: ItemGroupMaster): void {
+  createRecord(model: HsnSacMaster): void {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000,
-            });
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
+      .subscribe((response) => {
+        if (response.IsSuccess) {
+          this.closeSidebar();
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+        } else {
+          this.alertService.showServerResponseAlert(response);
         }
+        this.isSubmitted = false;
       });
     }
     catch (error) {
@@ -147,7 +148,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: ItemGroupMaster): void {
+  updateRecord(model: HsnSacMaster): void {
     try {
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))
