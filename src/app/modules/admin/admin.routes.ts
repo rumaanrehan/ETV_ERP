@@ -4,6 +4,8 @@ import { Routes } from '@angular/router';
 export const adminRoute: Routes = [
   { path: 'item-group/index', loadComponent: () => import('../../components/Item-Group/index/index.component').then((m) => m.IndexComponent) },
   { path: 'admin/state-master/index', loadComponent: () => import('./settings/state-master/index/index.component').then((m) => m.IndexComponent) },
+    { path: 'admin/currency-master/index', loadComponent: () => import('../admin/settings/CurrencyMaster/index/index.component').then((m) => m.IndexComponent) },
+
   { path: 'admin/country-master/index', loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/CityMaster/Index', loadComponent: () => import('./settings/CityMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'admin/designation-master/index', loadComponent: () => import('./settings/designation-master/index/index.component').then((m) => m.IndexComponent) },

@@ -5,6 +5,7 @@ export interface CompanyMaster {
     CompanyCode: string | null;
     CompanyName: string | null;
     CompanyTypeID: number | null;
+    CountryID: number | null;
     StateID: number | null;
     CompanyPhoneNo: string | null;
     CompanyEmailID: string | null;
@@ -51,4 +52,9 @@ export interface CompanyRequest {
 export interface State_SelectList {
     StateID: number;
     StateName: String;
+}
+
+export interface Country_SelectList {
+    CountryID: number;
+    CountryName: String;
 }
