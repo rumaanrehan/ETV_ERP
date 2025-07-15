@@ -1,0 +1,46 @@
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+  <div sidebarHeader>
+    <h5 class="text-white">Document Type Master</h5>
+  </div>
+
+  <div sidebarContent>
+    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="col-xl-12 form-group">
+        <z-span [text]="form.get('DocumentTypeCode')?.value" [label]="formConfig.DocumentTypeCode.label">
+        </z-span>
+      </div>
+
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'DocumentTypeName'" [label]="formConfig.DocumentTypeName.label" [validationMessage]="formConfig.DocumentTypeName.error">
+        </z-inputtext>
+      </div>
+      <!-- <div class="col-xl-12 form-group">
+        <z-select [group]="form" [control]="'DocumentName'" [label]="formConfig.DocumentName.label" [validationMessage]="formConfig.DocumentName.error"
+          [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="DocumentTypeList">
+        </z-select>
+      </div> -->
+    </form>
+  </div>
+
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="col-md-6 pe-1">
+        <button 
+          type="submit" 
+          class="btn btn-md btn-primary w-100" 
+          [disabled]="isSubmitted" 
+          (click)="onSubmit()">
+          {{ isEditMode ? "Update" : "Save" }}
+        </button>
+      </div>
+      <div class="col-md-6 ps-1">
+        <button 
+          type="button" 
+          class="btn btn-md btn-light w-100" 
+          (click)="closeSidebar()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</app-form-sidebar>
