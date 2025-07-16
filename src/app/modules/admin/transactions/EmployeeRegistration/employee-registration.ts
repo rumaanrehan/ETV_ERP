@@ -1,8 +1,6 @@
 export interface EmployeeRegistration {
   EmployeeID: number | null;
-  EmployeeCode: string | null; 
-
-  // Personal Details
+  EmployeeCode: string | null;
   EmployeePrefix: string | null;
   EmployeeName: string | null;
   Gender: number | null;
@@ -20,63 +18,94 @@ export interface EmployeeRegistration {
   EmployeeStateID: number | null;
   EmployeeCountryID: number | null;
   EmployeePinCode: string | null;
-  DifferentPermanentAddress: boolean | null;
+  DifferentPermanentAddress: boolean;
   PermanentAddress: string | null;
   PermanentCity: string | null;
   PermanentStateID: number | null;
   PermanentCountryID: number | null;
   PermanentPinCode: string | null;
-  EmergencyContactDetails: boolean | null;
+  EmergencyContactDetails: boolean;
   EmergencyContactName: string | null;
   EmergencyContactMobileNo: string | null;
   EmergencyContactRelationship: number | null;
   EmployeeCategory: number | null;
   EmployeeTypeID: number | null;
-  EmployeeTypeName: string | null;
   DOJ: Date | null;
   DepartmentID: number | null;
-  DepartmentName: string | null;
   DesignationID: number | null;
-  DesignationName: string | null;
   ReportingTo: number | null;
-  CanApproveEmployeeRequest: boolean | null;
-  CanApproveBillingDiscount: boolean | null;
-  DisablePayroll: boolean | null;
-
-  // For Consultant
+  CanApproveEmployeeRequest: boolean;
+  CanApproveBillingDiscount: boolean;
+  DisablePayroll: boolean;
   SMCRegistrationNo: string | null;
   ConsultationCharge: number | null;
-  IsSurgeon: boolean | null;
-  IsAnaesthetist: boolean | null;
-  IsSuperSpecialist: boolean | null;
-  IsVisitingConsultant: boolean | null;
-  IsSignatory: boolean | null;
+  IsSurgeon: boolean;
+  IsAnaesthetist: boolean;
+  IsSuperSpecialist: boolean;
+  IsVisitingConsultant: boolean;
+  IsSignatory: boolean;
   ConsultantSignatureImagePath: any | null;
-  SignatoryArea: number | null ;
-
-  // For ERP Access
-  CanAccessERP: boolean | null;
-  CanAccessEmployeePortal: boolean | null;
+  SignatoryArea: number | null;
+  CanAccessERP: boolean;
+  CanAccessEmployeePortal: boolean;
   RoleID: number | null;
   UserID: string | null;
- 
+  Password: string | null;
+  StatusText: string | null;
+  HexValue: string | null;
+  CanUpdate: boolean;
 }
 
-export interface EmployeeRegistrationList {
+export interface EmployeeRegistrationSelectListRequest {
+  EmployeeID?: number;
+  EmployeeCode?: string;
+  EmployeeName?: string;
+  MobileNo?: string;
+  EmployeeTypeID?: number;
+  DepartmentID?: number;
+  DesignationID?: number;
+  CanAccessERP?: boolean;
+  PopulateType?: string;
+}
+
+export interface EmployeeRegistrationSelectListResponse {
+  EmployeeID: number;
+  EmployeeCode: string;
+  EmployeeName: string;
+  MobileNo: string;
+  EmployeeTypeName: string;
+  DepartmentName: string;
+  DesignationName: string;
+}
+
+export interface EmployeeRegistrationIndexTableRequest {
+  EmployeeCode: string | null;
+  EmployeeName: string | null;
+  MobileNo: string | null;
+  EmployeeTypeID: number | null;
+  DepartmentID: number | null;
+  DesignationID: number | null;
+  // CanAccessERP: any;
+  ActiveStatusID: number | null;
+  PopulateType: string | null;
+}
+
+export interface EmployeeRegistrationIndexTableResponse {
   RowID: number;
   EmployeeID: number;
-  EmployeeCode: string ;
+  EmployeeCode: string;
   EmployeeName: string;
   MobileNo: string;
   EmployeeTypeName: string;
   DepartmentName: string;
   DesignationName: string;
   CanAccessERP: boolean | null;
-  ActiveStatus: boolean;
+  ActiveStatus: string;
 }
 
-export interface FileUpload {
+export interface EmployeeRegistrationFileUpload {
   FileType: string | null;
   FileName: string | null;
   File: File | null;
 }
+

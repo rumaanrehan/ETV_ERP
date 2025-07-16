@@ -4,28 +4,30 @@ import { Subject, takeUntil } from 'rxjs';
 import { CreateComponent } from '../create/create.component';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { DesignationMaster, DesignationMaster_IndexTableFilter, DesignationMaster_IndexTableList } from '../designation-master';
+import { DataTableFilterList } from '../../../../../shared/models/select-list';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { FormService } from '../../../../../shared/services/form.service';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { Designation_IndexTableList, Designation_IndexTableFilter, DesignationMaster } from '../designation-master';
 import { DesignationMasterService } from '../designation-master.service';
+
 
 @Component({
   selector: 'app-index',
   standalone: true,
   imports: [ZDataTable, CreateComponent],
   templateUrl: './index.component.html',
-  styleUrl: './index.component.scss',
+  styleUrl: './index.component.scss'
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-    @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-    @ViewChild('designationCodeTemplate', { static: true }) designationCodeTemplate!: TemplateRef<any>;
-    @ViewChild('designationActiveStatusTemplate', { static: true }) designationActiveStatusTemplate!: TemplateRef<any>;
-    @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-    @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
+  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('designationCodeTemplate', { static: true }) designationCodeTemplate!: TemplateRef<any>;
+  @ViewChild('designationActiveStatusTemplate', { static: true }) designationActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<DesignationMaster_IndexTableList>;
+  tableDef!: DataTableDef<Designation_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
 
   constructor(
@@ -37,12 +39,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-
     this.tableDef = {
       tableKey: 'Admin_DesignationMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'DesignationCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<DesignationMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      filterForm: this.formService.createFormGroup_DataTableFilter<Designation_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
@@ -51,7 +52,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'DesignationCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.designationCodeTemplate },
       { data: 'DesignationName', label: 'Designation Name', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.designationActiveStatusTemplate, },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.designationActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -61,21 +62,21 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  OnClickPageHeaderAddButton(): void {
+  onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
-      this.createSidebar.openSidebar(false, this.formService.createNullObject<DesignationMaster>());
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<DesignationMaster>());
     }
   }
 
-  OnClickEditDetails(DesignationID: number): void {
+  onClickEditDetails(designationID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && DesignationID) {
-        this.pageService.GetDetails(DesignationID)
+      if (this.createSidebar && designationID) {
+        this.pageService.GetDetails(designationID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.createSidebar.openSidebar(true, response.Data);
+              this.createSidebar.openSidebar(activeStatus, true, response.Data);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -88,11 +89,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     }
   }
-  
+
   onCloseSidebar(): void {
     this.loadData();
   }
-  
+
   onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
     this.tableEvent = event;
     this.loadData();
@@ -100,7 +101,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     try {
-      const model: DataTableParams<DesignationMaster_IndexTableFilter> = {
+      const model: DataTableParams<Designation_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
@@ -138,7 +139,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
       this.alertService.showConfirmationWithInput({
         inputPlaceholder: inputPlaceholder,
-        text: `Do you really want to ${ActionType} the "<b>${row.EmployeeTypeName}</b>"?`,
+        text: `Do you really want to ${ActionType} the "<b>${row.DesignationName}</b>"?`,
       })
       .then(result => {
         if (result.isConfirmed) {

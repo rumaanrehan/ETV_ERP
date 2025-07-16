@@ -1,15 +1,16 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { CreateComponent } from '../create/create.component';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { FormService } from '../../../../../shared/services/form.service';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { Department_IndexTableFilter, Department_IndexTableList, DepartmentMaster } from '../department-master';
 import { DataTableFilterList } from '../../../../../shared/models/select-list';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { Department_IndexTableList, Department_IndexTableFilter, DepartmentMaster } from '../department-master';
 import { DepartmentMasterService } from '../department-master.service';
+
 
 @Component({
   selector: 'app-index',
@@ -21,16 +22,13 @@ import { DepartmentMasterService } from '../department-master.service';
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('DepartmentCodeTemplate', { static: true }) departmentTypeCodeTemplate!: TemplateRef<any>;
-  @ViewChild('DepartmentActiveStatusTemplate', { static: true }) departmentTypeActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('departmentCodeTemplate', { static: true }) departmentCodeTemplate!: TemplateRef<any>;
+  @ViewChild('departmentActiveStatusTemplate', { static: true }) departmentActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
   tableDef!: DataTableDef<Department_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
-
-  itemTypeFilterList: DataTableFilterList[] = [];
-  departmentActiveStatusTemplate: TemplateRef<any> | undefined;
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -52,11 +50,11 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'DepartmentCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.departmentTypeCodeTemplate },
+      { data: 'DepartmentCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.departmentCodeTemplate },
       { data: 'DepartmentName', label: 'Department Name', filterable: true },
-      { data: 'ShortCode', label: 'Short Code', filterable: true },
-      // { data: 'DepartmentTypeID', label: 'Department Type ID', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.departmentActiveStatusTemplate, },
+      { data: 'ShortCode', label: 'Short Code', orderable: false, width: "10%" },
+      { data: 'DepartmentType', label: 'Department Type', filterable: true, width: "10%" },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.departmentActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -72,23 +70,23 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(DepartmentID: number, activeStatus: boolean): void {
-    try {
-      if (this.createSidebar && DepartmentID) {
-        this.pageService.GetDetails(DepartmentID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
+  onClickEditDetails(departmentID: number, activeStatus: boolean): void {
+      try {
+        if (this.createSidebar && departmentID) {
+          this.pageService.GetDetails(departmentID)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
+        }
       }
-    }
     catch (error) {
 
     }
@@ -117,7 +115,6 @@ export class IndexComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            console.log('response.Data.Items', response.Data.Items);
             this.tableDef.data = response.Data.Items;
             this.tableDef.totalRecords = response.Data.TotalRecords;
           }

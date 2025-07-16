@@ -1,24 +1,28 @@
 <app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
     <div sidebarHeader>
-        <h5 class="text-white">Department Master</h5>
+        <h5 class="text-white">Currency Master</h5>
     </div>
     <div sidebarContent>
         <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
             <div class="col-xl-12 form-group">
-                <z-span [text]="form.get('DepartmentCode')?.value" [label]="formConfig.DepartmentCode.label"></z-span>
+                <z-span [text]="form.get('CurrencyCode')?.value" [label]="formConfig.CurrencyCode.label"></z-span>
+            </div>
+             <div class="col-xl-12 form-group">
+              <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label"
+              [validationMessage]="formConfig.CountryID.error" [optionLabel]="'CountryName'" [optionValue]="'CountryID'" [options]="countryList">
+              </z-select>
             </div>
             <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'DepartmentName'" [label]="formConfig.DepartmentName.label"></z-inputtext>
+                <z-inputtext [group]="form" [control]="'CurrencyName'" [label]="formConfig.CurrencyName.label" [validationMessage]="formConfig.CurrencyName.error"></z-inputtext>
             </div>
             <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'ShortCode'" [label]="formConfig.ShortCode.label"></z-inputtext>
+                <z-inputtext [group]="form" [control]="'CurrencySymbol'" [label]="formConfig.CurrencySymbol.label" [validationMessage]="formConfig.CurrencySymbol.error"></z-inputtext>
             </div>
            
             <div class="col-xl-12 form-group">
-              <z-select [group]="form" [control]="'DepartmentTypeID'" [label]="formConfig.DepartmentTypeID.label"
-              [validationMessage]="formConfig.DepartmentTypeID.error" [optionLabel]="'DepartmentType'" [optionValue]="'DepartmentTypeID'" [options]="departmentList">
-              </z-select>
+                <z-inputtext [group]="form" [control]="'CurrencyISOCode'" [label]="formConfig.CurrencyISOCode.label"></z-inputtext>
             </div>
+            
         </form>
     </div>
     <div sidebarFooter>

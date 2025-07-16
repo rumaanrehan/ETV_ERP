@@ -1,14 +1,15 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
+import { CreateComponent } from '../create/create.component';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
+import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
+import { DataTableFilterList } from '../../../../../shared/models/select-list';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { CreateComponent } from '../create/create.component';
-import { EmployeeTypeMasterService } from '../employee-type-master.service';
-import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeTypeMaster } from '../employee-type-master';
+import { Currency_IndexTableList, Currency_IndexTableFilter, CurrencyMaster } from '../currency-master';
+import { CurrencyMasterService } from '../currency-master.service';
 
 
 @Component({
@@ -21,18 +22,17 @@ import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeTyp
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('employeeTypeCodeTemplate', { static: true }) employeeTypeCodeTemplate!: TemplateRef<any>;
-  @ViewChild('employeeTypeIsAllowedOverTimeTemplate', { static: true }) employeeTypeIsAllowedOverTimeTemplate!: TemplateRef<any>;
-  @ViewChild('employeeTypeActiveStatusTemplate', { static: true }) employeeTypeActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('currencyCodeTemplate', { static: true }) currencyCodeTemplate!: TemplateRef<any>;
+  @ViewChild('currencyActiveStatusTemplate', { static: true }) currencyActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<EmployeeType_IndexTableList>;
+  tableDef!: DataTableDef<Currency_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
 
   constructor(
     private pageHeaderService: PageHeaderService,
-    private pageService: EmployeeTypeMasterService,
+    private pageService: CurrencyMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
   ) { }
@@ -40,20 +40,24 @@ export class IndexComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.tableDef = {
-      tableKey: 'Admin_EmployeeTypeMaster_IndexTable',
+      tableKey: 'Admin_CurrencyMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: 'EmployeeTypeCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<EmployeeType_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      defaultSortColumn: { sortField: 'CurrencyCode', sortOrder: 1 },
+      filterForm: this.formService.createFormGroup_DataTableFilter<Currency_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'EmployeeTypeCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.employeeTypeCodeTemplate },
-      { data: 'EmployeeTypeName', label: 'Employee Type Name', filterable: true },
-      { data: 'IsAllowedOverTime', label: 'IS Allowed Over Time', customTemplate: this.employeeTypeIsAllowedOverTimeTemplate },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.employeeTypeActiveStatusTemplate },
+      { data: 'CurrencyCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.currencyCodeTemplate },
+      { data: 'CountryName', label: 'Country Name', filterable: true, width: "10%" },
+
+      { data: 'CurrencyName', label: 'Currency Name', filterable: true },
+      { data: 'CurrencyISOCode', label: 'Currency ISO Code', orderable: false, width: "10%" },
+      { data: 'CurrencySymbol', label: 'Currency Symbol', filterable: true, orderable: false, width: "8%" },
+
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.currencyActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -65,14 +69,14 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
-      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<EmployeeTypeMaster>());
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<CurrencyMaster>());
     }
   }
 
-  onClickEditDetails(employeeTypeID: number, activeStatus: boolean): void {
+  onClickEditDetails(currencyID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && employeeTypeID) {
-        this.pageService.GetDetails(employeeTypeID)
+      if (this.createSidebar && currencyID) {
+        this.pageService.GetDetails(currencyID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -102,7 +106,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     try {
-      const model: DataTableParams<EmployeeType_IndexTableFilter> = {
+      const model: DataTableParams<Currency_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
@@ -140,11 +144,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
       this.alertService.showConfirmationWithInput({
         inputPlaceholder: inputPlaceholder,
-        text: `Do you really want to ${ActionType} the "<b>${row.EmployeeName}</b>"?`,
+        text: `Do you really want to ${ActionType} the "<b>${row.CurrencyName}</b>"?`,
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: EmployeeTypeMaster = {
+          const model: CurrencyMaster = {
             ...row,
             ActionType: ActionType,
             ReasonToUpdate: result.value

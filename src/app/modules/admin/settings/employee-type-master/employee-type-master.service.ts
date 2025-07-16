@@ -1,21 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { CountryMasterService } from '../country-master/country-master.service';
+import { Country_SelectList, CountryRequest } from '../country-master/country-master';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { ApiService } from '../../../../core/services/api.service';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeType_SelectList, EmployeeTypeMaster, EmployeeTypeRequest } from './employee-type-master';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-// import { EmployeeType_SelectList } from '../../../ims/item-group-master/item-group-master';
-// import { ApiService } from '../../../core/services/api.service';
-// import { DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
-// import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
-// import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
-// import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
-// import { EmployeeType_SelectList, EmployeeTypeRequest } from '../item-type-master/item-type-master';
-// import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeType_SelectList, EmployeeTypeMaster, EmployeeTypeRequest } from './item-group-master';
-// import { EmployeeTypeMasterService } from './../item-type-master/item-type-master.service';
+import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeType_SelectList, EmployeeTypeMaster, EmployeeTypeRequest } from './employee-type-master';
 
 @Injectable({
   providedIn: 'root'
@@ -24,10 +17,9 @@ export class EmployeeTypeMasterService {
   private endpoint = 'Admin/EmployeeTypeMaster';
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
   ) {}
 
- 
   PopulateList(model: EmployeeTypeRequest): Observable<ApiListResponse<EmployeeType_SelectList>> {
     return this.apiService.post<ApiListResponse<EmployeeType_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
@@ -36,8 +28,8 @@ export class EmployeeTypeMasterService {
     return this.apiService.post<ApiPagedListResponse<EmployeeType_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(EmployeeTypeID: number): Observable<ApiDataResponse<EmployeeTypeMaster>> {
-    return this.apiService.post<ApiDataResponse<EmployeeTypeMaster>>(`${this.endpoint}/GetDetails?EmployeeTypeID=${EmployeeTypeID}`, {});
+  GetDetails(employeeTypeID: number): Observable<ApiDataResponse<EmployeeTypeMaster>> {
+    return this.apiService.post<ApiDataResponse<EmployeeTypeMaster>>(`${this.endpoint}/GetDetails?employeeTypeID=${employeeTypeID}`, {});
   }
 
   CreateRecord(model: EmployeeTypeMaster): Observable<ApiResponse> {
@@ -57,6 +49,7 @@ export class EmployeeTypeMasterService {
     return {
       EmployeeTypeCode: '',
       EmployeeTypeName: '',
+      IsAllowedOverTime: '',
       ActiveStatusID: 0
     }
   }
@@ -68,23 +61,21 @@ export class EmployeeTypeMasterService {
         defaultValue: null,
       },
       EmployeeTypeCode: {
-        label: 'Employee Type Code',
+        label: 'Employee Code',
         defaultValue: 'NEW'
       },
       EmployeeTypeName: {
-        label: 'Employee Type Name',
+        label: 'Employee Name',
         defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Employee Type Name is required'
+          required: 'Employee Name is required'
         }
       },
-      IsAllowedOvertime: {
-        label: 'Is Allowed Overtime',
-        defaultValue: null,
-
-
-      }
+       IsAllowedOverTime: {
+        label: 'Is Allowed Over Time',
+        defaultValue: 'NEW'
+      },
     }
   }
 }

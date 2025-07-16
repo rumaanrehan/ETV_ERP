@@ -11,11 +11,11 @@
 </div>
 
 <!-- Table Column Custom Template -->
- <ng-template #DepartmentCodeTemplate let-row>
+ <ng-template #departmentCodeTemplate let-row>
     <span class="table-action-link" (click)="onClickEditDetails(row.DepartmentID, row.ActiveStatus)" style="cursor: pointer;">{{ row.DepartmentCode }}</span>
 </ng-template>
 
-<ng-template #DepartmentActiveStatusTemplate let-row>
+<ng-template #departmentActiveStatusTemplate let-row>
     <span class="table-row-status">
         <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
         {{ row.ActiveStatus ? 'Active'  : 'Inactive' }}

@@ -6,8 +6,9 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { FormService } from '../../../../../shared/services/form.service';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { EmployeeTypeMaster } from '../employee-type-master';
-import { EmployeeTypeMasterService } from '../employee-type-master.service';
+import { Country_SelectList } from '../../country-master/country-master';
+import { CurrencyMaster } from '../currency-master';
+import { CurrencyMasterService } from '../currency-master.service';
 
 @Component({
   selector: 'app-create',
@@ -26,27 +27,39 @@ export class CreateComponent implements OnInit, OnDestroy {
   activeStatus: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<EmployeeTypeMaster>;
+  formConfig!: FormConfigType<CurrencyMaster>;
 
+  countryList: Country_SelectList[] = [];
 
   constructor(
-    private pageService: EmployeeTypeMasterService,
+    private pageService: CurrencyMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<EmployeeTypeMaster>(this.formConfig);
+    this.form = this.formService.createFormGroup<CurrencyMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }  
+  }
 
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: EmployeeTypeMaster): void {
+  loadDropdownList(): void  {
+    this.pageService.GetMasterDropdownLists()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.countryList = data.countryList.Data.Items;
+      },
+    });
+  }
+
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: CurrencyMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
@@ -58,7 +71,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<EmployeeTypeMaster>(this.formConfig, this.form);
+    this.formService.resetFormValue<CurrencyMaster>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -82,7 +95,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: EmployeeTypeMaster = {
+            const model: CurrencyMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
@@ -102,7 +115,7 @@ export class CreateComponent implements OnInit, OnDestroy {
    }
   }
   
-  createRecord(model: EmployeeTypeMaster): void {
+  createRecord(model: CurrencyMaster): void {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
@@ -129,7 +142,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: EmployeeTypeMaster): void {
+  updateRecord(model: CurrencyMaster): void {
     try {
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))

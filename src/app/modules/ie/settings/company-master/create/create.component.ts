@@ -10,11 +10,14 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { SelectList } from '../../../../admin/settings/SelectList/select-list';
 import { StaticList } from '../../../../../shared/models/select-list';
+import { Country } from '../../../../../shared/layouts/directives/soratable.directive';
+import { Country_SelectList, CountryMaster } from '../../../../admin/settings/country-master/country-master';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule, CommonModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
@@ -35,12 +38,19 @@ export class CreateComponent {
     { iValue: 2, Text: "Vendor", cValue: "" }
   ]
 
+  countryList: Country_SelectList[] = [];   
+
   stateList: State_SelectList[] = [
     { StateID: 1, StateName: "Delhi"},
     { StateID: 2, StateName: "Bihar"},
     { StateID: 3, StateName: "Karnataka"},
     { StateID: 4, StateName: "Maharastra"},
-    { StateID: 5, StateName: "Uttar Pradesh"}
+    { StateID: 5, StateName: "Uttar Pradesh"},
+    { StateID: 6, StateName: "Goa"},
+    { StateID: 7, StateName: "Sikkim"},
+    { StateID: 8, StateName: "Haryana"},
+    { StateID: 9, StateName: "Punjab"}
+
   ]
 
   constructor(
@@ -53,6 +63,7 @@ export class CreateComponent {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<CompanyMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.LoadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -77,6 +88,20 @@ export class CreateComponent {
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
+  }
+
+
+  LoadDropdownList(): void {
+
+    this.pageService.GetMasterDropdownLists()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          if (data.CountryList.IsSuccess) {
+            this.countryList = data.CountryList.Data.Items;
+          }
+          },
+      });
   }
 
   onSubmit(): void {

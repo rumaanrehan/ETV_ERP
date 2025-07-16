@@ -1,6 +1,6 @@
 <!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add Designation</button>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add Currency</button>
 </ng-template>
 
 <!-- Index Table Component -->
@@ -11,11 +11,11 @@
 </div>
 
 <!-- Table Column Custom Template -->
- <ng-template #designationCodeTemplate let-row>
-    <span class="table-action-link" (click)="onClickEditDetails(row.DesignationID, row.ActiveStatus)" style="cursor: pointer;">{{ row.DesignationCode }}</span>
+ <ng-template #currencyCodeTemplate let-row>
+    <span class="table-action-link" (click)="onClickEditDetails(row.CurrencyID, row.ActiveStatus)" style="cursor: pointer;">{{ row.CurrencyCode }}</span>
 </ng-template>
 
-<ng-template #designationActiveStatusTemplate let-row>
+<ng-template #currencyActiveStatusTemplate let-row>
     <span class="table-row-status">
         <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
         {{ row.ActiveStatus ? 'Active'  : 'Inactive' }}
