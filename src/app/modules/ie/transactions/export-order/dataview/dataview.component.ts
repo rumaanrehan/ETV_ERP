@@ -14,6 +14,8 @@ import { ExportOrderService } from '../export-order.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { Router } from '@angular/router';
+import { response } from 'express';
+import { DateUtils } from '../../../../../shared/utility/date-utils';
 
 @Component({
   selector: 'app-dataview',
@@ -93,8 +95,12 @@ export class DataviewComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
-              this.dataViewDef.data = response.Data.Items;
+              const data = response.Data.Items.map(item => ({
+                ...item,
+                ExportOrderDate: DateUtils.formatDate(item.ExportOrderDate),
+                ReferenceDate: DateUtils.formatDate(item.ReferenceDate),
+              }));
+              this.dataViewDef.data = data;
               this.dataViewDef.totalRecords = response.Data.TotalRecords;
             }
             else {

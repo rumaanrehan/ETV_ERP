@@ -1,9 +1,9 @@
 export class DateUtils {
-  //static formatDate(date: Date, format: string): string {
+  // static formatDate(date: Date, format: string): string {
   //  // Implementation of date formatting
   //  // For example, using date-fns or moment.js
   //  return new Intl.DateTimeFormat('en-IN', { dateStyle: format }).format(date);
-  //}
+  // }
 
   /**
    * Formats a date to a specified string format.
@@ -14,6 +14,7 @@ export class DateUtils {
    */
   static formatDate(
     date: Date | string | number,
+    seperator: string = '-',
     options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: '2-digit',
@@ -23,8 +24,21 @@ export class DateUtils {
     const parsedDate = DateUtils.toDate(date); // Convert the input to a Date object
     if (!parsedDate) return ''; // Return an empty string if the date is invalid
 
-    return new Intl.DateTimeFormat('en-IN', options).format(parsedDate); // Use Intl.DateTimeFormat to format the date
+    const formattedDate = new Intl.DateTimeFormat('en-IN', options).format(parsedDate); // Use Intl.DateTimeFormat to format the date
+    return formattedDate.replace(/[^0-9]/g, seperator);
+  // Replace all non-digit characters (like "/" or ".") with custom separator
   }
+
+  // static formatDate(date: Date | string | number, separator: string): string {
+  //   const parsedDate = DateUtils.toDate(date); // Convert input to Date object
+  //   if (!parsedDate) return ''; // Return empty string if invalid
+
+  //   const day = String(parsedDate.getDate()).padStart(2, '0');
+  //   const month = String(parsedDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+  //   const year = parsedDate.getFullYear();
+
+  //   return `${day}${separator}${month}${separator}${year}`; // Format as dd-MM-yyyy
+  // }
 
   /**
    * Converts a string or number to a Date object.

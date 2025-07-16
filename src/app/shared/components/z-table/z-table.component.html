@@ -3,7 +3,7 @@
     [value]="tableDef.data"
     [styleClass]="'p-paginator-striped'" 
     [tableStyleClass]="'table page-table'"
-    [scrollable]="true"
+    [scrollable]="false"
     [scrollHeight]="'flex'">
     <ng-template pTemplate="caption">
       <div class="index-table-action-bar">
@@ -13,7 +13,7 @@
             <div class="column-toggle-panel">
               <ng-container *ngFor="let col of tableHeaderDef">
                 <p-checkbox
-                  *ngIf="!col.colVisToggle"
+                  *ngIf="!col.hideVisToggle"
                   [(ngModel)]="col.visible"
                   binary="true"
                   [label]="col.label"
@@ -31,18 +31,24 @@
     <ng-template pTemplate="header">
       <tr>
         <ng-container *ngFor="let col of tableDef.columnDef">
-          <th class="{{ col.cssClass }}">
+          <th 
+              *ngIf="col.visible !== false"
+              [class]="col.cssClass"
+              [style.width]="col.width">
             {{ col.label }}
           </th>
         </ng-container>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData>
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
       <tr>
         <ng-container *ngFor="let col of tableDef.columnDef">
-          <td class="{{col.cssClass}}">
+          <td 
+              *ngIf="col.visible !== false"
+              [class]="col.cssClass"
+              [style.width]="col.width">
             <ng-container *ngIf="col.customTemplate; else defaultTemplate">
-              <ng-container *ngTemplateOutlet="col.customTemplate; context: { $implicit: rowData }"></ng-container>
+              <ng-container *ngTemplateOutlet="col.customTemplate; context: { $implicit: rowData, index: rowIndex }"></ng-container>
             </ng-container>
             <ng-template #defaultTemplate>
               {{ col.data ? rowData[col.data] : '' }}

@@ -1,3 +1,6 @@
+import { ProductMaster } from "../../../ims/settings/product-master/product-master";
+import { CompanyMaster } from "../../settings/company-master/company-master";
+
 export interface ExportOrder {
     ExportOrderID: number | null;
     ExportOrderNo: string | null;
@@ -28,9 +31,14 @@ export interface ExportOrder {
     ShipmentModeID: string | null;
     LoadingPortID: number | null;
     DischargePortID: number | null;
-    DestinationName: string | null;
+    FinalDestination: string | null;
     Narration: string | null;
     StatusID: number | null;
+    
+    ProductID: number | null;
+    ProductName: string | null;
+
+    Customer?: CompanyMaster
 }
 
 export interface ExportOrderRequest {
@@ -43,17 +51,20 @@ export interface ExportOrder_SelectList {
     ExportOrderNo: string;
 }
 
-export interface ExportOrderDetail{
+export interface ExportOrderDetail {
     ProductID: number | null;
     ProductName: string | null;
-    Quantity: number | null;
-    TaxRate: number | null;
+    SalesQty: number | null;
+    SalesTaxRate: number | null;
     RatePerUnitBC: number | null;
     RatePerUnitFC: number | null;
     TaxAmountBC: number | null;
     TaxAmountFC: number | null;
-    TotalAmountBC: number | null;
-    TotalAmountFC: number | null;
+    TaxableAmountBC: number | null;
+    TaxableAmountFC: number | null;
+
+    //Foreign Keys
+    Product?: ProductMaster;
 }
 
 export interface ExportOrder_IndexTableFilter {
@@ -64,22 +75,13 @@ export interface ExportOrder_IndexTableFilter {
 export interface ExportOrder_IndexTableList {
     ExportOrderID: number;
     ExportOrderNo: string;
-    ExportOrderDate: Date;
+    ExportOrderDate: string;
     ReferenceNo: string;
-    ReferenceDate: Date;
+    ReferenceDate: string;
     CompanyName: string;
-    IncotermID: number;
-    IsDutyDrawable: boolean;
-    IsRoDTEP: boolean;
-    SubtotalAmountBC: number;
-    TaxAmountBC: number;
-    DestinationName: string;
+    ShipmentMode: string;
+    LoadingPortName: string;
+    NetAmount: number;
+    FinalDestination: string;
     StatusID: number;
-}
-
-//Temp Intefaces
-
-export interface Port_SelectList {
-    PortID: number;
-    PortName: string;
 }

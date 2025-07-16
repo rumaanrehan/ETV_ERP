@@ -22,15 +22,9 @@ export interface ProductMaster {
   PurTaxOn: number | null;
 }
 
-export interface ProductMasterTemp {
-  ProductID: number;
-  ProductCode: string;
-  ProductName: string;
-  TaxRate: number;
-}
-
 export interface Product_SelectList {
   ProductID: number | null;
+  ProductCode: number | null;
   ProductName: string | null;
   PurTaxRate: number | null;
 }
@@ -40,7 +34,7 @@ export interface ProductMaster_IndexTableFilter {
   ProductName: string | null;
   ItemGroupName: string | null;
   ItemCategoryName: string | null;
-  GenericItemName: string | null;
+  GenericName: string | null;
   ManufacturerName: string | null;
   UOMName: string | null;
   ActiveStatusID: number | null;

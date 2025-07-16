@@ -21,7 +21,6 @@
                 </div>
             </form>
         </div>
-        
     </z-data-view>
 </div>
 
@@ -39,48 +38,56 @@
             <div class="col-12 d-flex flex-column flex-lg-row">
                 <div class="col-xl-8">
                     <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
-                        <div class="col-xl-5 d-flex align-items-center">
-                            <div class="col-xl-5">
-                                <span class="fs-6 fw-bold text-secondary">Order Date:</span>
+                        <div class="col-xl-4 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Order Date:</span>
                             </div>
                             <div class="col-xl-7">
                                 <span class="fs-6 text-secondary"> {{item.ExportOrderDate}} </span>
                             </div>
                         </div>
-                        <div class="col-xl-4 d-flex align-items-center">  
-                            <div class="col-xl-5">
-                                <span class="fs-6 fw-bold text-secondary">Destination:</span>
+                        <div class="col-xl-5 d-flex align-items-center">  
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Destination:</span>
                             </div>
-                            <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{item.DestinationName}} </span>
+                            <div class="col-xl-8">
+                                <span class="fs-6 text-secondary"> {{item.FinalDestination}} </span>
                             </div>
                         </div>
                     </div>
                     <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
+                        <div class="col-xl-4 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Reference No:</span>
+                            </div>
+                            <div class="col-xl-8">
+                                <span class="fs-6 text-secondary"> {{item.ReferenceNo}} </span>
+                            </div>
+                        </div>
                         <div class="col-xl-5 d-flex align-items-center">
-                            <div class="col-xl-5">
-                                <span class="fs-6 fw-bold text-secondary">Reference Date:</span>
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Reference Date:</span>
                             </div>
                             <div class="col-xl-7">
                                 <span class="fs-6 text-secondary"> {{item.ReferenceDate}} </span>
                             </div>
                         </div>
-                        <div class="col-xl-5 d-flex align-items-center">
-                            <div class="col-xl-5">
-                                <span class="fs-6 fw-bold text-secondary">Reference No:</span>
-                            </div>
-                            <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{item.ReferenceNo}} </span>
-                            </div>
-                        </div>
                     </div>
                     <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
-                        <div class="col-xl-5 d-flex align-items-center">
-                            <div class="col-xl-5">
-                                <span class="fs-6 fw-bold text-secondary">Subtotal:</span>
+                        <div class="col-xl-4 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Order Total:</span>
                             </div>
                             <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{item.SubtotalAmountBC}} </span>
+                                <span class="fs-6 text-secondary"> <i class="pi pi-indian-rupee"></i>{{item.NetAmount}} </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-5 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Loading Port:</span>
+                            </div>
+                            <div class="col-xl-7">
+                                <span class="fs-6 text-secondary"> {{item.LoadingPortName}} </span>
                             </div>
                         </div>
                     </div>
