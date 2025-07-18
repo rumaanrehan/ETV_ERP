@@ -122,12 +122,14 @@ export class FormService {
     return formArrayData;
   }
   
-  transformFormData(formData: any): any {
+ transformFormData(formData: any): any {
     for (const key in formData) {
       const value = formData[key];
-      // console.log(value);
   
-      if(Array.isArray(value)) {
+      if (value instanceof File || (Array.isArray(value) && value[0] instanceof File)) {
+        continue;
+      }
+      else if(Array.isArray(value)) {
         // Recursively transform each item in the array
         formData[key] = value.map(item => this.transformFormData(item));
       }
@@ -157,6 +159,7 @@ export class FormService {
     }
     return formData;
   }
+
   //#endregion
   
   //#region Form Validation Message
