@@ -50,13 +50,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(isEditMode: boolean, model: LetterOfCredit): void {
-    if (isEditMode && model) {
-      this.isEditMode = isEditMode;
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: LetterOfCredit): void {
+      if (isEditMode && model) {
+        this.isEditMode = isEditMode;
+      }
+      this.form.patchValue(model);
+      this.isFormSidebarVisible = true;
     }
-    this.form.patchValue(model);
-    this.isFormSidebarVisible = true;
-  }
 
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
@@ -93,26 +93,22 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
   
   onSelectExportOrder(event: ExportOrder_SelectList): void {
+    this.form.patchValue({
+      ExportOrderID: event.ExportOrderID,
+      ExportOrderNo: event.ExportOrderNo
+    });
   }
 
-  onUnselectExportOrder(event: ExportOrder_SelectList): void {
-  }
-  
   onClearExportOrder(): void {
-    // if (!this.isEditMode) {
-    //   this.alertService.showConfirmation({
-    //     text: 'Are you sure you want to clear the Job Post details?',
-    //   }).then((result) => {
-    //     if (result.isConfirmed) {
-    //       this.formService.resetFormValue<JobPost>(this.formConfig, this.form);
-    //     }
-    //   });
-    // }
+    this.form.patchValue({
+      ExportOrderID: null,
+      ExportOrderNo: null
+    });
   }
   
   onSubmit(): void {
     if (this.isSubmitted) return;
-
+    
     this.isSubmitted = true;
     try{
       if (this.form.invalid) {
@@ -195,6 +191,18 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
     catch (error) {
 
+    }
+  }
+
+  calculateBaseCurrencyAmount(): void {
+    const lcAmountFC = this.form.get('LCAmountFC')?.value;
+    const exchangeRateToBC = this.form.get('ExchangeRateToBC')?.value;
+
+    if (lcAmountFC && exchangeRateToBC) {
+      const lcAmountBC = lcAmountFC * exchangeRateToBC;
+      this.form.patchValue({ LCAmountBC: lcAmountBC });
+    } else {
+      this.form.patchValue({ LCAmountBC: null });
     }
   }
 }

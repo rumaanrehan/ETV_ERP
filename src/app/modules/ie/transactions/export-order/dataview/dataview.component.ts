@@ -17,6 +17,7 @@ import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList }
 import { ExportOrderService } from '../export-order.service';
 import { CreateComponent } from './../../export-order-payment/create/create.component';
 import { ExportOrderPayment } from '../../export-order-payment/export-payment';
+import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
 
 @Component({
   selector: 'app-dataview',
@@ -31,7 +32,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
-  componentRef?: ComponentRef<CreateComponent>;
+  componentRef?: ComponentRef<any>;
 
   dataViewDef!: DataViewDef<ExportOrder_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
@@ -168,38 +169,53 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onClickLoadExportPaymentComponent(row: ExportOrder_IndexTableList) {
+  handleComponentLoad(componentName: string, model: any) {
     if (this.componentRef) {
-      this.destroyLoadExportPaymentComponen();
+      this.destroyComponent();
     }
 
-    const { CreateComponent } = await import('./../../export-order-payment/create/create.component');
-    this.componentRef = this.container.createComponent(CreateComponent);
-    const model: ExportOrderPayment = {
-      ExportOrderPaymentID: null,
-      ExportOrderPaymentNo: 'NEW',
-      ExportOrderID: row.ExportOrderID,
-      ExportOrderNo: row.ExportOrderNo,
-      PaymentRefNo: null,
-      PaymentAmountFC: null,
-      ExchangeRateToBC: null,
-      PaymentAmountBC: null,
-      PaymentDate: null
+    switch (componentName) {
+      case 'PaymentCreateComponent':
+        return this.createPaymentComponent(model);
+      case 'LetterOfCreditCreateComponent':
+        return this.createLCComponent(model);
+      default:
+        throw new Error(`Component ${componentName} not found`);
     }
+  }
 
+  loadDynamicComponent(model: any){
     setTimeout(() => {
       this.componentRef?.instance.openSidebar(true, false, model);
       this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
         this.loadData();
-        this.destroyLoadExportPaymentComponen();
+        this.destroyComponent();
       });
     })
   }
 
-  destroyLoadExportPaymentComponen() {
+  destroyComponent() {
     if (this.componentRef) {
       this.componentRef.destroy();
       this.componentRef = undefined;
     }
+  }
+
+  async createPaymentComponent(row: ExportOrder_IndexTableList) {
+    const { CreateComponent } = await import('./../../export-order-payment/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderPayment = this.formService.createNullObject<ExportOrderPayment>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
+
+  async createLCComponent(row: ExportOrder_IndexTableList) {
+    const { CreateComponent } = await import('./../../letter-of-credit/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: LetterOfCredit = this.formService.createNullObject<LetterOfCredit>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
   }
 }

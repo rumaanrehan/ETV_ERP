@@ -50,5 +50,4 @@ export const adminRoute: Routes = [
   { path: 'Admin/EmployeeRegistration/Index', loadComponent: () => import('./transactions/EmployeeRegistration/index/index.component').then((m) => m.IndexComponent) },//========
   { path: 'Admin/EmployeeRegistration/Edit/:id', loadComponent: () => import('./transactions/EmployeeRegistration/create/create.component').then((m) => m.CreateComponent) },
   { path: 'Admin/Kashif/Index', loadComponent: () => import('./settings/Kashif/index/index.component').then((m) => m.IndexComponent) },
-  { path: 'admin/letter-of-credit/index', loadComponent: () => import('./settings/LetterOfCredit/index/index.component').then((m) => m.IndexComponent) }
 ];

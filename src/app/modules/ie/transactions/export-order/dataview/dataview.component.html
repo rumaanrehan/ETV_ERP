@@ -35,8 +35,8 @@
                     <span class="badge bg-outline-primary">{{populateStatus(item.StatusID)}}</span>
                 </div>
             </div>
-            <div class="col-12 d-flex flex-column flex-lg-row">
-                <div class="col-xl-8">
+            <div class="col-12">
+                <div class="col-xl-12">
                     <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
                         <div class="col-xl-4 d-flex align-items-center">
                             <div class="col-xl-4">
@@ -92,15 +92,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-4 d-flex flex-column gap-3 justify-content-between">
+                <div class="col-12 col-lg-12 d-flex flex-column gap-3 justify-content-between">
                     <div class="col-12 d-flex gap-3 justify-content-end">
-                        <div class="col-4" *ngIf="!item.IsKnockOff">
+                        <div class="col-2" *ngIf="!item.IsKnockOff">
                             <button class="btn btn-primary"
-                                (click)="onClickLoadExportPaymentComponent(item)">Add Payment</button>
+                                (click)="handleComponentLoad('PaymentCreateComponent', item)">Add Payment</button>
                         </div>
-                    </div>
-                    <div class="col-12 d-flex gap-3 justify-content-end">
-                        <div class="col-4">
+                        <div class="col-2">
+                            <button class="btn btn-primary">Add Document</button>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary">Add Container</button>
+                        </div>
+                        <div class="col-1">
+                            <button class="btn btn-primary"
+                                (click)="handleComponentLoad('LetterOfCreditCreateComponent', item)">Add LC</button>
+                        </div>
+                        <div class="col-1">
                             <button class="btn btn-primary"
                                 (click)="onClickCancel(item)">Cancel</button>
                         </div>

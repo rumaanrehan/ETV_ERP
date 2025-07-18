@@ -18,7 +18,7 @@ export class LetterOfCreditService {
 
   constructor(
     private apiService: ApiService,
-        private exportOrderService: ExportOrderService
+    private exportOrderService: ExportOrderService
   ) {}
   
   GetExportOrderList(model: ExportOrderRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
@@ -49,6 +49,9 @@ export class LetterOfCreditService {
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<LetterOfCredit_IndexTableFilter> {
     return {
       LCNo: '',
+      ExportOrderNo: '',
+      LCRefNo: '',
+      BankName: ''
     }
   }
 
@@ -65,22 +68,37 @@ export class LetterOfCreditService {
       ExportOrderID:{
         label: 'Export Order',
         defaultValue: null,
-        // validators: [Validators.required],
-        // validationMessages: {
-        //   required: 'Export Order is required'
-        // }
-      },
-      LCDate: {
-        label: 'LC Date',
-        defaultValue: null,
-        validators: [Validators.required]
-      },
-      IssuerBankID: {
-        label: 'Issuer Bank ID',
-        defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
           required: 'Export Order is required'
+        }
+      },
+      ExportOrderNo:{
+        label: 'Export Order',
+        defaultValue: null,
+      },
+      LCRefNo: {
+        label: 'LC Ref No',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'LC Ref No is required'
+        }
+      },
+      IssuerBank: {
+        label: 'Issuer Bank',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Issuer bank is required'
+        }
+      },
+      IssueDate: {
+        label: 'Issue Date',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Issue Date is required'
         }
       },
       LCAmountFC: {
@@ -91,10 +109,25 @@ export class LetterOfCreditService {
           required: 'LC Amount is required'
         }
       },
+      ExchangeRateToBC: {
+        label: 'Exchange Rate at Issue',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Exchange Rate is required'
+        }
+      },
+      LCAmountBC: {
+        label: 'LC Amount BC',
+        defaultValue: null,
+      },
       ExpiryDate: {
         label: 'Expiry Date',
         defaultValue: null,
-        validators: [Validators.required]
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Expiry Date is required'
+        }
       }
     }
   }
@@ -103,14 +136,14 @@ export class LetterOfCreditService {
     return {
       type: 'formControl',
       group: form,
-      control: 'ExportOrderID',  
-      label: formConfig.ExportOrderID.label,  
-      validationMessage: formConfig.ExportOrderID.error,  
-      placeholder: 'Search Export Orders',
+      control: 'ExportOrderNo',  
+      label: formConfig.ExportOrderNo.label,  
+      validationMessage: formConfig.ExportOrderNo.error,  
+      placeholder: 'Search Export Order',
       options: [],
-      optionLabel: 'ExportOrderID',   
+      optionLabel: 'ExportOrderNo',   
       columns: [
-        { data: 'ExportOrderNo', label: 'ExportOrderNo', width: '300px' }  
+        { data: 'ExportOrderNo', label: 'Export Order No', width: '300px' }  
       ]
     }
   }
