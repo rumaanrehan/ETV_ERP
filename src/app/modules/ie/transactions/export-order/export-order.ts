@@ -81,7 +81,8 @@ export interface ExportOrder_IndexTableList {
     CompanyName: string;
     ShipmentMode: string;
     LoadingPortName: string;
-    NetAmount: number;
     FinalDestination: string;
+    NetAmountBC: number;
+    IsKnockOff: boolean;
     StatusID: number;
 }

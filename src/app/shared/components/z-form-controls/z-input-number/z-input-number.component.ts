@@ -20,6 +20,8 @@ export class ZInputNumberComponent {
   @Input() mode: 'decimal' | 'currency' = 'decimal';
   @Input() min: number | null = 0; //Mininum boundary value.
   @Input() max: number | null = null; //Maximum boundary value.
+  @Input() readonly: boolean = false;
+  
   
   @Output() onChange = new EventEmitter<any>(); // Event emitter for value changes
 

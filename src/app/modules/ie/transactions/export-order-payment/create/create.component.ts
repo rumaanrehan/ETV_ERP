@@ -8,6 +8,8 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { ExportOrderPaymentService } from '../export-order-payment.service';
 import { ExportOrderPayment } from '../export-payment';
+import { ExportOrder_SelectList } from '../../export-order/export-order';
+import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 
 @Component({
   selector: 'app-create',
@@ -23,9 +25,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false;
+  activeStatus: boolean = false;
+  currentDate: Date = new Date();
+
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrderPayment>;
+  
+  exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
 
   constructor(
     private pageService: ExportOrderPaymentService,
@@ -37,6 +43,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<ExportOrderPayment>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.exportOrderAutoCompleteDef = this.pageService.getExportOrderAutoCompleteDef(this.formConfig, this.form);
   }
 
   ngOnDestroy(): void {
@@ -47,9 +54,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: ExportOrderPayment): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
-      this.ActiveStatus = activeStatus;
+      this.activeStatus = activeStatus;
     }
-    this.ActiveStatus = activeStatus;
+    this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
@@ -136,5 +143,17 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
         });
     } catch (error) {}
+  }
+
+  calculateBaseCurrencyAmount(): void {
+    const paymentAmountFC = this.form.get('PaymentAmountFC')?.value;
+    const exchangeRateToBC = this.form.get('ExchangeRateToBC')?.value;
+
+    if (paymentAmountFC && exchangeRateToBC) {
+      const paymentAmountBC = paymentAmountFC * exchangeRateToBC;
+      this.form.patchValue({ PaymentAmountBC: paymentAmountBC });
+    } else {
+      this.form.patchValue({ PaymentAmountBC: null });
+    }
   }
 }

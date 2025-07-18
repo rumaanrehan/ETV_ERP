@@ -222,7 +222,7 @@ export class ExportOrderService {
             }
           },
           SalesQty: {
-            label: 'Sales Qty',
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
@@ -230,7 +230,7 @@ export class ExportOrderService {
             }
           },
           SalesTaxRate: {
-            label: 'Tax Rate',
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
@@ -238,7 +238,7 @@ export class ExportOrderService {
             }
           },
           RatePerUnitBC: {
-            label: 'Rate Per Unit',
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {

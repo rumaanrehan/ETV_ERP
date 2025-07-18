@@ -17,6 +17,8 @@ export class ZDatePickerComponent {
   @Input() control: string = ''; // Name of the control
   @Input() label: string = ''; // Label for the datepicker
   @Input() validationMessage: string | undefined = ''; // Validation message for tooltip
+  @Input() minDate: Date | null = null;
+  @Input() maxDate: Date | null = null;
   @Output() valueChange = new EventEmitter<Date>(); // Event emitter for value changes
 
   onDateSelect(value: Date): void {
