@@ -1,5 +1,5 @@
-export interface ExportOrderDocumentMapping {
-    ExportOrderDocumentMappingID: number | null;
+export interface ExportOrderDocument {
+    ExportOrderDocumentID: number | null;
     ExportOrderID: number | null;
     ExportOrderNo: string | null;
     DocumentTypeID: number | null;
@@ -12,7 +12,7 @@ export interface ExportOrderDocument_IndexTableFilter {
 }
 
 export interface ExportOrderDocument_IndexTableList {
-    ExportOrderDocumentMappingID: number | null;
+    ExportOrderDocumentID: number | null;
     ExportOrderNo: number | null;
     DocumemntTypeCode: string | null;
     FileName: string | null;

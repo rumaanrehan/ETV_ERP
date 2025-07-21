@@ -6,13 +6,13 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { ExportOrderDocumentMapping } from '../export-order-document-mapping';
-import { ExportOrderDocumentService } from '../export-order-document-mapping.service';
 import { ZFileUploadComponent } from '../../../../../shared/components/z-form-controls/z-file-upload/z-file-upload.component';
 import { DocumentType_SelectList } from '../../../settings/document-type-master/document-type-master';
 import { ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { ExportOrderDocument } from '../export-order-document';
+import { ExportOrderDocumentService } from '../export-order-document.service';
 
 @Component({
   selector: 'app-create',
@@ -31,7 +31,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   ActiveStatus: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<ExportOrderDocumentMapping>;
+  formConfig!: FormConfigType<ExportOrderDocument>;
   
   exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
 
@@ -51,7 +51,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ExportOrderDocumentMapping>(this.formConfig);
+    this.form = this.formService.createFormGroup<ExportOrderDocument>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
 
     this.exportOrderAutoCompleteDef = this.pageService.getExportOrderAutoCompleteDef(this.formConfig, this.form);
@@ -62,7 +62,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ExportOrderDocumentMapping): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ExportOrderDocument): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
       this.ActiveStatus = activeStatus;
@@ -75,7 +75,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<ExportOrderDocumentMapping>(this.formConfig, this.form);
+    this.formService.resetFormValue<ExportOrderDocument>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -192,7 +192,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     } catch (error) {}
   }
 
-  updateRecord(model: ExportOrderDocumentMapping): void {
+  updateRecord(model: ExportOrderDocument): void {
     try {
       this.pageService.UpdateRecord(model)
         .pipe(takeUntil(this.destroy$))

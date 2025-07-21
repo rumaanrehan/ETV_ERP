@@ -7,8 +7,8 @@ import { DataTableDef, DataTableParams } from '../../../../../shared/components/
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { ExportOrderDocument_IndexTableFilter, ExportOrderDocument_IndexTableList, ExportOrderDocumentMapping } from '../export-order-document-mapping';
-import { ExportOrderDocumentService } from '../export-order-document-mapping.service';
+import { ExportOrderDocument_IndexTableList, ExportOrderDocument_IndexTableFilter, ExportOrderDocument } from '../export-order-document';
+import { ExportOrderDocumentService } from '../export-order-document.service';
 
 @Component({
   selector: 'app-index',
@@ -68,7 +68,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
-      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<ExportOrderDocumentMapping>());
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<ExportOrderDocument>());
     }
   }
 
@@ -143,7 +143,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            const model: ExportOrderDocumentMapping = {
+            const model: ExportOrderDocument = {
               ...row,
               ActionType: actionType,
               ReasonToUpdate: result.value,

@@ -5,11 +5,11 @@ import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { ExportOrderDocument_IndexTableFilter, ExportOrderDocument_IndexTableList, ExportOrderDocumentMapping } from './export-order-document-mapping';
 import { ExportOrder, ExportOrder_SelectList, ExportOrderRequest } from '../export-order/export-order';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { ExportOrderService } from '../export-order/export-order.service';
 import { HttpClient } from '@angular/common/http';
+import { ExportOrderDocument_IndexTableFilter, ExportOrderDocument_IndexTableList, ExportOrderDocument } from './export-order-document';
 
 @Injectable({
   providedIn: 'root'
@@ -31,19 +31,19 @@ export class ExportOrderDocumentService {
     return this.apiService.post<ApiPagedListResponse<ExportOrderDocument_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
   
-  GetDetails(ExportOrderID: number): Observable<ApiDataResponse<ExportOrderDocumentMapping>> {
-    return this.apiService.post<ApiDataResponse<ExportOrderDocumentMapping>>(`${this.endpoint}/GetDetails?ExportOrderID=${ExportOrderID}`, {});
+  GetDetails(ExportOrderID: number): Observable<ApiDataResponse<ExportOrderDocument>> {
+    return this.apiService.post<ApiDataResponse<ExportOrderDocument>>(`${this.endpoint}/GetDetails?ExportOrderID=${ExportOrderID}`, {});
   }
 
   CreateRecord(model: FormData): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`http://localhost:44316/api/${this.endpoint}/Create`, model);
   }
 
-  UpdateRecord(model: ExportOrderDocumentMapping): Observable<ApiResponse> {
+  UpdateRecord(model: ExportOrderDocument): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: ExportOrderDocumentMapping): Observable<ApiResponse> {
+  DeleteReactivate(model: ExportOrderDocument): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
@@ -55,10 +55,10 @@ export class ExportOrderDocumentService {
     }
   }
 
-  getFormConfig(): FormConfigType<ExportOrderDocumentMapping> {
+  getFormConfig(): FormConfigType<ExportOrderDocument> {
     return {
-      ExportOrderDocumentMappingID: {
-        label: 'Export Order Document Mapping ID',
+      ExportOrderDocumentID: {
+        label: 'Export Order Document  ID',
         defaultValue: null
       },
         ExportOrderID: {
@@ -92,7 +92,7 @@ export class ExportOrderDocumentService {
     }
   }
   
-  getExportOrderAutoCompleteDef(formConfig: FormConfigType<ExportOrderDocumentMapping>, form: FormGroup): AutoCompleteDef<ExportOrder_SelectList> {
+  getExportOrderAutoCompleteDef(formConfig: FormConfigType<ExportOrderDocument>, form: FormGroup): AutoCompleteDef<ExportOrder_SelectList> {
     return {
       type: 'formControl',
       group: form,
