@@ -11,20 +11,20 @@
 </div>
 
 <!-- Table Column Custom Template -->
- <ng-template #stateCodeTemplate let-row>
-    <span class="table-action-link" (click)="onClickEditDetails(row.StateID, row.ActiveStatus)" style="cursor: pointer;">{{ row.StateCode }}</span>
+ <ng-template #exportOrderTemplate let-row>
+    <span class="table-action-link" (click)="onClickEditDetails(row.ExportOrderDocumentMappingID, row.ActiveStatus)" style="cursor: pointer;">{{ row.ExportOrderDocumentMappingID }}</span>
 </ng-template>
 
-<ng-template #stateActiveStatusTemplate let-row>
+<ng-template #statusTemplate let-row>
     <span class="table-row-status">
-        <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
-        {{ row.ActiveStatus ? 'Active'  : 'Inactive' }}
+        <i class="pi pi-circle-fill text-{{ row.IsDeleted ? 'danger' : 'success' }}"></i>
+        {{ row.IsDeleted ? 'Inactive'  : 'Active' }}
     </span>
 </ng-template>
 
 <ng-template #actionColTemplate let-row>
     <div class="d-flex justify-content-end">
-        <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
+        <span class="btn btn-icon btn-sm btn-{{row.IsDeleted ? 'success' : 'danger'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.IsDeleted ? 'undo' : 'trash'}}"></i></span>
     </div>
 </ng-template>
 

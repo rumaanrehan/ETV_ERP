@@ -36,8 +36,6 @@ export class ExportOrderDocumentService {
   }
 
   CreateRecord(model: FormData): Observable<ApiResponse> {
-    debugger;
-    
     return this.http.post<ApiResponse>(`http://localhost:44316/api/${this.endpoint}/Create`, model);
   }
 
@@ -52,22 +50,28 @@ export class ExportOrderDocumentService {
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ExportOrderDocument_IndexTableFilter> {
     return {
-      ExportOrderCode: '',
-      DocumentTypeID: 0,
-      ActiveStatusID: 0
+      ExportOrderNo: '',
+      DocumentFile: '',
     }
   }
 
   getFormConfig(): FormConfigType<ExportOrderDocumentMapping> {
     return {
+      ExportOrderDocumentMappingID: {
+        label: 'Export Order Document Mapping ID',
+        defaultValue: null
+      },
         ExportOrderID: {
         label: 'Export Order',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Export Order is required'
+        }
       },
         ExportOrderNo: {
         label: 'Export Order No',
-        defaultValue: ''
-        
+        defaultValue: null,        
       },
       DocumentTypeID: {
         label: 'Document Type  ID',
@@ -79,7 +83,11 @@ export class ExportOrderDocumentService {
       },
       DocumentFile: {
         label: 'Document File',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Document File is required'
+        }
       },      
     }
   }
@@ -91,7 +99,7 @@ export class ExportOrderDocumentService {
       control: 'ExportOrderNo',  
       label: formConfig.ExportOrderID.label,  
       validationMessage: formConfig.ExportOrderID.error,  
-      placeholder: 'Search ExportOrder',
+      placeholder: 'Search Export Order',
       options: [],
       optionLabel: 'ExportOrderNo',  
       columns: [

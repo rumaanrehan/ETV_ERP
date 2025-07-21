@@ -53,11 +53,10 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: '4%' },
-      { data: 'ExportOrderID', label: 'Export Order ID', filterable: true, width: '10%', customTemplate: this.exportNoTemplate },
-      { data: 'ExportOrderCode', label: 'Export Order Code', filterable: true },
-      { data: 'ExportOrderNo', label: 'Export Order No ', filterable: false },
-      { data: 'DocumentTypeName', label: 'Document Type Name ', filterable: false },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', customTemplate: this.statusTemplate, width: '10%' },
+      { data: 'ExportOrderNo', label: 'Export Order No ', filterable: true },
+      { data: 'DocumentTypeCode', label: 'Document Type Code ',  filterable: true, width: "10%"  },
+      { data: 'FileName', label: 'File Name ', filterable: true, width: "10%"  },
+      { data: 'IsDeleted', label: 'Status', filterable: true, filterType: 'select', filterKey: 'IsDeletedID', customTemplate: this.statusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: '3%', customTemplate: this.actionColTemplate },
     ];
   }
@@ -102,33 +101,34 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   loadData(): void {
-    // try {
-    //   const model: DataTableParams<ExportOrderDocument_IndexTableFilter> = {
-    //     first: this.tableEvent.first,
-    //     last: this.tableEvent.last,
-    //     sortField: this.tableEvent.sortField,
-    //     sortOrder: this.tableEvent.sortOrder,
-    //     filters: this.tableDef.filterForm?.value,
-    //   };
+    try {
+      const model: DataTableParams<ExportOrderDocument_IndexTableFilter> = {
+        first: this.tableEvent.first,
+        last: this.tableEvent.last,
+        sortField: this.tableEvent.sortField,
+        sortOrder: this.tableEvent.sortOrder,
+        filters: this.tableDef.filterForm?.value,
+      };
 
-    //   this.pageService.PopulateGrid(model)
-    //     .pipe(takeUntil(this.destroy$))
-    //     .subscribe({
-    //       next: (response) => {
-    //         if (response.IsSuccess) {
-    //           this.tableDef.data = response.Data.Items;
-    //           this.tableDef.totalRecords = response.Data.TotalRecords;
-    //         } else {
-    //           this.tableDef.data = [];
-    //           this.tableDef.totalRecords = 0;
-    //           this.alertService.showServerResponseToast(response);
-    //         }
-    //       },
-    //       complete: () => {
-    //         this.tableDef.loading = false;
-    //       },
-    //     });
-    // } catch (error) {}
+      this.pageService.PopulateGrid(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              console.log(response.Data.Items);
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            } else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
+          },
+        });
+    } catch (error) {}
   }
 
   onClickDeleteReactivate(row: any): void {

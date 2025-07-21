@@ -1,4 +1,5 @@
 export interface ExportOrderDocumentMapping {
+    ExportOrderDocumentMappingID: number | null;
     ExportOrderID: number | null;
     ExportOrderNo: string | null;
     DocumentTypeID: number | null;
@@ -6,18 +7,14 @@ export interface ExportOrderDocumentMapping {
 }
 
 export interface ExportOrderDocument_IndexTableFilter {
-    ExportOrderCode: string | null;
-    DocumentTypeID: number  | null;
-    ActiveStatusID: number | null;
+    ExportOrderNo: string | null;
+    DocumentFile: string | null;
 }
 
 export interface ExportOrderDocument_IndexTableList {
-    ExportOrderID: number;
-    ExportOrderCode: string | null;
-    ExportOrderNo: string | null;
-    DocumentTypeName: string | null;
-    ActiveStatus: boolean;
+    ExportOrderDocumentMappingID: number | null;
+    ExportOrderNo: number | null;
+    DocumemntTypeCode: string | null;
+    FileName: string | null;
+    IsDeleted: boolean;
 }
-
-
-
