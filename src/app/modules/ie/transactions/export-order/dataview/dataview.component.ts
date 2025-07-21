@@ -19,6 +19,7 @@ import { CreateComponent } from './../../export-order-payment/create/create.comp
 import { ExportOrderPayment } from '../../export-order-payment/export-payment';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
 import { ExportOrderTracking } from '../../export-order-tracking/export-order-tracking';
+import { ExportOrderDocument } from '../../export-order-document/export-order-document';
 
 @Component({
   selector: 'app-dataview',
@@ -182,6 +183,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
         return this.createLCComponent(model);
       case 'TrackingCreateComponent':
         return this.createTrackingComponent(model);
+      case 'DocumentCreateComponent':
+        return this.createDocumentComponent(model);
       default:
         throw new Error(`Component ${componentName} not found`);
     }
@@ -226,6 +229,15 @@ export class DataviewComponent implements OnInit, OnDestroy {
     const { CreateComponent } = await import('./../../export-order-tracking/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: ExportOrderTracking = this.formService.createNullObject<ExportOrderTracking>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
+
+  async createDocumentComponent(row: ExportOrder_IndexTableList) {
+    const { CreateComponent } = await import('./../../export-order-document/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderDocument = this.formService.createNullObject<ExportOrderDocument>();
     model.ExportOrderID = row.ExportOrderID;
     model.ExportOrderNo = row.ExportOrderNo;
     this.loadDynamicComponent(model);

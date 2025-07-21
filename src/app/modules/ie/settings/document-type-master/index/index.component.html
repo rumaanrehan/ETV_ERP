@@ -13,8 +13,15 @@
 
 <!-- Column Template for Code -->
 <ng-template #documentTypeCodeTemplate let-row>
-  <span class="table-action-link" (click)="onClickEditDetails(row.DocumentTypeID, row.ActiveStatus)" style="cursor: pointer;">
+  <span class="table-action-link" (click)="onClickEditDetails(row.DocumentTypeID, row.ActiveStatus)">
     {{ row.DocumentTypeCode }}
+  </span>
+</ng-template>
+
+<!-- Column Template for Is Approval Required -->
+<ng-template #documentIsApprovalRequiredTemplate let-row>
+  <span class="{{ row.IsApprovalRequired ? 'text-success' : 'text-danger' }}">
+    <i class="pi {{ row.IsApprovalRequired ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
   </span>
 </ng-template>
 

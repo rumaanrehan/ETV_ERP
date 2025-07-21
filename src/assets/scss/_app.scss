@@ -575,8 +575,9 @@ label {
   color: rgba(0, 90, 158, 1);
 }
 
-.table tbody tr:hover .table-action-link{
+.table tbody tr:hover .table-action-link {
   font-weight: 500;
+  cursor: pointer;
 }
 
 .table .table-action-link:hover {

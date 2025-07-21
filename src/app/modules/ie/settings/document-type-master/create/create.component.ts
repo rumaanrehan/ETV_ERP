@@ -25,17 +25,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+  activeStatus: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<DocumentTypeMaster>;
-
-    // DocumentTypeList: StaticList[] = [
-    //   { Text: 'USD - US Dollar', iValue: 1, cValue: 'USD - US Dollar' },
-    //   { Text: 'EUR - Euro', iValue: 2, cValue: 'EUR - Euro' },
-    //   { Text: 'JPY - Japanese Yen', iValue: 3, cValue: 'JPY - Japanese Yen' },
-    //   { Text: 'GBP - British Pound', iValue: 4, cValue: 'GBP - British Pound' },
-    //   { Text: 'INR - Indian Rupee', iValue: 5, cValue: 'INR - Indian Rupee' }
-    // ];
 
   constructor(
     private pageService: DocumentTypeMasterService,
@@ -54,10 +47,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(isActive: boolean, isEditMode: boolean, model: DocumentTypeMaster): void {
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: DocumentTypeMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
+    this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
