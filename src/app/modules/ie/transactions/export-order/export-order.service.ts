@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -12,6 +12,12 @@ import { Company_SelectList, CompanyRequest } from '../../settings/company-maste
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
 import { ProductRequest, Product_SelectList, ProductMaster } from '../../../ims/settings/product-master/product-master';
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
+import { PortMasterService } from '../../settings/port-master/port-master.service';
+import { Port_SelectList, PortRequest } from '../../settings/port-master/port-master';
+import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { SelectListService } from '../../../../shared/services/select-list.service';
+import { TaxSlabMasterService } from '../../../admin/settings/TaxSlabMaster/tax-slab-master.service';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
 
 @Injectable({
   providedIn: 'root'
@@ -21,12 +27,31 @@ export class ExportOrderService {
 
   constructor(
     private apiService: ApiService,
+    private portService: PortMasterService,
     private companyMasterService: CompanyMasterService,
     private productMasterService: ProductMasterService,
+    private taxSlabMasterService: TaxSlabMasterService,
+    private selectListService: SelectListService
   ) { }
+
+  GetMasterDropdownLists(): Observable<{
+    taxSlabList: ApiListResponse<TaxSlab_SelectList>;
+    }> {
+    return forkJoin({
+      taxSlabList: this.taxSlabMasterService.PopulateList({PopulateType: 'SelectList'} as TaxSlabRequest),
+    });
+  }
+
+  GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
+    return this.selectListService.GetStaticList(model);
+  }
 
   GetCompanyList(model: CompanyRequest): Observable<ApiListResponse<Company_SelectList>> {
     return this.companyMasterService.PopulateList(model);
+  }
+
+  GetPortList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
+    return this.portService.PopulateList(model);
   }
   
   GetProductList(model: ProductRequest): Observable<ApiListResponse<Product_SelectList>> {
@@ -50,6 +75,7 @@ export class ExportOrderService {
   }
 
   CreateRecord(model: ExportOrder): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
@@ -109,7 +135,7 @@ export class ExportOrderService {
         }
       },
       CustomerID: {
-        label: 'Customer Name',
+        label: 'Customer',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
@@ -117,7 +143,7 @@ export class ExportOrderService {
         }
       },
       CustomerName: {
-        label: 'Customer Name',
+        label: 'Customer',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
@@ -129,7 +155,7 @@ export class ExportOrderService {
         defaultValue: null
       },
       ExchangeRateDate: {
-        label: 'Exchange Rate Date',
+        label: 'Exchange Date',
         defaultValue: null,
         validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
         validationMessages: {
@@ -168,6 +194,14 @@ export class ExportOrderService {
         label: 'Insurance Amount (BC)',
         defaultValue: null
       },
+      ProductID: {
+        label: '',
+        defaultValue: null
+      },
+      ProductName: {
+        label: 'Product Name',
+        defaultValue: null
+      },
       ProductList: {
         type: 'array',
         items: {
@@ -187,16 +221,16 @@ export class ExportOrderService {
               require: "Product is required"
             }
           },
-          Quantity: {
-            label: 'Quantity',
+          SalesQty: {
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Quantity is required"
+              require: "Sales Qty is required"
             }
           },
-          TaxRate: {
-            label: 'Tax Rate',
+          SalesTaxRate: {
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
@@ -204,7 +238,7 @@ export class ExportOrderService {
             }
           },
           RatePerUnitBC: {
-            label: 'Rate Per Unit',
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
@@ -235,20 +269,20 @@ export class ExportOrderService {
               require: "Tax in foreign currency is required"
             }
           },
-          TotalAmountFC: {
-            label: 'Total Amount FC',
+          TaxableAmountFC: {
+            label: 'Taxable Amount FC',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Total amount in foreign currency is required"
+              require: "Taxable amount in foreign currency is required"
             }
           },
-          TotalAmountBC: {
-            label: 'Total Amount BC',
+          TaxableAmountBC: {
+            label: 'Taxable Amount BC',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Total Amount in base currency is required"
+              require: "Taxable Amount in base currency is required"
             }
           }
         }
@@ -273,12 +307,12 @@ export class ExportOrderService {
         label: 'Discharge Port',
         defaultValue: null
       },
-      DestinationName: {
-        label: 'Destination Name',
+      FinalDestination: {
+        label: 'Final Destination',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Destination Name is required"
+          required: "Final Destination is required"
         }
       },
       Narration: {
@@ -331,18 +365,19 @@ export class ExportOrderService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<ExportOrderDetail>, form: FormGroup): AutoCompleteDef<ProductMaster> {
+  getProductMasterAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,
       control: 'ProductName',  
-      label: formConfig.ProductID.label,  
-      validationMessage: formConfig.ProductID.error,  
+      label: formConfig.ProductName.label,  
+      validationMessage: formConfig.ProductName.error,  
       placeholder: 'Search Product',
       options: [],
       optionLabel: 'ProductName',  
       columns: [
-        { data: 'ProductName', label: 'Product Name', width: '300px' }  
+        { data: 'ProductCode', label: 'Product Code', width: '100px' },
+        { data: 'ProductName', label: 'Product Name', width: '200px' }  
       ],
     }
   }

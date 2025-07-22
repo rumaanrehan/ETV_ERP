@@ -30,6 +30,8 @@ export interface Port_IndexList {
 }
 
 export interface PortRequest {
+  PortTypeID?: number | null;
+  CountryID?: number | null;
   PortCode?: string | null;
   PortName?: string | null;
   PopulateType?: string | null;

@@ -10,7 +10,7 @@ interface TableColumnDef {
   label: string;
   groupLabel?: string;
   visible?: boolean;
-  colVisToggle?: boolean;
+  hideVisToggle?: boolean;
   cssClass?: string;
   width?: string;
   customTemplate?: TemplateRef<any>;
@@ -22,6 +22,6 @@ export interface TableHeaderColDef {
     hasSubHeader?: boolean;
     colSpan?: number;
     visible?: boolean;
-    colVisToggle?: boolean;
+    hideVisToggle?: boolean;
     cssClass?: string;
 }

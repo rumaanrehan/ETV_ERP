@@ -391,6 +391,10 @@ span#password-capslock-tooltip {
   // vertical-align: middle;
 }
 
+span.input-group-text .pi{
+  color: #fff;
+}
+
 .input-group>:first-child{
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -571,8 +575,9 @@ label {
   color: rgba(0, 90, 158, 1);
 }
 
-.table tbody tr:hover .table-action-link{
+.table tbody tr:hover .table-action-link {
   font-weight: 500;
+  cursor: pointer;
 }
 
 .table .table-action-link:hover {
@@ -663,7 +668,7 @@ label {
   border-color: var(--default-border);
 }
 
-span{
+span {
   color: var(--default-text-color);
 }
 
@@ -672,7 +677,7 @@ span{
   padding: 0.25rem 0.5rem;
   border: 1px solid #ccc;
   border-radius: var(--default-radius-sm);
-  line-height: 1.8;
+  line-height: 1.5;
 }
 
 .p-float-label > span:not(:empty) ~ label {
@@ -718,4 +723,31 @@ span{
 
 .p-dataview .pi.pi-times {
     padding: 0;
+}
+
+.p-datatable-wrapper {
+  overflow: visible;
+}
+
+.p-checkbox .p-checkbox-box.p-highlight {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.p-dropdown-item:hover, .p-dropdown-item.p-highlight span {
+    color: #fff;
+}
+
+.p-dropdown-item, .p-dropdown-item:hover span {
+    color: #fff;
+}
+
+.p-datepicker table td > span.p-highlight {
+    background: var(--primary-color);
+    color: #fff;
+    // margin-left: -1px;
+}
+
+.numeric-span span {
+  justify-content: end;
 }

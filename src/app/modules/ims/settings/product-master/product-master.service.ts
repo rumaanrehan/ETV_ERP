@@ -110,7 +110,7 @@ export class ProductMasterService {
       ProductName: '',
       ItemGroupName: '',
       ItemCategoryName: '',
-      GenericItemName: '',
+      GenericName: '',
       ManufacturerName: '',
       UOMName: '',
       ActiveStatusID: 0

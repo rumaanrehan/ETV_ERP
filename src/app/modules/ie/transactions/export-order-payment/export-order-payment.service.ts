@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
 import { ExportOrderPayment, ExportOrderPayment_IndexTableFilter, ExportOrderPayment_IndexTableList, ExportOrderPayment_SelectList, ExportOrderPaymentRequest } from './export-payment';
 import { Observable } from 'rxjs';
-import { ExportOrder_SelectList } from '../export-order/export-order';
+import { ExportOrder, ExportOrder_SelectList } from '../export-order/export-order';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 
 @Injectable({
   providedIn: 'root'
@@ -46,8 +47,9 @@ export class ExportOrderPaymentService {
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ExportOrderPayment_IndexTableFilter> {
     return {
-      PaymentNo: '',
+      ExportOrderPaymentNo: '',
       PaymentRefNo: '',
+      ExportOrderNo: '',
       PaymentDate: null,
       IsCanceled: 0
     }
@@ -55,12 +57,12 @@ export class ExportOrderPaymentService {
 
   getFormConfig(): FormConfigType<ExportOrderPayment> {
     return {
-        PaymentID: {
+        ExportOrderPaymentID: {
         label: '',
         defaultValue: null,
       },
-        PaymentNo: {
-        label: 'Export Order Payment No',
+        ExportOrderPaymentNo: {
+        label: 'Payment No',
         defaultValue: 'NEW'
       },
       PaymentRefNo: {
@@ -69,6 +71,22 @@ export class ExportOrderPaymentService {
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
           required: 'Payment Reference No is required'
+        }
+      },  
+      ExportOrderID: {
+        label: '',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Export Order ID is required'
+        }
+      },
+      ExportOrderNo: {
+        label: 'Export Order',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Export Order No is required'
         }
       },
       PaymentDate: {
@@ -82,11 +100,39 @@ export class ExportOrderPaymentService {
       PaymentAmountFC: {
         label: 'Payment Amount (FC)', 
         defaultValue: null,
-        validators: [Validators.required, NotOnlyWhitespaceValidator()],
+        validators: [Validators.required],
         validationMessages: {
           required: 'Payment Amount No is required'
         }
       },
+      ExchangeRateToBC: {
+        label: 'Exchange Rate to Base Currency', 
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Exchange Rate is required'
+        }
+      },
+      PaymentAmountBC: {
+        label: 'Payment Amount (BC)', 
+        defaultValue: null,
+      }
     }
   }
+
+  getExportOrderAutoCompleteDef(formConfig: FormConfigType<ExportOrderPayment>, form: FormGroup): AutoCompleteDef<ExportOrder_SelectList> {
+      return {
+        type: 'formControl',
+        group: form,
+        control: 'ExportOrderNo',  
+        label: formConfig.ExportOrderNo.label,  
+        validationMessage: formConfig.ExportOrderNo.error,  
+        placeholder: 'Search Export Order',
+        options: [],
+        optionLabel: 'ExportOrderNo',  
+        columns: [
+          { data: 'ExportOrderNo', label: 'Export Order No', width: '300px' },
+        ],
+      }
+    }
 }

@@ -28,6 +28,10 @@ export class ZTableComponent<T> {
 
   generateHeaderStructure() {
     this.tableDef.columnDef.forEach((col) => {
+      if (col.visible === false) {
+        return;
+      }
+      
       if (col.groupLabel) {
         const existingGroup = this.tableHeaderDef.find(
           (header) => header.label === col.groupLabel
@@ -43,7 +47,8 @@ export class ZTableComponent<T> {
             label: col.groupLabel,
             hasSubHeader: true,
             colSpan: 1,
-            colVisToggle: false
+            visible: col.visible ?? true,
+            hideVisToggle: false
           });
         }
         
@@ -57,7 +62,8 @@ export class ZTableComponent<T> {
         this.tableHeaderDef.push({
           data: col.data,
           label: col.label ?? '',
-          colVisToggle: col.colVisToggle,
+          visible: col.visible ?? true,
+          hideVisToggle: col.hideVisToggle,
           cssClass: col.cssClass
         });
       }

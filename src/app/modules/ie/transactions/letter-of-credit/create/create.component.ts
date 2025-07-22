@@ -8,8 +8,8 @@ import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { ExportOrder_SelectList, ExportOrderRequest } from '../../../../ie/transactions/export-order/export-order';
-import { ExportContainer } from '../export-container';
-import { ExportContainerService } from '../export-container.service';
+import { LetterOfCredit } from '../letter-of-credit';
+import { LetterOfCreditService } from '../letter-of-credit.service';
 
 @Component({
   selector: 'app-create',
@@ -27,19 +27,19 @@ export class CreateComponent implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<ExportContainer>;
-
-  exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
+  formConfig!: FormConfigType<LetterOfCredit>;
   
+  exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
+
   constructor(
-    private pageService: ExportContainerService,
+    private pageService: LetterOfCreditService,
     private formService: FormService,
     private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ExportContainer>(this.formConfig);
+    this.form = this.formService.createFormGroup<LetterOfCredit>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     
     this.exportOrderAutoCompleteDef = this.pageService.getExportOrderAutoCompleteDef(this.formConfig, this.form);
@@ -50,24 +50,24 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(isEditMode: boolean, model: ExportContainer): void {
-    if (isEditMode && model) {
-      this.isEditMode = isEditMode;
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: LetterOfCredit): void {
+      if (isEditMode && model) {
+        this.isEditMode = isEditMode;
+      }
+      this.form.patchValue(model);
+      this.isFormSidebarVisible = true;
     }
-    this.form.patchValue(model);
-    this.isFormSidebarVisible = true;
-  }
 
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<ExportContainer>(this.formConfig, this.form);
+    this.formService.resetFormValue<LetterOfCredit>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-  
+    
   loadExportOrder(event: string): void {
     try {
       const dto: ExportOrderRequest = {
@@ -92,28 +92,23 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  //Isko dekhna hai, ye shyd hatega
   onSelectExportOrder(event: ExportOrder_SelectList): void {
-  }
-//Isko dekhna hai, ye shyd hatega
-  onUnselectExportOrder(event: ExportOrder_SelectList): void {
-  }
-//Isko dekhna hai, ye shyd hatega
-  onClearExportOrder(): void {
-    // if (!this.isEditMode) {
-    //   this.alertService.showConfirmation({
-    //     text: 'Are you sure you want to clear the Job Post details?',
-    //   }).then((result) => {
-    //     if (result.isConfirmed) {
-    //       this.formService.resetFormValue<JobPost>(this.formConfig, this.form);
-    //     }
-    //   });
-    // }
+    this.form.patchValue({
+      ExportOrderID: event.ExportOrderID,
+      ExportOrderNo: event.ExportOrderNo
+    });
   }
 
+  onClearExportOrder(): void {
+    this.form.patchValue({
+      ExportOrderID: null,
+      ExportOrderNo: null
+    });
+  }
+  
   onSubmit(): void {
     if (this.isSubmitted) return;
-
+    
     this.isSubmitted = true;
     try{
       if (this.form.invalid) {
@@ -128,7 +123,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: ExportContainer = {
+            const model: LetterOfCredit = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
@@ -148,7 +143,7 @@ export class CreateComponent implements OnInit, OnDestroy {
    }
   }
   
-  createRecord(model: ExportContainer): void {
+  createRecord(model: LetterOfCredit): void {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
@@ -171,7 +166,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: ExportContainer): void {
+  updateRecord(model: LetterOfCredit): void {
     try {
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))
@@ -196,6 +191,18 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
     catch (error) {
 
+    }
+  }
+
+  calculateBaseCurrencyAmount(): void {
+    const lcAmountFC = this.form.get('LCAmountFC')?.value;
+    const exchangeRateToBC = this.form.get('ExchangeRateToBC')?.value;
+
+    if (lcAmountFC && exchangeRateToBC) {
+      const lcAmountBC = lcAmountFC * exchangeRateToBC;
+      this.form.patchValue({ LCAmountBC: lcAmountBC });
+    } else {
+      this.form.patchValue({ LCAmountBC: null });
     }
   }
 }

@@ -1,15 +1,19 @@
 export interface ExportOrderPayment {
-  PaymentID: number | null;
-  PaymentNo: string | null;
+  ExportOrderPaymentID: number | null;
+  ExportOrderPaymentNo: string | null;
+  ExportOrderID: number | null;
+  ExportOrderNo: string | null;
   PaymentRefNo: string | null;
   PaymentAmountFC: number | null;
-  // PaymentAmountBC: number | null;
+  ExchangeRateToBC: number | null
+  PaymentAmountBC: number | null;
   PaymentDate: string | null;
 }
 
 export interface ExportOrderPayment_IndexTableList {
-  PaymentID: number;
-  PaymentNo: string;
+  ExportOrderPaymentID: number;
+  ExportOrderPaymentNo: string;
+  ExportOrderNo: string;
   PaymentRefNo: string;
   PaymentAmountFC: number;
   PaymentDate: string;
@@ -17,19 +21,20 @@ export interface ExportOrderPayment_IndexTableList {
 }
 
 export interface ExportOrderPayment_IndexTableFilter {
-  PaymentNo: string | null;
+  ExportOrderPaymentNo: string | null;
   PaymentRefNo: string | null;
+  ExportOrderNo: string;
   PaymentDate: string | null;
   IsCanceled: number | null;
 }
 
 export interface ExportOrderPayment_SelectList {
-  PaymentID: number | null;
-  PaymentNo: string | null;
+  ExportOrderPaymentID: number | null;
+  ExportOrderPaymentNo: string | null;
 }
 
 export interface ExportOrderPaymentRequest {
-  PaymentNo?: string | null;
+  ExportOrderPaymentNo?: string | null;
   PaymentRefNo?: string | null;
   PopulateType?: string | null;
 }

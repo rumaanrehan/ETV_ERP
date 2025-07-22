@@ -64,7 +64,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
-      this.createSidebar.openSidebar(false, this.formService.createNullObject<LetterOfCredit>());
+      this.createSidebar.openSidebar(true, false, this.formService.createNullObject<LetterOfCredit>());
     }
   }
 
@@ -76,7 +76,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.createSidebar.openSidebar(true, response.Data);
+              this.createSidebar.openSidebar(true, true, response.Data);
             }
             else {
               this.alertService.showServerResponseAlert(response);

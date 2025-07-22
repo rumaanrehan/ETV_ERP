@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, StaticClassSansProvider } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
@@ -8,8 +8,9 @@ import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { ExportOrder_SelectList, ExportOrderRequest } from '../../../../ie/transactions/export-order/export-order';
-import { LetterOfCredit } from '../letter-of-credit';
-import { LetterOfCreditService } from '../letter-of-credit.service';
+import { ExportContainerService } from '../export-order-tracking.service';
+import { ExportOrderTracking } from '../export-order-tracking';
+import { StaticList } from '../../../../../shared/models/select-list';
 
 @Component({
   selector: 'app-create',
@@ -27,19 +28,26 @@ export class CreateComponent implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<LetterOfCredit>;
-  
+  formConfig!: FormConfigType<ExportOrderTracking>;
+
   exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
 
+  containerTypeList: StaticList[] = [
+    { iValue: 1, cValue: '20ft', Text: '20ft' },
+    { iValue: 2, cValue: '40ft', Text: '40ft' },
+    { iValue: 3, cValue: '40ft HC', Text: '40ft HC' },
+    { iValue: 4, cValue: '45ft', Text: '45ft' }
+  ]
+  
   constructor(
-    private pageService: LetterOfCreditService,
+    private pageService: ExportContainerService,
     private formService: FormService,
     private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<LetterOfCredit>(this.formConfig);
+    this.form = this.formService.createFormGroup<ExportOrderTracking>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     
     this.exportOrderAutoCompleteDef = this.pageService.getExportOrderAutoCompleteDef(this.formConfig, this.form);
@@ -50,7 +58,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  openSidebar(isEditMode: boolean, model: LetterOfCredit): void {
+  openSidebar(activestatus: boolean, isEditMode: boolean, model: ExportOrderTracking): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
@@ -61,13 +69,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<LetterOfCredit>(this.formConfig, this.form);
+    this.formService.resetFormValue<ExportOrderTracking>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-    
+  
   loadExportOrder(event: string): void {
     try {
       const dto: ExportOrderRequest = {
@@ -93,23 +101,19 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
   
   onSelectExportOrder(event: ExportOrder_SelectList): void {
+    this.form.patchValue({
+      ExportOrderID: event.ExportOrderID,
+      ExportOrderNo: event.ExportOrderNo
+    });
   }
 
-  onUnselectExportOrder(event: ExportOrder_SelectList): void {
-  }
-  
   onClearExportOrder(): void {
-    // if (!this.isEditMode) {
-    //   this.alertService.showConfirmation({
-    //     text: 'Are you sure you want to clear the Job Post details?',
-    //   }).then((result) => {
-    //     if (result.isConfirmed) {
-    //       this.formService.resetFormValue<JobPost>(this.formConfig, this.form);
-    //     }
-    //   });
-    // }
+    this.form.patchValue({
+      ExportOrderID: null,
+      ExportOrderNo: null
+    });
   }
-  
+
   onSubmit(): void {
     if (this.isSubmitted) return;
 
@@ -127,7 +131,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: LetterOfCredit = {
+            const model: ExportOrderTracking = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
@@ -147,7 +151,7 @@ export class CreateComponent implements OnInit, OnDestroy {
    }
   }
   
-  createRecord(model: LetterOfCredit): void {
+  createRecord(model: ExportOrderTracking): void {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
@@ -170,7 +174,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
   
-  updateRecord(model: LetterOfCredit): void {
+  updateRecord(model: ExportOrderTracking): void {
     try {
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))

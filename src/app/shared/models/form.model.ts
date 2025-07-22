@@ -5,6 +5,8 @@ export type FormConfigType<T> = {
     ? {
         type: 'array';
         items: FormConfigType<U>; // Array of configurations for each item in the array
+        // validators?: ValidatorFn[];
+        // validationMessages?: { [key: string]: string };
       }
     : T[P] extends object // Check if T[P] is an object
     ? {

@@ -9,6 +9,7 @@ export interface TaxSlabMaster {
 export interface TaxSlab_SelectList {
   TaxSlabID: number | null;
   TaxSlabName: string | null;
+  TaxRate: number | null
 }
 
 export interface TaxSlab_IndexTableFilter {

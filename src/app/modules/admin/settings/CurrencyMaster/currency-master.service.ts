@@ -37,7 +37,6 @@ export class CurrencyMasterService {
     return this.apiService.post<ApiPagedListResponse<Currency_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
   
-
   GetDetails(CurrencyID: number): Observable<ApiDataResponse<CurrencyMaster>> {
     return this.apiService.post<ApiDataResponse<CurrencyMaster>>(`${this.endpoint}/GetDetails?CurrencyID=${CurrencyID}`, {});
   }

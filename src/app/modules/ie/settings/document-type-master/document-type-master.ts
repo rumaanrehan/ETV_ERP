@@ -2,18 +2,20 @@ export interface DocumentTypeMaster {
   DocumentTypeID: number | null;
   DocumentTypeCode: string | null;
   DocumentTypeName: string | null;
-  ActiveStatus?: boolean | null; 
+  ShortCode: string | null;
+  IsApprovalRequired: boolean | null;
+  Description: string | null;
 }
 
 export interface DocumentType_SelectList {
-  DocumentTypeID: number | null;
-  DocumentTypeName: string | null;
+  DocumentTypeID: number;
+  DocumentTypeName: string;
 }
 
 export interface DocumentType_IndexFilter {
-  DocumentTypeCode: string;
-  DocumentTypeName: string;
-  
+  DocumentTypeCode: string | null;
+  DocumentTypeName: string | null;
+  ActiveStatusID: number | null;
 }
 
 export interface DocumentType_IndexList {
@@ -21,6 +23,8 @@ export interface DocumentType_IndexList {
   DocumentTypeID: number;
   DocumentTypeCode: string;
   DocumentTypeName: string;
+  ShortCode: string;
+  IsApprovalRequired: boolean;
   ActiveStatus: boolean | null; 
 }
 

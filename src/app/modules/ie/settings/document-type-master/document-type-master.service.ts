@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
-import {DocumentTypeMaster,DocumentType_IndexFilter,DocumentType_IndexList,DocumentType_SelectList} from './document-type-master';
+import {DocumentTypeMaster,DocumentTypeRequest,DocumentType_IndexFilter,DocumentType_IndexList,DocumentType_SelectList} from './document-type-master';
 import {ApiListResponse,ApiPagedListResponse,ApiDataResponse,ApiResponse} from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import {DataTableFilterFormConfigType,FormConfigType} from '../../../../shared/models/form.model';
@@ -14,26 +14,28 @@ import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-on
 export class DocumentTypeMasterService {
   private endpoint = 'IE/DocumentTypeMaster';
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService
+  ) {}
 
-  PopulateList(model: any): Observable<ApiListResponse<DocumentType_SelectList>> {
-    return this.apiService.post<ApiListResponse<DocumentType_SelectList>>(`${this.endpoint}/PopulateList`,model);
+  PopulateList(model: DocumentTypeRequest): Observable<ApiListResponse<DocumentType_SelectList>> {
+    return this.apiService.post<ApiListResponse<DocumentType_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<DocumentType_IndexFilter>): Observable<ApiPagedListResponse<DocumentType_IndexList>> {
-    return this.apiService.post<ApiPagedListResponse<DocumentType_IndexList>>(`${this.endpoint}/PopulateGrid`,model);
+    return this.apiService.post<ApiPagedListResponse<DocumentType_IndexList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
   GetDetails(documentTypeID: number): Observable<ApiDataResponse<DocumentTypeMaster>> {
-    return this.apiService.post<ApiDataResponse<DocumentTypeMaster>>(`${this.endpoint}/GetDetails?DocumentTypeID=${documentTypeID}`,{});
+    return this.apiService.post<ApiDataResponse<DocumentTypeMaster>>(`${this.endpoint}/GetDetails?DocumentTypeID=${documentTypeID}`, {});
   }
 
   CreateRecord(model: DocumentTypeMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`,model);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
   UpdateRecord(model: DocumentTypeMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`,model);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
   DeleteReactivate(model: DocumentTypeMaster): Observable<ApiResponse> {
@@ -44,7 +46,7 @@ export class DocumentTypeMasterService {
     return {
       DocumentTypeCode: '',
       DocumentTypeName: '',
-
+      ActiveStatusID: 0
     };
   }
 
@@ -60,12 +62,24 @@ export class DocumentTypeMasterService {
       },
       DocumentTypeName: {
         label: 'Document Type Name',
-        defaultValue: '',
+        defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
           required: 'Document Type Name is required.'
         }
       },
+      ShortCode: {
+        label: 'Short Code',
+        defaultValue: null,
+      },
+      IsApprovalRequired: {
+        label: 'Is Approval Required',
+        defaultValue: false,
+      },
+      Description: {
+        label: 'Description',
+        defaultValue: null,
+      },
+    }
   }
-  }
-  } 
+}
