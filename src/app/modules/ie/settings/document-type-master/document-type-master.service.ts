@@ -17,45 +17,27 @@ export class DocumentTypeMasterService {
   constructor(private apiService: ApiService) {}
 
   PopulateList(model: any): Observable<ApiListResponse<DocumentType_SelectList>> {
-    return this.apiService.post<ApiListResponse<DocumentType_SelectList>>(
-      `${this.endpoint}/PopulateList`,
-      model
-    );
+    return this.apiService.post<ApiListResponse<DocumentType_SelectList>>(`${this.endpoint}/PopulateList`,model);
   }
 
   PopulateGrid(model: DataTableParams<DocumentType_IndexFilter>): Observable<ApiPagedListResponse<DocumentType_IndexList>> {
-    return this.apiService.post<ApiPagedListResponse<DocumentType_IndexList>>(
-      `${this.endpoint}/PopulateGrid`,
-      model
-    );
+    return this.apiService.post<ApiPagedListResponse<DocumentType_IndexList>>(`${this.endpoint}/PopulateGrid`,model);
   }
 
   GetDetails(documentTypeID: number): Observable<ApiDataResponse<DocumentTypeMaster>> {
-    return this.apiService.post<ApiDataResponse<DocumentTypeMaster>>(
-      `${this.endpoint}/GetDetails?DocumentTypeID=${documentTypeID}`,
-      {}
-    );
+    return this.apiService.post<ApiDataResponse<DocumentTypeMaster>>(`${this.endpoint}/GetDetails?DocumentTypeID=${documentTypeID}`,{});
   }
 
   CreateRecord(model: DocumentTypeMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(
-      `${this.endpoint}/Create`,
-      model
-    );
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`,model);
   }
 
   UpdateRecord(model: DocumentTypeMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(
-      `${this.endpoint}/Edit`,
-      model
-    );
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`,model);
   }
 
   DeleteReactivate(model: DocumentTypeMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(
-      `${this.endpoint}/Delete`,
-      model
-    );
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<DocumentType_IndexFilter> {

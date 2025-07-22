@@ -56,7 +56,6 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'RowID', label: 'SN', width: '5%', hideVisToggle: true, orderable: false },
       { data: 'DocumentTypeID', visible: false, hideVisToggle: true, orderable: false },
       { data: 'DocumentTypeCode', label: 'Code', filterable: true, customTemplate: this.documentTypeCodeTemplate },
-      // { data: 'DocumentName', label: 'Document Name', filterable: true },
       { data: 'DocumentTypeName', label: 'Document Type Name', filterable: true },
       { data: 'ActiveStatus',label: 'Status',filterable: true,filterType: 'select',filterKey: 'ActiveStatusID',cssClass: 'text-center', width: '5%',customTemplate: this.documentTypeActiveStatusTemplate,},
       {data: '',hideVisToggle: true,orderable: false,cssClass: 'text-center',width: '5%',customTemplate: this.actionColTemplate,}

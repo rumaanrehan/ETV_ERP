@@ -13,7 +13,7 @@ import { CreateComponent } from '../create/create.component';
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [ZDataTable,CreateComponent],
+  imports: [ZDataTable, CreateComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss',
 })
@@ -21,8 +21,8 @@ import { CreateComponent } from '../create/create.component';
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('paymenttermCodeTemplate', { static: true }) paymenttermCodeTemplate!: TemplateRef<any>;
-  @ViewChild('paymenttermActiveStatusTemplate', { static: true }) paymenttermActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('paymentTermCodeTemplate', { static: true }) paymentTermCodeTemplate!: TemplateRef<any>;
+  @ViewChild('paymentTermActiveStatusTemplate', { static: true }) paymentTermActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
@@ -50,10 +50,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'PaymentTermCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.paymenttermCodeTemplate },
+      { data: 'PaymentTermCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.paymentTermCodeTemplate },
       { data: 'PaymentTermName', label: 'PaymentTerm Name', width: "50%", filterable: true },
-      { data: 'ShortCode', label: 'Short Code', width: "15%", orderable: false },
-      { data: 'ActiveStatus', label: 'Status', width: "15%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.paymenttermActiveStatusTemplate },
+      { data: 'Description', label: 'Description', width: "15%", orderable: false },
+      { data: 'ActiveStatus', label: 'Status', width: "15%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.paymentTermActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -69,10 +69,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(paymenttermID: number, activeStatus: boolean): void {
+  onClickEditDetails(paymentTermID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && paymenttermID) {
-        this.pageService.GetDetails(paymenttermID)
+      if (this.createSidebar && paymentTermID) {
+        this.pageService.GetDetails(paymentTermID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
