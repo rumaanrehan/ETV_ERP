@@ -14,7 +14,7 @@ export const adminRoute: Routes = [
   { path: 'admin/department-type-master/index', loadComponent: () => import('./settings/department-type-master/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/BillCompanyMaster/Index', loadComponent: () => import('./settings/BillCompanyMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/HolidayMaster/Index', loadComponent: () => import('./settings/HolidayMaster/index/index.component').then((m) => m.IndexComponent) },
-  // { path: 'Admin/CountryMaster/Index', loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent) },
+  { path: 'Admin/CountryMaster/Index', loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/RelationshipMaster/Index', loadComponent: () => import('./settings/RelationshipMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'Admin/PrefixMaster/Index', loadComponent: () => import('./settings/PrefixMaster/index/index.component').then((m) => m.IndexComponent) },
   { path: 'admin/role-master/index', loadComponent: () => import('./settings/RoleMaster/index/index.component').then((m) => m.IndexComponent) },

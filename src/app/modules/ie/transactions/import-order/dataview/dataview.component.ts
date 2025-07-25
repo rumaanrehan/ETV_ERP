@@ -13,12 +13,12 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { ExportOrderDocument } from '../../export-order-document/export-order-document';
-import { ExportOrderPayment } from '../../export-order-payment/export-payment';
-import { ExportOrderTracking } from '../../export-order-tracking/export-order-tracking';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList } from '../export-order';
-import { ExportOrderService } from '../export-order.service';
+import { ImportOrder, ImportOrder_IndexTableFilter, ImportOrder_IndexTableList } from '../import-order';
+import { ImportOrderDocument } from '../import-order-document/import-order-document';
+import { ImportOrderPayment } from '../import-order-payment/import-order-payment';
+import { ImportOrderTracking } from '../import-order-tracking/import-order-tracking';
+import { ImportOrderService } from '../import-order.service';
 
 @Component({
   selector: 'app-dataview',
@@ -27,7 +27,6 @@ import { ExportOrderService } from '../export-order.service';
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
-
 export class DataviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
@@ -35,11 +34,11 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   componentRef?: ComponentRef<any>;
 
-  dataViewDef!: DataViewDef<ExportOrder_IndexTableList>;
+  dataViewDef!: DataViewDef<ImportOrder_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
   
   filterForm!: FormGroup;
-  filterFormConfig!: FormConfigType<ExportOrder_IndexTableFilter>
+  filterFormConfig!: FormConfigType<ImportOrder_IndexTableFilter>
 
   statusList: StaticList[] = [
     {iValue: 0, Text: "All", cValue: ""},
@@ -53,7 +52,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   constructor(
     private pageHeaderService: PageHeaderService,
-    private pageService: ExportOrderService,
+    private pageService: ImportOrderService,
     private formService: FormService,
     private alertService: AlertNotificationService,
     private router: Router
@@ -62,10 +61,10 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
-    this.filterForm = this.formService.createFormGroup<ExportOrder_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
+    this.filterForm = this.formService.createFormGroup<ImportOrder_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
     this.dataViewDef = {
-      tableKey: 'Admin_ExportOrder_IndexDataView',
-      defaultSortColumn: { sortField: 'ExportOrderNo', sortOrder: 1 },
+      tableKey: 'Admin_ImportOrder_IndexDataView',
+      defaultSortColumn: { sortField: 'ImportOrderNo', sortOrder: 1 },
       filterForm: this.filterForm,
       data: [],
       totalRecords: 0,
@@ -84,12 +83,12 @@ export class DataviewComponent implements OnInit, OnDestroy {
   }
 
   onClickPageHeaderAddButton() {
-    this.router.navigate(['ie/export-order/create']);
+    this.router.navigate(['ie/import-order/create']);
   }
 
   loadData() {
     try {
-      const model: DataViewParams<ExportOrder_IndexTableFilter> = {
+      const model: DataViewParams<ImportOrder_IndexTableFilter> = {
         first: this.dataViewEvent.first,
         last: this.dataViewEvent.rows,
         sortField: this.dataViewEvent.sortField,
@@ -103,7 +102,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
             if (response.IsSuccess) {
               const data = response.Data.Items.map(item => ({
                 ...item,
-                ExportOrderDate: DateUtils.formatDate(item.ExportOrderDate),
+                ImportOrderDate: DateUtils.formatDate(item.ImportOrderDate),
                 ReferenceDate: DateUtils.formatDate(item.ReferenceDate),
               }));
               this.dataViewDef.data = data;
@@ -125,13 +124,13 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
   
-  onClickEditDetails(exportOrderID: number) {
-    if (exportOrderID) {
-      this.router.navigate([`ie/export-order/edit/${exportOrderID}`]);
+  onClickEditDetails(importOrderID: number) {
+    if (importOrderID) {
+      this.router.navigate([`ie/import-order/edit/${importOrderID}`]);
     }
   }
 
-  onClickCancel(model: ExportOrder) {
+  onClickCancel(model: ImportOrder) {
     this.alertService
     .showConfirmation({
       text: 'Do you want to cancel?',
@@ -206,39 +205,39 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  async createPaymentComponent(row: ExportOrder_IndexTableList) {
-    const { CreateComponent } = await import('./../../export-order-payment/create/create.component');
+  async createPaymentComponent(row: ImportOrder_IndexTableList) {
+    const { CreateComponent } = await import('./../import-order-payment/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
-    const model: ExportOrderPayment = this.formService.createNullObject<ExportOrderPayment>();
-    model.ExportOrderID = row.ExportOrderID;
-    model.ExportOrderNo = row.ExportOrderNo;
+    const model: ImportOrderPayment = this.formService.createNullObject<ImportOrderPayment>();
+    model.ImportOrderID = row.ImportOrderID;
+    model.ImportOrderNo = row.ImportOrderNo;
     this.loadDynamicComponent(model);
   }
 
-  async createLCComponent(row: ExportOrder_IndexTableList) {
+  async createLCComponent(row: ImportOrder_IndexTableList) {
     const { CreateComponent } = await import('./../../letter-of-credit/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: LetterOfCredit = this.formService.createNullObject<LetterOfCredit>();
-    model.ExportOrderID = row.ExportOrderID;
-    model.ExportOrderNo = row.ExportOrderNo;
+    // model.ImportOrderID = row.ImportOrderID;
+    // model.ImportOrderNo = row.ImportOrderNo;
     this.loadDynamicComponent(model);
   }
 
-  async createTrackingComponent(row: ExportOrder_IndexTableList) {
-    const { CreateComponent } = await import('./../../export-order-tracking/create/create.component');
+  async createTrackingComponent(row: ImportOrder_IndexTableList) {
+    const { CreateComponent } = await import('./../import-order-tracking/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
-    const model: ExportOrderTracking = this.formService.createNullObject<ExportOrderTracking>();
-    model.ExportOrderID = row.ExportOrderID;
-    model.ExportOrderNo = row.ExportOrderNo;
+    const model: ImportOrderTracking = this.formService.createNullObject<ImportOrderTracking>();
+    model.ImportOrderID = row.ImportOrderID;
+    model.ImportOrderNo = row.ImportOrderNo;
     this.loadDynamicComponent(model);
   }
 
-  async createDocumentComponent(row: ExportOrder_IndexTableList) {
-    const { CreateComponent } = await import('./../../export-order-document/create/create.component');
+  async createDocumentComponent(row: ImportOrder_IndexTableList) {
+    const { CreateComponent } = await import('./../import-order-document/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
-    const model: ExportOrderDocument = this.formService.createNullObject<ExportOrderDocument>();
-    model.ExportOrderID = row.ExportOrderID;
-    model.ExportOrderNo = row.ExportOrderNo;
+    const model: ImportOrderDocument = this.formService.createNullObject<ImportOrderDocument>();
+    model.ImportOrderID = row.ImportOrderID;
+    model.ImportOrderNo = row.ImportOrderNo;
     this.loadDynamicComponent(model);
   }
 }

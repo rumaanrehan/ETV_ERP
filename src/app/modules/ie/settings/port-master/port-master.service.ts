@@ -37,6 +37,7 @@ export class PortMasterService {
   }
 
   PopulateList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
+    console.log("Loading ports...");
     return this.apiService.post<ApiListResponse<Port_SelectList>>( `${this.endpoint}/PopulateList`, model );
   }
 

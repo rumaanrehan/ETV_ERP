@@ -81,6 +81,7 @@ export class ProductMasterService {
   }
 
   PopulateList(model: ProductRequest): Observable<ApiListResponse<Product_SelectList>> {
+    console.log("Loading Product List...");
     return this.apiService.post<ApiListResponse<Product_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
