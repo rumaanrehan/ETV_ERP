@@ -118,7 +118,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.isSubmitted = true;
 
     try {
-      // Handle invalid form
+     
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -127,7 +127,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Handle form submission based on editMode
+      
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
           text: 'Do you really want to Update?',
