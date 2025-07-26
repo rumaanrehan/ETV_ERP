@@ -93,7 +93,7 @@ export class PortMasterService {
         defaultValue: 0,
         validators: [Validators.required],
         validationMessages: {
-          required: 'Port Type is required.'
+        required: 'Port Type is required.'
         }        
       },
       CountryID: {
@@ -101,7 +101,7 @@ export class PortMasterService {
         defaultValue: 0,
         validators: [Validators.required],
         validationMessages: {
-          required: 'Country is required.'
+        required: 'Country is required.'
         }        
       }
     }
