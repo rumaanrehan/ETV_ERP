@@ -3,7 +3,7 @@ export interface DocumentTypeMaster {
   DocumentTypeCode: string | null;
   DocumentTypeName: string | null;
   ShortCode: string | null;
-  IsApprovalRequired: boolean | null;
+  IsVerificationRequired: boolean | null;
   Description: string | null;
 }
 

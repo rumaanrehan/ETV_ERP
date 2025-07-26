@@ -16,10 +16,11 @@ import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { Product_SelectList, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 import { Company_SelectList, CompanyRequest } from '../../../settings/company-master/company-master';
 import { Port_SelectList, PortRequest } from '../../../settings/port-master/port-master';
-import { ExportOrder, ExportOrderDetail } from '../export-order';
+import { ExportOrder, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { TaxSlab_SelectList, TaxSlabMaster } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
+import { ExportOrderDocumentTemplate } from '../../export-order-document/export-order-document';
 
 @Component({
   selector: 'app-create',
@@ -38,14 +39,24 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountBCColTemplate', { static: true }) taxableAmountBCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountBCColTemplate', { static: true }) taxAmountBCColTemplate!: TemplateRef<any>;
+  
+  //Export Order Document Table Related Template
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  // @ViewChild('viewDocumentColTemplate', { static: true }) viewDocumentColTemplate!: TemplateRef<any>;
+  // @ViewChild('downloadDocumentColTemplate', { static: true }) downloadDocumentColTemplate!: TemplateRef<any>;
+  @ViewChild('removePaymentColTemplate', { static: true }) removePaymentColTemplate!: TemplateRef<any>;
 
   selectedCustomerAddress!: string | null;
-
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+  isLoadDocumentVisible: boolean = true;
+  isLoadPaymentVisible: boolean = true;
+
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrder>;
   tableDef!: TableDef<ExportOrderDetail>;
+  exportOrderDocumentTableDef!: TableDef<ExportOrderDocumentList>
+  exportOrderPaymentTableDef!: TableDef<ExportOrderPaymentList>
 
   customerList: Company_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
@@ -66,8 +77,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   ];
   
   statusList: StaticList[] = [
-    { Text: 'Processing', iValue: 1, cValue: '' },
-    { Text: 'Ready to Ship', iValue: 2, cValue: '' }
+    { Text: 'Processing', iValue: 1, cValue: '#28a745' },
+    { Text: 'Ready to Ship', iValue: 2, cValue: '#dc3545' }
   ];
 
   constructor(
@@ -86,6 +97,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
+    this.exportOrderDocumentTableDef = this.pageService.getExportOrderDocumentTableDef({SerialNoTemplate: this.serialNoColTemplate, ActionTemplate: this.actionColTemplate} as ExportOrderDocumentTemplate);
+    this.exportOrderPaymentTableDef = this.pageService.getExportOrderPaymentTableDef([this.serialNoColTemplate, this.removePaymentColTemplate]);
     this.tableDef = {
       columnDef: [
         {data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate},
@@ -107,10 +120,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  onTaxSlabChange(): void{
-    console.log(this.form.value);
   }
 
   loadDropdownList(): void  {
@@ -151,6 +160,10 @@ export class CreateComponent implements OnInit, OnDestroy {
         });
       },
     });
+  }
+
+  onTaxSlabChange(): void{
+    console.log(this.form.value);
   }
   
   onClickPageHeaderBackButton(): void {
@@ -465,12 +478,11 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getDetails(): void {
     this.route.params.subscribe((params) => {
-      const ExportOrderID = +params['id'];
-      if (ExportOrderID) {
+      const exportOrderID = +params['id'];
+      if (exportOrderID) {
         this.isEditMode = true;
         try {
-          this.pageService
-          .GetDetails(ExportOrderID)
+          this.pageService.GetDetails(exportOrderID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
@@ -489,7 +501,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  GetOrderItemDetails(model: ExportOrder){
+  GetOrderItemDetails(model: ExportOrder): void {
     this.route.params.subscribe((params) => {
       const ExportOrderID = +params['id'];
       this.pageService.GetOrderItemDetails(ExportOrderID)
@@ -524,6 +536,172 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
         },
       });
+    });
+  }
+
+  onClickLoadDocuments(): void {
+    this.route.params.subscribe((params) => {
+      const exportOrderID = +params['id'];
+      if (exportOrderID) {
+        try {
+          this.pageService.LoadDocument(exportOrderID)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                const model: any[] = response.Data.Items.map(item => ({
+                  ...item,
+                  UploadedDateTime: DateUtils.formatDate(item.UploadedDateTime),
+                }));
+                this.exportOrderDocumentTableDef.data = model;
+                this.isLoadDocumentVisible = false
+              } else {
+                // this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
+        }
+        catch (error) {
+
+        }
+      }
+    });
+  }
+
+  onClickViewDocumentItem(row: ExportOrderDocumentList): void {
+    if(row.DocumentPath && row.DocumentPath.trim() !== '') {
+      this.pageService.GetDocument(row.DocumentPath)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const fileURL = URL.createObjectURL(response);
+          window.open(fileURL, '_blank');
+        },
+        error: (err) => {
+          if (err.status === 404) {
+            this.alertService.showAlert({ type: 'error', text: 'File not found.' });
+          } else {
+            this.alertService.showAlert({ type: 'error', text: 'Download failed.' });
+          }
+        }
+      });
+    }
+  }
+
+  onClickDownloadDocumentItem(row: ExportOrderDocumentList): void {
+    if (row.DocumentPath && row.DocumentPath.trim() !== '') {
+      this.pageService.GetDocument(row.DocumentPath)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            const blob = new Blob([response], { type: response.type });
+            const fileURL = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = fileURL;
+            a.download = row.DocumentPath.split(/[/\\]/).pop() || 'downloaded-file'
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(fileURL);
+          },
+          error: (err) => {
+            if (err.status === 404) {
+              this.alertService.showAlert({ type: 'error', text: 'File not found.' });
+            } else {
+              this.alertService.showAlert({ type: 'error', text: 'Download failed.' });
+            }
+          }
+        });
+    }
+  }
+
+  onClickRemoveDocumentItem(row: any){
+    this.alertService.showConfirmationWithInput({
+      text: 'Do you really want to remove this document?',
+      inputPlaceholder: 'Reason to delete'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const dto: ExportOrderDocumentList = {
+          ...row,
+          ReasonToDelete: result.value
+        }
+        this.pageService.DeleteDocument(dto)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000,
+              });
+              this.onClickLoadDocuments();
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+        });
+      }
+    });
+  }
+
+  onClickLoadPayments(){
+    this.route.params.subscribe((params) => {
+      const exportOrderID = +params['id'];
+      if (exportOrderID) {
+        try {
+          this.pageService.LoadPayment(exportOrderID)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              console.log(response.Data.Items);
+              if (response.IsSuccess) {
+                const model: any = response.Data.Items.map(item => ({
+                  ...item,
+                  PaymentDate: DateUtils.formatDate(item.PaymentDate)
+                }));
+                this.exportOrderPaymentTableDef.data = model;
+                this.isLoadPaymentVisible = false;
+              } else {
+                // this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
+        }
+        catch (error) {
+
+        }
+      }
+    });
+  }
+
+  onClickRemovePaymentItem(row: any){
+    this.alertService.showConfirmationWithInput({
+      text: 'Do you really want to remove this payment?',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const dto: ExportOrderPaymentList = {
+          ...row,
+          ReasonToCancel: result.value
+        }
+        this.pageService.DeletePayment(dto)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000,
+              });
+              this.onClickLoadPayments();
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+        });
+      }
     });
   }
 }

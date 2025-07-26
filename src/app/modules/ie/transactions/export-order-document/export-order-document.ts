@@ -1,20 +1,29 @@
+import { TemplateRef } from "@angular/core";
+
 export interface ExportOrderDocument {
     ExportOrderDocumentID: number | null;
     ExportOrderID: number | null;
     ExportOrderNo: string | null;
     DocumentTypeID: number | null;
-    DocumentFile: string | null;
+    DocumentFile: File | null;
 }
 
 export interface ExportOrderDocument_IndexTableFilter {
     ExportOrderNo: string | null;
-    DocumentFile: string | null;
+    DocumentTypeName: string | null;
 }
 
 export interface ExportOrderDocument_IndexTableList {
     ExportOrderDocumentID: number | null;
     ExportOrderNo: number | null;
-    DocumemntTypeCode: string | null;
-    FileName: string | null;
+    DocumentTypeCode: string | null;
+    DocumentTypeName: string | null;
     IsDeleted: boolean;
+}
+
+export interface ExportOrderDocumentTemplate {
+    SerialNoTemplate?: TemplateRef<any>;
+    ActionTemplate?: TemplateRef<any>;
+    DownloadTemplate?: TemplateRef<any>;
+    RemoveTemplate?: TemplateRef<any>;
 }

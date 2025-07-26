@@ -84,12 +84,8 @@ export class ZDataViewComponent<T> {
   }
 
   applySorting(){
-    console.log(this.sortingForm.value.sortField);
-    console.log(this.sortingForm.value.sortOrder);
-
     this.dataViewLazyLoadEvent.sortField = this.sortingForm.value.sortField;
     this.dataViewLazyLoadEvent.sortOrder = this.sortingForm.value.sortOrder;
-    console.log("sorting me ye values le jaa raha hun",this.dataViewLazyLoadEvent);
     setTimeout(() => {
       this.dataViewDef.loading = true;
 

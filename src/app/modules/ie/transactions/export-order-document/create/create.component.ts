@@ -35,13 +35,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   
   exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
 
-   documentTypeList: DocumentType_SelectList[] = [
-    { DocumentTypeID: 1, DocumentTypeName: 'Identity Proof' },
-    { DocumentTypeID: 2, DocumentTypeName: 'Address Proof' },
-    { DocumentTypeID: 3, DocumentTypeName: 'Tax Document' },
-    { DocumentTypeID: 4, DocumentTypeName: 'Educational Certificate' },
-    { DocumentTypeID: 5, DocumentTypeName: 'Employment Contract' }
-  ];
+   documentTypeList: DocumentType_SelectList[] = [];
 
   constructor(
     private pageService: ExportOrderDocumentService,
@@ -53,13 +47,24 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<ExportOrderDocument>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-
     this.exportOrderAutoCompleteDef = this.pageService.getExportOrderAutoCompleteDef(this.formConfig, this.form);
+
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  loadDropdownList(): void  {
+    this.pageService.GetMasterDropdownLists()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.documentTypeList = data.documentTypeList.Data.Items;
+      },
+    });
   }
 
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: ExportOrderDocument): void {

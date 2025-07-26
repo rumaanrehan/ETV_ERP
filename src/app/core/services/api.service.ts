@@ -29,9 +29,18 @@ export class ApiService {
   }
   
   // Generic POST request
+  blobPost(endpoint: string, body: any) {
+    return this.http.post(`${this.apiUrl}${endpoint}`, body, {
+      headers: this.getHeaders(),
+      responseType: 'blob'
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+  
   post<T>(endpoint: string, body: any): Observable<T> {
     return this.http.post<T>(`${this.apiUrl}${endpoint}`, body, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     }).pipe(
       catchError(this.handleError)
     );

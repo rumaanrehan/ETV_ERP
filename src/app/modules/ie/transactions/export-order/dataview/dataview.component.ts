@@ -45,7 +45,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   statusList: StaticList[] = [
     {iValue: 0, Text: "All", cValue: ""},
     {iValue: 1, Text: "processing", cValue: ""},
-    {iValue: 2, Text: "ready_to_ship", cValue: ""},
+    {iValue: 2, Text: "Ready To Ship", cValue: ""},
   ]
 
   sortFieldList: any[] = [

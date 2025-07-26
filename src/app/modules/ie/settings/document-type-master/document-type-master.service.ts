@@ -72,8 +72,8 @@ export class DocumentTypeMasterService {
         label: 'Short Code',
         defaultValue: null,
       },
-      IsApprovalRequired: {
-        label: 'Is Approval Required',
+      IsVerificationRequired: {
+        label: 'Is Verification Required',
         defaultValue: false,
       },
       Description: {
