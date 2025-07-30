@@ -36,7 +36,7 @@ export interface ImportOrder {
     ProductID: number | null;
     ProductName: string | null;
 
-    Customer?: CompanyMaster
+    Vendor?: CompanyMaster
 }
 
 export interface ImportOrderRequest {
@@ -52,8 +52,8 @@ export interface ImportOrder_SelectList {
 export interface ImportOrderDetail {
     ProductID: number | null;
     ProductName: string | null;
-    SalesQty: number | null;
-    SalesTaxRate: number | null;
+    PurchaseQty: number | null;
+    PurchaseTaxRate: number | null;
     RatePerUnitBC: number | null;
     RatePerUnitFC: number | null;
     TaxAmountBC: number | null;
@@ -76,7 +76,7 @@ export interface ImportOrder_IndexTableList {
     ImportOrderDate: string;
     ReferenceNo: string;
     ReferenceDate: string;
-    CompanyName: string;
+    VendorName: string;
     ShipmentMode: string;
     LoadingPortName: string;
     FinalDestination: string;

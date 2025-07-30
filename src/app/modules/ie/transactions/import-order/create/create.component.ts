@@ -32,14 +32,14 @@ export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
-  @ViewChild('salesQtyColTemplate', { static: true }) salesQtyColTemplate!: TemplateRef<any>;
+  @ViewChild('purchaseQtyColTemplate', { static: true }) purchaseQtyColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitColTemplate', { static: true }) ratePerUnitColTemplate!: TemplateRef<any>;
   @ViewChild('taxRateColTemplate', { static: true }) taxRateColTemplate!: TemplateRef<any>;
   @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountBCColTemplate', { static: true }) taxableAmountBCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountBCColTemplate', { static: true }) taxAmountBCColTemplate!: TemplateRef<any>;
 
-  selectedCustomerAddress!: string | null;
+  selectedVendorAddress!: string | null;
 
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
@@ -90,7 +90,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       columnDef: [
         {data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate},
         {data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%"},
-        {data: "SalesQty", label: "Sales Qty", width: "10%", customTemplate: this.salesQtyColTemplate},
+        {data: "PurchaseQty", label: "Purchase Qty", width: "10%", customTemplate: this.purchaseQtyColTemplate},
         {data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitColTemplate},
         {data: "TaxRate", label: "Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate},
         {data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountBCColTemplate},
@@ -101,7 +101,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     this.loadDropdownList();
-    this.loadPortList()
     this.getDetails();
   }
   
@@ -185,11 +184,11 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getAmount(index: number): number[] {
     const group = this.productListArray.at(index);
-    const quantity = group.get('SalesQty')?.value || 0;
+    const quantity = group.get('PurchaseQty')?.value || 0;
     const rate = group.get('RatePerUnitBC')?.value || 0;
-    const salesTaxRate = group.get('SalesTaxRate')?.value || 0;
+    const purchaseTaxRate = group.get('PurchaseTaxRate')?.value || 0;
     
-    return [quantity * rate, quantity * rate * (salesTaxRate / 100)];
+    return [quantity * rate, quantity * rate * (purchaseTaxRate / 100)];
   }
 
   loadCompany(event: string): void {
@@ -262,7 +261,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     productItemForm.patchValue({
       ProductID: event.ProductID,
       ProductName: event.ProductName,
-      SalesTaxRate: event.PurTaxRate
+      PurchaseTaxRate: event.PurTaxRate
     });
 
     // this.productListArray = [...this.productListArray, productItemForm];
@@ -274,7 +273,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     // console.log(this.tableDef.data);
     
     // const data: ExportOrder_ProductDetail = {
-    //   ProductID: event.ProductID, ProductName: event.ProductName, SalesQty: null, RatePerUnitBC: null, TaxRate: event.PurTaxRate
+    //   ProductID: event.ProductID, ProductName: event.ProductName, PurchaseQty: null, RatePerUnitBC: null, TaxRate: event.PurTaxRate
     // }
     // this.tableDef.data.push(data);
   }
@@ -283,12 +282,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     const exchangeRate = this.form.get('ExchangeRateToBC')?.value || 1;
 
     this.productListArray.controls.forEach((group: FormGroup) => {
-      const quantity = group.get('SalesQty')?.value || 0;
+      const quantity = group.get('PurchaseQty')?.value || 0;
       const rate = group.get('RatePerUnitBC')?.value || 0;
-      const salestaxRate = group.get('SalesTaxRate')?.value || 0;
+      const purchasetaxRate = group.get('PurchaseTaxRate')?.value || 0;
 
       const taxableAmountBC = quantity * rate;
-      const taxAmountBC = (taxableAmountBC * salestaxRate) / 100;
+      const taxAmountBC = (taxableAmountBC * purchasetaxRate) / 100;
 
       group.patchValue({
         TaxAmountBC: taxAmountBC,
@@ -327,7 +326,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   OnCustomerSelect(event: Company_SelectList): void {
     this.form.patchValue({VendorID: event.CompanyID, CustomerName: event.CompanyName});
-    this.selectedCustomerAddress = event?.BillingAddress || '';
+    this.selectedVendorAddress = event?.BillingAddress || '';
   }
 
   onChangeShipmentMode(): void {
@@ -501,22 +500,23 @@ export class CreateComponent implements OnInit, OnDestroy {
         next: (response) => {
           if (response.IsSuccess) {
             this.loadPortList();
+            console.log(response.Data.Items);
             response.Data.Items.forEach(item => {
               const patchedModel = {
                 ...item,
-                ProductName: item.Product!.ProductName,
+                ProductName: item.Product!.ProductName || '',
               };
               const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
               productForm.patchValue(patchedModel);
               this.productListArray.push(productForm);
             });
             this.tableDef.data = this.productListArray.value;
-            this.selectedCustomerAddress = model.Customer?.BillingAddress!;
+            this.selectedVendorAddress = model.Vendor?.BillingAddress!;
             const patchedModel = {
               ...model,
-              CustomerID: model.Customer?.CompanyID,
-              CustomerName: model.Customer?.CompanyName,
-              ExportOrderDate: DateUtils.toDate(model.ImportOrderDate),
+              VendorID: model.Vendor?.CompanyID,
+              VendorName: model.Vendor?.CompanyName,
+              ImportOrderDate: DateUtils.toDate(model.ImportOrderDate),
               ReferenceDate: DateUtils.toDate(model.ReferenceDate),
               ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
             };

@@ -357,6 +357,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    console.log(this.form.errors, this.form);
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
@@ -497,6 +498,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
+            console.log(response.Data.Items);
             this.loadPortList();
             response.Data.Items.forEach(item => {
               const patchedModel = {

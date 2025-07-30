@@ -36,7 +36,7 @@
                 </div>
                 <div class="col-xl-9"></div>
                 <div class="col-xl-12 form-group px-2">
-                  <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
+                  <z-span [text]="selectedVendorAddress ?? ''"></z-span>
                 </div>
 
                 <!-- Currency & Exchange -->
@@ -149,8 +149,8 @@
   {{i + 1}}
 </ng-template>
 
-<ng-template #salesQtyColTemplate let-row let-i="index">
-  <z-inputnumber [group]="productListArray.at(i)" [control]="'SalesQty'" [label]="formConfig.ProductList.items.SalesQty.label" [validationMessage]="formConfig.ProductList.items.SalesQty.error"
+<ng-template #purchaseQtyColTemplate let-row let-i="index">
+  <z-inputnumber [group]="productListArray.at(i)" [control]="'PurchaseQty'" [label]="formConfig.ProductList.items.PurchaseQty.label" [validationMessage]="formConfig.ProductList.items.PurchaseQty.error"
     (onChange)="productCalculation()">
   </z-inputnumber>
 </ng-template>
@@ -164,7 +164,7 @@
 </ng-template>
 
 <ng-template #taxRateColTemplate let-row let-i="index">
-  <z-select [group]="productListArray.at(i)" [control]="'SalesTaxRate'" [label]="formConfig.ProductList.items.SalesTaxRate.label" [validationMessage]="formConfig.ProductList.items.SalesTaxRate.error"
+  <z-select [group]="productListArray.at(i)" [control]="'PurchaseTaxRate'" [label]="formConfig.ProductList.items.PurchaseTaxRate.label" [validationMessage]="formConfig.ProductList.items.PurchaseTaxRate.error"
     [options]="taxSlabList" [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="onTaxSlabChange();">
   </z-select>
 </ng-template>

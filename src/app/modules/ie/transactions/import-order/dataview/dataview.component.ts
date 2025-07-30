@@ -100,6 +100,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data.Items)
               const data = response.Data.Items.map(item => ({
                 ...item,
                 ImportOrderDate: DateUtils.formatDate(item.ImportOrderDate),

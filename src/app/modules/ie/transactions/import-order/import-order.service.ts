@@ -83,6 +83,7 @@ export class ImportOrderService {
   }
 
   CancelOrder(model: ImportOrder): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
 
@@ -212,15 +213,15 @@ export class ImportOrderService {
               required: "Product is required"
             }
           },
-          SalesQty: {
+          PurchaseQty: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Sales Qty is required"
+              required: "Purchase Qty is required"
             }
           },
-          SalesTaxRate: {
+          PurchaseTaxRate: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
