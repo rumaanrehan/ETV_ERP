@@ -1,3 +1,5 @@
+import { TemplateRef } from "@angular/core";
+
 export interface ExportOrderPayment {
   ExportOrderPaymentID: number | null;
   ExportOrderPaymentNo: string | null;
@@ -37,4 +39,10 @@ export interface ExportOrderPaymentRequest {
   ExportOrderPaymentNo?: string | null;
   PaymentRefNo?: string | null;
   PopulateType?: string | null;
+}
+
+export interface ExportOrderPaymentTemplate {
+    SerialNoTemplate?: TemplateRef<any>;
+    PaymentDateTemplate?: TemplateRef<any>;
+    ActionTemplate?: TemplateRef<any>;
 }

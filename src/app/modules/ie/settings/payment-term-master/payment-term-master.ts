@@ -3,18 +3,12 @@ export interface PaymentTermMaster {
   PaymentTermCode: string | null;
   PaymentTermName: string | null;
   Description: string | null;
-  ActiveStatus?: boolean | null;
-  CreatedBy?: string | null;
-  CreatedDateTime?: string | null;
-  ModifiedBy?: string | null;
-  ModifiedDateTime?: string | null;
 }
 
 export interface PaymentTerm_IndexTableList {
   PaymentTermID: number;
   PaymentTermCode: string;
   PaymentTermName: string;
-  Description: string;
   ActiveStatus: boolean;
 }
 

@@ -62,9 +62,9 @@
 .page-action-panel {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   background: var(--background-tertiary);
   padding: 0.1875rem 0;
-  // box-shadow: 0 -2px 5px rgba(40, 90, 185, 0.1);
 }
 
 .page-action-panel>div{
@@ -750,4 +750,19 @@ span {
 
 .numeric-span span {
   justify-content: end;
+}
+
+.lazyload-data-container {
+  display: flex;
+  align-items: center;
+  min-height: 10rem;
+}
+
+.status-pill {
+  padding: 5px 10px;
+  border-radius: 25px;
+}
+
+.status-pill span {
+  color: #fff;
 }

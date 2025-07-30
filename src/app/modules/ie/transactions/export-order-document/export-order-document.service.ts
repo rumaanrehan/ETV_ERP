@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -10,6 +10,8 @@ import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z
 import { ExportOrderService } from '../export-order/export-order.service';
 import { HttpClient } from '@angular/common/http';
 import { ExportOrderDocument_IndexTableFilter, ExportOrderDocument_IndexTableList, ExportOrderDocument } from './export-order-document';
+import { DocumentType_SelectList, DocumentTypeRequest } from '../../settings/document-type-master/document-type-master';
+import { DocumentTypeMasterService } from '../../settings/document-type-master/document-type-master.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +22,17 @@ export class ExportOrderDocumentService {
   constructor(
     private apiService: ApiService,
     private exportOrderService: ExportOrderService,
+    private documentTypeMasterService: DocumentTypeMasterService,
     private http: HttpClient
   ) { } 
+
+  GetMasterDropdownLists(): Observable<{
+    documentTypeList: ApiListResponse<DocumentType_SelectList>;
+    }> {
+    return forkJoin({
+      documentTypeList: this.documentTypeMasterService.PopulateList({PopulateType: 'SelectList'} as DocumentTypeRequest),
+    });
+  }
     
   GetExportOrderList(model: ExportOrderRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
     return this.exportOrderService.PopulateList(model);
@@ -51,7 +62,7 @@ export class ExportOrderDocumentService {
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ExportOrderDocument_IndexTableFilter> {
     return {
       ExportOrderNo: '',
-      DocumentFile: '',
+      DocumentTypeName: '',
     }
   }
 

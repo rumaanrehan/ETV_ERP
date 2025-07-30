@@ -8,8 +8,8 @@ export interface ExportOrder {
     ReferenceDate: Date | null;
     ReferenceNo: string | null;
     CustomerID: number | null;
-    CustomerName: number | null;
-
+    CustomerName: string | null;
+    
     //Exchange Rate Details
     FCCurrencyID: number | null;
     ExchangeRateDate: Date | null;
@@ -27,7 +27,7 @@ export interface ExportOrder {
     TaxAmountFC: number | null;
     SubtotalAmountBC: number | null;
     TaxAmountBC: number | null;
-    PaymentTerms: string | null;
+    PaymentTermID: number | null;
     ShipmentModeID: string | null;
     LoadingPortID: number | null;
     DischargePortID: number | null;
@@ -69,6 +69,14 @@ export interface ExportOrderDetail {
 
 export interface ExportOrder_IndexTableFilter {
     ExportOrderNo: string | null;
+    ReferenceNo: string | null;
+    CustomerName: string | null;
+    IncotermID: number | null;
+    DutyDrawableID: number | null;
+    RoDTEPID: number | null;
+    ShipmentModeID: number | null;
+    LoadingPortID: number | null;
+    DischargePortID: number | null;
     StatusID: number | null;
 }
 
@@ -85,4 +93,25 @@ export interface ExportOrder_IndexTableList {
     NetAmountBC: number;
     IsKnockOff: boolean;
     StatusID: number;
+}
+
+export interface ExportOrderDocumentList {
+    ExportOrderDocumentID: number;
+    ExportOrderID: number;
+    ExportOrderNo: string;
+    DocumentTypeName: string;
+    DocumentPath: string;
+    IsVerfied: boolean;
+    UploadedBy: string;
+    UploadedDateTime: Date;
+}
+
+export interface ExportOrderPaymentList {
+    ExportOrderPaymentID: number;
+    ExportOrderNo: string;
+    ExportOrderPaymentNo: string;
+    PaymentRefNo: string;
+    PaymentAmountBC: number;
+    PaymentDate: Date;
+    CreatedBy: string;
 }

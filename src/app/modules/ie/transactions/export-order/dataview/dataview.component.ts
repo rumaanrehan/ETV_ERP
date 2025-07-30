@@ -44,7 +44,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   statusList: StaticList[] = [
     {iValue: 0, Text: "All", cValue: ""},
     {iValue: 1, Text: "processing", cValue: ""},
-    {iValue: 2, Text: "ready_to_ship", cValue: ""},
+    {iValue: 2, Text: "Ready To Ship", cValue: ""},
   ]
 
   sortFieldList: any[] = [
@@ -101,12 +101,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              const data = response.Data.Items.map(item => ({
-                ...item,
-                ExportOrderDate: DateUtils.formatDate(item.ExportOrderDate),
-                ReferenceDate: DateUtils.formatDate(item.ReferenceDate),
-              }));
-              this.dataViewDef.data = data;
+              this.dataViewDef.data = response.Data.Items;
               this.dataViewDef.totalRecords = response.Data.TotalRecords;
             }
             else {
@@ -131,15 +126,20 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickCancel(model: ExportOrder) {
+  onClickCancel(row: any) {
     this.alertService
-    .showConfirmation({
+    .showConfirmationWithInput({
       text: 'Do you want to cancel?',
+      inputPlaceholder: 'Reason to cancel'
     })
     .then((result) => {
       if (result.isConfirmed) {
-        this.pageService
-        .CancelOrder(model)
+        const model: ExportOrder = {
+          ...row,
+          ReasonToUpdate : result.Message 
+        }
+
+        this.pageService.CancelOrder(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -165,6 +165,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
         return 'Processing';
       case 2:
         return 'Ready to ship';
+      case 3:
+        return 'Canceled';
       default:
         return 'Undefined';
     }
@@ -240,5 +242,9 @@ export class DataviewComponent implements OnInit, OnDestroy {
     model.ExportOrderID = row.ExportOrderID;
     model.ExportOrderNo = row.ExportOrderNo;
     this.loadDynamicComponent(model);
+  }
+
+  formatDate(date: Date){
+    return DateUtils.formatDate(date);
   }
 }

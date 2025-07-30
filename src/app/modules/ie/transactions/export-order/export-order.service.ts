@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, TemplateRef } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../shared/models/form.model';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderDetail, ExportOrderRequest } from './export-order';
+import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
@@ -18,6 +18,11 @@ import { StaticList, StaticListRequest } from '../../../../shared/models/select-
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { TaxSlabMasterService } from '../../../admin/settings/TaxSlabMaster/tax-slab-master.service';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
+import { TableDef } from '../../../../shared/components/z-table/z-table';
+import { ExportOrderDocumentTemplate } from '../export-order-document/export-order-document';
+import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
+import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
+import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
 
 @Injectable({
   providedIn: 'root'
@@ -27,18 +32,21 @@ export class ExportOrderService {
 
   constructor(
     private apiService: ApiService,
-    private portService: PortMasterService,
     private companyMasterService: CompanyMasterService,
     private productMasterService: ProductMasterService,
+    private paymentTermMasterService: PaymentTermMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
+    private portService: PortMasterService,
     private selectListService: SelectListService
   ) { }
 
   GetMasterDropdownLists(): Observable<{
+    paymentTermList: ApiListResponse<PaymentTerm_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
     }> {
     return forkJoin({
-      taxSlabList: this.taxSlabMasterService.PopulateList({PopulateType: 'SelectList'} as TaxSlabRequest),
+      paymentTermList: this.paymentTermMasterService.PopulateList({PopulateType: 'SelectList'} as PaymentTermRequest),
+      taxSlabList: this.taxSlabMasterService.PopulateList({PopulateType: 'SelectList'} as TaxSlabRequest)
     });
   }
 
@@ -75,7 +83,6 @@ export class ExportOrderService {
   }
 
   CreateRecord(model: ExportOrder): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
@@ -84,7 +91,28 @@ export class ExportOrderService {
   }
 
   CancelOrder(model: ExportOrder): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  LoadDocument(exportOrderID: number): Observable<ApiListResponse<ExportOrderDocumentList>> {
+    return this.apiService.post<ApiListResponse<ExportOrderDocumentList>>(`${this.endpoint}/LoadDocument?exportOrderID=${exportOrderID}`, {});
+  }
+
+  GetDocument(documentPath: string): Observable<Blob> {
+    return this.apiService.blobPost(`FileHandler/download?documentPath=${documentPath}`, {});
+  }
+
+  DeleteDocument(model: ExportOrderDocumentList): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/DeleteDocument`, model);
+  }
+
+  LoadPayment(exportOrderID: number): Observable<ApiListResponse<ExportOrderPaymentList>> {
+    return this.apiService.post<ApiListResponse<ExportOrderPaymentList>>(`${this.endpoint}/LoadPayment?exportOrderID=${exportOrderID}`, {});
+  }
+
+  DeletePayment(model: ExportOrderPaymentList): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/DeletePayment`, model);
   }
 
   getFormConfig_DataTableFilter(): FormConfigType<ExportOrder_IndexTableFilter> {
@@ -93,11 +121,43 @@ export class ExportOrderService {
         label: 'Order No',
         defaultValue: ''
       },
+      ReferenceNo: {
+        label: 'Reference No',
+        defaultValue: ''
+      },
+      CustomerName: {
+        label: 'Customer Name',
+        defaultValue: ''
+      },
+      IncotermID: {
+        label: 'Incoterm',
+        defaultValue: 0
+      },
+      DutyDrawableID: {
+        label: 'Is Duty Drawable',
+        defaultValue: 0
+      },
+      RoDTEPID: {
+        label: 'Is RoDTEP',
+        defaultValue: 0
+      },
+      ShipmentModeID: {
+        label: 'Shipment Mode',
+        defaultValue: 0
+      },
+      LoadingPortID: {
+        label: 'Loading Port',
+        defaultValue: 0
+      },
+      DischargePortID: {
+        label: 'Discharge Port',
+        defaultValue: 0
+      },
       StatusID: {
         label: 'Status',
         defaultValue: 0
       }
-    };
+    }
   }
 
   getFormConfig(): FormConfigType<ExportOrder> {
@@ -143,12 +203,8 @@ export class ExportOrderService {
         }
       },
       CustomerName: {
-        label: 'Customer',
+        label: 'Customer Name',
         defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Customer Name is required"
-        }
       },
       FCCurrencyID: {
         label: 'Foreign Currency',
@@ -254,7 +310,7 @@ export class ExportOrderService {
             }
           },
           TaxAmountBC: {
-            label: 'Tax Amount BC',
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
@@ -278,7 +334,7 @@ export class ExportOrderService {
             }
           },
           TaxableAmountBC: {
-            label: 'Taxable Amount BC',
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
@@ -287,8 +343,8 @@ export class ExportOrderService {
           }
         }
       },
-      PaymentTerms: {
-        label: 'Payment Terms',
+      PaymentTermID: {
+        label: 'Payment Term',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
@@ -345,6 +401,38 @@ export class ExportOrderService {
         label: 'Tax Amount (BC)',
         defaultValue: null
       }
+    };
+  }
+
+  getExportOrderDocumentTableDef(templateList: ExportOrderDocumentTemplate): TableDef<ExportOrderDocumentList> {
+    return {
+      columnDef: [
+        { data: '', label: 'S No', hideVisToggle: true, width: '5%', customTemplate: templateList.SerialNoTemplate },
+        { data: 'ExportOrderDocumentID', label: 'Document ID', visible: false, hideVisToggle: true, width: '10%' },
+        { data: 'ExportOrderNo', label: 'Export Order No', width: '20%' },
+        { data: 'DocumentTypeName', label: 'Document Type', width: '20%' },
+        { data: 'UploadedDateTime', label: 'Uploaded On', width: '10%', customTemplate: templateList.UpdateDateTemplate },
+        { data: 'UploadedBy', label: 'Uploaded By', width: '10%' },
+        { data: '', label: 'Is Verified', hideVisToggle: true, width: '10%', customTemplate: templateList.IsVerfiedTemplate },
+        { data: '', label: '', hideVisToggle: true, width: '10%', customTemplate: templateList.ActionTemplate },
+      ],
+      data: []
+    };
+  }
+
+  getExportOrderPaymentTableDef(templateList: ExportOrderPaymentTemplate): TableDef<ExportOrderPaymentList> {
+    return {
+      columnDef: [
+        { data: '', label: 'S No', hideVisToggle: true, width: '5%', customTemplate: templateList.SerialNoTemplate },
+        { data: 'ExportOrderNo', label: 'Export Order No', width: '15%' },
+        { data: 'ExportOrderPaymentNo', label: 'Payment No', width: '15%' },
+        { data: 'PaymentRefNo', label: 'Reference No', width: '20%' },
+        { data: 'PaymentAmountBC', label: 'Amount (BC)', width: '10%', cssClass: 'text-end' },
+        { data: 'PaymentDate', label: 'Payment Date', width: '15%', customTemplate: templateList.PaymentDateTemplate },
+        { data: 'CreatedBy', label: 'Created By', width: '10%' },
+        { data: '', label: '', hideVisToggle: true, width: '10%', customTemplate: templateList.ActionTemplate }
+      ],
+      data: []
     };
   }
 

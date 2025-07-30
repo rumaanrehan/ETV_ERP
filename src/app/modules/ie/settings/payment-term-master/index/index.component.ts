@@ -40,7 +40,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
 
     this.tableDef = {
-      tableKey: 'IMS_PaymentTermMaster_IndexTable',
+      tableKey: 'IE_PaymentTermMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'PaymentTermCode', sortOrder: 1 },
       filterForm: this.formService.createFormGroup_DataTableFilter<PaymentTerm_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
@@ -51,8 +51,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'PaymentTermCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.paymentTermCodeTemplate },
-      { data: 'PaymentTermName', label: 'PaymentTerm Name', width: "50%", filterable: true },
-      { data: 'Description', label: 'Description', width: "15%", orderable: false },
+      { data: 'PaymentTermName', label: 'Payment Term Name', width: "50%", filterable: true },
       { data: 'ActiveStatus', label: 'Status', width: "15%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.paymentTermActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];

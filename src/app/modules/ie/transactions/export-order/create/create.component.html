@@ -88,9 +88,9 @@
                   </z-table>
                 </div>
                 <!-- Payment & Shipment -->
-                <div class="col-xl-12 form-group px-2">
-                  <z-textarea [group]="form" [control]="'PaymentTerms'"
-                    [label]="formConfig.PaymentTerms.label"></z-textarea>
+                <div class="col-xl-2 form-group px-2">
+                  <z-select [group]="form" [control]="'PaymentTermID'" [label]="formConfig.PaymentTermID.label"
+                    [options]="paymentTermList" [optionLabel]="'PaymentTermName'" [optionValue]="'PaymentTermID'"></z-select>
                 </div>
                 <!-- Shipment -->
                 <h6 class="form-group px-2">Shipment</h6>
@@ -119,11 +119,43 @@
                 </div>
                 <div class="col-xl-4"></div>
                 <!-- Status -->
-                <div class="col-md-2 form-group px-2">
+                <div class="col-md-2 form-group px-2" *ngIf="!isEditMode">
                   <z-select [group]="form" [control]="'StatusID'" [label]="formConfig.StatusID.label"
                     [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="statusList"></z-select>
                 </div>
               </div> <!-- row -->
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 card m-auto mb-2" *ngIf="isEditMode">
+          <div class="card-header">
+            <h6>Export Order Documents</h6>
+          </div>
+          <div class="card-body lazyload-data-container">
+            <div class="col-xl-12">
+              <div class="col-xl-2 m-auto" *ngIf="isLoadDocumentVisible">
+                <button class="btn btn-primary" [type]="'button'" (click)="onClickLoadDocuments()">
+                  <i class="pi pi-spinner-dotted"></i>&nbsp;&nbsp;
+                  <span class="text-white">Load Documents</span>
+                </button>
+              </div>
+              <z-table [tableDef]="exportOrderDocumentTableDef" *ngIf="!isLoadDocumentVisible"></z-table>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 card m-auto mb-2" *ngIf="isEditMode">
+          <div class="card-header">
+            <h6>Export Order Payments</h6>
+          </div>
+          <div class="card-body lazyload-data-container">
+            <div class="col-xl-12">
+              <div class="col-xl-2 m-auto" *ngIf="isLoadPaymentVisible">
+                <button class="btn btn-primary" [type]="'button'" (click)="onClickLoadPayments()">
+                  <i class="pi pi-spinner-dotted"></i>&nbsp;&nbsp;
+                  <span class="text-white">Load Payments</span>
+                </button>
+              </div>
+              <z-table [tableDef]="exportOrderPaymentTableDef" *ngIf="!isLoadPaymentVisible"></z-table>
             </div>
           </div>
         </div>
@@ -132,7 +164,11 @@
   </div>
   <div class="page-action-panel">
     <div class="col-xl-4"></div>
-    <div class="col-xl-4"></div>
+    <div class="col-xl-4">
+      <div class="status-pill" [ngStyle]="{'background-color': 'green'}" *ngIf="isEditMode">
+          <span>Status: Processing</span>
+      </div>
+    </div>
     <div class="col-xl-4">
       <div class="col-xl-3 px-1">
         <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"> {{ isEditMode ? "Update" : "Save" }} </button>
@@ -144,7 +180,7 @@
   </div>
 </div>
 
-
+<!-- Export Order Item Table Related Templates Start-->
 <ng-template #serialNoColTemplate let-row let-i="index">
   {{i + 1}}
 </ng-template>
@@ -158,8 +194,8 @@
 <ng-template #ratePerUnitColTemplate let-row let-i="index">
   <div class="input-group">
     <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
-    <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitBC'" [mode]="'currency'" [label]="formConfig.ProductList.items.RatePerUnitBC.label"
-      [validationMessage]="formConfig.ProductList.items.RatePerUnitBC.error" (onChange)="productCalculation()"></z-inputnumber>
+    <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitBC'"[label]="formConfig.ProductList.items.RatePerUnitBC.label"
+      [validationMessage]="formConfig.ProductList.items.RatePerUnitBC.error" [styleClass]="'text-end'" (onChange)="productCalculation()"></z-inputnumber>
   </div>
 </ng-template>
 
@@ -172,14 +208,18 @@
 <ng-template #taxableAmountBCColTemplate let-row let-i="index">
   <div class="input-group">
     <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
-    <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[0].toString()"></z-span>
+    <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxableAmountBC'"[label]="formConfig.ProductList.items.TaxableAmountBC.label"
+      [validationMessage]="formConfig.ProductList.items.TaxableAmountBC.error" [styleClass]="'text-end'"></z-inputnumber>
+    <!-- <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[0].toString()"></z-span> -->
   </div>
 </ng-template>
 
 <ng-template #taxAmountBCColTemplate let-row let-i="index">
   <div class="input-group">
     <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
-    <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[1].toString()"></z-span>
+    <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxAmountBC'"[label]="formConfig.ProductList.items.TaxAmountBC.label"
+      [validationMessage]="formConfig.ProductList.items.TaxAmountBC.error" [styleClass]="'text-end'"></z-inputnumber>
+    <!-- <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[1].toString()"></z-span> -->
   </div>
 </ng-template>
 
@@ -190,3 +230,54 @@
     <i class="pi pi-minus-circle"></i></span>
   </div>
 </ng-template>
+<!-- Export Order Item Table Related Templates End-->
+
+
+<!-- Export Order Document Related Templates Start-->
+<ng-template #documentActionColTemplate let-row let-i="index">
+  <div class="col-xl-12 d-flex justify-content-between">
+    <div class="d-flex justify-content-end px-2">
+      <span class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" 
+      (click)="onClickViewDocumentItem(row)" >
+      <i class="pi pi-eye"></i></span>
+    </div>
+
+    <div class="d-flex justify-content-end px-2">
+      <span class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" 
+      (click)="onClickDownloadDocumentItem(row)" >
+      <i class="pi pi-arrow-circle-down"></i></span>
+    </div>
+
+    <div class="d-flex justify-content-end px-2">
+      <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate" 
+      (click)="onClickRemoveDocumentItem(row)" >
+      <i class="pi pi-minus-circle"></i></span>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #isDocumentVerifiedTemplate let-row let-i="index">
+  <span class="{{ row.IsVerified ? 'text-success' : 'text-danger' }}">
+    <i class="pi {{ row.IsVerified ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
+  </span>
+</ng-template>
+
+<ng-template #documentUploadDateTemplate let-row let-i="index">
+  {{formatDate(row.UploadedDateTime)}}
+</ng-template>
+<!-- Export Order Document Related Templates End-->
+
+<!-- Export Order Payment Related Templates Start-->
+
+<ng-template #paymentDateTemplate let-row let-i="index">
+  {{formatDate(row.PaymentDate)}}
+</ng-template>
+
+<ng-template #paymentActionColTemplate let-row let-i="index">
+  <div class="d-flex justify-content-end">
+    <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate" 
+     (click)="onClickRemovePaymentItem(row)" >
+    <i class="pi pi-minus-circle"></i></span>
+  </div>
+</ng-template>
+<!-- Export Order Payment Related Templates End-->
