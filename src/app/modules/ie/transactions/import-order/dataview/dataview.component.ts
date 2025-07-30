@@ -43,7 +43,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   statusList: StaticList[] = [
     {iValue: 0, Text: "All", cValue: ""},
     {iValue: 1, Text: "processing", cValue: ""},
-    {iValue: 2, Text: "ready_to_ship", cValue: ""},
+    {iValue: 2, Text: "ready_to_ship", cValue: ""}
   ]
 
   sortFieldList: any[] = [
@@ -100,15 +100,20 @@ export class DataviewComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items)
-              const data = response.Data.Items.map(item => ({
-                ...item,
-                ImportOrderDate: DateUtils.formatDate(item.ImportOrderDate),
-                ReferenceDate: DateUtils.formatDate(item.ReferenceDate),
-              }));
-              this.dataViewDef.data = data;
+              console.log(response.Data.Items);
+              this.dataViewDef.data = response.Data.Items;
               this.dataViewDef.totalRecords = response.Data.TotalRecords;
             }
+            // if (response.IsSuccess) {
+            //   console.log(response.Data.Items)
+            //   const data = response.Data.Items.map(item => ({
+            //     ...item,
+            //     ImportOrderDate: DateUtils.formatDate(item.ImportOrderDate),
+            //     ReferenceDate: DateUtils.formatDate(item.ReferenceDate),
+            //   }));
+            //   this.dataViewDef.data = data;
+            //   this.dataViewDef.totalRecords = response.Data.TotalRecords;
+            // }
             else {
               this.dataViewDef.data = [];
               this.dataViewDef.totalRecords = 0;
@@ -165,6 +170,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
         return 'Processing';
       case 2:
         return 'Ready to ship';
+      case 3:
+        return 'Cancelled';
       default:
         return 'Undefined';
     }
@@ -240,5 +247,13 @@ export class DataviewComponent implements OnInit, OnDestroy {
     model.ImportOrderID = row.ImportOrderID;
     model.ImportOrderNo = row.ImportOrderNo;
     this.loadDynamicComponent(model);
+  }
+
+  formatDateToIndian(dateStr: any) {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');  // Months are 0-based
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   }
 }

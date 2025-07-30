@@ -15,7 +15,7 @@ export const ieRoute: Routes = [
   { path: 'ie/letter-of-credit/index', loadComponent: () => import('./transactions/letter-of-credit/index/index.component').then(m => m.IndexComponent)},
   { path: 'ie/document-type-master/index', loadComponent: () => import('./settings/document-type-master/index/index.component').then((m) => m.IndexComponent) },
   { path: 'ie/document-mapping/index', loadComponent: () => import('./transactions/export-order-document/index/index.component').then((m) => m.IndexComponent) },
-    {path: 'ie/payment-term-master/index', loadComponent: () => import('./settings/payment-term-master/index/index.component').then((m) => m.IndexComponent) },
+  {path: 'ie/payment-term-master/index', loadComponent: () => import('./settings/payment-term-master/index/index.component').then((m) => m.IndexComponent) },
   { path: 'ie/export-document-mapping/index', loadComponent: () => import('./transactions/export-order-document/index/index.component').then((m) => m.IndexComponent) },
   { path: 'ie/import-document-mapping/index', loadComponent: () => import('./transactions/import-order/import-order-document/index/index.component').then((m) => m.IndexComponent) },
 ];
