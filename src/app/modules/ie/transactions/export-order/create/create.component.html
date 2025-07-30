@@ -88,9 +88,9 @@
                   </z-table>
                 </div>
                 <!-- Payment & Shipment -->
-                <div class="col-xl-12 form-group px-2">
-                  <z-textarea [group]="form" [control]="'PaymentTerms'"
-                    [label]="formConfig.PaymentTerms.label"></z-textarea>
+                <div class="col-xl-2 form-group px-2">
+                  <z-select [group]="form" [control]="'PaymentTermID'" [label]="formConfig.PaymentTermID.label"
+                    [options]="paymentTermList" [optionLabel]="'PaymentTermName'" [optionValue]="'PaymentTermID'"></z-select>
                 </div>
                 <!-- Shipment -->
                 <h6 class="form-group px-2">Shipment</h6>
@@ -165,7 +165,7 @@
   <div class="page-action-panel">
     <div class="col-xl-4"></div>
     <div class="col-xl-4">
-      <div class="status-pill" [ngStyle]="{'background-color': 'green'}">
+      <div class="status-pill" [ngStyle]="{'background-color': 'green'}" *ngIf="isEditMode">
           <span>Status: Processing</span>
       </div>
     </div>
@@ -234,7 +234,7 @@
 
 
 <!-- Export Order Document Related Templates Start-->
-<ng-template #actionColTemplate let-row let-i="index">
+<ng-template #documentActionColTemplate let-row let-i="index">
   <div class="col-xl-12 d-flex justify-content-between">
     <div class="d-flex justify-content-end px-2">
       <span class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" 
@@ -255,11 +255,25 @@
     </div>
   </div>
 </ng-template>
+
+<ng-template #isDocumentVerifiedTemplate let-row let-i="index">
+  <span class="{{ row.IsVerified ? 'text-success' : 'text-danger' }}">
+    <i class="pi {{ row.IsVerified ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
+  </span>
+</ng-template>
+
+<ng-template #documentUploadDateTemplate let-row let-i="index">
+  {{formatDate(row.UploadedDateTime)}}
+</ng-template>
 <!-- Export Order Document Related Templates End-->
 
 <!-- Export Order Payment Related Templates Start-->
 
-<ng-template #removePaymentColTemplate let-row let-i="index">
+<ng-template #paymentDateTemplate let-row let-i="index">
+  {{formatDate(row.PaymentDate)}}
+</ng-template>
+
+<ng-template #paymentActionColTemplate let-row let-i="index">
   <div class="d-flex justify-content-end">
     <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate" 
      (click)="onClickRemovePaymentItem(row)" >

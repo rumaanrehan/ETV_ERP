@@ -12,10 +12,10 @@ import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-on
   providedIn: 'root'
 })
 export class PaymentTermMasterService {
-  private endpoint = 'IMS/PaymentTermMaster';
+  private endpoint = 'IE/PaymentTermMaster';
 
   constructor(
-    private apiService: ApiService,
+    private apiService: ApiService
   ) {}
 
   PopulateList(model: PaymentTermRequest): Observable<ApiListResponse<PaymentTerm_SelectList>> {
@@ -23,6 +23,7 @@ export class PaymentTermMasterService {
   }
 
   PopulateGrid(model: DataTableParams<PaymentTerm_IndexTableFilter>): Observable<ApiPagedListResponse<PaymentTerm_IndexTableList>> {
+    console.log(model);
     return this.apiService.post<ApiPagedListResponse<PaymentTerm_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
@@ -73,7 +74,10 @@ export class PaymentTermMasterService {
         label: 'Description',
         defaultValue: null,
         validators: [NotOnlyWhitespaceValidator()],
-      },
+        validationMessages: {
+          required: 'Description is required'
+        }
+      }
     };
   }
 }

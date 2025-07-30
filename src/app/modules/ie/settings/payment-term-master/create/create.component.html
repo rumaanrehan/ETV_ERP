@@ -8,10 +8,14 @@
                 <z-span [text]="form.get('PaymentTermCode')?.value" [label]="formConfig.PaymentTermCode.label"></z-span>
             </div>
             <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'PaymentTermName'" [label]="formConfig.PaymentTermName.label"></z-inputtext>
+                <z-inputtext [group]="form" [control]="'PaymentTermName'" [label]="formConfig.PaymentTermName.label"
+                    [validationMessage]="formConfig.PaymentTermCode.error">
+                </z-inputtext>
             </div>
             <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'Description'" [label]="formConfig.Description.label"></z-inputtext>
+                <z-textarea [group]="form" [control]="'Description'" [label]="formConfig.Description.label"
+                    [validationMessage]="formConfig.Description.error">
+                </z-textarea>
             </div>
         </form>
     </div>

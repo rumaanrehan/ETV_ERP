@@ -23,7 +23,7 @@ export interface ExportOrderDocument_IndexTableList {
 
 export interface ExportOrderDocumentTemplate {
     SerialNoTemplate?: TemplateRef<any>;
+    IsVerfiedTemplate?: TemplateRef<any>;
+    UpdateDateTemplate?: TemplateRef<any>;
     ActionTemplate?: TemplateRef<any>;
-    DownloadTemplate?: TemplateRef<any>;
-    RemoveTemplate?: TemplateRef<any>;
 }

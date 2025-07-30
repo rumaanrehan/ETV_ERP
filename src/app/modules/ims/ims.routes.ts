@@ -9,5 +9,4 @@ export const imsRoute: Routes = [
   {path: 'ims/uom-master/index', loadComponent: () => import('./settings/uom-master/index/index.component').then((m) => m.IndexComponent) },
   {path: 'ims/manufacturer-master/index', loadComponent: () => import('./settings/manufacturer-master/index/index.component').then((m) => m.IndexComponent) },
   {path: 'ims/hsn-sac-master/index', loadComponent: () => import('./settings/hsn-code-master/index/index.component').then((m) => m.IndexComponent) },
-  {path: 'ims/payment-term-master/index', loadComponent: () => import('./settings/payment-term-master/index/index.component').then((m) => m.IndexComponent) },
 ];

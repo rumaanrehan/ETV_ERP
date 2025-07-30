@@ -20,6 +20,9 @@ import { TaxSlabMasterService } from '../../../admin/settings/TaxSlabMaster/tax-
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
 import { TableDef } from '../../../../shared/components/z-table/z-table';
 import { ExportOrderDocumentTemplate } from '../export-order-document/export-order-document';
+import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
+import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
+import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
 
 @Injectable({
   providedIn: 'root'
@@ -29,18 +32,21 @@ export class ExportOrderService {
 
   constructor(
     private apiService: ApiService,
-    private portService: PortMasterService,
     private companyMasterService: CompanyMasterService,
     private productMasterService: ProductMasterService,
+    private paymentTermMasterService: PaymentTermMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
+    private portService: PortMasterService,
     private selectListService: SelectListService
   ) { }
 
   GetMasterDropdownLists(): Observable<{
+    paymentTermList: ApiListResponse<PaymentTerm_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
     }> {
     return forkJoin({
-      taxSlabList: this.taxSlabMasterService.PopulateList({PopulateType: 'SelectList'} as TaxSlabRequest),
+      paymentTermList: this.paymentTermMasterService.PopulateList({PopulateType: 'SelectList'} as PaymentTermRequest),
+      taxSlabList: this.taxSlabMasterService.PopulateList({PopulateType: 'SelectList'} as TaxSlabRequest)
     });
   }
 
@@ -65,7 +71,6 @@ export class ExportOrderService {
   }
 
   PopulateGrid(model: DataTableParams<ExportOrder_IndexTableFilter>): Observable<ApiPagedListResponse<ExportOrder_IndexTableList>> {
-    console.log(model);
     return this.apiService.post<ApiPagedListResponse<ExportOrder_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
@@ -86,6 +91,7 @@ export class ExportOrderService {
   }
 
   CancelOrder(model: ExportOrder): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
 
@@ -337,8 +343,8 @@ export class ExportOrderService {
           }
         }
       },
-      PaymentTerms: {
-        label: 'Payment Terms',
+      PaymentTermID: {
+        label: 'Payment Term',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
@@ -405,25 +411,26 @@ export class ExportOrderService {
         { data: 'ExportOrderDocumentID', label: 'Document ID', visible: false, hideVisToggle: true, width: '10%' },
         { data: 'ExportOrderNo', label: 'Export Order No', width: '20%' },
         { data: 'DocumentTypeName', label: 'Document Type', width: '20%' },
-        { data: 'UploadedDateTime', label: 'Uploaded On', width: '10%' },
+        { data: 'UploadedDateTime', label: 'Uploaded On', width: '10%', customTemplate: templateList.UpdateDateTemplate },
         { data: 'UploadedBy', label: 'Uploaded By', width: '10%' },
+        { data: '', label: 'Is Verified', hideVisToggle: true, width: '10%', customTemplate: templateList.IsVerfiedTemplate },
         { data: '', label: '', hideVisToggle: true, width: '10%', customTemplate: templateList.ActionTemplate },
       ],
       data: []
     };
   }
 
-  getExportOrderPaymentTableDef(templateList: TemplateRef<any>[]): TableDef<ExportOrderPaymentList> {
+  getExportOrderPaymentTableDef(templateList: ExportOrderPaymentTemplate): TableDef<ExportOrderPaymentList> {
     return {
       columnDef: [
-        { data: '', label: 'S No', hideVisToggle: true, width: '5%', customTemplate: templateList[0] },
+        { data: '', label: 'S No', hideVisToggle: true, width: '5%', customTemplate: templateList.SerialNoTemplate },
         { data: 'ExportOrderNo', label: 'Export Order No', width: '15%' },
         { data: 'ExportOrderPaymentNo', label: 'Payment No', width: '15%' },
         { data: 'PaymentRefNo', label: 'Reference No', width: '20%' },
         { data: 'PaymentAmountBC', label: 'Amount (BC)', width: '10%', cssClass: 'text-end' },
-        { data: 'PaymentDate', label: 'Payment Date', width: '15%' },
+        { data: 'PaymentDate', label: 'Payment Date', width: '15%', customTemplate: templateList.PaymentDateTemplate },
         { data: 'CreatedBy', label: 'Created By', width: '10%' },
-        { data: '', label: '', hideVisToggle: true, width: '10%', customTemplate: templateList[1] }
+        { data: '', label: '', hideVisToggle: true, width: '10%', customTemplate: templateList.ActionTemplate }
       ],
       data: []
     };

@@ -9,12 +9,13 @@ import { DataTableFilterFormConfigType, FormConfigType } from '../../../../share
 import { ExportOrder_SelectList, ExportOrderRequest } from '../../../ie/transactions/export-order/export-order';
 import { ExportOrderService } from '../../../ie/transactions/export-order/export-order.service';
 import { LetterOfCredit, LetterOfCredit_IndexTableFilter, LetterOfCredit_IndexTableList } from './letter-of-credit';
+import { GreaterThan } from '../../../../shared/validators/greater-than.validator';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LetterOfCreditService {
-  private endpoint = 'Admin/LetterOfCredit';
+  private endpoint = 'IE/LetterOfCredit';
 
   constructor(
     private apiService: ApiService,
@@ -124,9 +125,10 @@ export class LetterOfCreditService {
       ExpiryDate: {
         label: 'Expiry Date',
         defaultValue: null,
-        validators: [Validators.required],
+        validators: [Validators.required, GreaterThan("IssueDate")],
         validationMessages: {
-          required: 'Expiry Date is required'
+          required: 'Expiry Date is required',
+          GreaterThan: 'Expiry date must be greater than issue date'
         }
       }
     }

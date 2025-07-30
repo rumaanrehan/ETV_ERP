@@ -21,6 +21,8 @@ import { ExportOrderService } from '../export-order.service';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { TaxSlab_SelectList, TaxSlabMaster } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
 import { ExportOrderDocumentTemplate } from '../../export-order-document/export-order-document';
+import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
+import { ExportOrderPaymentTemplate } from '../../export-order-payment/export-payment';
 
 @Component({
   selector: 'app-create',
@@ -41,10 +43,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('taxAmountBCColTemplate', { static: true }) taxAmountBCColTemplate!: TemplateRef<any>;
   
   //Export Order Document Table Related Template
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-  // @ViewChild('viewDocumentColTemplate', { static: true }) viewDocumentColTemplate!: TemplateRef<any>;
-  // @ViewChild('downloadDocumentColTemplate', { static: true }) downloadDocumentColTemplate!: TemplateRef<any>;
-  @ViewChild('removePaymentColTemplate', { static: true }) removePaymentColTemplate!: TemplateRef<any>;
+  @ViewChild('documentUploadDateTemplate', { static: true }) documentUploadDateTemplate!: TemplateRef<any>;
+  @ViewChild('isDocumentVerifiedTemplate', { static: true }) isDocumentVerifiedTemplate!: TemplateRef<any>;
+  @ViewChild('documentActionColTemplate', { static: true }) documentActionColTemplate!: TemplateRef<any>;
+  
+  //Export Order Payment Table Related Template
+  @ViewChild('paymentDateTemplate', { static: true }) paymentDateTemplate!: TemplateRef<any>;
+  @ViewChild('paymentActionColTemplate', { static: true }) paymentActionColTemplate!: TemplateRef<any>;
 
   selectedCustomerAddress!: string | null;
   isEditMode: boolean = false;
@@ -59,6 +64,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   exportOrderPaymentTableDef!: TableDef<ExportOrderPaymentList>
 
   customerList: Company_SelectList[] = [];
+  paymentTermList: PaymentTerm_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
   portList: Port_SelectList[] = [];
 
@@ -97,8 +103,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
-    this.exportOrderDocumentTableDef = this.pageService.getExportOrderDocumentTableDef({SerialNoTemplate: this.serialNoColTemplate, ActionTemplate: this.actionColTemplate} as ExportOrderDocumentTemplate);
-    this.exportOrderPaymentTableDef = this.pageService.getExportOrderPaymentTableDef([this.serialNoColTemplate, this.removePaymentColTemplate]);
+    this.exportOrderDocumentTableDef = this.pageService.getExportOrderDocumentTableDef({SerialNoTemplate: this.serialNoColTemplate ,IsVerfiedTemplate: this.isDocumentVerifiedTemplate, UpdateDateTemplate: this.documentUploadDateTemplate, ActionTemplate: this.documentActionColTemplate} as ExportOrderDocumentTemplate);
+    this.exportOrderPaymentTableDef = this.pageService.getExportOrderPaymentTableDef({SerialNoTemplate: this.serialNoColTemplate, PaymentDateTemplate: this.paymentDateTemplate, ActionTemplate: this.paymentActionColTemplate} as ExportOrderPaymentTemplate);
     this.tableDef = {
       columnDef: [
         {data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate},
@@ -131,6 +137,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data) => {
+        this.paymentTermList = data.paymentTermList.Data.Items;
         this.taxSlabList = data.taxSlabList.Data.Items;
       },
     });
@@ -549,14 +556,10 @@ export class CreateComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                const model: any[] = response.Data.Items.map(item => ({
-                  ...item,
-                  UploadedDateTime: DateUtils.formatDate(item.UploadedDateTime),
-                }));
-                this.exportOrderDocumentTableDef.data = model;
+                this.exportOrderDocumentTableDef.data = response.Data.Items;
                 this.isLoadDocumentVisible = false
               } else {
-                // this.alertService.showServerResponseAlert(response);
+                this.alertService.showServerResponseAlert(response);
               }
             },
           });
@@ -616,7 +619,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickRemoveDocumentItem(row: any){
+  onClickRemoveDocumentItem(row: any): void {
     this.alertService.showConfirmationWithInput({
       text: 'Do you really want to remove this document?',
       inputPlaceholder: 'Reason to delete'
@@ -646,7 +649,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  onClickLoadPayments(){
+  onClickLoadPayments(): void {
     this.route.params.subscribe((params) => {
       const exportOrderID = +params['id'];
       if (exportOrderID) {
@@ -655,16 +658,11 @@ export class CreateComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
-              console.log(response.Data.Items);
               if (response.IsSuccess) {
-                const model: any = response.Data.Items.map(item => ({
-                  ...item,
-                  PaymentDate: DateUtils.formatDate(item.PaymentDate)
-                }));
-                this.exportOrderPaymentTableDef.data = model;
+                this.exportOrderPaymentTableDef.data = response.Data.Items;
                 this.isLoadPaymentVisible = false;
               } else {
-                // this.alertService.showServerResponseAlert(response);
+                this.alertService.showServerResponseAlert(response);
               }
             },
           });
@@ -676,7 +674,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  onClickRemovePaymentItem(row: any){
+  onClickRemovePaymentItem(row: any): void {
     this.alertService.showConfirmationWithInput({
       text: 'Do you really want to remove this payment?',
     }).then((result) => {
@@ -703,5 +701,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  formatDate(date: Date){
+    return DateUtils.formatDate(date);
   }
 }

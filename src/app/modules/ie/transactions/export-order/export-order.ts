@@ -27,7 +27,7 @@ export interface ExportOrder {
     TaxAmountFC: number | null;
     SubtotalAmountBC: number | null;
     TaxAmountBC: number | null;
-    PaymentTerms: string | null;
+    PaymentTermID: number | null;
     ShipmentModeID: string | null;
     LoadingPortID: number | null;
     DischargePortID: number | null;
@@ -101,7 +101,7 @@ export interface ExportOrderDocumentList {
     ExportOrderNo: string;
     DocumentTypeName: string;
     DocumentPath: string;
-    DocumentName: string;
+    IsVerfied: boolean;
     UploadedBy: string;
     UploadedDateTime: Date;
 }
