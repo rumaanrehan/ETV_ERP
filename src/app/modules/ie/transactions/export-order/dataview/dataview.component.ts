@@ -37,18 +37,18 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   dataViewDef!: DataViewDef<ExportOrder_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
-  
+
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<ExportOrder_IndexTableFilter>
 
   statusList: StaticList[] = [
-    {iValue: 0, Text: "All", cValue: ""},
-    {iValue: 1, Text: "processing", cValue: ""},
-    {iValue: 2, Text: "Ready To Ship", cValue: ""},
+    { iValue: 0, Text: "All", cValue: "" },
+    { iValue: 1, Text: "processing", cValue: "" },
+    { iValue: 2, Text: "Ready To Ship", cValue: "" },
   ]
 
   sortFieldList: any[] = [
-    {value: "StatusID", text: "Status"}
+    { value: "StatusID", text: "Status" }
   ]
 
   constructor(
@@ -119,7 +119,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
     }
   }
-  
+
   onClickEditDetails(exportOrderID: number) {
     if (exportOrderID) {
       this.router.navigate([`ie/export-order/edit/${exportOrderID}`]);
@@ -128,40 +128,40 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   onClickCancel(row: any) {
     this.alertService
-    .showConfirmationWithInput({
-      text: 'Do you want to cancel?',
-      inputPlaceholder: 'Reason to cancel'
-    })
-    .then((result) => {
-      if (result.isConfirmed) {
-        const model: ExportOrder = {
-          ...row,
-          ReasonToUpdate : result.Message 
-        }
+      .showConfirmationWithInput({
+        text: 'Do you want to cancel?',
+        inputPlaceholder: 'Reason to cancel'
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const model: ExportOrder = {
+            ...row,
+            ReasonToUpdate: result.Message
+          }
 
-        this.pageService.CancelOrder(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            this.loadData();
-            if (response.IsSuccess) {
-              this.alertService.showAlert({
-                type: 'success',
-                text: response.Message,
-                timer: 5000,
-              });
-            } else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
-      }
-    });
+          this.pageService.CancelOrder(model)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                this.loadData();
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: 'success',
+                    text: response.Message,
+                    timer: 5000,
+                  });
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+      });
   }
 
   populateStatus(statusID: number): string {
     switch (statusID) {
-      case 1: 
+      case 1:
         return 'Processing';
       case 2:
         return 'Ready to ship';
@@ -191,7 +191,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadDynamicComponent(model: any){
+  loadDynamicComponent(model: any) {
     setTimeout(() => {
       this.componentRef?.instance.openSidebar(true, false, model);
       this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
@@ -244,7 +244,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.loadDynamicComponent(model);
   }
 
-  formatDate(date: Date){
+  formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
 }

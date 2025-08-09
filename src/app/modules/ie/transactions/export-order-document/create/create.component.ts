@@ -17,7 +17,7 @@ import { ExportOrderDocumentService } from '../export-order-document.service';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule,ZFileUploadComponent, AutoCompleteModule],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule, ZFileUploadComponent, AutoCompleteModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
@@ -32,16 +32,16 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrderDocument>;
-  
+
   exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
 
-   documentTypeList: DocumentType_SelectList[] = [];
+  documentTypeList: DocumentType_SelectList[] = [];
 
   constructor(
     private pageService: ExportOrderDocumentService,
     private formService: FormService,
     private alertService: AlertNotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
@@ -57,14 +57,14 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList(): void  {
+  loadDropdownList(): void {
     this.pageService.GetMasterDropdownLists()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        this.documentTypeList = data.documentTypeList.Data.Items;
-      },
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.documentTypeList = data.documentTypeList.Data.Items;
+        },
+      });
   }
 
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: ExportOrderDocument): void {
@@ -86,7 +86,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-  
+
   loadExportOrder(event: string): void {
     try {
       const dto: ExportOrderRequest = {
@@ -94,18 +94,18 @@ export class CreateComponent implements OnInit, OnDestroy {
         PopulateType: 'AutoSuggest'
       }
       this.pageService.GetExportOrderList(dto)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.exportOrderAutoCompleteDef.options = response.Data.Items;
-          } else {
-            this.exportOrderAutoCompleteDef.options = [];
-            if (response.Message != "Record not found.") {
-              this.alertService.showServerResponseAlert(response);
+        .pipe(takeUntil(this.destroy$)).subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.exportOrderAutoCompleteDef.options = response.Data.Items;
+            } else {
+              this.exportOrderAutoCompleteDef.options = [];
+              if (response.Message != "Record not found.") {
+                this.alertService.showServerResponseAlert(response);
+              }
             }
-          }
-        },
-      });
+          },
+        });
     } catch (error) {
     }
   }
@@ -117,7 +117,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
- onSubmit(): void {
+  onSubmit(): void {
     if (this.isSubmitted) return;
     this.isSubmitted = true;
 
@@ -131,7 +131,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
 
 
-      
+
       const formData = new FormData();
       const transformedData = this.formService.transformFormData(this.form.value);
 
@@ -147,7 +147,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
         }
         else {
-          if(transformedData[key] != null) {
+          if (transformedData[key] != null) {
             formData.append(key, transformedData[key]);
           }
         }
@@ -194,7 +194,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
           this.isSubmitted = false;
         });
-    } catch (error) {}
+    } catch (error) { }
   }
 
   updateRecord(model: ExportOrderDocument): void {
@@ -218,6 +218,6 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-    } catch (error) {}
+    } catch (error) { }
   }
 }

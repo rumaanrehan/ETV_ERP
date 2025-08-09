@@ -1,47 +1,58 @@
 <!--Page Header Action Button Template-->
 <ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
-      class="pi pi-plus"></i>&nbsp;Add Export Order</button>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
+            class="pi pi-plus"></i>&nbsp;Add Export Order</button>
 </ng-template>
 
 <div class="col-xl-12 index-page-content">
-    <z-data-view 
-        [dataViewDef]="dataViewDef"
-        (lazyLoad)="onIndexDataViewLazyLoad($event)"
-        [itemTemplate]="customTemplate"
-        [sortFieldList]="sortFieldList">
+    <z-data-view [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+        [itemTemplate]="customTemplate" [sortFieldList]="sortFieldList">
 
         <div sidebarContent>
             <form class="form-sidebar" [formGroup]="filterForm">
                 <div class="col-xl-12 form-group">
-                    <z-inputtext [group]="filterForm" [control]="'ExportOrderNo'" [label]="filterFormConfig.ExportOrderNo.label"></z-inputtext>
+                    <z-inputtext [group]="filterForm" [control]="'ExportOrderNo'"
+                        [label]="filterFormConfig.ExportOrderNo.label"></z-inputtext>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-inputtext [group]="filterForm" [control]="'ReferenceNo'" [label]="filterFormConfig.ReferenceNo.label"></z-inputtext>
+                    <z-inputtext [group]="filterForm" [control]="'ReferenceNo'"
+                        [label]="filterFormConfig.ReferenceNo.label"></z-inputtext>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-inputtext [group]="filterForm" [control]="'CustomerName'" [label]="filterFormConfig.CustomerName.label"></z-inputtext>
+                    <z-inputtext [group]="filterForm" [control]="'CustomerName'"
+                        [label]="filterFormConfig.CustomerName.label"></z-inputtext>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'IncotermID'" [label]="filterFormConfig.IncotermID.label" [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'IncotermID'" [label]="filterFormConfig.IncotermID.label"
+                        [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'DutyDrawableID'" [label]="filterFormConfig.DutyDrawableID.label" [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'DutyDrawableID'"
+                        [label]="filterFormConfig.DutyDrawableID.label" [options]="statusList" [optionLabel]="'Text'"
+                        [optionValue]="'iValue'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'RoDTEPID'" [label]="filterFormConfig.RoDTEPID.label" [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'RoDTEPID'" [label]="filterFormConfig.RoDTEPID.label"
+                        [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'ShipmentModeID'" [label]="filterFormConfig.ShipmentModeID.label" [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'ShipmentModeID'"
+                        [label]="filterFormConfig.ShipmentModeID.label" [options]="statusList" [optionLabel]="'Text'"
+                        [optionValue]="'iValue'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'LoadingPortID'" [label]="filterFormConfig.LoadingPortID.label" [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'LoadingPortID'"
+                        [label]="filterFormConfig.LoadingPortID.label" [options]="statusList" [optionLabel]="'Text'"
+                        [optionValue]="'iValue'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'DischargePortID'" [label]="filterFormConfig.DischargePortID.label" [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'DischargePortID'"
+                        [label]="filterFormConfig.DischargePortID.label" [options]="statusList" [optionLabel]="'Text'"
+                        [optionValue]="'iValue'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'StatusID'" [label]="filterFormConfig.StatusID.label" [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'StatusID'" [label]="filterFormConfig.StatusID.label"
+                        [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
                 </div>
             </form>
         </div>
@@ -70,7 +81,7 @@
                                 <span class="fs-6 text-secondary"> {{formatDate(item.ExportOrderDate)}} </span>
                             </div>
                         </div>
-                        <div class="col-xl-5 d-flex align-items-center">  
+                        <div class="col-xl-5 d-flex align-items-center">
                             <div class="col-xl-4">
                                 <span class="fs-6 text-secondary">Destination:</span>
                             </div>
@@ -103,7 +114,8 @@
                                 <span class="fs-6 text-secondary">Order Total:</span>
                             </div>
                             <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> <i class="pi pi-indian-rupee"></i>{{item.NetAmountBC}} </span>
+                                <span class="fs-6 text-secondary"> <i
+                                        class="pi pi-indian-rupee"></i>{{item.NetAmountBC}} </span>
                             </div>
                         </div>
                         <div class="col-xl-5 d-flex align-items-center">
@@ -135,8 +147,7 @@
                                 (click)="handleComponentLoad('LetterOfCreditCreateComponent', item)">Add LC</button>
                         </div>
                         <div class="col-1" *ngIf="item.StatusID == 1">
-                            <button class="btn btn-primary"
-                                (click)="onClickCancel(item)">Cancel</button>
+                            <button class="btn btn-primary" (click)="onClickCancel(item)">Cancel</button>
                         </div>
                     </div>
                 </div>

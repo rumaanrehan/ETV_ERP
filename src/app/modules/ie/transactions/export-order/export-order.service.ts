@@ -43,10 +43,10 @@ export class ExportOrderService {
   GetMasterDropdownLists(): Observable<{
     paymentTermList: ApiListResponse<PaymentTerm_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
-    }> {
+  }> {
     return forkJoin({
-      paymentTermList: this.paymentTermMasterService.PopulateList({PopulateType: 'SelectList'} as PaymentTermRequest),
-      taxSlabList: this.taxSlabMasterService.PopulateList({PopulateType: 'SelectList'} as TaxSlabRequest)
+      paymentTermList: this.paymentTermMasterService.PopulateList({ PopulateType: 'SelectList' } as PaymentTermRequest),
+      taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest)
     });
   }
 
@@ -61,11 +61,11 @@ export class ExportOrderService {
   GetPortList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
     return this.portService.PopulateList(model);
   }
-  
+
   GetProductList(model: ProductRequest): Observable<ApiListResponse<Product_SelectList>> {
     return this.productMasterService.PopulateList(model);
   }
-    
+
   PopulateList(model: ExportOrderRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
     return this.apiService.post<ApiListResponse<ExportOrder_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }
@@ -91,7 +91,6 @@ export class ExportOrderService {
   }
 
   CancelOrder(model: ExportOrder): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
 
@@ -440,15 +439,15 @@ export class ExportOrderService {
     return {
       type: 'formControl',
       group: form,
-      control: 'CustomerName',  
-      label: formConfig.CustomerID.label,  
-      validationMessage: formConfig.CustomerID.error,  
+      control: 'CustomerName',
+      label: formConfig.CustomerID.label,
+      validationMessage: formConfig.CustomerID.error,
       placeholder: 'Search Customer',
       options: [],
-      optionLabel: 'CompanyName',  
+      optionLabel: 'CompanyName',
       columns: [
         { data: 'CompanyCode', label: 'Code', width: '150px' },
-        { data: 'CompanyName', label: 'Name', width: '150px' }  
+        { data: 'CompanyName', label: 'Name', width: '150px' }
       ],
     }
   }
@@ -457,15 +456,15 @@ export class ExportOrderService {
     return {
       type: 'formControl',
       group: form,
-      control: 'ProductName',  
-      label: formConfig.ProductName.label,  
-      validationMessage: formConfig.ProductName.error,  
+      control: 'ProductName',
+      label: formConfig.ProductName.label,
+      validationMessage: formConfig.ProductName.error,
       placeholder: 'Search Product',
       options: [],
-      optionLabel: 'ProductName',  
+      optionLabel: 'ProductName',
       columns: [
         { data: 'ProductCode', label: 'Product Code', width: '100px' },
-        { data: 'ProductName', label: 'Product Name', width: '200px' }  
+        { data: 'ProductName', label: 'Product Name', width: '200px' }
       ],
     }
   }
