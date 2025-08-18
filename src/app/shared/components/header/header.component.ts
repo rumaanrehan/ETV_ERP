@@ -2,6 +2,12 @@ import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SwitcherService } from '../../../shared/services/switcher.service';
 import { Menu, NavService } from '../../services/nav.service';
+import { UserService } from '../../../core/services/user.service';
+import { Subject, takeUntil } from 'rxjs';
+import { UserStateService } from '../../../core/services/user-state.service';
+import { RequestContextService } from '../../../core/services/request-context.service';
+import { Router } from '@angular/router';
+import { AlertNotificationService } from '../../services/alert-notification.service';
 
 interface Item {
   id: number;
@@ -17,6 +23,7 @@ interface Item {
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
+  private destroy$ = new Subject<void>();
   @ViewChild('dropdown') dropdown!: ElementRef<HTMLSelectElement>;
 
   cartItemCount: number = 5;
@@ -27,7 +34,12 @@ export class HeaderComponent {
     public SwitcherService: SwitcherService,
     private modalService: NgbModal,
     public renderer: Renderer2,
-    public NavServices: NavService
+    public NavServices: NavService,
+    private userService: UserService,
+    private userStateService: UserStateService,
+    private requestContextService: RequestContextService,
+    private alertService: AlertNotificationService,
+    private router: Router
   ) {
     let html = this.elementRef.nativeElement.ownerDocument.documentElement;
     // if(html?.getAttribute('data-toggled') == 'detached-close'){
@@ -64,6 +76,41 @@ export class HeaderComponent {
     context.font = window.getComputedStyle(this.dropdown.nativeElement).font;
     return context.measureText(text).width;
   }
+
+  logout() {
+    try {
+      this.alertService.showConfirmation({
+        text: `Do you really want to Logout?`,
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.userService.Logout()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                if (response.IsSuccess) {
+                  this.userStateService.clearUser();
+                  this.requestContextService.ClearTokens();
+                  this.router.navigate(['/login']);
+                }
+                else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+              complete: () => {
+              }
+            });
+        }
+      });
+    }
+    catch (error) {
+
+    }
+  }
+
+
+
+
+
 
   toggleSwicher() {
     this.SwitcherService.emitChange(true);
@@ -110,8 +157,8 @@ export class HeaderComponent {
       document.querySelector('html')?.getAttribute('data-toggled') != null
         ? document.querySelector('html')?.removeAttribute('data-toggled')
         : document
-            .querySelector('html')
-            ?.setAttribute('data-toggled', 'icon-overlay-close');
+          .querySelector('html')
+          ?.setAttribute('data-toggled', 'icon-overlay-close');
     }
     let html = this.elementRef.nativeElement.ownerDocument.documentElement;
 
@@ -130,58 +177,58 @@ export class HeaderComponent {
     }
   }
 
-   togglesidebar() {
+  togglesidebar() {
     let html = this.elementRef.nativeElement.ownerDocument.documentElement;
-     if (localStorage.getItem('data-toggled') == 'true') {
+    if (localStorage.getItem('data-toggled') == 'true') {
       document.querySelector('html')?.getAttribute('data-toggled') == 'icon-overlay-close';
-     } else if (html?.getAttribute('data-vertical-style') == 'overlay') {
-      document.querySelector('html')?.getAttribute('data-toggled') != null ? document.querySelector('html')?.removeAttribute('data-toggled') : document.querySelector('html') ?.setAttribute('data-toggled', 'icon-overlay-close');
-     } else if (localStorage.getItem('ynexverticalstyles') == 'closed') {
+    } else if (html?.getAttribute('data-vertical-style') == 'overlay') {
+      document.querySelector('html')?.getAttribute('data-toggled') != null ? document.querySelector('html')?.removeAttribute('data-toggled') : document.querySelector('html')?.setAttribute('data-toggled', 'icon-overlay-close');
+    } else if (localStorage.getItem('ynexverticalstyles') == 'closed') {
       html?.setAttribute(
         'data-toggled',
         html?.getAttribute('data-toggled') == 'close-menu-close'
           ? ''
           : 'close-menu-close'
       );
-     } else if (localStorage.getItem('ynexverticalstyles') == 'icontext') {
+    } else if (localStorage.getItem('ynexverticalstyles') == 'icontext') {
       html?.setAttribute(
         'data-toggled',
         html?.getAttribute('data-toggled') == 'icon-text-close'
           ? ''
           : 'icon-text-close'
       );
-     } else if (localStorage.getItem('ynexverticalstyles') == 'detached') {
+    } else if (localStorage.getItem('ynexverticalstyles') == 'detached') {
       html?.setAttribute(
         'data-toggled',
         html?.getAttribute('data-toggled') == 'detached-close'
           ? ''
           : 'detached-close'
       );
-     } else if (localStorage.getItem('ynexverticalstyles') == 'doublemenu') {
-      html?.setAttribute('data-toggled', html?.getAttribute('data-toggled') == 'double-menu-close' && document.querySelector(".slide.open")?.classList.contains("has-sub")? 'double-menu-open': 'double-menu-close');
+    } else if (localStorage.getItem('ynexverticalstyles') == 'doublemenu') {
+      html?.setAttribute('data-toggled', html?.getAttribute('data-toggled') == 'double-menu-close' && document.querySelector(".slide.open")?.classList.contains("has-sub") ? 'double-menu-open' : 'double-menu-close');
 
-     } else if (localStorage.getItem('ynexnavstyles') == 'menu-click') {
+    } else if (localStorage.getItem('ynexnavstyles') == 'menu-click') {
       html?.setAttribute(
         'data-toggled',
         html?.getAttribute('data-toggled') == 'menu-click-closed'
           ? ''
           : 'menu-click-closed'
       );
-     } else if (localStorage.getItem('ynexnavstyles') == 'menu-hover') {
+    } else if (localStorage.getItem('ynexnavstyles') == 'menu-hover') {
       html?.setAttribute(
         'data-toggled',
         html?.getAttribute('data-toggled') == 'menu-hover-closed'
           ? ''
           : 'menu-hover-closed'
       );
-     } else if (localStorage.getItem('ynexnavstyles') == 'icon-click') {
+    } else if (localStorage.getItem('ynexnavstyles') == 'icon-click') {
       html?.setAttribute(
         'data-toggled',
         html?.getAttribute('data-toggled') == 'icon-click-closed'
           ? ''
           : 'icon-click-closed'
       );
-     } else if (localStorage.getItem('ynexnavstyles') == 'icon-hover') {
+    } else if (localStorage.getItem('ynexnavstyles') == 'icon-hover') {
       html?.setAttribute(
         'data-toggled',
         html?.getAttribute('data-toggled') == 'icon-hover-closed'
@@ -239,48 +286,48 @@ export class HeaderComponent {
     //  this.items = menuItems;
     //});
     // To clear and close the search field by clicking on body
-    document.querySelector('.main-content')?.addEventListener('click',()=>{
+    document.querySelector('.main-content')?.addEventListener('click', () => {
       this.clearSearch();
     })
     this.text = '';
   }
 
   //search 
-    public menuItems!: Menu[];
-    public items!: Menu[];
-    public text!: string;
-    public SearchResultEmpty:boolean = false;
+  public menuItems!: Menu[];
+  public items!: Menu[];
+  public text!: string;
+  public SearchResultEmpty: boolean = false;
 
   Search(searchText: any) {
     if (!searchText) return this.menuItems = [];
     // items array which stores the elements
-    let items:any[] = [];
+    let items: any[] = [];
     // Converting the text to lower case by using toLowerCase() and trim() used to remove the spaces from starting and ending
     searchText = searchText.toLowerCase().trim();
-    this.items.filter((menuItems:any) => {
+    this.items.filter((menuItems: any) => {
       // checking whether menuItems having title property, if there was no title property it will return
       if (!menuItems?.title) return false;
       //  checking wheteher menuitems type is text or string and checking the titles of menuitems
       if (menuItems.type === 'link' && menuItems.title.toLowerCase().includes(searchText)) {
         // Converting the menuitems title to lowercase and checking whether title is starting with same text of searchText
-        if( menuItems.title.toLowerCase().startsWith(searchText)){// If you want to get all the data with matching to letter entered remove this line(condition and leave items.push(menuItems))
+        if (menuItems.title.toLowerCase().startsWith(searchText)) {// If you want to get all the data with matching to letter entered remove this line(condition and leave items.push(menuItems))
           // If both are matching then the code is pushed to items array
           items.push(menuItems);
         }
       }
       //  checking whether the menuItems having children property or not if there was no children the return
       if (!menuItems.children) return false;
-      menuItems.children.filter((subItems:any) => {
+      menuItems.children.filter((subItems: any) => {
         if (subItems.type === 'link' && subItems.title.toLowerCase().includes(searchText)) {
-          if( subItems.title.toLowerCase().startsWith(searchText)){         // If you want to get all the data with matching to letter entered remove this line(condition and leave items.push(subItems))
+          if (subItems.title.toLowerCase().startsWith(searchText)) {         // If you want to get all the data with matching to letter entered remove this line(condition and leave items.push(subItems))
             items.push(subItems);
           }
 
         }
         if (!subItems.children) return false;
-        subItems.children.filter((subSubItems:any) => {
+        subItems.children.filter((subSubItems: any) => {
           if (subSubItems.title.toLowerCase().includes(searchText)) {
-            if( subSubItems.title.toLowerCase().startsWith(searchText)){// If you want to get all the data with matching to letter entered remove this line(condition and leave items.push(subSubItems))
+            if (subSubItems.title.toLowerCase().startsWith(searchText)) {// If you want to get all the data with matching to letter entered remove this line(condition and leave items.push(subSubItems))
               items.push(subSubItems);
             }
           }
@@ -290,21 +337,20 @@ export class HeaderComponent {
       return this.menuItems = items;
     });
     // Used to show the No search result found box if the length of the items is 0
-    if(!items.length){
+    if (!items.length) {
       this.SearchResultEmpty = true;
     }
-    else{
+    else {
       this.SearchResultEmpty = false;
     }
     return;
   }
 
-   //  Used to clear previous search result
-   clearSearch() {
+  //  Used to clear previous search result
+  clearSearch() {
     this.text = '';
     this.menuItems = [];
     this.SearchResultEmpty = false;
     return this.text, this.menuItems
   }
-  
 }

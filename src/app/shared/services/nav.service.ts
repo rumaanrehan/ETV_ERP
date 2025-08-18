@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subject, BehaviorSubject, fromEvent } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { MenuService } from '../../core/services/menu.service';
 // Menu
 export interface Menu {
   headTitle?: string;
@@ -20,9 +21,10 @@ export interface Menu {
   children2?: Menu[];
   Menusub?: boolean;
   target?: boolean;
-  menutype?: string;
-  dirchange?: boolean;
-  nochild?: any;
+  menutype?: string,
+  dirchange?: boolean,
+  nochild?: any
+
 }
 
 @Injectable({
@@ -55,7 +57,9 @@ export class NavService implements OnDestroy {
   public fullScreen = false;
   active: any;
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+    private menuService: MenuService
+  ) {
     this.setScreenWidth(window.innerWidth);
     fromEvent(window, 'resize')
       .pipe(debounceTime(1000), takeUntil(this.unsubscriber))
@@ -105,7 +109,7 @@ export class NavService implements OnDestroy {
       children: [
         //{ path: '/dashboard/analytics', title: 'Analytics', type: 'link', dirchange: false, },
         //{ path: '/dashboard/courses', title: 'Courses', type: 'link', dirchange: false, },
-        { path: '/crm', title: 'CRM', type: 'link', dirchange: false },
+        { path: '/crm', title: 'CRM', type: 'link', dirchange: false, },
         //{ path: '/dashboard/crypto', title: 'Crypto', type: 'link', dirchange: false, },
         //{ path: '/dashboard/ecommerce', title: 'Ecommerce', type: 'link', dirchange: false, },
         //{ path: '/dashboard/hrm', title: 'HRM', type: 'link', dirchange: false, },
@@ -113,18 +117,9 @@ export class NavService implements OnDestroy {
         //{ path: '/dashboard/nft', title: 'NFT', type: 'link', dirchange: false, },
         //{ path: '/dashboard/personal', title: 'Personal', type: 'link', dirchange: false, },
         //{ path: '/dashboard/projects', title: 'Projects', type: 'link', dirchange: false, },
-        {
-          path: '/dashboard/sales',
-          title: 'Sales',
-          type: 'link',
-          dirchange: false,
-        },
-        {
-          path: '/dashboard/stocks',
-          title: 'Stocks',
-          type: 'link',
-          dirchange: false,
-        },
+        { path: '/dashboard/sales', title: 'Sales', type: 'link', dirchange: false, },
+        { path: '/dashboard/stocks', title: 'Stocks', type: 'link', dirchange: false, },
+
       ],
     },
 
@@ -170,54 +165,13 @@ export class NavService implements OnDestroy {
       badgeText: 'secondary',
       badgeValue: 'New',
       children: [
-        {
-          path: 'Admin/ProductMaster/Index',
-          title: 'Product Master',
-          type: 'link',
-          dirchange: false,
-        },
-        {
-          path: '/Admin/CountryMaster/Index',
-          title: 'Country Master',
-          type: 'link',
-          dirchange: false,
-        },
-        {
-          path: '/Admin/HolidayMaster/Index',
-          title: 'Holiday Master',
-          type: 'link',
-          dirchange: false,
-        },
-        {
-          path: '/Admin/MusheerKhalid/Index',
-          title: 'Musheer Khalid',
-          type: 'link',
-          dirchange: false,
-        },
-        {
-          path: '/Admin/StateMaster/Index',
-          title: 'State Master',
-          type: 'link',
-          dirchange: false,
-        },
-        {
-          path: '/Admin/EmployeeRegistration/Index',
-          title: 'Employee Registration',
-          type: 'link',
-          dirchange: false,
-        },
-        {
-          path: '/Admin/PlanMaster/Index',
-          title: 'Plan Master',
-          type: 'link',
-          dirchange: false,
-        },
-        {
-          path: '/LB/TestBooking/Index',
-          title: 'Test Booking',
-          type: 'link',
-          dirchange: false,
-        },
+        { path: '/Admin/CountryMaster/Index', title: 'Country Master', type: 'link', dirchange: false, },
+        { path: '/Admin/HolidayMaster/Index', title: 'Holiday Master', type: 'link', dirchange: false, },
+        { path: '/Admin/MusheerKhalid/Index', title: 'Musheer Khalid', type: 'link', dirchange: false, },
+        { path: '/Admin/StateMaster/Index', title: 'State Master', type: 'link', dirchange: false, },
+        { path: '/Admin/EmployeeRegistration/Index', title: 'Employee Registration', type: 'link', dirchange: false, },
+        { path: '/Admin/PlanMaster/Index', title: 'Plan Master', type: 'link', dirchange: false, },
+        { path: '/LB/TestBooking/Index', title: 'Test Booking', type: 'link', dirchange: false, },
       ],
     },
   ];

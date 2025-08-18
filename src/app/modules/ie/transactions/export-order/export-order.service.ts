@@ -265,7 +265,7 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Product is required"
+              required: "Product is required"
             }
           },
           ProductName: {
@@ -273,7 +273,7 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Product is required"
+              required: "Product is required"
             }
           },
           SalesQty: {
@@ -281,7 +281,7 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Sales Qty is required"
+              required: "Sales Qty is required"
             }
           },
           SalesTaxRate: {
@@ -289,7 +289,7 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Tax Rate is required"
+              required: "Tax Rate is required"
             }
           },
           RatePerUnitBC: {
@@ -297,7 +297,7 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Rate is required"
+              required: "Rate is required"
             }
           },
           RatePerUnitFC: {
@@ -305,23 +305,7 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Rate in foreign currency is required"
-            }
-          },
-          TaxAmountBC: {
-            label: '',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              require: "Tax in base currency is required"
-            }
-          },
-          TaxAmountFC: {
-            label: 'Tax Amount FC',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              require: "Tax in foreign currency is required"
+              required: "Rate in foreign currency is required"
             }
           },
           TaxableAmountFC: {
@@ -329,7 +313,7 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Taxable amount in foreign currency is required"
+              required: "Taxable amount in foreign currency is required"
             }
           },
           TaxableAmountBC: {
@@ -337,7 +321,23 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              require: "Taxable Amount in base currency is required"
+              required: "Taxable Amount in base currency is required"
+            }
+          },
+          TaxAmountFC: {
+            label: 'Tax Amount FC',
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Tax in foreign currency is required"
+            }
+          },
+          TaxAmountBC: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Tax in base currency is required"
             }
           }
         }
@@ -347,7 +347,7 @@ export class ExportOrderService {
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          require: "Payment Terms are required"
+          required: "Payment Terms are required"
         }
       },
       ShipmentModeID: {
@@ -381,7 +381,7 @@ export class ExportOrderService {
         defaultValue: 1,
         validators: [Validators.required],
         validationMessages: {
-          require: "Status is required"
+          required: "Status is required"
         }
       },
       SubtotalAmountFC: {

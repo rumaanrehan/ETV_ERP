@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { DataTableParams } from '../../../shared/components/z-datatable/z-datatable';
-import { ApiDataResponse, ApiPagedListResponse, ApiResponse } from '../../../shared/models/api-response';
-import { DataTableFilterFormConfigType, FormConfigType } from '../../../shared/models/form.model';
-import { NotOnlyWhitespaceValidator } from '../../../shared/validators/not-only-whitespace.validator';
 import { IndustryMaster, IndustryMaster_IndexTableFilter, IndustryMaster_IndexTableList } from './industry-master';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class IndustryMasterService {
 
   constructor(
     private apiService: ApiService,
-  ) {}
+  ) { }
 
   PopulateGrid(model: DataTableParams<IndustryMaster_IndexTableFilter>): Observable<ApiPagedListResponse<IndustryMaster_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<IndustryMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);

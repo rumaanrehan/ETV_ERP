@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Zunified.Client": {
+    "ETV_ERP.Web": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/zunified.client",
+            "outputPath": "dist/etv_erp.web",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -48,7 +48,6 @@
               "./node_modules/swiper/swiper-bundle.min.js",
               "./node_modules/jquery/dist/jquery.min.js",
               "./node_modules/datatables.net/js/dataTables.min.js"
-              
             ]
           },
           "configurations": {
@@ -91,13 +90,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Zunified.Client:build:production"
+              "buildTarget": "ETV_ERP.Web:build:production"
             },
             "development": {
-              "buildTarget": "Zunified.Client:build:development"
+              "buildTarget": "ETV_ERP.Web:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

@@ -1,14 +1,14 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { DataTableDef, DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ZDataTable } from '../../../../shared/components/z-datatable/z-datatable.component';
-import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../shared/services/form.service';
-import { PageHeaderService } from '../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
 import { IndustryMaster, IndustryMaster_IndexTableFilter, IndustryMaster_IndexTableList } from '../industry-master';
 import { IndustryMasterService } from '../industry-master.service';
+import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 
 @Component({
   selector: 'app-index',
@@ -49,18 +49,18 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'IndustryCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.industryCodeTemplate },
+      { data: 'IndustryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.industryCodeTemplate },
       { data: 'IndustryName', label: 'Industry Name', filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.industryMasterActiveStatusTemplate, },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
+
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
       this.createSidebar.openSidebar(true, false, this.formService.createNullObject<IndustryMaster>());
@@ -71,28 +71,28 @@ export class IndexComponent implements OnInit, OnDestroy {
     try {
       if (this.createSidebar && industryID) {
         this.pageService.GetDetails(industryID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
       }
     }
     catch (error) {
 
     }
   }
-  
+
   onCloseSidebar(): void {
     this.loadData();
   }
-  
+
   onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
     this.tableEvent = event;
     this.loadData();
@@ -108,23 +108,23 @@ export class IndexComponent implements OnInit, OnDestroy {
         filters: this.tableDef.filterForm?.value
       };
       this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            }
+            else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
           }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
+        });
     }
     catch (error) {
 
@@ -140,33 +140,33 @@ export class IndexComponent implements OnInit, OnDestroy {
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.IndustryName}</b>"?`,
       })
-      .then(result => {
-        if (result.isConfirmed) {
-          const model: IndustryMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
+        .then(result => {
+          if (result.isConfirmed) {
+            const model: IndustryMaster = {
+              ...row,
+              ActionType: ActionType,
+              ReasonToUpdate: result.value
+            };
 
-          this.pageService.DeleteReactivate(model)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.loadData();
-                this.alertService.showAlert({
-                  type: "success",
-                  text: response.Message,
-                  timer: 5000
-                });
-              }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            }
-          });
-        }
-      });
+            this.pageService.DeleteReactivate(model)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response) => {
+                  if (response.IsSuccess) {
+                    this.loadData();
+                    this.alertService.showAlert({
+                      type: "success",
+                      text: response.Message,
+                      timer: 5000
+                    });
+                  }
+                  else {
+                    this.alertService.showServerResponseAlert(response);
+                  }
+                }
+              });
+          }
+        });
     }
     catch (error) {
 

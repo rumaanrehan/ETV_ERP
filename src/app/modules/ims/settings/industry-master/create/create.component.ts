@@ -1,13 +1,13 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { FormSidebarComponent } from '../../../../shared/components/form-sidebar/form-sidebar.component';
-import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
-import { FormConfigType } from '../../../../shared/models/form.model';
-import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../shared/services/form.service';
 import { IndustryMaster } from '../industry-master';
 import { IndustryMasterService } from '../industry-master.service';
+import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
 
 @Component({
   selector: 'app-create',
@@ -38,7 +38,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form = this.formService.createFormGroup<IndustryMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -63,12 +63,12 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-  
+
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    try{
+    try {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -87,61 +87,61 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-      } 
+      }
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-   }
-   catch (error) {
-
-   }
-  }
-
-  createRecord(model: IndustryMaster): void {
-    try{
-    this.pageService.CreateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((response) => {
-        if (response.IsSuccess) {
-          this.closeSidebar();
-          this.alertService.showAlert({
-            type: 'success',
-            text: response.Message,
-            timer: 5000,
-          });
-        } else {
-          this.alertService.showServerResponseAlert(response);
-        }
-        this.isSubmitted = false;
-      });
     }
     catch (error) {
 
     }
   }
-  
-  updateRecord(model: IndustryMaster): void {
+
+  createRecord(model: IndustryMaster): void {
     try {
-      this.pageService.UpdateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
+      this.pageService.CreateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((response) => {
           if (response.IsSuccess) {
             this.closeSidebar();
             this.alertService.showAlert({
-              type: "success",
+              type: 'success',
               text: response.Message,
-              timer: 5000
+              timer: 5000,
             });
-          }
-          else {
+          } else {
             this.alertService.showServerResponseAlert(response);
           }
-        },
-        complete: () => {
           this.isSubmitted = false;
-        }
-      });
+        });
+    }
+    catch (error) {
+
+    }
+  }
+
+  updateRecord(model: IndustryMaster): void {
+    try {
+      this.pageService.UpdateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: "success",
+                text: response.Message,
+                timer: 5000
+              });
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
+          }
+        });
     }
     catch (error) {
 

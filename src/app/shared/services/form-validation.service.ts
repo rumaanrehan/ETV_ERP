@@ -26,7 +26,7 @@ export class FormValidationService {
         formErrors[field] = '';
         const control = form.get(field);
         const element = document.querySelector(`[formControlName="${field}"]`);
-        
+
         if (control && !control.valid && control.touched) {
           const messages = formValidationMessages[field];
           for (const key in control.errors) {

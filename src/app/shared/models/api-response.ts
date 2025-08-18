@@ -37,7 +37,7 @@ export interface ApiDataResponse<T> extends ApiResponse {
 
 // Response with a list of items
 export interface ApiListResponse<T> extends ApiDataResponse<TList<T>> {
-  
+
 }
 
 export interface TList<T> {
@@ -46,7 +46,7 @@ export interface TList<T> {
 
 // Paged response with a list of items and total record count
 export interface ApiPagedListResponse<T> extends ApiDataResponse<TPagedList<T>> {
-  
+
 }
 
 export interface TPagedList<T> extends TList<T> {

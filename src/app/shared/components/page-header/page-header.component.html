@@ -1,39 +1,22 @@
 <!-- page header Start -->
 <div class="d-flex d-block align-items-center justify-content-between page-header-breadcrumb">
   <div>
-    <ng-container *ngTemplateOutlet="pageHeaderActionTemplate"></ng-container>
+    <ng-container *ngIf="pageHeaderActionTemplate">
+      <ng-container *ngTemplateOutlet="pageHeaderActionTemplate"></ng-container>
+    </ng-container>
   </div>
   <nav>
     <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item d-flex align-items-center">
-        <!--<i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>-->
-        <a href="index.html">Home</a>
+        <a routerLink="/home">Home</a>
       </li>
-      @for (path of routerEvents; track path; let i = $index) {
-      <li class="breadcrumb-item d-flex align-items-center" aria-current="page">
-        <a href="javascript:void(0);" [ngStyle]="{'color': i ===routerEvents.length - 1 ? '#333335' : 'defaultColor'}" class="d-flex align-items-center">{{path | titlecase}}</a>
+      <li *ngFor="let breadcrumb of breadcrumbs; let last = last" class="breadcrumb-item d-flex align-items-center">
+        <!-- Clickable breadcrumb (if URL is provided) -->
+        <a *ngIf="breadcrumb.url && !last" [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
+
+        <!-- Display-only breadcrumb (if no URL) -->
+        <span *ngIf="!breadcrumb.url || last" style="color: #333335;">{{ breadcrumb.label }}</span>
       </li>
-      }
     </ol>
   </nav>
-  <!--<ol class="breadcrumb">
-    <li class="breadcrumb-item d-flex align-items-center">
-      <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
-      <a href="index.html">Home</a>
-    </li>
-    <li class="breadcrumb-item text-primary d-flex align-items-center" aria-current="page">
-      Dashboard
-    </li>
-  </ol>-->
-  <!--<div class="ms-md-1 ms-0">
-    <nav>
-      <ol class="breadcrumb mb-0">
-        @for (path of routerEvents; track path; let i = $index) {
-        <li [ngClass]="{'active': routerEvents.length - 1 == i,'custom-color': i === routerEvents.length - 1 }" class="breadcrumb-item">
-          <a href="javascript:void(0);" [ngStyle]="{'color': i ===routerEvents.length - 1 ? '#333335' : 'defaultColor'}">{{path | titlecase}}</a>
-        </li>
-        }
-      </ol>
-    </nav>
-  </div>-->
 </div>

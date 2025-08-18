@@ -4,11 +4,11 @@
     <div class="text-center text-primary mb-5 company-name-container">
       <h3 class="fw-bold">ETV ERP</h3>
     </div>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="mb-3">
         <div class="form-floating">
           <input type="text" class="form-control input-lg" id="Username" formControlName="Username"
-            placeholder="Username" [appShowValidationTooltip]="formErrors['Username']" />
+            placeholder="Username" />
           <label for="Username">Username</label>
         </div>
       </div>
@@ -16,8 +16,7 @@
       <div class="mb-3 position-relative">
         <div class="form-floating w-100">
           <input [type]="showPassword ? 'text' : 'password'" class="form-control input-lg pe-5" id="Password"
-            formControlName="Password" placeholder="Password" [appShowValidationTooltip]="formErrors['Password']"
-            (keydown)="checkCapsLock($event)" />
+            formControlName="Password" placeholder="Password" (keydown)="checkCapsLock($event)" />
           <label for="Password">Password</label>
         </div>
         <div class="password-toggle position-absolute top-50 end-0 translate-middle-y pe-3">

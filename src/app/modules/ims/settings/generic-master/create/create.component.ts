@@ -58,11 +58,11 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          if(data.itemTypeMasterList.IsSuccess) {
+          if (data.itemTypeMasterList.IsSuccess) {
             this.itemTypeList = data.itemTypeMasterList.Data.Items;
           }
         }
-    });
+      });
   }
 
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: GenericMaster): void {
@@ -73,10 +73,10 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
     this.activeStatus = activeStatus;
     this.form.patchValue(model);
-    this.form.patchValue({ItemTypeID: model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID, ItemGroupID: model.ItemCategory?.ItemGroup?.ItemGroupID});
+    this.form.patchValue({ ItemTypeID: model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID, ItemGroupID: model.ItemCategory?.ItemGroup?.ItemGroupID });
     this.isFormSidebarVisible = true;
   }
-  
+
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
@@ -87,7 +87,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }, 1);
   }
 
-  onChange_ItemType(): void{
+  onChange_ItemType(): void {
     this.itemGroupList = [];
     this.itemCategoryList = [];
     this.loadItemGroup(this.form.value.ItemTypeID);
@@ -141,12 +141,12 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.itemCategoryList = [];
     }
   }
-  
+
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    try{
+    try {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -169,61 +169,61 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-      } 
+      }
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-   }
-   catch (error) {
-
-   }
-  }
-  
-  createRecord(model: GenericMaster): void {
-    try{
-    this.pageService.CreateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((response) => {
-        if (response.IsSuccess) {
-          this.closeSidebar();
-          this.alertService.showAlert({
-            type: 'success',
-            text: response.Message,
-            timer: 5000,
-          });
-        } else {
-          this.alertService.showServerResponseAlert(response);
-        }
-        this.isSubmitted = false;
-      });
     }
     catch (error) {
 
     }
   }
-  
-  updateRecord(model: GenericMaster): void {
+
+  createRecord(model: GenericMaster): void {
     try {
-      this.pageService.UpdateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
+      this.pageService.CreateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((response) => {
           if (response.IsSuccess) {
             this.closeSidebar();
             this.alertService.showAlert({
-              type: "success",
+              type: 'success',
               text: response.Message,
-              timer: 5000
+              timer: 5000,
             });
-          }
-          else {
+          } else {
             this.alertService.showServerResponseAlert(response);
           }
-        },
-        complete: () => {
           this.isSubmitted = false;
-        }
-      });
+        });
+    }
+    catch (error) {
+
+    }
+  }
+
+  updateRecord(model: GenericMaster): void {
+    try {
+      this.pageService.UpdateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: "success",
+                text: response.Message,
+                timer: 5000
+              });
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
+          }
+        });
     }
     catch (error) {
 

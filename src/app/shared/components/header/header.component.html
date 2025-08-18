@@ -1,4 +1,4 @@
-  <!-- app-header -->
+<!-- app-header -->
 <header class="app-header">
   <!-- Start::main-header-container -->
   <div class="main-header-container container-fluid align-items-center">
@@ -7,8 +7,10 @@
     <div class="header-content-left align-items-center">
       <!-- Start::header-element -->
       <div class="header-element">
-        <a aria-label="Hide Sidebar" (click)="togglesidebar()" class="sidemenu-toggle header-link animated-arrow hor-toggle horizontal-navtoggle p-0" data-bs-toggle="sidebar" href="javascript:void(0);">
-          <i class="ri-menu-line"></i>
+        <a aria-label="Hide Sidebar" (click)="togglesidebar()"
+          class="sidemenu-toggle header-link animated-arrow hor-toggle horizontal-navtoggle p-0"
+          data-bs-toggle="sidebar" href="javascript:void(0);">
+          <i class="bx bx-menu fs-24"></i>
           <!--<i class="bi bi-list fs-4"></i>-->
         </a>
       </div>
@@ -16,27 +18,28 @@
       <!--Add By Musab-->
       <div class="header-element">
         <!-- Start::header-link -->
-        <!-- <div class="">
-          <a [routerLink]="['/crm']" class="header-logo">
-            <img src="./assets/images/brand-logos/brand-logo.svg" alt="logo" class="desktop-logo">
+        <div class="">
+          <a [routerLink]="['/home']" class="header-logo">
+            <h5 class="text-white">IEMS</h5>
+            <!-- <img src="./assets/images/brand-logos/brand-logo.svg" alt="logo" class="desktop-logo"> -->
           </a>
-        </div> -->
+        </div>
         <!-- End::header-link -->
       </div>
     </div>
     <!-- End::header-content-left -->
 
     <!-- Start::header-content-center -->
-    <!-- <div class="header-content-center align-items-center col-md-4 d-none d-md-block">
-      <div class="col-md-12">
+    <div class="header-content-center align-items-center col-md-4 d-none d-md-block">
+      <!-- <div class="col-md-12">
         <select #dropdown (change)="onSelectionChange()" class="form-control company-dropdown">
           <option>Jagannath Gupta Institute of Medical Sciences & Hospital</option>
           <option>Basaveshwara Medical College & Hospital</option>
           <option>S. S. Institute of Medical Sciences & Research Centre</option>
           <option>Sri Siddhartha Institute of Medical Sciences & Research Centre</option>
         </select>
-      </div>
-    </div> -->
+      </div> -->
+    </div>
     <!-- End::header-content-center -->
 
     <!-- Start::header-content-right -->
@@ -44,13 +47,10 @@
 
       <!-- Start::header-element Search-Box-->
       <div class="header-element header-search">
-        <a href="javascript:void(0);"
-           class="header-link"
-           data-bs-toggle="modal"
-           data-bs-target="#searchModal"
-           (click)="SearchModal(searchModal)">
+        <a href="javascript:void(0);" class="header-link" data-bs-toggle="modal" data-bs-target="#searchModal"
+          (click)="SearchModal(searchModal)">
           <span class="light-layout">
-            <i class="ri-search-line header-link-icon"></i>
+            <i class="bx bx-search-alt-2 header-link-icon"></i>
           </span>
           <!--<i class="bi bi-search header-link-icon"></i>-->
           <!--<i class="bx bx-search-alt-2 header-link-icon"></i>-->
@@ -62,13 +62,12 @@
       <div class="header-element header-theme-mode">
         <a href="javascript:void(0);" class="header-link layout-setting">
           <span class="light-layout" (click)="themeChange('dark', 'dark')">
-            <i class="ri-moon-line header-link-icon"></i>
+            <i class="bx bx-moon header-link-icon"></i>
             <!--<i class="bi bi-moon header-link-icon"></i>
             <i class="bx bx-moon header-link-icon"></i>-->
           </span>
           <span class="dark-layout">
-            <i class="bx bx-sun header-link-icon"
-               (click)="themeChange('color', 'light')"></i>
+            <i class="bx bx-sun header-link-icon" (click)="themeChange('color', 'light')"></i>
           </span>
         </a>
       </div>
@@ -76,26 +75,19 @@
 
       <!-- Start::header-element Notification-->
       <div ngbDropdown [autoClose]="'outside'" class="header-element notifications-dropdown">
-        <a ngbDropdownToggle
-           href="javascript:void(0);"
-           class="header-link dropdown-toggle"
-           data-bs-toggle="dropdown"
-           data-bs-auto-close="outside"
-           id="messageDropdown"
-           aria-expanded="false">
+        <a ngbDropdownToggle href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-toggle="dropdown"
+          data-bs-auto-close="outside" id="messageDropdown" aria-expanded="false">
           <span class="light-layout">
-            <i class="ri-notification-line header-link-icon"></i>
+            <i class="bx bx-bell header-link-icon"></i>
           </span>
-          
+
           <!--<i class="bi bi-bell header-link-icon"></i>-->
           <!--<i class="bx bx-bell header-link-icon"></i>-->
           <span class="badge bg-secondary rounded-pill header-icon-badge pulse pulse-secondary"
-                id="notification-icon-badge">{{ notificationCount }}</span>
+            id="notification-icon-badge">{{ notificationCount }}</span>
         </a>
-        <div ngbDropdownMenu
-             id="notificationitemclose"
-             class="main-header-dropdown dropdown-menu dropdown-menu-end"
-             data-popper-placement="none">
+        <div ngbDropdownMenu id="notificationitemclose" class="main-header-dropdown dropdown-menu dropdown-menu-end"
+          data-popper-placement="none">
           <div class="p-3">
             <div class="d-flex align-items-center justify-content-between">
               <p class="mb-0 fs-17 fw-semibold">Notifications</p>
@@ -103,9 +95,8 @@
             </div>
           </div>
           <div class="dropdown-divider"></div>
-          <ul class="list-unstyled mb-0 overflow-scroll"
-              id="header-notification-scroll"
-              (click)="handleCardClick($event)">
+          <ul class="list-unstyled mb-0 overflow-scroll" id="header-notification-scroll"
+            (click)="handleCardClick($event)">
             <li ngbDropdownItem class="dropdown-item" id="row6">
               <div class="d-flex align-items-start">
                 <div class="pe-2">
@@ -124,9 +115,8 @@
                     </span>
                   </div>
                   <div>
-                    <a (click)="removeNotify('row6')"
-                       href="javascript:void(0);"
-                       class="min-w-fit-content text-muted me-1 dropdown-item-close1">
+                    <a (click)="removeNotify('row6')" href="javascript:void(0);"
+                      class="min-w-fit-content text-muted me-1 dropdown-item-close1">
                       <i class="ti ti-x fs-16"></i>
                     </a>
                   </div>
@@ -145,12 +135,12 @@
                     <p class="mb-0 fw-semibold">
                       <a href="javascript:void(0);">Discount Available</a>
                     </p>
-                    <span class="text-muted fw-normal fs-12 header-notification-text">Discount Available On Selected Products</span>
+                    <span class="text-muted fw-normal fs-12 header-notification-text">Discount Available On Selected
+                      Products</span>
                   </div>
                   <div>
-                    <a (click)="removeNotify('row7')"
-                       href="javascript:void(0);"
-                       class="min-w-fit-content text-muted me-1 dropdown-item-close1">
+                    <a (click)="removeNotify('row7')" href="javascript:void(0);"
+                      class="min-w-fit-content text-muted me-1 dropdown-item-close1">
                       <i class="ti ti-x fs-16"></i>
                     </a>
                   </div>
@@ -169,12 +159,12 @@
                     <p class="mb-0 fw-semibold">
                       <a href="javascript:void(0);">Account Has Been Verified</a>
                     </p>
-                    <span class="text-muted fw-normal fs-12 header-notification-text">Your Account Has Been Verified Sucessfully</span>
+                    <span class="text-muted fw-normal fs-12 header-notification-text">Your Account Has Been Verified
+                      Sucessfully</span>
                   </div>
                   <div>
-                    <a (click)="removeNotify('row8')"
-                       href="javascript:void(0);"
-                       class="min-w-fit-content text-muted me-1 dropdown-item-close1">
+                    <a (click)="removeNotify('row8')" href="javascript:void(0);"
+                      class="min-w-fit-content text-muted me-1 dropdown-item-close1">
                       <i class="ti ti-x fs-16"></i>
                     </a>
                   </div>
@@ -199,9 +189,8 @@
                     <span class="text-muted fw-normal fs-12 header-notification-text">Order Placed Successfully</span>
                   </div>
                   <div>
-                    <a (click)="removeNotify('row9')"
-                       href="javascript:void(0);"
-                       class="min-w-fit-content text-muted me-1 dropdown-item-close1">
+                    <a (click)="removeNotify('row9')" href="javascript:void(0);"
+                      class="min-w-fit-content text-muted me-1 dropdown-item-close1">
                       <i class="ti ti-x fs-16"></i>
                     </a>
                   </div>
@@ -226,9 +215,8 @@
                     <span class="text-muted fw-normal fs-12 header-notification-text">Order Delayed Unfortunately</span>
                   </div>
                   <div>
-                    <a (click)="removeNotify('row10')"
-                       href="javascript:void(0);"
-                       class="min-w-fit-content text-muted me-1 dropdown-item-close1">
+                    <a (click)="removeNotify('row10')" href="javascript:void(0);"
+                      class="min-w-fit-content text-muted me-1 dropdown-item-close1">
                       <i class="ti ti-x fs-16"></i>
                     </a>
                   </div>
@@ -257,39 +245,39 @@
 
       <!-- Start::header-element Full-Screen-->
       <div class="header-element header-fullscreen" appFullscreen>
-        <a href="javascript:void(0);"
-           class="header-link"
-           (click)="toggleFullscreen()">
+        <a href="javascript:void(0);" class="header-link" (click)="toggleFullscreen()">
           <span class="light-layout">
-            <i class="ri-fullscreen-line full-screen-open header-link-icon" [ngClass]="{ 'd-none': isFullscreen }"></i>
+            <i class="bx bx-fullscreen full-screen-open header-link-icon" [ngClass]="{ 'd-none': isFullscreen }"></i>
           </span>
           <!--<i class="bi bi-fullscreen full-screen-open header-link-icon" [ngClass]="{ 'd-none': isFullscreen }"></i>-->
           <!--<i class="bx bx-fullscreen full-screen-open header-link-icon" [ngClass]="{ 'd-none': isFullscreen }"></i>-->
           <i [ngClass]="{ 'd-none': !isFullscreen }"
-             class="bx bx-exit-fullscreen full-screen-close header-link-icon d-none"></i>
+            class="bx bx-exit-fullscreen full-screen-close header-link-icon d-none"></i>
         </a>
       </div>
       <!-- End::header-element Full-Screen-->
 
       <!-- Start::header-element Shortcut-->
-      <!-- <div ngbDropdown class="header-element header-shortcuts-dropdown">
-        <a ngbDropdownToggle href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" id="notificationDropdown" aria-expanded="false">
+      <div ngbDropdown class="header-element header-shortcuts-dropdown">
+        <a ngbDropdownToggle href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-toggle="dropdown"
+          data-bs-auto-close="outside" id="notificationDropdown" aria-expanded="false">
           <span class="light-layout">
-            <i class="ri-layout-grid-fill header-link-icon"></i>
-          </span> -->
+            <i class="bx bx-grid-alt header-link-icon"></i>
+          </span>
           <!--<i class="bi bi-grid-fill header-link-icon"></i>-->
           <!--<i class="bi bi-grid-3x3-gap header-link-icon"></i>-->
           <!--<i class="bx bxs-grid header-link-icon"></i>-->
-        <!-- </a>
-        <div ngbDropdownMenu class="main-header-dropdown header-shortcuts-dropdown dropdown-menu pb-0 dropdown-menu-end" aria-labelledby="notificationDropdown"> -->
+        </a>
+        <div ngbDropdownMenu class="main-header-dropdown header-shortcuts-dropdown dropdown-menu pb-0 dropdown-menu-end"
+          aria-labelledby="notificationDropdown">
           <!--<div class="p-3">
             <div class="d-flex align-items-center justify-content-between">
               <p class="mb-0 fs-17 fw-semibold">Related Apps</p>
             </div>
           </div>-->
-          <!-- <div class="dropdown-divider mb-0"></div>
+          <div class="dropdown-divider mb-0"></div>
           <div class="main-header-shortcuts p-2 overflow-y-scroll" id="header-shortcut-scroll">
-            <div class="row g-2"> -->
+            <div class="row g-2">
               <!--<div class="col-4">
                 <a href="javascript:void(0);">
                   <div class="text-center p-2 related-app">
@@ -403,12 +391,11 @@
                   </div>
                 </a>
               </div>-->
-              <!-- <div class="col-4">
+              <div class="col-4">
                 <a href="javascript:void(0);">
                   <div class="text-center p-2 related-app">
                     <span class="avatar avatar-md">
-                      <img src="./assets/images/icons/BDP.svg"
-                           alt="" />
+                      <img src="./assets/images/icons/BDP.svg" alt="" />
                     </span>
                     <span class="d-block fs-12">BDP</span>
                   </div>
@@ -418,87 +405,69 @@
                 <a href="javascript:void(0);">
                   <div class="text-center p-2 related-app">
                     <span class="avatar avatar-md">
-                      <img src="./assets/images/icons/Ward.svg"
-                           alt="" />
+                      <img src="./assets/images/icons/Ward.svg" alt="" />
                     </span>
                     <span class="d-block fs-12">Ward</span>
                   </div>
                 </a>
               </div>
             </div>
-          </div> -->
+          </div>
           <!--<div class="p-3 border-top">
             <div class="d-grid">
               <a href="javascript:void(0);" class="btn btn-primary">View All</a>
             </div>
           </div>-->
-        <!-- </div>
-      </div> -->
+        </div>
+      </div>
       <!-- End::header-element Shortcut-->
 
       <!-- Start::header-element Profile-->
       <div ngbDropdown class="header-element">
-        <a ngbDropdownToggle
-           href="javascript:void(0);"
-           class="header-link dropdown-toggle"
-           id="mainHeaderProfile"
-           data-bs-toggle="dropdown"
-           data-bs-auto-close="outside"
-           aria-expanded="false">
+        <a ngbDropdownToggle href="javascript:void(0);" class="header-link dropdown-toggle" id="mainHeaderProfile"
+          data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
           <div class="d-flex align-items-center">
             <div class="me-0">
-              <img src="./assets/images/faces/profile-avatar.png" alt="./assets/images/faces/profile-avatar.png" width="32" height="32" class="rounded-circle" />
+              <img src="./assets/images/faces/profile-avatar.png" alt="./assets/images/faces/profile-avatar.png"
+                width="32" height="32" class="rounded-circle" />
             </div>
           </div>
         </a>
         <ul ngbDropdownMenu
-            class="main-header-dropdown dropdown-menu pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end"
-            aria-labelledby="mainHeaderProfile">
+          class="main-header-dropdown dropdown-menu pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end"
+          aria-labelledby="mainHeaderProfile">
           <li>
-            <a href="javascript:void(0)"
-               ngbDropdownItem
-               class="dropdown-item d-flex"
-               href="javascript:void(0);"><i class="ti ti-user-circle fs-18 me-2 op-7"></i>Profile</a>
+            <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item d-flex" href="javascript:void(0);"><i
+                class="ti ti-user-circle fs-18 me-2 op-7"></i>Profile</a>
           </li>
           <li>
-            <a href="javascript:void(0)"
-               ngbDropdownItem
-               class="dropdown-item d-flex"
-               href="javascript:void(0);">
+            <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item d-flex" href="javascript:void(0);">
               <i class="ti ti-inbox fs-18 me-2 op-7"></i>Inbox
               <span class="badge bg-success-transparent ms-auto">25</span>
             </a>
           </li>
           <li>
-            <a ngbDropdownItem
-               class="dropdown-item d-flex border-block-end"
-               href="javascript:void(0);">
+            <a ngbDropdownItem class="dropdown-item d-flex border-block-end" href="javascript:void(0);">
               <i class="ti ti-clipboard-check fs-18 me-2 op-7"></i>Task
               Manager
             </a>
           </li>
           <li>
-            <a ngbDropdownItem
-               class="dropdown-item d-flex"
-               href="javascript:void(0);">
+            <a ngbDropdownItem class="dropdown-item d-flex" href="javascript:void(0);">
               <i class="ti ti-adjustments-horizontal fs-18 me-2 op-7"></i>Settings
             </a>
           </li>
           <li>
-            <a ngbDropdownItem
-               class="dropdown-item d-flex border-block-end"
-               href="javascript:void(0);"><i class="ti ti-wallet fs-18 me-2 op-7"></i>Bal: $7,12,950</a>
+            <a ngbDropdownItem class="dropdown-item d-flex border-block-end" href="javascript:void(0);"><i
+                class="ti ti-wallet fs-18 me-2 op-7"></i>Bal: $7,12,950</a>
           </li>
           <li>
-            <a href="javascript:void(0)"
-               ngbDropdownItem
-               class="dropdown-item d-flex"
-               href="javascript:void(0);"><i class="ti ti-headset fs-18 me-2 op-7"></i>Support</a>
+            <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item d-flex" href="javascript:void(0);"><i
+                class="ti ti-headset fs-18 me-2 op-7"></i>Support</a>
           </li>
           <li>
-            <a ngbDropdownItem
-               class="dropdown-item d-flex"
-               href="javascript:void(0);"><i class="ti ti-logout fs-18 me-2 op-7"></i>Log Out</a>
+            <a ngbDropdownItem class="dropdown-item d-flex" (click)="logout()"><i
+                class="ti ti-logout fs-18 me-2 op-7"></i>Log Out</a>
           </li>
         </ul>
       </div>
@@ -506,154 +475,81 @@
     </div>
     <!-- End::header-content-right -->
   </div>
-    <!-- End::main-header-container -->
+  <!-- End::main-header-container -->
 </header>
 <!-- /app-header -->
 <ng-template #searchModal>
   <div class="modal-body header-modal">
     <div ngbDropdown class="input-group">
-      <a href="javascript:void(0);" class="input-group-text" id="Search-Grid"
-        ><i class="fe fe-search header-link-icon fs-18"></i
-      ></a>
-      <input [(ngModel)]="text"
-      [ngModelOptions]="{standalone: true}" (keyup)="Search(text)"
-        type="search"
-        class="form-control border-0 px-2"
-        placeholder="Search"
-        aria-label="Username"
-      />
-      <a href="javascript:void(0);" class="input-group-text" id="voice-search"
-        ><i class="fe fe-mic header-link-icon"></i
-      ></a>
-        <a
-        ngbDropdownToggle
-        href="javascript:void(0);"
-        class="btn btn-light btn-icon no-caret"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
+      <a href="javascript:void(0);" class="input-group-text" id="Search-Grid"><i
+          class="fe fe-search header-link-icon fs-18"></i></a>
+      <input [(ngModel)]="text" [ngModelOptions]="{standalone: true}" (keyup)="Search(text)" type="search"
+        class="form-control border-0 px-2" placeholder="Search" aria-label="Username" />
+      <a href="javascript:void(0);" class="input-group-text" id="voice-search"><i
+          class="fe fe-mic header-link-icon"></i></a>
+      <a ngbDropdownToggle href="javascript:void(0);" class="btn btn-light btn-icon no-caret" data-bs-toggle="dropdown"
+        aria-expanded="false">
         <i class="fe fe-more-vertical"></i>
       </a>
-       <div class="search-result p-absolute w-100 card border mt-1" *ngIf="menuItems?.length;">
-          <div class="card-header">
-            <h4 class="card-title me-2">Search result of "{{text}}" </h4> <small> limit dropdown 5 only</small>
-          </div>
-          <ul class="list-group text-break">
-            <li *ngFor="let menuItem of menuItems | slice:0:5" [routerLink]="menuItem?.path"
-              class="list-group-item header-list-group border-start-end-top-0 br-0" (click)="clearSearch()">
-              <i class="fa fa-angle-double-right me-2" aria-hidden="true"></i>{{menuItem?.title}}
-            </li>
-          </ul>
+      <div class="search-result p-absolute w-100 card border mt-1" *ngIf="menuItems?.length;">
+        <div class="card-header">
+          <h4 class="card-title me-2">Search result of "{{text}}" </h4> <small> limit dropdown 5 only</small>
         </div>
+        <ul class="list-group text-break">
+          <li *ngFor="let menuItem of menuItems | slice:0:5" [routerLink]="menuItem?.path"
+            class="list-group-item header-list-group border-start-end-top-0 br-0" (click)="clearSearch()">
+            <i class="fa fa-angle-double-right me-2" aria-hidden="true"></i>{{menuItem?.title}}
+          </li>
+        </ul>
+      </div>
       <ul ngbDropdownMenu class="dropdown-menu">
         <li>
-          <a
-            href="javascript:void(0)"
-            ngbDropdownItem
-            class="dropdown-item"
-            href="javascript:void(0);"
-            >Action</a
-          >
+          <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Action</a>
         </li>
         <li>
-          <a
-            href="javascript:void(0)"
-            ngbDropdownItem
-            class="dropdown-item"
-            href="javascript:void(0);"
-            >Another action</a
-          >
+          <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Another
+            action</a>
         </li>
         <li>
-          <a
-            href="javascript:void(0)"
-            ngbDropdownItem
-            class="dropdown-item"
-            href="javascript:void(0);"
-            >Something else here</a
-          >
+          <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Something else
+            here</a>
         </li>
-        <li><hr class="dropdown-divider" /></li>
         <li>
-          <a
-            href="javascript:void(0)"
-            ngbDropdownItem
-            class="dropdown-item"
-            href="javascript:void(0);"
-            >Separated link</a
-          >
+          <hr class="dropdown-divider" />
+        </li>
+        <li>
+          <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item" href="javascript:void(0);">Separated
+            link</a>
         </li>
       </ul>
     </div>
     <div class="mt-4">
       <p class="font-weight-semibold text-muted mb-2">Are You Looking For...</p>
-      <span id="badge1" class="search-tags me-1"
-        ><i class="fe fe-user me-2"></i>People<a
-          href="javascript:void(0)"
-          class="tag-addon"
-          ><i class="fe fe-x" (click)="removeRow('badge1')"></i></a
-      ></span>
-      <span id="badge2" class="search-tags me-1"
-        ><i class="fe fe-file-text me-2"></i>Pages<a
-          href="javascript:void(0)"
-          class="tag-addon"
-          ><i class="fe fe-x" (click)="removeRow('badge2')"></i></a
-      ></span>
-      <span id="badge3" class="search-tags me-1"
-        ><i class="fe fe-align-left me-2"></i>Articles<a
-          href="javascript:void(0)"
-          class="tag-addon"
-          ><i class="fe fe-x" (click)="removeRow('badge3')"></i></a
-      ></span>
-      <span id="badge4" class="search-tags me-1"
-        ><i class="fe fe-server me-2"></i>Tags<a
-          href="javascript:void(0)"
-          class="tag-addon"
-          ><i class="fe fe-x" (click)="removeRow('badge4')"></i></a
-      ></span>
+      <span id="badge1" class="search-tags me-1"><i class="fe fe-user me-2"></i>People<a href="javascript:void(0)"
+          class="tag-addon"><i class="fe fe-x" (click)="removeRow('badge1')"></i></a></span>
+      <span id="badge2" class="search-tags me-1"><i class="fe fe-file-text me-2"></i>Pages<a href="javascript:void(0)"
+          class="tag-addon"><i class="fe fe-x" (click)="removeRow('badge2')"></i></a></span>
+      <span id="badge3" class="search-tags me-1"><i class="fe fe-align-left me-2"></i>Articles<a
+          href="javascript:void(0)" class="tag-addon"><i class="fe fe-x" (click)="removeRow('badge3')"></i></a></span>
+      <span id="badge4" class="search-tags me-1"><i class="fe fe-server me-2"></i>Tags<a href="javascript:void(0)"
+          class="tag-addon"><i class="fe fe-x" (click)="removeRow('badge4')"></i></a></span>
     </div>
     <div class="my-4">
       <p class="font-weight-semibold text-muted mb-2">Recent Search :</p>
-      <div
-        id="badge5"
-        class="p-2 border br-5 d-flex align-items-center text-muted mb-2 alert"
-      >
-        <a href="javascript:void(0);"
-          ><span>Notifications</span></a
-        >
-        <a
-          class="ms-auto lh-1"
-          href="javascript:void(0);"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-          ><i class="fe fe-x text-muted" (click)="removeRow('badge5')"></i
-        ></a>
+      <div id="badge5" class="p-2 border br-5 d-flex align-items-center text-muted mb-2 alert">
+        <a href="javascript:void(0);"><span>Notifications</span></a>
+        <a class="ms-auto lh-1" href="javascript:void(0);" data-bs-dismiss="alert" aria-label="Close"><i
+            class="fe fe-x text-muted" (click)="removeRow('badge5')"></i></a>
       </div>
-      <div
-        id="badge6"
-        class="p-2 border br-5 d-flex align-items-center text-muted mb-2 alert"
-      >
+      <div id="badge6" class="p-2 border br-5 d-flex align-items-center text-muted mb-2 alert">
         <a href="javascript:void(0);"><span>Alerts</span></a>
-        <a
-          class="ms-auto lh-1"
-          href="javascript:void(0);"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-          ><i class="fe fe-x text-muted" (click)="removeRow('badge6')"></i
-        ></a>
+        <a class="ms-auto lh-1" href="javascript:void(0);" data-bs-dismiss="alert" aria-label="Close"><i
+            class="fe fe-x text-muted" (click)="removeRow('badge6')"></i></a>
       </div>
-      <div
-        id="badge7"
-        class="p-2 border br-5 d-flex align-items-center text-muted mb-0 alert"
-      >
+      <div id="badge7" class="p-2 border br-5 d-flex align-items-center text-muted mb-0 alert">
         <a href="javascript:void(0);"><span>Mail</span></a>
-        <a
-          class="ms-auto lh-1"
-          href="javascript:void(0);"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-          ><i class="fe fe-x text-muted" (click)="removeRow('badge7')"></i
-        ></a>
+        <a class="ms-auto lh-1" href="javascript:void(0);" data-bs-dismiss="alert" aria-label="Close"><i
+            class="fe fe-x text-muted" (click)="removeRow('badge7')"></i></a>
       </div>
     </div>
   </div>

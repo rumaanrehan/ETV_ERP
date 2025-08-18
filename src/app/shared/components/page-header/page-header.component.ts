@@ -1,7 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { MenuService } from '../../../core/services/menu.service';
 import { PageHeaderService } from '../../services/page-header.service';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-page-header',
@@ -9,16 +8,17 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./page-header.component.scss']
 })
 export class PageHeaderComponent implements OnInit {
-  pageHeaderActionTemplate!: TemplateRef<any>;
+  pageHeaderActionTemplate!: TemplateRef<any> | null;
 
-  routerEvents:any[]=[]
-  constructor(private router: Router, private pageHeaderService: PageHeaderService) {
-    this.router.events.subscribe((event: any) => {
-      if (event instanceof NavigationEnd) {
-        this.routerEvents = event.url.split('/').filter(e => e != '');
-      }
-    })
+  get breadcrumbs() {
+    return this.menuService.breadcrumbs();
   }
+
+  routerEvents: any[] = []
+  constructor(
+    private pageHeaderService: PageHeaderService,
+    private menuService: MenuService
+  ) { }
 
   ngOnInit() {
     // Subscribe to the template sent by the routed components

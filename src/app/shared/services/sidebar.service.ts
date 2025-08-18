@@ -6,10 +6,10 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class SidebarService {
-    private doubleMenuToggleSubject = new BehaviorSubject<boolean>(false);
-    doubleMenuToggle$ = this.doubleMenuToggleSubject.asObservable();
-  
-    setNavActive(): void {
-      this.doubleMenuToggleSubject.next(true);
-    }
+  private doubleMenuToggleSubject = new BehaviorSubject<boolean>(false);
+  doubleMenuToggle$ = this.doubleMenuToggleSubject.asObservable();
+
+  setNavActive(): void {
+    this.doubleMenuToggleSubject.next(true);
+  }
 }

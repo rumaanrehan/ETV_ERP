@@ -1,5 +1,4 @@
-import { ItemGroup } from "../../../../components/Item-Group/item-group";
-
+import { ItemGroupMaster } from "../item-group-master/item-group-master";
 
 export interface ItemCategoryMaster {
   ItemCategoryID: number | null;
@@ -8,7 +7,7 @@ export interface ItemCategoryMaster {
   ItemGroupID: number | null;
   ItemCategoryName: string | null;
 
-  ItemGroup?: ItemGroup | null;
+  ItemGroup?: ItemGroupMaster | null;
 }
 
 export interface ItemCategory_SelectList {
@@ -33,7 +32,7 @@ export interface ItemCategory_IndexList {
 }
 
 export interface ItemCategoryRequest {
-    ItemGroupID?: number | null;
-    ItemCategoryID?: number | null;
-    PopulateType?: string | null;
+  ItemGroupID?: number | null;
+  ItemCategoryID?: number | null;
+  PopulateType?: string | null;
 }

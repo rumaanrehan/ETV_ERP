@@ -37,8 +37,8 @@ export class AlertNotificationService {
       const htmlString = `
         <ul>
           ${response.ValidationErrors?.map(error =>
-          `<li>${error.ErrorMessage}</li>`
-        ).join('')}
+        `<li>${error.ErrorMessage}</li>`
+      ).join('')}
         </ul>
       `;
       this.showToast({
@@ -83,7 +83,7 @@ export class AlertNotificationService {
     return Swal.fire(swalOptions);
   }
 
-  showServerErrorAlert(options: AlertOptions){
+  showServerErrorAlert(options: AlertOptions) {
     options.type = 'error';
     options.title = options.title || 'Server Error';
     options.footer = 'If the problem persists then please contact to the system administrator.';
@@ -115,8 +115,8 @@ export class AlertNotificationService {
       const htmlString = `
         <ul>
           ${response.ValidationErrors?.map(error =>
-          `<li>${error.ErrorMessage}</li>`
-        ).join('')}
+        `<li>${error.ErrorMessage}</li>`
+      ).join('')}
         </ul>
       `;
       this.showAlert({
@@ -187,7 +187,7 @@ export class AlertNotificationService {
       inputPlaceholder: options.inputPlaceholder,
       inputValue: options.inputValue,
       inputOptions: options.inputOptions,
-      inputValidator: (value:any) => {
+      inputValidator: (value: any) => {
         if (options.inputRequired && !value) {
           return `${options.inputPlaceholder} is Required.`;
         }
@@ -200,7 +200,7 @@ export class AlertNotificationService {
 
   showValidationToast(validationErrors?: any): void {
     let html = '';
-    if(validationErrors){
+    if (validationErrors) {
       html = `<div>
         <ul>
           ${Object.keys(validationErrors).map(key => validationErrors[key] ? `<li>${validationErrors[key]}</li>` : '').join('')}
@@ -210,7 +210,7 @@ export class AlertNotificationService {
     else {
       html = 'The form contains validation errors. Please review and correct the highlighted fields before submitting again.'
     }
-    
+
     this.showToast({
       type: "warning",
       text: html
@@ -219,7 +219,7 @@ export class AlertNotificationService {
 
   showValidationAlert(validationErrors?: any): void {
     let html = '';
-    if(validationErrors){
+    if (validationErrors) {
       html = `<div>
         <ul>
           ${Object.keys(validationErrors).map(key => validationErrors[key] ? `<li>${validationErrors[key]}</li>` : '').join('')}
@@ -229,7 +229,7 @@ export class AlertNotificationService {
     else {
       html = 'The form contains validation errors. Please review and correct the highlighted fields before submitting again.'
     }
-    
+
     this.showAlert({
       type: "warning",
       title: "Form Validation Errors",

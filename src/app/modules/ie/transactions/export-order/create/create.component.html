@@ -112,8 +112,8 @@
                     [optionLabel]="'PortName'" [optionValue]="'PortID'"></z-select>
                 </div>
                 <div class="col-md-3 form-group px-2">
-                  <z-inputtext [group]="form" [control]="'FinalDestination'"
-                    [label]="formConfig.FinalDestination.label"></z-inputtext>
+                  <z-inputtext [group]="form" [control]="'FinalDestination'" [label]="formConfig.FinalDestination.label"
+                    [validationMessage]="formConfig.FinalDestination.error"></z-inputtext>
                 </div>
                 <!-- Narration -->
                 <div class="col-md-6 form-group px-2">
@@ -191,7 +191,7 @@
 <ng-template #salesQtyColTemplate let-row let-i="index">
   <z-inputnumber [group]="productListArray.at(i)" [control]="'SalesQty'"
     [label]="formConfig.ProductList.items.SalesQty.label"
-    [validationMessage]="formConfig.ProductList.items.SalesQty.error" (onChange)="productCalculation()">
+    [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" (onChange)="productCalculation()">
   </z-inputnumber>
 </ng-template>
 
@@ -200,7 +200,7 @@
     <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
     <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitBC'"
       [label]="formConfig.ProductList.items.RatePerUnitBC.label"
-      [validationMessage]="formConfig.ProductList.items.RatePerUnitBC.error" [styleClass]="'text-end'"
+      [validationMessage]="formConfig.ProductList.items.RatePerUnitBC.error?.[i]" [styleClass]="'text-end'"
       (onChange)="productCalculation()"></z-inputnumber>
   </div>
 </ng-template>
@@ -208,7 +208,7 @@
 <ng-template #taxRateColTemplate let-row let-i="index">
   <z-select [group]="productListArray.at(i)" [control]="'SalesTaxRate'"
     [label]="formConfig.ProductList.items.SalesTaxRate.label"
-    [validationMessage]="formConfig.ProductList.items.SalesTaxRate.error" [options]="taxSlabList"
+    [validationMessage]="formConfig.ProductList.items.SalesTaxRate.error?.[i]" [options]="taxSlabList"
     [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="onTaxSlabChange();">
   </z-select>
 </ng-template>
@@ -218,9 +218,8 @@
     <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
     <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxableAmountBC'"
       [label]="formConfig.ProductList.items.TaxableAmountBC.label"
-      [validationMessage]="formConfig.ProductList.items.TaxableAmountBC.error"
+      [validationMessage]="formConfig.ProductList.items.TaxableAmountBC.error?.[i]"
       [styleClass]="'text-end'"></z-inputnumber>
-    <!-- <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[0].toString()"></z-span> -->
   </div>
 </ng-template>
 
@@ -229,7 +228,8 @@
     <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
     <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxAmountBC'"
       [label]="formConfig.ProductList.items.TaxAmountBC.label"
-      [validationMessage]="formConfig.ProductList.items.TaxAmountBC.error" [styleClass]="'text-end'"></z-inputnumber>
+      [validationMessage]="formConfig.ProductList.items.TaxAmountBC.error?.[i]"
+      [styleClass]="'text-end'"></z-inputnumber>
     <!-- <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[1].toString()"></z-span> -->
   </div>
 </ng-template>

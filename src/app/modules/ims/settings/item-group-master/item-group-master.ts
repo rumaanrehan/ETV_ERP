@@ -1,8 +1,12 @@
+import { ItemTypeMaster } from "../item-type-master/item-type-master";
+
 export interface ItemGroupMaster {
     ItemGroupID: number | null;
     ItemGroupCode: string | null;
     ItemGroupName: string | null;
     ItemTypeID: number | null;
+
+    ItemType?: ItemTypeMaster | null;
 }
 
 export interface ItemGroup_SelectList {
