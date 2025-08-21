@@ -9,7 +9,7 @@ export interface ExportOrder {
     ReferenceNo: string | null;
     CustomerID: number | null;
     CustomerName: string | null;
-    
+
     //Exchange Rate Details
     FCCurrencyID: number | null;
     ExchangeRateDate: Date | null;
@@ -18,15 +18,21 @@ export interface ExportOrder {
     IncotermID: number | null;
     IsDutyDrawable: boolean | null;
     IsRoDTEP: boolean | null;
+    BankChargesFC: number | null;
+    BankChargesBC: number | null;
+    FreightChargeFC: number | null;
     FreightChargeBC: number | null;
+    InsuranceAmountFC: number | null;
     InsuranceAmountBC: number | null;
 
     ProductList: ExportOrderDetail[];
 
     SubtotalAmountFC: number | null;
-    TaxAmountFC: number | null;
     SubtotalAmountBC: number | null;
+    TaxAmountFC: number | null;
     TaxAmountBC: number | null;
+    NetAmountFC: number | null;
+    NetAmountBC: number | null;
     PaymentTermID: number | null;
     ShipmentModeID: string | null;
     LoadingPortID: number | null;
@@ -34,7 +40,7 @@ export interface ExportOrder {
     FinalDestination: string | null;
     Narration: string | null;
     StatusID: number | null;
-    
+
     ProductID: number | null;
     ProductName: string | null;
 
@@ -43,6 +49,7 @@ export interface ExportOrder {
 
 export interface ExportOrderRequest {
     ExportOrderNo?: string | null;
+    CustomerName?: string | null;
     PopulateType?: string | null;
 }
 
@@ -56,12 +63,14 @@ export interface ExportOrderDetail {
     ProductName: string | null;
     SalesQty: number | null;
     SalesTaxRate: number | null;
-    RatePerUnitBC: number | null;
     RatePerUnitFC: number | null;
-    TaxAmountBC: number | null;
-    TaxAmountFC: number | null;
-    TaxableAmountBC: number | null;
+    RatePerUnitBC: number | null;
     TaxableAmountFC: number | null;
+    TaxableAmountBC: number | null;
+    TaxAmountFC: number | null;
+    TaxAmountBC: number | null;
+    SalesAmountFC: number | null;
+    SalesAmountBC: number | null;
 
     //Foreign Keys
     Product?: ProductMaster;

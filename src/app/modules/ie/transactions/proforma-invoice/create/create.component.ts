@@ -1,28 +1,25 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { TableDef } from '../../../../../shared/components/z-table/z-table';
-import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
+import { TaxSlab_SelectList } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
 import { Product_SelectList, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 import { Company_SelectList, CompanyRequest } from '../../../settings/company-master/company-master';
-import { Port_SelectList, PortRequest } from '../../../settings/port-master/port-master';
-import { ExportOrder, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList } from '../export-order';
-import { ExportOrderService } from '../export-order.service';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
-import { TaxSlab_SelectList, TaxSlabMaster } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
-import { ExportOrderDocumentTemplate } from '../../export-order-document/export-order-document';
-import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
-import { ExportOrderPaymentTemplate } from '../../export-order-payment/export-payment';
+import { ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
+import { ProformaInvoice, ProformaInvoiceDetail } from '../proforma-invoice';
+import { ProformaInvoiceService } from '../proforma-invoice.service';
+import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-create',
@@ -31,7 +28,7 @@ import { ExportOrderPaymentTemplate } from '../../export-order-payment/export-pa
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
-export class CreateComponent implements OnInit, OnDestroy {
+export class CreateComponent {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
@@ -58,19 +55,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   isLoadPaymentVisible: boolean = true;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<ExportOrder>;
-  tableDef!: TableDef<ExportOrderDetail>;
-  exportOrderDocumentTableDef!: TableDef<ExportOrderDocumentList>
-  exportOrderPaymentTableDef!: TableDef<ExportOrderPaymentList>
+  formConfig!: FormConfigType<ProformaInvoice>;
+  tableDef!: TableDef<ProformaInvoiceDetail>;
 
   customerList: Company_SelectList[] = [];
-  paymentTermList: PaymentTerm_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
-  portList: Port_SelectList[] = [];
 
-  incotermList: StaticList[] = [];
-  shipmentModeList: StaticList[] = [];
-
+  exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
@@ -89,7 +80,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   constructor(
     private pageHeaderService: PageHeaderService,
-    private pageService: ExportOrderService,
+    private pageService: ProformaInvoiceService,
     private formService: FormService,
     private alertService: AlertNotificationService,
     private router: Router,
@@ -99,12 +90,11 @@ export class CreateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<ExportOrder>(this.formConfig);
+    this.form = this.formService.createFormGroup<ProformaInvoice>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.exportOrderAutoCompleteDef = this.pageService.getExportOrderAutoCompleteDef(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
-    this.exportOrderDocumentTableDef = this.pageService.getExportOrderDocumentTableDef({ SerialNoTemplate: this.serialNoColTemplate, IsVerfiedTemplate: this.isDocumentVerifiedTemplate, UpdateDateTemplate: this.documentUploadDateTemplate, ActionTemplate: this.documentActionColTemplate } as ExportOrderDocumentTemplate);
-    this.exportOrderPaymentTableDef = this.pageService.getExportOrderPaymentTableDef({ SerialNoTemplate: this.serialNoColTemplate, PaymentDateTemplate: this.paymentDateTemplate, ActionTemplate: this.paymentActionColTemplate } as ExportOrderPaymentTemplate);
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
@@ -129,15 +119,14 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   loadDropdownList(): void {
-    this.loadStaticLists([
-      { fieldName: 'Incoterm', targetList: 'incotermList' },
-      { fieldName: 'ShipmentMode', targetList: 'shipmentModeList' },
-    ]);
+    // this.loadStaticLists([
+    //   { fieldName: 'Incoterm', targetList: 'incotermList' },
+    //   { fieldName: 'ShipmentMode', targetList: 'shipmentModeList' },
+    // ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.paymentTermList = data.paymentTermList.Data.Items;
           this.taxSlabList = data.taxSlabList.Data.Items;
         },
       });
@@ -149,7 +138,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     listConfigs.forEach(({ fieldName, targetList }) => {
       sources[targetList] = this.pageService.GetStaticList({
         AreaName: 'IE',
-        ControllerName: 'ExportOrder',
+        ControllerName: 'ProformaInvoice',
         FieldName: fieldName,
       });
     });
@@ -176,7 +165,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   resetForm(): void {
-    this.formService.resetFormValue<ExportOrder>(this.formConfig, this.form);
+    this.formService.resetFormValue<ProformaInvoice>(this.formConfig, this.form);
   }
 
   get productListArray(): FormArray<FormGroup> {
@@ -191,9 +180,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.productListArray.removeAt(index);
         this.tableDef.data = this.productListArray.value;
         this.productCalculation();
-
-        console.log(this.tableDef.data);
-        console.log(this.productListArray.value);
       }
     });
   }
@@ -205,6 +191,35 @@ export class CreateComponent implements OnInit, OnDestroy {
     const salesTaxRate = group.get('SalesTaxRate')?.value || 0;
 
     return [quantity * rate, quantity * rate * (salesTaxRate / 100)];
+  }
+
+  loadExportOrder(event: string): void {
+    try {
+      const dto: ExportOrderRequest = {
+        ExportOrderNo: event,
+        PopulateType: 'AutoSuggest'
+      }
+      this.pageService.GetExportOrderList(dto)
+        .pipe(takeUntil(this.destroy$)).subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.exportOrderAutoCompleteDef.options = response.Data.Items;
+            } else {
+              this.exportOrderAutoCompleteDef.options = [];
+              if (response.Message != "Record not found.") {
+                this.alertService.showServerResponseAlert(response);
+              }
+            }
+          },
+        });
+    } catch (error) {
+
+    }
+  }
+
+  onClear_ExportOrder(): void {
+    this.form.get('ExportOrderID')?.patchValue(null);
+    this.form.get('ExportOrderNo')?.patchValue(null);
   }
 
   loadCompany(event: string): void {
@@ -279,22 +294,11 @@ export class CreateComponent implements OnInit, OnDestroy {
       SalesTaxRate: event.PurTaxRate
     });
 
-    // this.productListArray = [...this.productListArray, productItemForm];
     this.productListArray.push(productItemForm);
     this.tableDef.data = this.productListArray.value;
-
-    // console.log(this.form.value);
-    // console.log(this.productListArray.value);
-    // console.log(this.tableDef.data);
-
-    // const data: ExportOrder_ProductDetail = {
-    //   ProductID: event.ProductID, ProductName: event.ProductName, SalesQty: null, RatePerUnitBC: null, TaxRate: event.PurTaxRate
-    // }
-    // this.tableDef.data.push(data);
   }
 
   productCalculation(): void {
-    // const exchangeRate = this.form.get('ExchangeRateToBC')?.value || 1;
     var netAmount: number = 0;
     this.productListArray.controls.forEach((group: FormGroup) => {
       const quantity = group.get('SalesQty')?.value || 0;
@@ -374,34 +378,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.selectedCustomerAddress = event?.BillingAddress || '';
   }
 
-  onChangeShipmentMode(): void {
-    this.loadPortList();
-  }
-
-  loadPortList(): void {
-    try {
-      const dto: PortRequest = {
-        PortTypeID: this.form.get('ShipmentModeID')?.value,
-        PopulateType: 'SelectList'
-      }
-      this.pageService.GetPortList(dto)
-        .pipe(takeUntil(this.destroy$)).subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.portList = response.Data.Items;
-            } else if (response.Status == "Info") {
-              this.portList = [];
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
-    } catch (error) {
-
-    }
-  }
-
   onSubmit(): void {
     if (this.isSubmitted) return;
 
@@ -431,7 +407,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           })
           .then((result) => {
             if (result.isConfirmed) {
-              const model: ExportOrder = {
+              const model: ProformaInvoice = {
                 ...this.formService.transformFormData(this.form.value),
                 ReasonToUpdate: result.value,
               };
@@ -450,7 +426,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  createRecord(model: ExportOrder): void {
+  createRecord(model: ProformaInvoice): void {
     try {
       this.pageService
         .CreateRecord(model)
@@ -480,7 +456,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateRecord(model: ExportOrder): void {
+  updateRecord(model: ProformaInvoice): void {
     try {
       this.pageService
         .UpdateRecord(model)
@@ -494,7 +470,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 timer: 5000,
               });
               setTimeout(() => {
-                this.router.navigate(['/ie/export-order/index']);
+                this.router.navigate(['/ie/proforma-invoice/index']);
               }, 2000);
             } else {
               this.alertService.showServerResponseAlert(response);
@@ -535,7 +511,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  GetOrderItemDetails(model: ExportOrder): void {
+  GetOrderItemDetails(model: ProformaInvoice): void {
     this.route.params.subscribe((params) => {
       const ExportOrderID = +params['id'];
       this.pageService.GetOrderItemDetails(ExportOrderID)
@@ -543,8 +519,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
-              this.loadPortList();
               response.Data.Items.forEach(item => {
                 const patchedModel = {
                   ...item,
@@ -560,8 +534,6 @@ export class CreateComponent implements OnInit, OnDestroy {
                 ...model,
                 CustomerID: model.Customer?.CompanyID,
                 CustomerName: model.Customer?.CompanyName,
-                ExportOrderDate: DateUtils.toDate(model.ExportOrderDate),
-                ReferenceDate: DateUtils.toDate(model.ReferenceDate),
                 ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
               };
               this.form.patchValue(patchedModel);
@@ -574,162 +546,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  onClickLoadDocuments(): void {
-    this.route.params.subscribe((params) => {
-      const exportOrderID = +params['id'];
-      if (exportOrderID) {
-        try {
-          this.pageService.LoadDocument(exportOrderID)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  this.exportOrderDocumentTableDef.data = response.Data.Items;
-                  this.isLoadDocumentVisible = false
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
-            });
-        }
-        catch (error) {
-
-        }
-      }
-    });
-  }
-
-  onClickViewDocumentItem(row: ExportOrderDocumentList): void {
-    if (row.DocumentPath && row.DocumentPath.trim() !== '') {
-      this.pageService.GetDocument(row.DocumentPath)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            const fileURL = URL.createObjectURL(response);
-            window.open(fileURL, '_blank');
-          },
-          error: (err) => {
-            if (err.status === 404) {
-              this.alertService.showAlert({ type: 'error', text: 'File not found.' });
-            } else {
-              this.alertService.showAlert({ type: 'error', text: 'Download failed.' });
-            }
-          }
-        });
-    }
-  }
-
-  onClickDownloadDocumentItem(row: ExportOrderDocumentList): void {
-    if (row.DocumentPath && row.DocumentPath.trim() !== '') {
-      this.pageService.GetDocument(row.DocumentPath)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            const blob = new Blob([response], { type: response.type });
-            const fileURL = URL.createObjectURL(blob);
-
-            const a = document.createElement('a');
-            a.href = fileURL;
-            a.download = row.DocumentPath.split(/[/\\]/).pop() || 'downloaded-file'
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(fileURL);
-          },
-          error: (err) => {
-            if (err.status === 404) {
-              this.alertService.showAlert({ type: 'error', text: 'File not found.' });
-            } else {
-              this.alertService.showAlert({ type: 'error', text: 'Download failed.' });
-            }
-          }
-        });
-    }
-  }
-
-  onClickRemoveDocumentItem(row: any): void {
-    this.alertService.showConfirmationWithInput({
-      text: 'Do you really want to remove this document?',
-      inputPlaceholder: 'Reason to delete'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const dto: ExportOrderDocumentList = {
-          ...row,
-          ReasonToDelete: result.value
-        }
-        this.pageService.DeleteDocument(dto)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.alertService.showAlert({
-                  type: 'success',
-                  text: response.Message,
-                  timer: 5000,
-                });
-                this.onClickLoadDocuments();
-              } else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
-      }
-    });
-  }
-
-  onClickLoadPayments(): void {
-    this.route.params.subscribe((params) => {
-      const exportOrderID = +params['id'];
-      if (exportOrderID) {
-        try {
-          this.pageService.LoadPayment(exportOrderID)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  this.exportOrderPaymentTableDef.data = response.Data.Items;
-                  this.isLoadPaymentVisible = false;
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
-            });
-        }
-        catch (error) {
-
-        }
-      }
-    });
-  }
-
-  onClickRemovePaymentItem(row: any): void {
-    this.alertService.showConfirmationWithInput({
-      text: 'Do you really want to remove this payment?',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const dto: ExportOrderPaymentList = {
-          ...row,
-          ReasonToCancel: result.value
-        }
-        this.pageService.DeletePayment(dto)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.alertService.showAlert({
-                  type: 'success',
-                  text: response.Message,
-                  timer: 5000,
-                });
-                this.onClickLoadPayments();
-              } else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
-      }
-    });
-  }
 
   formatDate(date: Date) {
     return DateUtils.formatDate(date);

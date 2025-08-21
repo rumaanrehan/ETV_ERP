@@ -97,7 +97,42 @@ export const ieRoute: Routes = [
                 }
               }
             ]
-          }
+          },
+          {
+            path: 'proforma-invoice',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Proforma Invoice'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/proforma-invoice/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/ProformaInvoice',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/ProformaInvoice',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/ProformaInvoice',
+                  breadcrumb: 'Edit'
+                }
+              }
+            ]
+          },
         ]
       },
 
