@@ -6,8 +6,8 @@ export interface ProformaInvoice {
     ProformaInvoiceNo: string | null;
     ProformaInvoiceDate: Date | null;
     BasedOn: number | null;
-    SalesOrderID: number | null;
-    SalesOrderNo: string | null;
+    ExportOrderID: number | null;
+    ExportOrderNo: string | null;
     CustomerID: number | null;
     CustomerName: string | null;
     FCCurrencyID: number | null;

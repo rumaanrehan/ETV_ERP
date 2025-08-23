@@ -11,47 +11,36 @@
                     <div class="card-body">
                         <div class="horizontal-form">
                             <div class="row">
-                                <!-- Order Details -->
-                                <div class="col-xl-2 form-group px-2">
+                                <!-- <div class="col-xl-2 form-group px-2">
                                     <z-span [text]="form.get('ProformaInvoiceNo')?.value"
                                         [label]="formConfig.ProformaInvoiceNo.label"></z-span>
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
+                                    <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
+                                        [optionLabel]="'Text'" [optionValue]="'iValue'"
+                                        [options]="basedOnList"></z-select>
+                                </div>
+                                <div class="col-xl-6 form-group px-2"></div>
+                                <div class="col-xl-2 form-group px-2">
                                     <z-datepicker [group]="form" [control]="'ProformaInvoiceDate'"
                                         [label]="formConfig.ProformaInvoiceDate.label"
                                         [validationMessage]="formConfig.ProformaInvoiceDate.error"></z-datepicker>
-                                </div>
-                                <div class="col-xl-4"></div>
-                                <!-- <div class="col-xl-2 form-group px-2">
-                                    <z-datepicker [group]="form" [control]="'ReferenceDate'"
-                                        [label]="formConfig.ReferenceDate.label"
-                                        [validationMessage]="formConfig.ReferenceDate.error"></z-datepicker>
-                                </div>
-                                <div class="col-xl-2 form-group px-2">
-                                    <z-inputtext [group]="form" [control]="'ReferenceNo'"
-                                        [label]="formConfig.ReferenceNo.label"
-                                        [validationMessage]="formConfig.ReferenceNo.error"></z-inputtext>
                                 </div> -->
-
-                                <!-- Customer Details -->
                                 <div class="col-xl-3 form-group px-2">
-                                    <z-autocomplete [controlDef]="companyMasterAutoCompleteDef"
-                                        (onSearch)="loadCompany($event)" (onSelect)="OnCustomerSelect($event)"
-                                        (onClear)="onClear_Company()"></z-autocomplete>
-                                </div>
-                                <div class="col-xl-9"></div>
-                                <div class="col-xl-12 form-group px-2">
-                                    <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
+                                    <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"
+                                        (onSearch)="loadExportOrder($event)" (onSelect)="onSelect_ExportOrder($event)"
+                                        (onClear)="onClear_ExportOrder()"></z-autocomplete>
                                 </div>
 
-                                <!-- Currency & Exchange -->
+                                <!-- <div class="col-xl-9"></div>
+
                                 <h6 class="form-group px-2">Exchange Rate Details</h6>
-                                <div class="col-xl-3 form-group px-2">
+                                <div class="col-xl-2 form-group px-2">
                                     <z-select [group]="form" [control]="'FCCurrencyID'"
                                         [label]="formConfig.FCCurrencyID.label" [optionLabel]="'cValue'"
                                         [optionValue]="'iValue'" [options]="currencyList"></z-select>
                                 </div>
-                                <div class="col-xl-5"></div>
+                                <div class="col-xl-6"></div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
                                         [label]="formConfig.ExchangeRateDate.label"></z-datepicker>
@@ -62,13 +51,11 @@
                                         (onChange)="productCalculation()"></z-inputnumber>
                                 </div>
 
-                                <!-- Incoterm and Charges -->
-                                <!-- <div class="col-xl-3 form-group px-2">
-                                    <z-select [group]="form" [control]="'IncotermID'"
-                                        [label]="formConfig.IncotermID.label" [optionLabel]="'Text'"
-                                        [optionValue]="'iValue'" [options]="incotermList"></z-select> 
-                                </div>-->
-                                <div class="col-xl-5"></div>
+                                <div class="col-md-2 form-group px-2">
+                                    <z-inputnumber [group]="form" [control]="'InsuranceAmountFC'"
+                                        [label]="formConfig.InsuranceAmountFC.label"></z-inputnumber>
+                                </div>
+                                <div class="col-xl-6"></div>
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'FreightChargeFC'"
                                         [label]="formConfig.FreightChargeFC.label"></z-inputnumber>
@@ -77,21 +64,8 @@
                                     <z-inputnumber [group]="form" [control]="'BankChargesFC'"
                                         [label]="formConfig.BankChargesFC.label"></z-inputnumber>
                                 </div>
-                                <!-- <div class="col-xl-2 form-group px-2">
-                                    <z-checkbox [group]="form" [control]="'IsDutyDrawable'"
-                                        [label]="formConfig.IsDutyDrawable.label"></z-checkbox>
-                                </div> -->
-                                <!-- <div class="col-xl-2 px-2">
-                                    <z-checkbox [group]="form" [control]="'IsRoDTEP'"
-                                        [label]="formConfig.IsRoDTEP.label"></z-checkbox>
-                                </div> -->
-                                <div class="col-xl-6"></div>
-                                <div class="col-md-2 form-group px-2">
-                                    <z-inputnumber [group]="form" [control]="'InsuranceAmountFC'"
-                                        [label]="formConfig.InsuranceAmountFC.label"></z-inputnumber>
-                                </div>
-                                <!-- Product List -->
-                                <div class="col-12 px-2">
+                                <div class="col-xl-6"></div> -->
+                                <!-- <div class="col-12 px-2">
                                     <h6 class="form-group">Product List</h6>
                                     <div class="col-xl-3 form-group">
                                         <z-autocomplete [controlDef]="productAutoCompleteDef"
@@ -100,52 +74,8 @@
                                     </div>
                                     <z-table [tableDef]="this.tableDef">
                                     </z-table>
-                                </div>
-                                <!-- Payment & Shipment -->
-                                <!-- <div class="col-xl-2 form-group px-2">
-                                    <z-select [group]="form" [control]="'PaymentTermID'"
-                                        [label]="formConfig.PaymentTermID.label" [options]="paymentTermList"
-                                        [optionLabel]="'PaymentTermName'" [optionValue]="'PaymentTermID'"></z-select>
                                 </div> -->
-                                <!-- Shipment -->
-                                <h6 class="form-group px-2">Shipment</h6>
-                                <!-- <div class="col-xl-2 form-group px-2">
-                                    <z-select [group]="form" [control]="'ShipmentModeID'"
-                                        [label]="formConfig.ShipmentModeID.label" [options]="shipmentModeList"
-                                        [optionLabel]="'Text'" [optionValue]="'iValue'"
-                                        (onChange)="onChangeShipmentMode()"></z-select>
-                                </div> -->
-                                <div class="col-xl-1"></div>
-                                <!-- <div class="col-md-3 form-group px-2">
-                                    <z-select [group]="form" [control]="'LoadingPortID'"
-                                        [label]="formConfig.LoadingPortID.label"
-                                        [validationMessage]="formConfig.LoadingPortID.error" [options]="portList"
-                                        [optionLabel]="'PortName'" [optionValue]="'PortID'"></z-select>
-                                </div> -->
-                                <!-- <div class="col-md-3 form-group px-2">
-                                    <z-select [group]="form" [control]="'DischargePortID'"
-                                        [label]="formConfig.DischargePortID.label"
-                                        [validationMessage]="formConfig.DischargePortID.error" [options]="portList"
-                                        [optionLabel]="'PortName'" [optionValue]="'PortID'"></z-select>
-                                </div> -->
-                                <!-- <div class="col-md-3 form-group px-2">
-                                    <z-inputtext [group]="form" [control]="'FinalDestination'"
-                                        [label]="formConfig.FinalDestination.label"
-                                        [validationMessage]="formConfig.FinalDestination.error"></z-inputtext>
-                                </div> -->
-                                <!-- Narration -->
-                                <div class="col-md-6 form-group px-2">
-                                    <z-textarea [group]="form" [control]="'Narration'"
-                                        [label]="formConfig.Narration.label"></z-textarea>
-                                </div>
-                                <div class="col-xl-4"></div>
-                                <!-- Status -->
-                                <!-- <div class="col-md-2 form-group px-2" *ngIf="!isEditMode">
-                                    <z-select [group]="form" [control]="'StatusID'" [label]="formConfig.StatusID.label"
-                                        [optionLabel]="'Text'" [optionValue]="'iValue'"
-                                        [options]="statusList"></z-select>
-                                </div> -->
-                            </div> <!-- row -->
+                            </div>
                         </div>
                     </div>
                 </div>

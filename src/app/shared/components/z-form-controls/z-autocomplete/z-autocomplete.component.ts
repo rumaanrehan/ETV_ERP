@@ -10,7 +10,7 @@ import { AutoCompleteDef } from './z-autocomplete';
 @Component({
   selector: 'z-autocomplete',
   standalone: true,
-  imports: [CommonModule,FormsModule,ReactiveFormsModule,FloatLabelModule,AutoCompleteModule,ShowValidationTooltipDirective],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FloatLabelModule, AutoCompleteModule, ShowValidationTooltipDirective],
   templateUrl: './z-autocomplete.component.html',
   styleUrl: './z-autocomplete.component.scss'
 })

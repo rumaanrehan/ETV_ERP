@@ -3,7 +3,7 @@ import { ProformaInvoice, ProformaInvoiceDetail } from './proforma-invoice';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { RequiredIf, Operator } from '../../../../shared/validators/required-if.validator';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderRequest } from '../export-order/export-order';
+import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderDetail, ExportOrderRequest } from '../export-order/export-order';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
 import { Product_SelectList, ProductRequest } from '../../../ims/settings/product-master/product-master';
@@ -66,12 +66,12 @@ export class ProformaInvoiceService {
   //   return this.apiService.post<ApiPagedListResponse<ExportOrder_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   // }
 
-  GetDetails(proformaInvoiceID: number): Observable<ApiDataResponse<ProformaInvoice>> {
-    return this.apiService.post<ApiDataResponse<ProformaInvoice>>(`${this.endpoint}/GetDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
+  GetExportOrderDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder>> {
+    return this.exportOrderService.GetDetails(exportOrderID);
   }
 
-  GetOrderItemDetails(proformaInvoiceID: number): Observable<ApiListResponse<ProformaInvoiceDetail>> {
-    return this.apiService.post<ApiListResponse<ProformaInvoiceDetail>>(`${this.endpoint}/GetItemDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
+  GetExportOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
+    return this.exportOrderService.GetOrderItemDetails(exportOrderID);
   }
 
   CreateRecord(model: ProformaInvoice): Observable<ApiResponse> {
@@ -139,15 +139,15 @@ export class ProformaInvoiceService {
         defaultValue: null
       },
       ProformaInvoiceNo: {
-        label: 'Order No',
+        label: 'Proforma Invoice No',
         defaultValue: "NEW"
       },
       ProformaInvoiceDate: {
-        label: 'Order Date',
+        label: 'Proforma Invoice Date',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Order Date is required"
+          required: "Proforma Invoice is required"
         }
       },
       BasedOn: {
@@ -158,20 +158,20 @@ export class ProformaInvoiceService {
           required: "Based On is required"
         }
       },
-      SalesOrderID: {
-        label: 'Sales Order',
+      ExportOrderID: {
+        label: 'Export Order',
         defaultValue: null,
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
         validationMessages: {
-          required: "Sales Order is required"
+          required: "Export Order is required"
         }
       },
-      SalesOrderNo: {
-        label: 'Sales Order',
+      ExportOrderNo: {
+        label: 'Export Order',
         defaultValue: null,
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
         validationMessages: {
-          required: "Sales Order is required"
+          required: "Export Order is required"
         }
       },
       CustomerID: {
@@ -372,15 +372,15 @@ export class ProformaInvoiceService {
     return {
       type: 'formControl',
       group: form,
-      control: 'ProductName',
-      label: formConfig.ProductName.label,
-      validationMessage: formConfig.ProductName.error,
-      placeholder: 'Search Product',
+      control: 'ExportOrderNo',
+      label: formConfig.ExportOrderNo.label,
+      validationMessage: formConfig.ExportOrderNo.error,
+      placeholder: 'Search ExportOrder',
       options: [],
-      optionLabel: 'ProductName',
+      optionLabel: 'ExportOrderNo',
       columns: [
-        { data: 'ProductCode', label: 'Product Code', width: '100px' },
-        { data: 'ProductName', label: 'Product Name', width: '200px' }
+        { data: 'ExportOrderNo', label: 'Export Order No', width: '100px' },
+        { data: 'CustomerName', label: 'Customer Name', width: '200px' }
       ],
     }
   }

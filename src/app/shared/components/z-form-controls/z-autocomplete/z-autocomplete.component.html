@@ -2,21 +2,12 @@
   <div [formGroup]="controlDef.group">
     <div class="input-group">
       <p-floatLabel class="flex-grow-1">
-        <p-autoComplete
-          [formControlName]="controlDef.control"
-          [appShowValidationTooltip]="controlDef.validationMessage"
-          [placeholder]="controlDef.placeholder"
-          [suggestions]="controlDef.options"
-          [optionLabel]="controlDef.optionLabel"
-          [readonly]="isValueSelected"
-          [forceSelection]="true"
-          [minLength]="2"
-          [delay]="500"
-          [autoHighlight]="true"
-          [autoOptionFocus]="true"
-          (completeMethod)="searchHandler($event)"
+        <p-autoComplete [formControlName]="controlDef.control" [appShowValidationTooltip]="controlDef.validationMessage"
+          [placeholder]="controlDef.placeholder" [suggestions]="controlDef.options"
+          [optionLabel]="controlDef.optionLabel" [readonly]="isValueSelected" [forceSelection]="true" [minLength]="2"
+          [delay]="500" [autoHighlight]="true" [autoOptionFocus]="true" (completeMethod)="searchHandler($event)"
           (onSelect)="selectHandler($event)">
-    
+
           <!-- Header template -->
           <ng-template pTemplate="header" *ngIf="!controlDef.hideHeader">
             <table class="autocomplete-table">
@@ -29,14 +20,13 @@
               </thead>
             </table>
           </ng-template>
-    
+
           <!-- Item template -->
           <ng-template let-item pTemplate="item">
             <table class="autocomplete-table">
               <tbody>
                 <tr>
-                  <td *ngFor="let col of controlDef.columns"
-                      [ngStyle]="{ 'width': col.width || 'auto' }">
+                  <td *ngFor="let col of controlDef.columns" [ngStyle]="{ 'width': col.width || 'auto' }">
                     {{ item[col.data] }}
                   </td>
                 </tr>
@@ -47,26 +37,18 @@
         <label>{{ controlDef.label }}</label>
       </p-floatLabel>
       <button *ngIf="isValueSelected" class="input-group-addon" type="button" (click)="clearHandler()" tabindex="-1">
-          <i class="pi pi-times"></i>
+        <i class="pi pi-times"></i>
       </button>
     </div>
   </div>
 </ng-container>
 <ng-container *ngIf="controlDef.type === 'suggestions'">
   <p-floatLabel>
-    <p-autoComplete
-      [ngModel]="controlDef.value"
-      [placeholder]="controlDef.placeholder"
-      [suggestions]="controlDef.options"
-      [optionLabel]="controlDef.optionLabel"
-      [forceSelection]="true"
-      [minLength]="2"
-      [delay]="500"
-      [autoHighlight]="true"
-      [autoOptionFocus]="true"
-      (completeMethod)="searchHandler($event)"
+    <p-autoComplete [ngModel]="controlDef.value" [placeholder]="controlDef.placeholder"
+      [suggestions]="controlDef.options" [optionLabel]="controlDef.optionLabel" [forceSelection]="true" [minLength]="2"
+      [delay]="500" [autoHighlight]="true" [autoOptionFocus]="true" (completeMethod)="searchHandler($event)"
       (onSelect)="selectHandler($event)">
-      
+
       <ng-template pTemplate="header" *ngIf="!controlDef.hideHeader">
         <table class="autocomplete-table">
           <thead>
@@ -78,13 +60,12 @@
           </thead>
         </table>
       </ng-template>
-      
+
       <ng-template let-item pTemplate="item">
         <table class="autocomplete-table">
           <tbody>
             <tr>
-              <td *ngFor="let col of controlDef.columns"
-                  [ngStyle]="{ 'width': col.width || 'auto' }">
+              <td *ngFor="let col of controlDef.columns" [ngStyle]="{ 'width': col.width || 'auto' }">
                 {{ item[col.data] }}
               </td>
             </tr>

@@ -56,6 +56,7 @@ export interface ExportOrderRequest {
 export interface ExportOrder_SelectList {
     ExportOrderID: number;
     ExportOrderNo: string;
+    CustomerName: string;
 }
 
 export interface ExportOrderDetail {

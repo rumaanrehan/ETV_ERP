@@ -14,7 +14,7 @@ import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { TaxSlab_SelectList } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
 import { Product_SelectList, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 import { Company_SelectList, CompanyRequest } from '../../../settings/company-master/company-master';
-import { ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
+import { ExportOrder, ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
 import { ProformaInvoice, ProformaInvoiceDetail } from '../proforma-invoice';
 import { ProformaInvoiceService } from '../proforma-invoice.service';
 import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
@@ -73,10 +73,10 @@ export class CreateComponent {
     { Text: 'INR - Indian Rupee', iValue: 5, cValue: 'INR - Indian Rupee' }
   ];
 
-  statusList: StaticList[] = [
-    { Text: 'Processing', iValue: 1, cValue: '#28a745' },
-    { Text: 'Ready to Ship', iValue: 2, cValue: '#dc3545' }
-  ];
+  basedOnList: StaticList[] = [
+    { Text: 'Export Order', iValue: 1, cValue: '' },
+    { Text: 'Direct', iValue: 2, cValue: '' }
+  ]
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -110,7 +110,6 @@ export class CreateComponent {
     }
 
     this.loadDropdownList();
-    this.getDetails();
   }
 
   ngOnDestroy(): void {
@@ -217,9 +216,21 @@ export class CreateComponent {
     }
   }
 
+  onSelect_ExportOrder(event: ExportOrder_SelectList): void {
+    if (event.ExportOrderID) {
+      this.getDetails(event.ExportOrderID);
+    }
+  }
+
   onClear_ExportOrder(): void {
-    this.form.get('ExportOrderID')?.patchValue(null);
-    this.form.get('ExportOrderNo')?.patchValue(null);
+    // console.log(this.tableDef.data);
+    // this.form.get('ExportOrderID')?.patchValue(null);
+    // this.form.get('ExportOrderNo')?.patchValue(null);
+    // console.log(this.tableDef.data);
+    // console.log(this.productListArray.value);
+
+    // this.productListArray.clear();
+    // this.tableDef.data = [];
   }
 
   loadCompany(event: string): void {
@@ -486,64 +497,64 @@ export class CreateComponent {
     }
   }
 
-  getDetails(): void {
-    this.route.params.subscribe((params) => {
-      const exportOrderID = +params['id'];
-      if (exportOrderID) {
-        this.isEditMode = true;
-        try {
-          this.pageService.GetDetails(exportOrderID)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  this.GetOrderItemDetails(response.Data)
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
-            });
-        }
-        catch (error) {
 
-        }
-      }
-    });
-  }
 
-  GetOrderItemDetails(model: ProformaInvoice): void {
-    this.route.params.subscribe((params) => {
-      const ExportOrderID = +params['id'];
-      this.pageService.GetOrderItemDetails(ExportOrderID)
+
+
+
+
+
+
+
+
+
+  getDetails(exportOrderID: number): void {
+    try {
+      console.log("Me Yaha hun");
+      this.pageService.GetExportOrderDetails(exportOrderID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              response.Data.Items.forEach(item => {
-                const patchedModel = {
-                  ...item,
-                  ProductName: item.Product!.ProductName,
-                };
-                const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                productForm.patchValue(patchedModel);
-                this.productListArray.push(productForm);
-              });
-              this.tableDef.data = this.productListArray.value;
-              this.selectedCustomerAddress = model.Customer?.BillingAddress!;
-              const patchedModel = {
-                ...model,
-                CustomerID: model.Customer?.CompanyID,
-                CustomerName: model.Customer?.CompanyName,
-                ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
-              };
-              this.form.patchValue(patchedModel);
-            }
-            else {
-              // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
+              this.GetOrderItemDetails(response.Data)
+            } else {
+              this.alertService.showServerResponseAlert(response);
             }
           },
         });
-    });
+    }
+    catch (error) {
+
+    }
+  }
+
+  GetOrderItemDetails(model: ExportOrder): void {
+    this.pageService.GetExportOrderItemDetails(model.ExportOrderID!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            response.Data.Items.forEach(item => {
+              const patchedModel = {
+                ...item,
+                ProductName: item.Product!.ProductName,
+              };
+              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productForm.patchValue(patchedModel);
+              this.productListArray.push(productForm);
+            });
+            this.tableDef.data = this.productListArray.value;
+            const patchedModel = {
+              ...model,
+              ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
+            };
+            this.form.patchValue(patchedModel);
+          }
+          else {
+            // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
+          }
+        },
+      });
   }
 
 
