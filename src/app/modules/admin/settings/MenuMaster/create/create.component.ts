@@ -14,7 +14,7 @@ import { SelectList } from '../../SelectList/select-list';
 import { SelectListService } from '../../SelectList/select-list.service';
 import { MenuMaster, MenuMaster_SelectList } from '../menu-master';
 import { MenuMasterService } from '../menu-master.service';
- 
+
 @Component({
   selector: 'app-create',
   standalone: true,
@@ -33,8 +33,8 @@ export class CreateComponent {
   formConfig!: FormConfigType<MenuMaster>;
   MenuTypeList: SelectList[] = [];
   ModuleList: ModuleMaster_SelectList[] = [];
-  GroupMenuList: MenuMaster_SelectList[] = [];              
-  ParentMenuList: MenuMaster_SelectList[] = [];              
+  GroupMenuList: MenuMaster_SelectList[] = [];
+  ParentMenuList: MenuMaster_SelectList[] = [];
 
   constructor(
     private pageService: MenuMasterService,
@@ -48,7 +48,7 @@ export class CreateComponent {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<MenuMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.loadMenuType('MenuType');
+    // this.loadMenuType('MenuType');
     this.loadModule();
   };
 
@@ -57,23 +57,23 @@ export class CreateComponent {
     this.destroy$.complete();
   }
 
-  loadMenuType(FieldName: any) {
-    try {
-      this.selectListService.PopulateList('Admin', 'MenuMaster', FieldName)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.MenuTypeList = response.Data.Items;
-            } else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
-    } catch (error) {
+  // loadMenuType(FieldName: any) {
+  //   try {
+  //     this.selectListService.PopulateList('Admin', 'MenuMaster', FieldName)
+  //       .pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (response) => {
+  //           if (response.IsSuccess) {
+  //             this.MenuTypeList = response.Data.Items;
+  //           } else {
+  //             this.alertService.showServerResponseAlert(response);
+  //           }
+  //         },
+  //       });
+  //   } catch (error) {
 
-    }
-  }
+  //   }
+  // }
 
   loadModule(): void {
     try {
@@ -111,9 +111,9 @@ export class CreateComponent {
 
   loadGroupMenu(ModuleID: number): void {
     try {
-      this.pageService.PopulateList(0, ModuleID, 0, 0, '', '', '','GroupMenuList')
+      this.pageService.PopulateList(0, ModuleID, 0, 0, '', '', '', 'GroupMenuList')
         .pipe(takeUntil(this.destroy$))
-        .subscribe({ 
+        .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
               this.GroupMenuList = response.Data.Items;

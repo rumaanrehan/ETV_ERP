@@ -43,7 +43,7 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/MenuMaster',
+              menu: 'Admin/MenuMaster',
               breadcrumb: 'Menu Master'
             }
           },
@@ -53,7 +53,7 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/RoleMaster',
+              menu: 'Admin/RoleMaster',
               breadcrumb: 'Role Master'
             }
           },
@@ -63,7 +63,7 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/TaxSlabMaster',
+              menu: 'Admin/TaxSlabMaster',
               breadcrumb: 'Tax Slab Master'
             }
           },
@@ -73,7 +73,7 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/CurrencyMaster',
+              menu: 'Admin/CurrencyMaster',
               breadcrumb: 'Currency Master'
             }
           },
@@ -83,7 +83,7 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/DesignationMaster',
+              menu: 'Admin/DesignationMaster',
               breadcrumb: 'Designation Master'
             }
           },
@@ -93,7 +93,7 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/EmployeeTypeMaster',
+              menu: 'Admin/EmployeeTypeMaster',
               breadcrumb: 'Employee Type Master'
             }
           }

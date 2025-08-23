@@ -1,28 +1,37 @@
 <!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add Role</button>
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i
+        class="pi pi-plus"></i>&nbsp;Add Roles</button>
+    <button class="btn btn-primary btn-page-header" [routerLink]="'/admin/role-permission'"><i
+        class=" pi pi-plus"></i>&nbsp;Role Permission</button>
+  </div>
 </ng-template>
 
 <!-- Index Table Component -->
-<div style="overflow-x: auto">
-  <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)"></z-datatable>
+
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)">
+  </z-datatable>
 </div>
 
 <!-- Table Column Custom Template -->
- <ng-template #roleCodeTemplate let-row>
-  <span class="table-action-link" (click)="onClickEditDetails(row.TaxSlabID,row.ActiveStatus)" style="cursor: pointer;">{{ row.TaxSlabCode }}</span>
+<ng-template #roleCodeTemplate let-row>
+  <span class="table-action-link" (click)="onClickEditDetails(row.TaxSlabID,row.ActiveStatus)"
+    style="cursor: pointer;">{{ row.TaxSlabCode }}</span>
 </ng-template>
 
 <ng-template #roleActiveStatusTemplate let-row>
   <span class="table-row-status">
-      <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
-      {{ row.ActiveStatus ? 'Active'  : 'Inactive' }}
+    <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
   </span>
 </ng-template>
 
 <ng-template #actionColTemplate let-row>
   <div class="d-flex justify-content-end">
-      <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
+    <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate"
+      (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
   </div>
 </ng-template>
 

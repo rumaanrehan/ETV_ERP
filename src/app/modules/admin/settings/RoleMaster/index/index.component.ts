@@ -9,30 +9,31 @@ import { PageHeaderService } from '../../../../../shared/services/page-header.se
 import { CreateComponent } from '../create/create.component';
 import { RoleMaster, RoleMaster_IndexTableFilter, RoleMaster_IndexTableList } from '../role-master';
 import { RoleMasterService } from '../role-master.service';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [ZDataTable, CreateComponent],
+  imports: [ZDataTable, CreateComponent, RouterLink],
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-    @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-    @ViewChild('roleCodeTemplate', { static: true }) roleCodeTemplate!: TemplateRef<any>;
-    @ViewChild('roleActiveStatusTemplate', { static: true }) roleActiveStatusTemplate!: TemplateRef<any>;
-    @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-    @ViewChild(CreateComponent) createSidebar!: CreateComponent;
+  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('roleCodeTemplate', { static: true }) roleCodeTemplate!: TemplateRef<any>;
+  @ViewChild('roleActiveStatusTemplate', { static: true }) roleActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
 
   tableDef!: DataTableDef<RoleMaster_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
 
   constructor(
-      private pageHeaderService: PageHeaderService,
-      private pageService: RoleMasterService,
-      private formService: FormService,
-      private alertService: AlertNotificationService
+    private pageHeaderService: PageHeaderService,
+    private pageService: RoleMasterService,
+    private formService: FormService,
+    private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
@@ -49,7 +50,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'RoleCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.roleCodeTemplate },
+      { data: 'RoleCode', label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.roleCodeTemplate },
       { data: 'RoleName', label: 'Role Name', filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.roleActiveStatusTemplate, },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
@@ -66,7 +67,9 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.createSidebar.openSidebar(true, false, this.formService.createNullObject<RoleMaster>());
     }
   }
-  
+
+  onClickAddRolePermission(): void { }
+
   onClickEditDetails(roleID: number, activeStatus: boolean): void {
     try {
       if (this.createSidebar && roleID) {
@@ -91,11 +94,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     }
   }
-  
+
   onCloseSidebar(): void {
     this.loadData();
   }
-  
+
   onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
     this.tableEvent = event;
     this.loadData();
@@ -111,31 +114,31 @@ export class IndexComponent implements OnInit, OnDestroy {
         filters: this.tableDef.filterForm?.value
       };
       this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            }
+            else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
           }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
+        });
     }
     catch (error) {
 
     }
   }
-  
+
   onClickDeleteReactivate(row: any): void {
-      try {
+    try {
       const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
 
@@ -143,33 +146,33 @@ export class IndexComponent implements OnInit, OnDestroy {
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.RoleName}</b>"?`,
       })
-      .then(result => {
-        if (result.isConfirmed) {
-          const model: RoleMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
+        .then(result => {
+          if (result.isConfirmed) {
+            const model: RoleMaster = {
+              ...row,
+              ActionType: ActionType,
+              ReasonToUpdate: result.value
+            };
 
-          this.pageService.DeleteReactivate(model)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.loadData();
-                this.alertService.showAlert({
-                  type: "success",
-                  text: response.Message,
-                  timer: 5000
-                });
-              }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            }
-          });
-        }
-      });
+            this.pageService.DeleteReactivate(model)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response) => {
+                  if (response.IsSuccess) {
+                    this.loadData();
+                    this.alertService.showAlert({
+                      type: "success",
+                      text: response.Message,
+                      timer: 5000
+                    });
+                  }
+                  else {
+                    this.alertService.showServerResponseAlert(response);
+                  }
+                }
+              });
+          }
+        });
     }
     catch (error) {
 
