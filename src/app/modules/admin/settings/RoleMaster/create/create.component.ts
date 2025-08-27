@@ -63,12 +63,12 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-
+    
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    try {
+    try{
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -77,11 +77,15 @@ export class CreateComponent implements OnInit, OnDestroy {
         return;
       }
       if (this.isEditMode) {
-        this.alertService.showConfirmation({
+        this.alertService.showConfirmationWithInput({
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            this.updateRecord(this.formService.transformFormData(this.form.value));
+            const model: RoleMaster = {
+              ...this.formService.transformFormData(this.form.value),
+              ReasonToUpdate: result.value
+            };
+            this.updateRecord(this.formService.transformFormData(model));
           }
           else {
             this.isSubmitted = false;

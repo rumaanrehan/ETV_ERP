@@ -18,12 +18,11 @@ export class RoleMasterService {
     private apiService: ApiService,
   ) {}
  
-  PopulateList(PopulateType: any): Observable<ApiListResponse<RoleMaster_SelectList>> {
-    return this.apiService.post<ApiListResponse<RoleMaster_SelectList>>(`${this.endpoint}PopulateList?PopulateType=${PopulateType}`, {});
+  PopulateList(populateType: any): Observable<ApiListResponse<RoleMaster_SelectList>> {
+    return this.apiService.post<ApiListResponse<RoleMaster_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${populateType}`, {});
   }
 
   PopulateGrid(model: DataTableParams<RoleMaster_IndexTableFilter>): Observable<ApiPagedListResponse<RoleMaster_IndexTableList>> {
-    console.log("Fetching List From RoleMasterService");
     return this.apiService.post<ApiPagedListResponse<RoleMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 

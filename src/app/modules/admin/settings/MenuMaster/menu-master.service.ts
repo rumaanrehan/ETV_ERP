@@ -7,7 +7,7 @@ import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } f
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { MenuMaster, MenuMaster_IndexTableFilter, MenuMaster_IndexTableList, MenuMaster_SelectList } from './menu-master';
+import { MenuMaster, MenuMaster_IndexTableFilter, MenuMaster_IndexTableList, MenuMaster_SelectList, MenuMasterRequest } from './menu-master';
 
 @Injectable({
   providedIn: 'root'
@@ -23,16 +23,17 @@ export class MenuMasterService {
   //  return this.http.post<ApiListResponse<MenuMasterList>>(`${this.apiUrl}Admin/MenuMaster/PopulateList?MenuID=${MenuID}&ModuleID=${ModuleID}&MenuType=${MenuType}&GroupMenuID=${GroupMenuID}&ParentMenuName=${ParentMenuName}&MenuName=${MenuName}&ControllerName=${ControllerName}&PopulateType=${PopulateType}`, {});
   //}
 
-  PopulateList(MenuID: number, ModuleID: number, MenuType: number, GroupMenuID: number, ParentMenuName: string, MenuName: string, ControllerName: string, PopulateType: any): Observable<ApiListResponse<MenuMaster_SelectList>> {
-    ParentMenuName = ParentMenuName || ''; MenuName = MenuName || ''; ControllerName = ControllerName || ''; GroupMenuID = GroupMenuID || 0;
-    return this.apiService.post<ApiListResponse<MenuMaster_SelectList>>(`${this.endpoint}/PopulateList?MenuID=${MenuID}&ModuleID=${ModuleID}&MenuType=${MenuType}&GroupMenuID=${GroupMenuID}&ParentMenuName=${ParentMenuName}&MenuName=${MenuName}&ControllerName=${ControllerName}&PopulateType=${PopulateType}`,{});
+  PopulateList(model: MenuMasterRequest): Observable<ApiListResponse<MenuMaster_SelectList>> {
+    console.log(model);
+    return this.apiService.post<ApiListResponse<MenuMaster_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<MenuMaster_IndexTableFilter>): Observable<ApiPagedListResponse<MenuMaster_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<MenuMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
+
   GetDetails(menuID: number): Observable<ApiDataResponse<MenuMaster>> {
-    return this.apiService.post<ApiDataResponse<MenuMaster>>(`${this.endpoint}/GetDetails?TaxSlabID=${menuID}`, {});
+    return this.apiService.post<ApiDataResponse<MenuMaster>>(`${this.endpoint}/GetDetails?menuID=${menuID}`, {});
   }
 
   CreateRecord(model: MenuMaster): Observable<ApiResponse> {
@@ -79,7 +80,7 @@ export class MenuMasterService {
       },
       MenuType: {
         label: 'Menu Type',
-        defaultValue: 2,
+        defaultValue: 1,
         validators: [Validators.required],
         validationMessages: {
           required: 'Please select an option from the Menu Type List.'
@@ -89,7 +90,7 @@ export class MenuMasterService {
       GroupMenuID: {
         label: 'Group Menu',
         defaultValue: null,
-        validators: [RequiredIf('MenuType', Operator.GreaterThanOrEqualTo, 2)],
+        validators: [RequiredIf('MenuType', Operator.LessThanOrEqualTo, 2)],
         validationMessages: {
           requiredIf: 'Please select an option from the Group Menu List.'
         },
@@ -98,7 +99,7 @@ export class MenuMasterService {
       ParentMenuID: {
         label: 'Parent Menu',
         defaultValue: null,
-        validators: [RequiredIf('MenuType', Operator.EqualTo, 3)],
+        validators: [RequiredIf('MenuType', Operator.EqualTo, 2)],
         validationMessages: {
           requiredIf: 'Please select an option from the Parent Menu List.'
         },
@@ -107,17 +108,17 @@ export class MenuMasterService {
       MenuName: {
         label: 'Menu Name',
         defaultValue: null,
-        validators: [Validators.required, Validators.maxLength(50)],
+        validators: [RequiredIf('MenuType', Operator.NotEqualTo, 2), Validators.maxLength(50)],
         validationMessages: {
-          required: 'Module Name is Required.',
-          maxlength: 'Module  name cannot be longer than 50 characters.'
+          required: 'Menu Name is Required.',
+          maxlength: 'Menu  name cannot be longer than 50 characters.'
         },
         type: 'control'
       },
       ControllerName: {
         label: 'Controller Name',
         defaultValue: null,
-        validators: [RequiredIf('MenuType', Operator.GreaterThanOrEqualTo, 2), NotOnlyWhitespaceValidator()],
+        validators: [RequiredIf('MenuType', Operator.LessThanOrEqualTo, 2), NotOnlyWhitespaceValidator()],
         validationMessages: {
           requiredIf: 'Controller Name is Required.',
         },
@@ -126,7 +127,7 @@ export class MenuMasterService {
       ActionName: {
         label: 'Default Action',
         defaultValue: null,
-        validators: [RequiredIf('MenuType', Operator.EqualTo, 2)],
+        validators: [RequiredIf('MenuType', Operator.EqualTo, 1)],
         validationMessages: {
           requiredIf: 'Default Action Name is Required.',
         },

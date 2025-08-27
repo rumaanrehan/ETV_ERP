@@ -3,6 +3,7 @@ export interface RoleMaster_RolePermission {
   ModuleID: number | null;
   RoleMapping: RoleMaster_RolePermissionList[];
 }
+
 export interface RoleMaster_RolePermissionList {
   MenuID: number | null;
   GroupMenuName: string | null;

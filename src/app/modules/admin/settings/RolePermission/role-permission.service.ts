@@ -3,19 +3,33 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Environment } from '../../../../../environments/environment';
-import { ApiListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { ApiDataResponse, ApiListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { RoleMaster_RolePermission } from './role-permission';
+import { ApiService } from '../../../../core/services/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RolePermissionService {
-  private apiUrl: string;
+  private endpoint = 'Admin/RoleMaster';
 
-  constructor(private http: HttpClient) {
-    this.apiUrl = Environment.apiUrl;
+  constructor(
+    private apiService: ApiService,
+  ) {}
+
+  GetDetailsRolePermission(roleID: number, moduleID: number): Observable<ApiDataResponse<RoleMaster_RolePermission>> {
+    return this.apiService.post<ApiDataResponse<RoleMaster_RolePermission>>(`${this.endpoint}/GetDetailsRolePermission?RoleID=${roleID}&ModuleID=${moduleID}`, {});
   }
+  
+  UpdateRecord(model: RoleMaster_RolePermission): Observable<ApiResponse> {
+    console.log(model);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateRolePermission`, model);
+  }
+
+  // UpdateRecord(model: RoleMaster_RolePermission): Observable<ApiResponse> {
+  //   return this.http.post<ApiResponse>(`${this.apiUrl}Admin/RoleMaster/RolePermission_Edit`, model);
+  // }
 
   //#region Form Configuration
   getFormConfig(): FormConfigType<RoleMaster_RolePermission> {
@@ -97,18 +111,5 @@ export class RolePermissionService {
       }
     };
   }
-
   //#endregion
-
-  //GetDetailsRolePermission(RoleID: number | null, ModuleID: number | null): Observable<ApiListResponse<RoleMaster_RolePermission>> {
-  //  return this.http.post<ApiListResponse<RoleMaster_RolePermission>>(`${this.apiUrl}Admin/RoleMaster/GetDetailsRolePermission${RoleID != null ? `?RoleID=${RoleID}` : ''}${RoleID != null && ModuleID != null ? `&ModuleID=${ModuleID}` : (ModuleID != null ? `?ModuleID=${ModuleID}` : '')}`, {});
-  //}
-
-  GetDetailsRolePermission(RoleID: number, ModuleID: number): Observable<ApiListResponse<RoleMaster_RolePermission>> {
-    return this.http.post<ApiListResponse<RoleMaster_RolePermission>>(`${this.apiUrl}Admin/RoleMaster/GetDetailsRolePermission?RoleID=${RoleID}&ModuleID=${ModuleID}`, {});
-  }
-
-  UpdateRecord(model: RoleMaster_RolePermission): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/RoleMaster/RolePermission_Edit`, model);
-  }
 }

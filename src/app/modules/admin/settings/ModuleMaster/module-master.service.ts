@@ -27,7 +27,7 @@ export class ModuleMasterService {
   }
 
   GetDetails(ModuleID: number): Observable<ApiDataResponse<ModuleMaster>> {
-    return this.apiService.post<ApiDataResponse<ModuleMaster>>(`${this.endpoint}/GetDetails?StateID=${ModuleID}`, {});
+    return this.apiService.post<ApiDataResponse<ModuleMaster>>(`${this.endpoint}/GetDetails?ModuleID=${ModuleID}`, {});
   }
 
   CreateRecord(model: ModuleMaster): Observable<ApiResponse> {

@@ -20,6 +20,11 @@ export interface MenuMaster_SelectList {
   ActiveStatus: boolean;
 }
 
+export interface MenuTypeItem {
+  value: number;
+  label: string;
+}
+
 export interface MenuMaster_IndexTableFilter {
   ModuleName: string | null;
   MenuTypeName: string | null;
@@ -41,4 +46,15 @@ export interface MenuMaster_IndexTableList {
   DisplayOrder: string | null;
   IsDeveloperOnly: any | null;
   ActiveStatus: boolean;
+}
+
+export interface MenuMasterRequest{
+  MenuID: number | null;
+  ModuleID: number | null;
+  MenuType: number | null;
+  GroupMenuID: number | null;
+  ParentMenuID: number | null;
+  MenuName: string | null;
+  ControllerName: string | null;
+  PopulateType: any;
 }

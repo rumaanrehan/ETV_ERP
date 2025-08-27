@@ -5,40 +5,40 @@
   <div sidebarContent>
     <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'ModuleID'" [label]="formConfig.ModuleID.label" (onChange)="onModuleChange($event)" [validationMessage]="formConfig.ModuleID.error"
-                  [options]="ModuleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleID'">
+        <z-select [group]="form" [control]="'ModuleID'" [label]="formConfig.ModuleID.label" onselect="loadMenuType($event)" (onChange)="onModuleChange($event)" [validationMessage]="formConfig.ModuleID.error"
+                  [options]="moduleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleID'">
         </z-select>
       </div>
       <div class="col-xl-12 form-group">
         <z-select [group]="form" [control]="'MenuType'" [label]="formConfig.MenuType.label" [validationMessage]="formConfig.MenuType.error"
-                  [options]="MenuTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
+                  [options]="menuTypeList" [optionLabel]="'label'" [optionValue]="'value'">
         </z-select>
       </div>
-      <div *ngIf="[2,3].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
+      <div *ngIf="[1,2].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
         <z-select [group]="form" [control]="'GroupMenuID'" [label]="formConfig.GroupMenuID.label" (onChange)="onGroupMenuChange($event)" [validationMessage]="formConfig.GroupMenuID.error"
-                  [options]="GroupMenuList" [optionLabel]="'MenuName'" [optionValue]="'MenuID'">
+                  [options]="groupMenuList" [optionLabel]="'MenuName'" [optionValue]="'MenuID'">
         </z-select>
       </div>
-      <div *ngIf="[3].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
+      <div *ngIf="[2].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
         <z-select [group]="form" [control]="'ParentMenuID'" [label]="formConfig.ParentMenuID.label" [validationMessage]="formConfig.ParentMenuID.error"
-                  [options]="ParentMenuList" [optionLabel]="'MenuName'" [optionValue]="'MenuID'">
+                  [options]="parentMenuList" [optionLabel]="'MenuName'" [optionValue]="'MenuID'">
         </z-select>
       </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" control="MenuName" [label]="form.get('MenuType')?.value === 1 || form.get('MenuType')?.value === 2 ? formConfig.MenuName.label : 'Access Control Name'"
+      <div *ngIf="[1,2,3].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
+        <z-inputtext [group]="form" control="MenuName" [label]="form.get('MenuType')?.value === 1 || form.get('MenuType')?.value === 3 ? formConfig.MenuName.label : 'Access Control Name'"
                      [validationMessage]="formConfig.MenuName.error"></z-inputtext>
       </div>
-      <div *ngIf="[2,3].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
-        <z-inputtext [group]="form" control="ControllerName" [label]="form.get('MenuType')?.value === 2 ? formConfig.ControllerName.label : 'Sub Control Name'"
+      <div *ngIf="[1,2].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
+        <z-inputtext [group]="form" control="ControllerName" [label]="form.get('MenuType')?.value === 1 ? formConfig.ControllerName.label : 'Sub Controller Name'"
                      [validationMessage]="formConfig.ControllerName.error"></z-inputtext>
       </div>
-      <div *ngIf="[2].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
+      <div *ngIf="[1].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
         <z-inputtext [group]="form" control="ActionName" [label]="formConfig.ActionName.label" [validationMessage]="formConfig.ActionName.error"></z-inputtext>
       </div>
-      <div *ngIf="[2,1].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
+      <div *ngIf="[1,3].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
         <z-inputnumber [group]="form" [control]="'DisplayOrder'" [label]="formConfig.DisplayOrder.label" [validationMessage]="formConfig.DisplayOrder.error"></z-inputnumber>
       </div>
-      <div *ngIf="[2].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
+      <div *ngIf="[1].includes(form.get('MenuType')?.value)" class="col-xl-12 form-group">
         <z-checkbox [group]="form" [control]="'IsDeveloperOnly'" [label]="formConfig.IsDeveloperOnly.label"></z-checkbox>
       </div>
     </form>
@@ -46,7 +46,7 @@
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>

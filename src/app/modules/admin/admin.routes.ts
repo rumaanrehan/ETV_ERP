@@ -58,6 +58,16 @@ export const adminRoute: Routes = [
             }
           },
           {
+            path: 'role-permission',
+            loadComponent: () => import('./settings/RolePermission/index/index.component').then((m) => m.IndexComponent),
+            canActivate: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              permission: 'CanRead',
+              menu: 'Admin/RoleMaster',
+              breadcrumb: 'Role Master'
+            }
+          },
+          {
             path: 'tax-slab-master',
             loadComponent: () => import('./settings/TaxSlabMaster/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],

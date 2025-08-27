@@ -1,28 +1,41 @@
+<!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"><i class="ri-add-fill" style="vertical-align: bottom;"></i>Add</button>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add</button>
 </ng-template>
 
-<app-index-table [tableDef]="tableDef"
+<!-- Index Table Component -->
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef"
+    (lazyLoad)="onIndexTableLazyLoad($event)">
+  </z-datatable>
+</div>
+<!-- <app-index-table [tableDef]="tableDef"
                  (lazyLoad)="onIndexTableLazyLoad($event)">
-</app-index-table>
+</app-index-table> -->
 
+
+<!-- Table Column Custom Template -->
 <ng-template #menuNameTemplate let-row>
   <span class="fw-bold font-blue" (click)="onClickEditDetails(row.MenuID,row.ActiveStatus)" style="cursor: pointer;">{{ row.MenuName }}</span>
 </ng-template>
+
 <ng-template #isDeveloperOnlyTemplate let-row>
   <span class="badge rounded-pill {{ row.IsDeveloperOnly ? 'bg-outline-success' : 'bg-outline-dark' }}">
     {{ row.IsDeveloperOnly ? 'Yes' : 'No' }}
   </span>
 </ng-template>
+
 <ng-template #menuMasterActiveStatusTemplate let-row>
-  <span class="badge {{ row.ActiveStatus ? 'bg-outline-success' : 'bg-outline-danger' }}">
-    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
-  </span>
+    <span class="table-row-status">
+        <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
+        {{ row.ActiveStatus ? 'Active'  : 'Inactive' }}
+    </span>
 </ng-template>
+
 <ng-template #actionColTemplate let-row>
-  <div class="hstack gap-2 fs-15 justify-content-end"><!--<span class="btn btn-icon btn-sm btn-info-transparent rounded-pill" (click)="onClickEdit(row)"><i class="ri-edit-line"></i></span>-->
-    <span class="btn btn-icon btn-sm btn-danger-transparent rounded-pill" (click)="onClickDelete(row)"><i class="ri-delete-bin-line"></i></span>
-  </div>
+    <div class="d-flex justify-content-end">
+        <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
+    </div>
 </ng-template>
 
 <app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>

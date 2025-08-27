@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { Subject, takeUntil } from 'rxjs';
@@ -10,9 +10,7 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { ModuleMaster_SelectList } from '../../ModuleMaster/module-master';
 import { ModuleMasterService } from '../../ModuleMaster/module-master.service';
-import { SelectList } from '../../SelectList/select-list';
-import { SelectListService } from '../../SelectList/select-list.service';
-import { MenuMaster, MenuMaster_SelectList } from '../menu-master';
+import { MenuMaster, MenuMaster_SelectList, MenuMasterRequest, MenuTypeItem } from '../menu-master';
 import { MenuMasterService } from '../menu-master.service';
 
 @Component({
@@ -22,23 +20,30 @@ import { MenuMasterService } from '../menu-master.service';
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss',
 })
-export class CreateComponent {
+export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+  
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  ActiveStatus: boolean = false;
+  activeStatus: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<MenuMaster>;
-  MenuTypeList: SelectList[] = [];
-  ModuleList: ModuleMaster_SelectList[] = [];
-  GroupMenuList: MenuMaster_SelectList[] = [];
-  ParentMenuList: MenuMaster_SelectList[] = [];
+
+  menuTypeList: MenuTypeItem[] = [
+    { value: 1, label: 'Menu' },
+    { value: 2, label: 'Access Control Menu' },
+    { value: 3, label: 'Group Menu' }
+  ];
+  moduleList: ModuleMaster_SelectList[] = [];
+  groupMenuList: MenuMaster_SelectList[] = [];
+  parentMenuList: MenuMaster_SelectList[] = [];
 
   constructor(
     private pageService: MenuMasterService,
-    private selectListService: SelectListService,
+    // private selectListService: SelectListService,
     private moduleService: ModuleMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
@@ -48,8 +53,8 @@ export class CreateComponent {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<MenuMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    // this.loadMenuType('MenuType');
     this.loadModule();
+    // this.loadMenuType('MenuType');
   };
 
   ngOnDestroy(): void {
@@ -64,7 +69,8 @@ export class CreateComponent {
   //       .subscribe({
   //         next: (response) => {
   //           if (response.IsSuccess) {
-  //             this.MenuTypeList = response.Data.Items;
+  //             console.log(response.Data.Items);
+  //             this.menuTypeList = response.Data.Items;
   //           } else {
   //             this.alertService.showServerResponseAlert(response);
   //           }
@@ -82,7 +88,7 @@ export class CreateComponent {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.ModuleList = response.Data.Items;
+              this.moduleList = response.Data.Items;
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -95,8 +101,8 @@ export class CreateComponent {
   }
 
   onModuleChange(event: DropdownChangeEvent): void {
-    this.GroupMenuList = [];
-    this.ParentMenuList = [];
+    this.groupMenuList = [];
+    this.parentMenuList = [];
     this.form.patchValue({
       GroupMenuID: null,
       ParentMenuID: null
@@ -104,19 +110,63 @@ export class CreateComponent {
     const ModuleID = this.form.get('ModuleID')?.value;
     if (ModuleID > 0) {
       this.loadGroupMenu(ModuleID);
+      // this.loadMenuType(ModuleID);
     } else {
-      this.GroupMenuList = [];
+      this.groupMenuList = [];
     }
   }
 
-  loadGroupMenu(ModuleID: number): void {
+  // loadMenuType(ModuleID: number): void {
+  //   this.menuTypeList = [];
+
+  //   const model: MenuMasterRequest = {
+  //     MenuID: 0,
+  //     ModuleID: ModuleID,
+  //     MenuType: 0,
+  //     GroupMenuID: 0,
+  //     ParentMenuName: "",
+  //     MenuName: "",
+  //     ControllerName: "",
+  //     PopulateType: "SelectList"
+  //   };
+
+  //   try {
+  //     this.pageService.PopulateList(model)
+  //       .pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (response) => {
+  //           if (response.IsSuccess) {
+  //             console.log(response);
+  //             this.menuTypeList = response.Data.Items;
+  //           }
+  //           else {
+  //             this.alertService.showServerResponseAlert(response);
+  //           }
+  //         },
+  //       });
+  //   } catch (error) {
+
+  //   }
+  // }
+
+  loadGroupMenu(ModuleID: number): void {    
+    const model: MenuMasterRequest = {
+      MenuID: null,
+      ModuleID: ModuleID,
+      MenuType: 1,
+      GroupMenuID: null,
+      ParentMenuID: 0,
+      MenuName: null,
+      ControllerName: null,
+      PopulateType: "SelectList"
+    };
     try {
-      this.pageService.PopulateList(0, ModuleID, 0, 0, '', '', '', 'GroupMenuList')
+      this.pageService.PopulateList(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.GroupMenuList = response.Data.Items;
+              this.groupMenuList = response.Data.Items;
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -129,7 +179,7 @@ export class CreateComponent {
   }
 
   onGroupMenuChange(event: DropdownChangeEvent): void {
-    this.ParentMenuList = [];
+    this.parentMenuList = [];
     this.form.patchValue({
       ParentMenuID: null
     });
@@ -139,18 +189,29 @@ export class CreateComponent {
     if (ModuleID > 0 && GroupMenuID > 0 && MenuType === 3) {
       this.loadParentMenu(ModuleID, GroupMenuID);
     } else {
-      this.ParentMenuList = [];
+      this.parentMenuList = [];
     }
   }
 
   loadParentMenu(ModuleID: number, GroupMenuID: number): void {
+    
+    const model: MenuMasterRequest = {
+      MenuID: null,
+      ModuleID: ModuleID,
+      MenuType: null,
+      GroupMenuID: GroupMenuID,
+      ParentMenuID: null,
+      MenuName: null,
+      ControllerName: null,
+      PopulateType: "SelectList"
+    };
     try {
-      this.pageService.PopulateList(0, ModuleID, 0, GroupMenuID, '', '', '', 'ParentMenuList')
+      this.pageService.PopulateList(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.ParentMenuList = response.Data.Items;
+              this.parentMenuList = response.Data.Items;
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -165,8 +226,8 @@ export class CreateComponent {
   openSidebar(ActiveStatus: boolean, isEditMode: boolean, model: MenuMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
-      this.ActiveStatus = ActiveStatus;
-      if (model.MenuType === 2) {
+      this.activeStatus = ActiveStatus;
+      if (model.MenuType === 1) {
         this.loadGroupMenu(model.ModuleID as number);
       }
       if (model.MenuType === 3) {
@@ -174,7 +235,7 @@ export class CreateComponent {
         this.loadParentMenu(model.ModuleID as number, model.GroupMenuID as number);
       }
     }
-    this.ActiveStatus = ActiveStatus;
+    this.activeStatus = ActiveStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;
   }
@@ -183,20 +244,18 @@ export class CreateComponent {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
     this.formService.resetFormValue<MenuMaster>(this.formConfig, this.form);
-    this.ParentMenuList = [];
-    this.GroupMenuList = [];
+    this.parentMenuList = [];
+    this.groupMenuList = [];
     setTimeout(() => {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-
+    
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
-    try {
-      // Handle invalid form
+    try{
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -204,24 +263,22 @@ export class CreateComponent {
         this.isSubmitted = false;
         return;
       }
-
-      // Handle form submission based on editMode
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
+          text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
             const model: MenuMaster = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
-            this.updateRecord(model);
+            this.updateRecord(this.formService.transformFormData(model));
           }
           else {
             this.isSubmitted = false;
           }
         });
-      }
+      } 
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
@@ -230,57 +287,56 @@ export class CreateComponent {
 
     }
   }
-
+    
   createRecord(model: MenuMaster): void {
-    try {
-      this.pageService.CreateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.closeSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
+    try{
+    this.pageService.CreateRecord(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: 'success',
+              text: response.Message,
+              timer: 5000,
+            });
+          } else {
+            this.alertService.showServerResponseAlert(response);
           }
-        });
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
     }
     catch (error) {
 
     }
   }
-
+    
   updateRecord(model: MenuMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.closeSidebar();
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.closeSidebar();
+            this.alertService.showAlert({
+              type: "success",
+              text: response.Message,
+              timer: 5000
+            });
           }
-        });
+          else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
     }
     catch (error) {
 

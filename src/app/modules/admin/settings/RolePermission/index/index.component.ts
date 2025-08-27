@@ -28,29 +28,32 @@ import { RolePermissionService } from '../role-permission.service';
   providers: [FormValidationService]
 })
 export class IndexComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  RoleList: RoleMaster_SelectList[] = [];
-  ModuleList: ModuleMaster_SelectList[] = [];
+
+  roleList: RoleMaster_SelectList[] = [];
+  moduleList: ModuleMaster_SelectList[] = [];
+  RoleMaster_RolePermission!: RoleMaster_RolePermission;
+  
   isAllCanReadSelected: boolean = false;
   isAllCanCreateSelected: boolean = false;
   isAllCanUpdateSelected: boolean = false;
   isAllCanDeleteSelected: boolean = false;
-  private destroy$ = new Subject<void>();
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<RoleMaster_RolePermission>;
-  RoleMaster_RolePermission: RoleMaster_RolePermission[] = [];
 
   constructor(
+    private pageHeaderService: PageHeaderService,
     private pageService: RolePermissionService,
     private roleService: RoleMasterService,
     private moduleService: ModuleMasterService,
-    private pageHeaderService: PageHeaderService,
-    private alertService: AlertNotificationService,
     private router: Router,
     private formService: FormService,
+    private alertService: AlertNotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -61,12 +64,13 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.loadRole();
     this.loadModule();
   }
+
   get RoleMappingArray(): FormArray {
     return this.form.get('RoleMapping') as FormArray;
   }
 
   onClickPageHeaderAddButton(): void {
-    this.router.navigate(['/Admin/RoleMaster/Index']);
+    this.router.navigate(['/admin/role-master']);
   }
 
   ngOnDestroy(): void {
@@ -80,7 +84,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.RoleList = response.Data.Items;
+              this.roleList = response.Data.Items;
             } else {
               this.alertService.showServerResponseAlert({
                 Status: response.Status,
@@ -102,7 +106,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.ModuleList = response.Data.Items;
+              this.moduleList = response.Data.Items;
             } else {
               this.alertService.showServerResponseAlert({
                 Status: response.Status,
@@ -148,29 +152,28 @@ export class IndexComponent implements OnInit, OnDestroy {
   
   }
 
-  loadData(RoleID: number, ModuleID: number) {
-    try {
-      this.pageService.GetDetailsRolePermission(RoleID, ModuleID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.RoleMappingArray.clear();
-              this.RoleMaster_RolePermission = response.Data.Items;
-              this.RoleMaster_RolePermission.forEach((mapping) => {
-                this.RoleMappingArray.push(this.formService.createFormArrayItem(this.formConfig.RoleMapping.items));
-              })
-              this.RoleMappingArray.patchValue(this.RoleMaster_RolePermission = response.Data.Items)
-            }
-            //else {
-            //  this.alertService.showServerResponseAlert(response);
-            //}
-          }
-        });
-    }
-    catch (error) {
+  loadData(roleID: number, moduleID: number): void {
+    this.pageService.GetDetailsRolePermission(roleID, moduleID)         
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response) => {
+        if (!response.IsSuccess) {
+          this.alertService.showServerResponseAlert(response);
+          return;
+        }
 
-    }
+        this.RoleMappingArray.clear();
+        response.Data.RoleMapping.forEach(() =>
+          this.RoleMappingArray.push(
+            this.formService.createFormArrayItem(this.formConfig.RoleMapping.items)
+          )
+        );
+
+        this.RoleMappingArray.patchValue(response.Data.RoleMapping);
+        this.RoleMaster_RolePermission = response.Data;
+      },
+      error: err => console.error('loadData error', err)
+    });
   }
 
   cbSelectAll(selectAllType: 'CanRead' | 'CanCreate' | 'CanUpdate' | 'CanDelete'): void {

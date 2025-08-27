@@ -9,12 +9,12 @@
       <div class="d-flex flex-column justify-content-center align-items-center">
         <div class="col-xl-12 form-group">
           <z-select [group]="form" [control]="'RoleID'" [label]="formConfig.RoleID.label" [validationMessage]="formConfig.RoleID.error" (onChange)="onRoleChange($event)"
-                    [options]="RoleList" [optionLabel]="'RoleName'" [optionValue]="'RoleID'">
+                    [options]="roleList" [optionLabel]="'RoleName'" [optionValue]="'RoleID'">
           </z-select>
         </div>
         <div class="col-xl-12 form-group">
           <z-select [group]="form" [control]="'ModuleID'" [label]="formConfig.ModuleID.label" [validationMessage]="formConfig.ModuleID.error" (onChange)="onModuleChange($event)"
-                    [options]="ModuleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleID'">
+                    [options]="moduleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleID'">
           </z-select>
         </div>
       </div>
