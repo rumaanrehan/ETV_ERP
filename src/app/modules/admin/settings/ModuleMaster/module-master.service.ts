@@ -16,12 +16,12 @@ export class ModuleMasterService {
 
   constructor(
     private apiService: ApiService,
-  ) {}
+  ) { }
 
   PopulateList(populateType: string): Observable<ApiListResponse<ModuleMaster_SelectList>> {
     return this.apiService.post<ApiListResponse<ModuleMaster_SelectList>>(`${this.endpoint}/PopulateList?PopulateType=${populateType}`, {});
   }
-  
+
   PopulateGrid(model: DataTableParams<ModuleMaster_IndexTableFilter>): Observable<ApiPagedListResponse<ModuleMaster_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<ModuleMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
@@ -41,7 +41,7 @@ export class ModuleMasterService {
   DeleteReactivate(model: ModuleMaster): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
-  
+
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ModuleMaster_IndexTableFilter> {
     return {

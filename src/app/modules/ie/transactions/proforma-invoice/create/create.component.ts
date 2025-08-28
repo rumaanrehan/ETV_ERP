@@ -53,7 +53,6 @@ export class CreateComponent {
   isSubmitted: boolean = false;
   isLoadDocumentVisible: boolean = true;
   isLoadPaymentVisible: boolean = true;
-
   form!: FormGroup;
   formConfig!: FormConfigType<ProformaInvoice>;
   tableDef!: TableDef<ProformaInvoiceDetail>;
@@ -110,6 +109,11 @@ export class CreateComponent {
     }
 
     this.loadDropdownList();
+    this.getDetails();
+  }
+
+  get isBasedOnExportOrder(): boolean {
+    return this.form.get('BasedOn')?.value === 1;
   }
 
   ngOnDestroy(): void {
@@ -159,7 +163,7 @@ export class CreateComponent {
 
   onClickPageHeaderBackButton(): void {
     try {
-      this.router.navigate(['/ie/export-order/index']);
+      this.router.navigate(['/ie/proforma-invoice/index']);
     } catch (error) { }
   }
 
@@ -217,20 +221,19 @@ export class CreateComponent {
   }
 
   onSelect_ExportOrder(event: ExportOrder_SelectList): void {
+    this.productListArray.clear();
+    this.tableDef.data = [];
     if (event.ExportOrderID) {
-      this.getDetails(event.ExportOrderID);
+      this.GetExportOrderDetails(event.ExportOrderID);
     }
   }
 
   onClear_ExportOrder(): void {
-    // console.log(this.tableDef.data);
-    // this.form.get('ExportOrderID')?.patchValue(null);
-    // this.form.get('ExportOrderNo')?.patchValue(null);
-    // console.log(this.tableDef.data);
-    // console.log(this.productListArray.value);
+    this.form.get('ExportOrderID')?.patchValue(null);
+    this.form.get('ExportOrderNo')?.patchValue(null);
 
-    // this.productListArray.clear();
-    // this.tableDef.data = [];
+    this.productListArray.clear();
+    this.tableDef.data = [];
   }
 
   loadCompany(event: string): void {
@@ -255,6 +258,12 @@ export class CreateComponent {
         });
     } catch (error) {
 
+    }
+  }
+
+  onSelect_Company(event: Company_SelectList): void {
+    if (event.CompanyID) {
+      this.form.patchValue({ CompanyID: event.CompanyID, CompanyName: event.CompanyName });
     }
   }
 
@@ -497,25 +506,69 @@ export class CreateComponent {
     }
   }
 
+  getDetails(): void {
+    this.route.params.subscribe((params) => {
+      const proformaInvoiceID = +params['id'];
+      if (proformaInvoiceID) {
+        this.isEditMode = true;
+        try {
+          this.pageService.GetDetails(proformaInvoiceID)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                if (response.IsSuccess) {
+                  this.GetInvoiceItemDetails(response.Data)
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+        catch (error) {
 
+        }
+      }
+    });
+  }
 
+  GetInvoiceItemDetails(model: ProformaInvoice): void {
+    this.pageService.GetInvoiceItemDetails(model.ProformaInvoiceID!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            response.Data.Items.forEach(item => {
+              const patchedModel = {
+                ...item,
+                ProductName: item.Product!.ProductName,
+              };
+              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productForm.patchValue(patchedModel);
+              this.productListArray.push(productForm);
+            });
+            this.tableDef.data = this.productListArray.value;
+            const patchedModel = {
+              ...model,
+              ProformaInvoiceDate: DateUtils.toDate(model.ProformaInvoiceDate),
+              ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
+            };
+            this.form.patchValue(patchedModel);
+          }
+          else {
+            // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
+          }
+        },
+      });
+  }
 
-
-
-
-
-
-
-
-
-  getDetails(exportOrderID: number): void {
+  GetExportOrderDetails(exportOrderID: number): void {
     try {
-      console.log("Me Yaha hun");
       this.pageService.GetExportOrderDetails(exportOrderID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data);
               this.GetOrderItemDetails(response.Data)
             } else {
               this.alertService.showServerResponseAlert(response);
@@ -548,6 +601,7 @@ export class CreateComponent {
               ...model,
               ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
             };
+            this.form.patchValue({ CustomerID: model.Customer?.CountryID, CustomerName: model.Customer?.CompanyName });
             this.form.patchValue(patchedModel);
           }
           else {
@@ -557,6 +611,12 @@ export class CreateComponent {
       });
   }
 
+  onBasedOnChange(): void {
+    this.formService.resetFormValue<ProformaInvoice>(this.formConfig, this.form);
+
+    this.productListArray.clear();
+    this.tableDef.data = [];
+  }
 
   formatDate(date: Date) {
     return DateUtils.formatDate(date);

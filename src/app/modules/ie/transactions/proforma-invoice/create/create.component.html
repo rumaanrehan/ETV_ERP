@@ -11,70 +11,111 @@
                     <div class="card-body">
                         <div class="horizontal-form">
                             <div class="row">
-                                <!-- <div class="col-xl-2 form-group px-2">
+                                <div class="col-xl-2 form-group px-2">
                                     <z-span [text]="form.get('ProformaInvoiceNo')?.value"
                                         [label]="formConfig.ProformaInvoiceNo.label"></z-span>
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
-                                        [optionLabel]="'Text'" [optionValue]="'iValue'"
-                                        [options]="basedOnList"></z-select>
+                                        [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="basedOnList"
+                                        [readonly]="isEditMode" (onChange)="onBasedOnChange()"></z-select>
                                 </div>
                                 <div class="col-xl-6 form-group px-2"></div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-datepicker [group]="form" [control]="'ProformaInvoiceDate'"
                                         [label]="formConfig.ProformaInvoiceDate.label"
                                         [validationMessage]="formConfig.ProformaInvoiceDate.error"></z-datepicker>
-                                </div> -->
-                                <div class="col-xl-3 form-group px-2">
+                                </div>
+                                <div class="col-xl-3 form-group px-2" *ngIf="isBasedOnExportOrder">
                                     <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"
                                         (onSearch)="loadExportOrder($event)" (onSelect)="onSelect_ExportOrder($event)"
                                         (onClear)="onClear_ExportOrder()"></z-autocomplete>
                                 </div>
+                                <div class="col-xl-3 form-group px-2">
+                                    <z-autocomplete [controlDef]="companyMasterAutoCompleteDef"
+                                        (onSearch)="loadCompany($event)" (onSelect)="onSelect_Company($event)"
+                                        (onClear)="onClear_Company()"></z-autocomplete>
+                                </div>
 
-                                <!-- <div class="col-xl-9"></div>
+                                <div class="col-xl-9"></div>
 
                                 <h6 class="form-group px-2">Exchange Rate Details</h6>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-select [group]="form" [control]="'FCCurrencyID'"
                                         [label]="formConfig.FCCurrencyID.label" [optionLabel]="'cValue'"
-                                        [optionValue]="'iValue'" [options]="currencyList"></z-select>
+                                        [optionValue]="'iValue'" [options]="currencyList"
+                                        [readonly]="isBasedOnExportOrder"></z-select>
                                 </div>
                                 <div class="col-xl-6"></div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
-                                        [label]="formConfig.ExchangeRateDate.label"></z-datepicker>
+                                        [label]="formConfig.ExchangeRateDate.label"
+                                        [readonly]="isBasedOnExportOrder"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
-                                        [label]="formConfig.ExchangeRateToBC.label"
-                                        (onChange)="productCalculation()"></z-inputnumber>
+                                        [label]="formConfig.ExchangeRateToBC.label" (onChange)="productCalculation()"
+                                        [readonly]="isBasedOnExportOrder"></z-inputnumber>
                                 </div>
 
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'InsuranceAmountFC'"
-                                        [label]="formConfig.InsuranceAmountFC.label"></z-inputnumber>
+                                        [label]="formConfig.InsuranceAmountFC.label"
+                                        [readonly]="isBasedOnExportOrder"></z-inputnumber>
                                 </div>
                                 <div class="col-xl-6"></div>
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'FreightChargeFC'"
-                                        [label]="formConfig.FreightChargeFC.label"></z-inputnumber>
+                                        [label]="formConfig.FreightChargeFC.label"
+                                        [readonly]="isBasedOnExportOrder"></z-inputnumber>
                                 </div>
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'BankChargesFC'"
-                                        [label]="formConfig.BankChargesFC.label"></z-inputnumber>
+                                        [label]="formConfig.BankChargesFC.label"
+                                        [readonly]="isBasedOnExportOrder"></z-inputnumber>
                                 </div>
-                                <div class="col-xl-6"></div> -->
-                                <!-- <div class="col-12 px-2">
-                                    <h6 class="form-group">Product List</h6>
-                                    <div class="col-xl-3 form-group">
-                                        <z-autocomplete [controlDef]="productAutoCompleteDef"
-                                            (onSearch)="onSearch_Product($event)"
-                                            (onSelect)="onSelect_Product($event)"></z-autocomplete>
+                                <div class="col-xl-6"></div>
+                                <div class="col-12 px-2">
+                                    <div *ngIf="!isBasedOnExportOrder">
+                                        <h6 class="form-group">Product List</h6>
+                                        <div class="col-xl-3 form-group">
+                                            <z-autocomplete [controlDef]="productAutoCompleteDef"
+                                                (onSearch)="onSearch_Product($event)"
+                                                (onSelect)="onSelect_Product($event)"></z-autocomplete>
+                                        </div>
                                     </div>
                                     <z-table [tableDef]="this.tableDef">
                                     </z-table>
-                                </div> -->
+                                </div>
+                                <div class="col-12 px-2 d-flex flex-column align-items-end gap-2">
+                                    <div class="col-12 col-xl-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <p class="mb-0">Sub total Amount: </p>
+                                            <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
+                                                [label]="formConfig.SubtotalAmountFC.label"
+                                                [validationMessage]="formConfig.SubtotalAmountFC.error"
+                                                [readonly]="true"></z-inputnumber>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-xl-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <p class="mb-0">Tax Amount: </p>
+                                            <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
+                                                [label]="formConfig.TaxAmountFC.label"
+                                                [validationMessage]="formConfig.TaxAmountFC.error"
+                                                [readonly]="true"></z-inputnumber>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-xl-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <p class="mb-0">Net Amount: </p>
+                                            <z-inputnumber [group]="form" [control]="'NetAmountFC'"
+                                                [label]="formConfig.NetAmountFC.label"
+                                                [validationMessage]="formConfig.NetAmountFC.error"
+                                                [readonly]="true"></z-inputnumber>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -91,12 +132,15 @@
         </div>
         <div class="col-xl-4">
             <div class="col-xl-3 px-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"> {{ isEditMode ?
+                <button type="submit" class="btn btn-md btn-primary w-100"
+                    [disabled]="form.get('BasedOn')?.value == 1 || form.get('StatusID')?.value !== 1"
+                    (click)="onSubmit()"> {{ isEditMode ?
                     "Update" :
                     "Save" }} </button>
             </div>
             <div class="col-xl-3 px-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" (click)="resetForm()"> Reset </button>
+                <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="form.get('BasedOn')?.value == 1"
+                    (click)=" resetForm()">Reset</button>
             </div>
         </div>
     </div>
@@ -110,7 +154,8 @@
 <ng-template #salesQtyColTemplate let-row let-i="index">
     <z-inputnumber [group]="productListArray.at(i)" [control]="'SalesQty'"
         [label]="formConfig.ProductList.items.SalesQty.label"
-        [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" (onChange)="productCalculation()">
+        [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" [readonly]="isBasedOnExportOrder"
+        (onChange)="productCalculation()">
     </z-inputnumber>
 </ng-template>
 
@@ -120,7 +165,7 @@
         <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"
             [label]="formConfig.ProductList.items.RatePerUnitFC.label"
             [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [styleClass]="'text-end'"
-            (onChange)="productCalculation()"></z-inputnumber>
+            [readonly]="isBasedOnExportOrder" (onChange)="productCalculation()"></z-inputnumber>
     </div>
 </ng-template>
 
@@ -128,7 +173,8 @@
     <z-select [group]="productListArray.at(i)" [control]="'SalesTaxRate'"
         [label]="formConfig.ProductList.items.SalesTaxRate.label"
         [validationMessage]="formConfig.ProductList.items.SalesTaxRate.error?.[i]" [options]="taxSlabList"
-        [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="productCalculation();">
+        [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" [readonly]="isBasedOnExportOrder"
+        (onChange)="productCalculation();">
     </z-select>
 </ng-template>
 
@@ -137,8 +183,8 @@
         <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
         <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxableAmountFC'"
             [label]="formConfig.ProductList.items.TaxableAmountFC.label"
-            [validationMessage]="formConfig.ProductList.items.TaxableAmountFC.error?.[i]"
-            [styleClass]="'text-end'"></z-inputnumber>
+            [validationMessage]="formConfig.ProductList.items.TaxableAmountFC.error?.[i]" [styleClass]="'text-end'"
+            [readonly]="isBasedOnExportOrder"></z-inputnumber>
     </div>
 </ng-template>
 
@@ -147,14 +193,13 @@
         <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
         <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxAmountFC'"
             [label]="formConfig.ProductList.items.TaxAmountFC.label"
-            [validationMessage]="formConfig.ProductList.items.TaxAmountFC.error?.[i]"
-            [styleClass]="'text-end'"></z-inputnumber>
-        <!-- <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[1].toString()"></z-span> -->
+            [validationMessage]="formConfig.ProductList.items.TaxAmountFC.error?.[i]" [styleClass]="'text-end'"
+            [readonly]="isBasedOnExportOrder"></z-inputnumber>
     </div>
 </ng-template>
 
 <ng-template #removeProductItemColTemplate let-row let-i="index">
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end" *ngIf="!isBasedOnExportOrder">
         <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
             (click)="onClickRemoveProductItem(i)">
             <i class="pi pi-minus-circle"></i></span>
@@ -191,23 +236,3 @@
         <i class="pi {{ row.IsVerified ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
     </span>
 </ng-template>
-
-<ng-template #documentUploadDateTemplate let-row let-i="index">
-    {{formatDate(row.UploadedDateTime)}}
-</ng-template>
-<!-- Export Order Document Related Templates End-->
-
-<!-- Export Order Payment Related Templates Start-->
-
-<ng-template #paymentDateTemplate let-row let-i="index">
-    {{formatDate(row.PaymentDate)}}
-</ng-template>
-
-<!-- <ng-template #paymentActionColTemplate let-row let-i="index">
-    <div class="d-flex justify-content-end">
-        <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-            (click)="onClickRemovePaymentItem(row)">
-            <i class="pi pi-minus-circle"></i></span>
-    </div>
-</ng-template> -->
-<!-- Export Order Payment Related Templates End-->

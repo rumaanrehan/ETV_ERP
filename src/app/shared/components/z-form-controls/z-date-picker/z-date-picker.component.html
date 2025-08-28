@@ -1,16 +1,8 @@
 <div [formGroup]="group">
-    <p-floatLabel>
-      <p-calendar
-        [styleClass]="styleClass"
-        [formControlName]="control"
-        [appShowValidationTooltip]="validationMessage"
-        [dateFormat]="'dd-mm-yy'"
-        [showIcon]="true"
-        [iconDisplay]="'input'"
-        [minDate]="minDate"
-        [maxDate]="maxDate"
-        (onSelect)="onDateSelect($event)"
-      ></p-calendar>
-      <label>{{ label }}</label>
-    </p-floatLabel>
-  </div>
+  <p-floatLabel>
+    <p-calendar [styleClass]="styleClass" [formControlName]="control" [appShowValidationTooltip]="validationMessage"
+      [dateFormat]="'dd-mm-yy'" [showIcon]="true" [iconDisplay]="'input'" [minDate]="minDate" [maxDate]="maxDate"
+      [readonlyInput]="readonly" (onSelect)="onDateSelect($event)"></p-calendar>
+    <label>{{ label }}</label>
+  </p-floatLabel>
+</div>

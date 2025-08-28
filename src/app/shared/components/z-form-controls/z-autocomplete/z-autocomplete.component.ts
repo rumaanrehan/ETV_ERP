@@ -21,6 +21,8 @@ export class ZAutoCompleteComponent<T> {
   @Output() onSelect = new EventEmitter<T>();
   @Output() onClear = new EventEmitter<any>();
 
+  lastSelected: any;
+
   get isValueSelected(): boolean {
     return !!(this.controlDef.type === 'formControl' && !!this.controlDef.group.get(this.controlDef.control)?.value);
   }
@@ -30,6 +32,10 @@ export class ZAutoCompleteComponent<T> {
   }
 
   selectHandler(event: AutoCompleteSelectEvent): void {
+    if (this.lastSelected === event.value) {
+      return; // ignore duplicate
+    }
+    this.lastSelected = event.value;
     this.onSelect.emit(event.value);
   }
 
