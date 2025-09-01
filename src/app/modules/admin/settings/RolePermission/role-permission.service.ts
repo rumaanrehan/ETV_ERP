@@ -1,12 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Environment } from '../../../../../environments/environment';
-import { ApiDataResponse, ApiListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { ApiService } from '../../../../core/services/api.service';
+import { ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { RoleMaster_RolePermission } from './role-permission';
-import { ApiService } from '../../../../core/services/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,10 +24,6 @@ export class RolePermissionService {
     console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateRolePermission`, model);
   }
-
-  // UpdateRecord(model: RoleMaster_RolePermission): Observable<ApiResponse> {
-  //   return this.http.post<ApiResponse>(`${this.apiUrl}Admin/RoleMaster/RolePermission_Edit`, model);
-  // }
 
   //#region Form Configuration
   getFormConfig(): FormConfigType<RoleMaster_RolePermission> {

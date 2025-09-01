@@ -22,6 +22,7 @@
               </div>
             </div>
           </div>
+          
           <div class="col-xl-12 card m-auto mb-2">
             <div class="card-body p-0">
               <div class="card-header text-start">
@@ -31,7 +32,7 @@
                 <div class="col-xl-2 form-group">
                   <z-select [group]="form" [control]="'EmployeePrefix'" [label]="formConfig.EmployeePrefix.label"
                     [validationMessage]="formConfig.EmployeePrefix.error" [options]="prefixList"
-                    [optionLabel]="'PrefixName'" [optionValue]="'PrefixName'">
+                    [optionLabel]="'cValue'" [optionValue]="'cValue'">
                   </z-select>
                 </div>
                 <div class="col-xl-4 form-group">
@@ -40,8 +41,8 @@
                 </div>
                 <div class="col-xl-3 form-group">
                   <z-select [group]="form" [control]="'Gender'" [label]="formConfig.Gender.label"
-                    [validationMessage]="formConfig.Gender.error" [options]="genderList" [optionLabel]="'GenderName'"
-                    [optionValue]="'GenderID'">
+                    [validationMessage]="formConfig.Gender.error" [options]="genderList" [optionLabel]="'cValue'"
+                    [optionValue]="'iValue'">
                   </z-select>
                 </div>
                 <div class="col-xl-3 form-group">
@@ -55,12 +56,12 @@
                 <div class="col-xl-3 form-group">
                   <z-select [group]="form" [control]="'MaritalStatus'" [label]="formConfig.MaritalStatus.label"
                     [validationMessage]="formConfig.MaritalStatus.error" [options]="maritalStatusList"
-                    [optionLabel]="'MaritalStatusName'" [optionValue]="'MaritalStatusID'">
+                    [optionLabel]="'cValue'" [optionValue]="'iValue'">
                   </z-select>
                 </div>
                 <div class="col-xl-3 form-group">
                   <z-select [group]="form" [control]="'BloodGroup'" [label]="formConfig.BloodGroup.label"
-                    [options]="bloodGroupList" [optionLabel]="'BloodGroupName'" [optionValue]="'BloodGroupID'">
+                    [options]="bloodGroupList" [optionLabel]="'cValue'" [optionValue]="'cValue'">
                   </z-select>
                 </div>
                 <div class="col-xl-3 form-group">
@@ -120,48 +121,6 @@
                 <span>
                   <strong>
                     <div class="col-xl-12 form-group">
-                      <z-checkbox [group]="form" [control]="'DifferentPermanentAddress'"
-                        [label]="formConfig.DifferentPermanentAddress.label"></z-checkbox>
-                    </div>
-                  </strong>
-                </span>
-              </div>
-              <div class="card-body form-horizontal d-flex flex-wrap"
-                *ngIf="form.get('DifferentPermanentAddress')?.value">
-                <div class="col-xl-12 form-group">
-                  <z-textarea [group]="form" control="PermanentAddress" [label]="formConfig.PermanentAddress.label"
-                    [validationMessage]="formConfig.PermanentAddress.error"></z-textarea>
-                </div>
-                <div class="col-xl-3 form-group">
-                  <z-inputtext [group]="form" control="PermanentCity" [label]="formConfig.PermanentCity.label"
-                    [validationMessage]="formConfig.PermanentCity.error"></z-inputtext>
-                </div>
-                <div class="col-xl-3 form-group">
-                  <z-select [group]="form" [control]="'PermanentStateID'" [label]="formConfig.PermanentStateID.label"
-                    [validationMessage]="formConfig.PermanentStateID.error" [options]="statePermanentList"
-                    [optionLabel]="'StateName'" [optionValue]="'StateID'">
-                  </z-select>
-                </div>
-                <div class="col-xl-3 form-group">
-                  <z-select [group]="form" [control]="'PermanentCountryID'"
-                    [label]="formConfig.PermanentCountryID.label"
-                    [validationMessage]="formConfig.PermanentCountryID.error" [options]="countryPermanentList"
-                    [optionLabel]="'CountryName'" [optionValue]="'CountryID'" (onChange)="OnChangeCountryPermanent()">
-                  </z-select>
-                </div>
-                <div class="col-xl-3 form-group">
-                  <z-inputtext [group]="form" control="PermanentPinCode" [label]="formConfig.PermanentPinCode.label"
-                    [validationMessage]="formConfig.PermanentPinCode.error"></z-inputtext>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-xl-12 card m-auto mb-2">
-            <div class="card-body p-0">
-              <div class="card-header text-start">
-                <span>
-                  <strong>
-                    <div class="col-xl-12 form-group">
                       <z-checkbox [group]="form" [control]="'EmergencyContactDetails'"
                         [label]="formConfig.EmergencyContactDetails.label"></z-checkbox>
                     </div>
@@ -183,7 +142,7 @@
                 <div class="col-xl-4 form-group" *ngIf="form.get('EmergencyContactDetails')?.value">
                   <z-select [group]="form" [control]="'EmergencyContactRelationship'"
                     [label]="formConfig.EmergencyContactRelationship.label" [options]="relationshipList"
-                    [optionLabel]="'RelationshipName'" [optionValue]="'RelationshipID'">
+                    [optionLabel]="'cValue'" [optionValue]="'iValue'">
                   </z-select>
                 </div>
               </div>
@@ -197,20 +156,21 @@
               </div>
               <div class="card-body form-horizontal d-flex flex-wrap">
                 <div class="col-xl-4 form-group">
-                  <z-select [group]="form" [control]="'EmployeeCategory'" [label]="formConfig.EmployeeCategory.label"
-                    [validationMessage]="formConfig.EmployeeCategory.error" [options]="categoryList"
-                    [optionLabel]="'CategoryName'" [optionValue]="'CategoryID'">
-                  </z-select>
+                  <z-datepicker [group]="form" control="DOJ" [label]="formConfig.DOJ.label"
+                    [validationMessage]="formConfig.DOJ.error"></z-datepicker>
                 </div>
+                <div class="col-xl-4 form-group" [style.visibility]="isEditMode ? 'visible' : 'hidden'">
+                  <z-datepicker [group]="form" control="DOT" [label]="formConfig.DOT.label"
+                    [validationMessage]="formConfig.DOT.error"></z-datepicker>
+                </div>
+                <!-- <div class="col-xl-4 form-group" [style.visibility]="form.get('DOT')?.value ? 'visible' : 'hidden'">
+                  <z-textarea [group]="form" control="ReasonForTermination" [label]="formConfig.ReasonForTermination.label"></z-textarea>
+                </div> -->
                 <div class="col-xl-4 form-group">
                   <z-select [group]="form" [control]="'EmployeeTypeID'" [label]="formConfig.EmployeeTypeID.label"
                     [validationMessage]="formConfig.EmployeeTypeID.error" [options]="employeeTypeList"
                     [optionLabel]="'EmployeeTypeName'" [optionValue]="'EmployeeTypeID'">
                   </z-select>
-                </div>
-                <div class="col-xl-4 form-group">
-                  <z-datepicker [group]="form" control="DOJ" [label]="formConfig.DOJ.label"
-                    [validationMessage]="formConfig.DOJ.error"></z-datepicker>
                 </div>
                 <div class="col-xl-4 form-group">
                   <z-select [group]="form" [control]="'DepartmentID'" [label]="formConfig.DepartmentID.label"
@@ -227,18 +187,18 @@
                 <div class="col-xl-4 form-group">
                   <z-select [group]="form" [control]="'ReportingTo'" [label]="formConfig.ReportingTo.label"
                     [validationMessage]="formConfig.ReportingTo.error" [options]="reportingToList"
-                    [optionLabel]="'EmployeeName'" [optionValue]="'EmployeeID'">
+                    [optionLabel]="'cValue'" [optionValue]="'iValue'">
                   </z-select>
                 </div>
-                <div class="col-xl-4 form-group">
+                <div class="col-xl-3 form-group">
                   <z-checkbox [group]="form" [control]="'CanApproveEmployeeRequest'"
                     [label]="formConfig.CanApproveEmployeeRequest.label"></z-checkbox>
                 </div>
-                <div class="col-xl-4 form-group">
+                <div class="col-xl-3 form-group">
                   <z-checkbox [group]="form" [control]="'CanApproveBillingDiscount'"
                     [label]="formConfig.CanApproveBillingDiscount.label"></z-checkbox>
                 </div>
-                <div class="col-xl-4 form-group">
+                <div class="col-xl-2 form-group">
                   <div class="input-group">
                     <z-checkbox [group]="form" [control]="'DisablePayroll'"
                       [label]="formConfig.DisablePayroll.label"></z-checkbox>
@@ -248,69 +208,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-xl-12 card m-auto mb-2" *ngIf="[3].includes(form.get('EmployeeCategory')?.value)">
-            <div class="card-body p-0">
-              <div class="card-header text-start">
-                <span><strong>Consultant Details</strong></span>
-              </div>
-              <div class="card-body form-horizontal d-flex flex-wrap">
-                <div class="col-xl-3 form-group">
-                  <div class="input-group">
-                    <span class="input-group-text" pTooltip="Help: State Medical Council Registration No.">
-                      <i class="fa fa-question-circle"></i>
-                    </span>
-                    <z-inputtext [group]="form" control="SMCRegistrationNo"
-                      [label]="formConfig.SMCRegistrationNo.label"></z-inputtext>
-                  </div>
-                </div>
-                <div class="col-xl-1">
-
-                </div>
-                <div class="col-xl-2 form-group">
-                  <z-checkbox [group]="form" [control]="'IsSurgeon'" [label]="formConfig.IsSurgeon.label"></z-checkbox>
-                </div>
-                <div class="col-xl-2 form-group">
-                  <z-checkbox [group]="form" [control]="'IsAnaesthetist'"
-                    [label]="formConfig.IsAnaesthetist.label"></z-checkbox>
-                </div>
-                <div class="col-xl-2 form-group">
-                  <z-checkbox [group]="form" [control]="'IsSuperSpecialist'"
-                    [label]="formConfig.IsSuperSpecialist.label"></z-checkbox>
-                </div>
-                <div class="col-xl-2 form-group">
-                  <z-checkbox [group]="form" [control]="'IsVisitingConsultant'"
-                    [label]="formConfig.IsVisitingConsultant.label"></z-checkbox>
-                </div>
-                <div class="col-xl-3 form-group" *ngIf="!isEditMode">
-                  <div class="input-group">
-                    <span class="input-group-text" id="addon-wrapping"><i class="pi pi-indian-rupee"></i></span>
-                    <z-inputnumber class='flex-grow-1' [group]="form" control="ConsultationCharge"
-                      [label]="formConfig.ConsultationCharge.label"></z-inputnumber>
-                    <span class="input-group-text" id="addon-wrapping">.00</span>
-                  </div>
-                </div>
-                <div class="col-xl-1" *ngIf="!isEditMode">
-
-                </div>
-                <div class="col-xl-3 form-group" *ngIf="isEditMode">
-                  <z-select [group]="form" [control]="'SignatoryArea'" [label]="formConfig.SignatoryArea.label"
-                    [options]="signatoryAreaList" [optionLabel]="'AreaID'" [optionValue]="'AreaName'">
-                  </z-select>
-                </div>
-                <div class="col-xl-1" *ngIf="isEditMode">
-
-                </div>
-                <div class="col-xl-2 form-group">
-                  <z-checkbox [group]="form" [control]="'IsSignatory'"
-                    [label]="formConfig.IsSignatory.label"></z-checkbox>
-                </div>
-                <div class="col-xl-2">
-
-                </div>
-              </div>
+               </div> 
             </div>
           </div>
           <div class="col-xl-12 card m-auto mb-2">
@@ -324,13 +222,13 @@
                 </div>
                 <div class="col-xl-4 form-group">
                   <div class="input-group">
-                    <span class="input-group-addon">
-                      <z-checkbox [group]="form" [control]="'CanAccessERP'" [label]="''"
+                    <span class="input-group-addon px-1">
+                      <z-checkbox [group]="form" [control]="'CanAccessERP'" [label]="'Can Access ERP'"
                         (onChange)="OnChangeCanAccessERP()"></z-checkbox>
                     </span>
                     <z-select class='flex-grow-1' [group]="form" [control]="'RoleID'" [label]="formConfig.RoleID.label"
-                      [validationMessage]="formConfig.RoleID.error" [options]="roleList" [optionLabel]="'RoleName'"
-                      [optionValue]="'RoleID'">
+                      [validationMessage]="formConfig.RoleID.error" [options]="roleList" [optionLabel]="'cValue'"
+                      [optionValue]="'iValue'">
                     </z-select>
                   </div>
                 </div>
@@ -352,7 +250,7 @@
     <div class="col-xl-4">
 
     </div>
-    <div class="col-xl-4">
+    <!-- <div class="col-xl-4">
       <div class="col-xl-6 px-1" *ngIf="isEditMode">
         <div class="input-group">
           <span class="input-group-text" id="addon-wrapping">Status</span>
@@ -360,32 +258,36 @@
             [ngStyle]="{ color: form.get('HexValue')?.value }"></z-span>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="col-xl-4">
-      <div class="col-xl-3 px-1" *ngIf="isEditMode">
+      <!-- <div class="col-xl-3 px-1" *ngIf="isEditMode">
         <button class="btn btn-md btn-primary w-100"
           [disabled]="!form.get('IsSignatory')?.value || !form.get('CanUpdate')?.value"
           (click)="ShowDialog('consultantSignature')"
           *ngIf="[3].includes(form.get('EmployeeCategory')?.value)">Signature File</button>
+      </div> -->
+      <div class="col-xl-4 px-1" *ngIf="isEditMode">
+        <button class="btn btn-md btn-primary w-100" [disabled]="!form.get('DOT')?.value || form.get('StatusID')?.value == 2" (click)="terminateEmployee()">
+          {{ form.get('StatusID')?.value == 1 ? 'Terminate Employee' : 'Employee Terminated' }}
+        </button>
       </div>
-      <div class="col-xl-3 px-1" *ngIf="isEditMode">
+      <!-- <div class="col-xl-3 px-1" *ngIf="isEditMode">
         <button class="btn btn-md btn-primary w-100" [disabled]="!form.get('CanUpdate')?.value"
           (click)="ShowDialog('resetPassword')">Reset Password</button>
-      </div>
+      </div> -->
       <div class="col-xl-3 px-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="OnSubmit()"
-          [disabled]="isSubmitted || !form.get('CanUpdate')?.value">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="OnSubmit()">
+          <!-- [disabled]="isSubmitted || !form.get('CanUpdate')?.value"> -->
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>
       <div class="col-xl-3 px-1" *ngIf="!isEditMode">
         <button type="submit" class="btn btn-md btn-primary w-100" (click)="ResetForm()">Reset</button>
       </div>
-      <div class="col-xl-3 px-1" *ngIf="isEditMode">
+      <!-- <div class="col-xl-3 px-1" *ngIf="isEditMode">
         <button type="submit" class="btn btn-md btn-primary w-100" (click)="OnClickPageHeaderBackToListButton()">Back To
           List</button>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
-
