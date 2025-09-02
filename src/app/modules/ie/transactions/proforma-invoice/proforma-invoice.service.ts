@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ProformaInvoice, ProformaInvoiceDetail } from './proforma-invoice';
+import { ProformaInvoice, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoiceDetail } from './proforma-invoice';
 import { FormGroup, Validators } from '@angular/forms';
-import { FormConfigType } from '../../../../shared/models/form.model';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { RequiredIf, Operator } from '../../../../shared/validators/required-if.validator';
 import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderDetail, ExportOrderRequest } from '../export-order/export-order';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
@@ -62,9 +62,17 @@ export class ProformaInvoiceService {
     return this.apiService.post<ApiListResponse<ExportOrder_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }
 
-  // PopulateGrid(model: DataTableParams<ExportOrder_IndexTableFilter>): Observable<ApiPagedListResponse<ExportOrder_IndexTableList>> {
-  //   return this.apiService.post<ApiPagedListResponse<ExportOrder_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
-  // }
+  PopulateGrid(model: DataTableParams<ProformaInvoice_IndexTableFilter>): Observable<ApiPagedListResponse<ProformaInvoice_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<ProformaInvoice_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  }
+
+  GetDetails(proformaInvoiceID: number): Observable<ApiDataResponse<ProformaInvoice>> {
+    return this.apiService.post<ApiDataResponse<ProformaInvoice>>(`${this.endpoint}/GetDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
+  }
+
+  GetInvoiceItemDetails(proformaInvoiceID: number): Observable<ApiListResponse<ProformaInvoiceDetail>> {
+    return this.apiService.post<ApiListResponse<ProformaInvoiceDetail>>(`${this.endpoint}/GetInvoiceItemDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
+  }
 
   GetExportOrderDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder>> {
     return this.exportOrderService.GetDetails(exportOrderID);
@@ -82,52 +90,17 @@ export class ProformaInvoiceService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  CancelOrder(model: ProformaInvoice): Observable<ApiResponse> {
+  CancelRecord(model: ProformaInvoice): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
 
-  getFormConfig_DataTableFilter(): FormConfigType<ExportOrder_IndexTableFilter> {
+
+  //#region Form Configuration
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ProformaInvoice_IndexTableFilter> {
     return {
-      ExportOrderNo: {
-        label: 'Order No',
-        defaultValue: ''
-      },
-      ReferenceNo: {
-        label: 'Reference No',
-        defaultValue: ''
-      },
-      CustomerName: {
-        label: 'Customer Name',
-        defaultValue: ''
-      },
-      IncotermID: {
-        label: 'Incoterm',
-        defaultValue: 0
-      },
-      DutyDrawableID: {
-        label: 'Is Duty Drawable',
-        defaultValue: 0
-      },
-      RoDTEPID: {
-        label: 'Is RoDTEP',
-        defaultValue: 0
-      },
-      ShipmentModeID: {
-        label: 'Shipment Mode',
-        defaultValue: 0
-      },
-      LoadingPortID: {
-        label: 'Loading Port',
-        defaultValue: 0
-      },
-      DischargePortID: {
-        label: 'Discharge Port',
-        defaultValue: 0
-      },
-      StatusID: {
-        label: 'Status',
-        defaultValue: 0
-      }
+      ProformaInvoiceNo: '',
+      CustomerName: '',
+      StatusID: 0
     }
   }
 
@@ -342,11 +315,11 @@ export class ProformaInvoiceService {
         validationMessages: {}
       },
       SubtotalAmountFC: {
-        label: 'Subtotal Amount(FC)',
+        label: '',
         defaultValue: null
       },
       TaxAmountFC: {
-        label: 'Tax Amount (FC)',
+        label: '',
         defaultValue: null
       },
       SubtotalAmountBC: {
@@ -364,6 +337,10 @@ export class ProformaInvoiceService {
       NetAmountBC: {
         label: '',
         defaultValue: null
+      },
+      StatusID: {
+        label: '',
+        defaultValue: 1
       }
     };
   }

@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'z-select',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule,FloatLabelModule,DropdownModule,MultiSelectModule,ShowValidationTooltipDirective],
+  imports: [CommonModule, ReactiveFormsModule, FloatLabelModule, DropdownModule, MultiSelectModule, ShowValidationTooltipDirective],
   templateUrl: './z-select.component.html',
   styleUrl: './z-select.component.scss'
 })
@@ -22,11 +22,12 @@ export class ZSelectComponent {
   @Input() options: any[] = [];        // The options for the dropdown
   @Input() optionLabel: string = '';   // The property name for the label in the options
   @Input() optionValue: string = '';   // The property name for the value in the options
+  @Input() readonly: boolean = false;
   @Input() showClear: boolean = true;
-  
+
   @Input() multi: boolean = false;
   @Input() maxSelectionLimit: number | null = null;
-  
+
   @Output() onChange = new EventEmitter<any>(); // Event emitter for value changes
 
   // Determine if filtering should be enabled based on the length of options
@@ -38,7 +39,7 @@ export class ZSelectComponent {
     this.onChange.emit(value); // Emit the new value to the parent component
   }
 
-  clearDropdown(dropdown : any){
+  clearDropdown(dropdown: any) {
     console.log(dropdown.clear);
     if (dropdown && dropdown.clear) {
       dropdown.clear();

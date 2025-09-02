@@ -168,7 +168,6 @@ export class IndexComponent implements OnInit, OnDestroy {
             this.formService.createFormArrayItem(this.formConfig.RoleMapping.items)
           )
         );
-
         this.RoleMappingArray.patchValue(response.Data.RoleMapping);
         this.RoleMaster_RolePermission = response.Data;
       },
@@ -196,9 +195,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
     try {
-      // Handle invalid form
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -207,22 +204,20 @@ export class IndexComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Handle form submission based on editMode
-        this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
-        }).then(result => {
-          if (result.isConfirmed) {
-            const model: RoleMaster_RolePermission = {
-              ...this.formService.transformFormData(this.form.value),
-              ReasonToUpdate: result.value
-            };
-            this.updateRecord(model)
-          }
-          else {
-            this.isSubmitted = false;
-          }
-        });
-      
+      this.alertService.showConfirmationWithInput({
+        text: 'Do you really want to Update?',
+      }).then(result => {
+        if (result.isConfirmed) {
+          const model: RoleMaster_RolePermission = {
+            ...this.formService.transformFormData(this.form.value),
+            ReasonToUpdate: result.value
+          };
+          this.updateRecord(model)
+        }
+        else {
+          this.isSubmitted = false;
+        }
+      });      
     }
     catch (error) {
 
@@ -232,29 +227,28 @@ export class IndexComponent implements OnInit, OnDestroy {
   updateRecord(model: RoleMaster_RolePermission): void {
     try {
       this.pageService.UpdateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-         
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.alertService.showAlert({
+              type: "success",
+              text: response.Message,
+              timer: 5000
+            });
+        
           }
-        });
+          else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        }
+      });
     }
     catch (error) {
 
     }
   }
-
 }

@@ -120,6 +120,36 @@ export const adminRoute: Routes = [
               menu: 'Admin/EmployeeTypeMaster',
               breadcrumb: 'Employee Type Master'
             }
+          },
+          {
+            path: 'employee-registration',
+            loadComponent: () => import('./transactions/employee-registration/index/index.component').then((m) => m.IndexComponent)
+            // canActivate: [AuthenticationGuard, AuthorizationGuard],
+            // data: {
+            //   permission: 'CanRead',
+            //   menu: 'Admin/EmployeeTypeMaster',
+            //   breadcrumb: 'Employee Type Master'
+            // }
+          },
+          {
+            path: 'employee-registration/create',
+            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent)
+            // canActivate: [AuthenticationGuard, AuthorizationGuard],
+            // data: {
+            //   permission: 'CanRead',
+            //   menu: 'Admin/EmployeeTypeMaster',
+            //   breadcrumb: 'Employee Type Master'
+            // }
+          },
+          {
+            path: 'employee-registration/edit/:id',
+            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent)
+            // canActivate: [AuthenticationGuard, AuthorizationGuard],
+            // data: {
+            //   permission: 'CanRead',
+            //   menu: 'Admin/EmployeeTypeMaster',
+            //   breadcrumb: 'Employee Type Master'
+            // }
           }
         ]
       }

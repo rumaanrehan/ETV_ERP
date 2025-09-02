@@ -1,61 +1,46 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { EmployeeRegistration, EmployeeRegistrationIndexTableRequest, EmployeeRegistrationIndexTableResponse, EmployeeRegistrationSelectListRequest, EmployeeRegistration_SelectList, EmployeeRegistrationFileUpload } from './employee-registration';
-import { ApiService } from '../../../../core/services/api.service';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
-import { HttpClient } from '@angular/common/http';
-import { Environment } from '../../../../../environments/environment';
-import { CountryMasterService } from '../../settings/country-master/country-master.service';
-import { DesignationMasterService } from '../../settings/designation-master/designation-master.service';
-import { DepartmentMasterService } from '../../settings/department-master/department-master.service';
-import { EmployeeTypeMasterService } from '../../settings/employee-type-master/employee-type-master.service';
-import { PrefixMasterService } from '../../settings/PrefixMaster/prefix-master.service';
-import { RelationshipMasterService } from '../../settings/RelationshipMaster/relationship-master.service';
-import { RoleMasterService } from '../../settings/RoleMaster/role-master.service';
-import { StateMasterService } from '../../settings/state-master/state-master.service';
-// import { DesignationMaster_SelectList } from '../DesignationMaster/designation-master';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { CountryMaster, CountryRequest } from '../../settings/country-master/country-master';
-import { StateMaster, StateRequest, State_SelectList } from '../../settings/state-master/state-master';
-import { Department_SelectList } from '../../settings/department-master/department-master';
+import { CountryMasterService } from '../../settings/country-master/country-master.service';
+import { Department_SelectList, DepartmentRequest } from '../../settings/department-master/department-master';
+import { DepartmentMasterService } from '../../settings/department-master/department-master.service';
+import { Designation_SelectList } from '../../settings/designation-master/designation-master';
+import { DesignationMasterService } from '../../settings/designation-master/designation-master.service';
 import { EmployeeType_SelectList, EmployeeTypeRequest } from '../../settings/employee-type-master/employee-type-master';
-import { Designation_SelectList, DesignationMaster, DesignationRequest } from '../../settings/designation-master/designation-master';
-// import { CountryMasterSelectListResponse } from '../../settings/country-master/country-master';
+import { EmployeeTypeMasterService } from '../../settings/employee-type-master/employee-type-master.service';
+import { State_SelectList, StateRequest } from '../../settings/state-master/state-master';
+import { StateMasterService } from '../../settings/state-master/state-master.service';
+import { EmployeeRegistration, EmployeeRegistration_IndexTableFilter, EmployeeRegistration_IndexTableList, EmployeeRegistration_SelectList, EmployeeRegistrationRequest } from './employee-registration';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class EmployeeRegistrationService {
-  private endpoint = 'Admin/EmployeeRegistration';
-  private apiUrl: string;
+  private endpoint = 'Admin/EmployeeRegistration'
 
   constructor(
     private apiService: ApiService,
     private selectListService: SelectListService,
-    private stateListService: StateMasterService,
     private countryService: CountryMasterService,
     private stateService: StateMasterService,
-    private prefixMasterService: PrefixMasterService,
     private employeeTypeService: EmployeeTypeMasterService,
     private departmentService: DepartmentMasterService,
-    private designationService: DesignationMasterService,
-    private relationshipService: RelationshipMasterService,
-    private roleMasterService: RoleMasterService,
-    private http: HttpClient
-  ) {
-    this.apiUrl = Environment.apiUrl;
-  }
+    private designationService: DesignationMasterService
+  ) { }
 
-  GetReportingList(model: EmployeeRegistrationSelectListRequest): Observable<ApiListResponse<EmployeeRegistration_SelectList>> {
-    return this.PopulateList(model);
-  }
+  // GetReportingList(model: EmployeeRegistrationSelectListRequest): Observable<ApiListResponse<EmployeeRegistrationSelectListResponse>> {
+  //   return this.PopulateList(model);
+  // }
 
   // GetStateList(model: StateMasterSelectListRequest): Observable<ApiListResponse<StateMasterSelectListResponse>> {
   //   return this.stateListService.PopulateList(model);
@@ -66,34 +51,26 @@ export class EmployeeRegistrationService {
   }
 
   GetMasterDropdownLists(): Observable<{
-    // PrefixList: ApiListResponse<PrefixMasterSelectListResponse>;
-    // RelationshipList: ApiListResponse<RelationshipMasterSelectListResponse>;
-    EmployeeTypeList: ApiListResponse<EmployeeType_SelectList>;
-    DepartmentList: ApiListResponse<Department_SelectList>;
-    DesignationList: ApiListResponse<Designation_SelectList>;
-    // RoleList: ApiListResponse<RoleMasterSelectListResponse>;
-    CountryList: ApiListResponse<CountryMaster>;
-    StateList: ApiListResponse<State_SelectList>;
-    // PermanentCountryList: ApiListResponse<CountryMasterSelectListResponse>;
+    stateList: ApiListResponse<State_SelectList>;
+    countryList: ApiListResponse<CountryMaster>;
+    employeeTypeList: ApiListResponse<EmployeeType_SelectList>;
+    departmentList: ApiListResponse<Department_SelectList>;
+    designationList: ApiListResponse<Designation_SelectList>;
   }> {
     return forkJoin({
-      // PrefixList: this.prefixMasterService.PopulateList("SelectList"),
-      // RelationshipList: this.relationshipService.PopulateList("SelectList"),
-      EmployeeTypeList: this.employeeTypeService.PopulateList({PopulateType: 'SelectList'} as EmployeeTypeRequest),
-      DepartmentList: this.departmentService.PopulateList({ DepartmentTypeID: 0, PopulateType: "MainDepartment" }),
-      DesignationList: this.designationService.PopulateList("SelectList" as DesignationRequest),
-      // RoleList: this.roleMasterService.PopulateList("SelectList"),
-      CountryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
-      StateList: this.stateService.PopulateList({PopulateType: 'SelectList'} as StateRequest),
+      stateList: this.stateService.PopulateList({PopulateType: 'SelectList'} as StateRequest),
+      countryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
+      employeeTypeList: this.employeeTypeService.PopulateList({PopulateType: 'SelectList'} as EmployeeTypeRequest),
+      departmentList: this.departmentService.PopulateList({ PopulateType: "SelectList" } as DepartmentRequest),
+      designationList: this.designationService.PopulateList({PopulateType: 'SelectList'} as EmployeeTypeRequest),
     });
   }
 
-  /*Page Service Call*/
-  PopulateList(model: EmployeeRegistrationSelectListRequest): Observable<ApiListResponse<EmployeeRegistration_SelectList>> {
+  PopulateList(model: EmployeeRegistrationRequest): Observable<ApiListResponse<EmployeeRegistration_SelectList>> {
     return this.apiService.post<ApiListResponse<EmployeeRegistration_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
-  PopulateGrid(model: DataTableParams<EmployeeRegistrationIndexTableRequest>): Observable<ApiPagedListResponse<EmployeeRegistrationIndexTableResponse>> {
+  PopulateGrid(model: DataTableParams<EmployeeRegistration_IndexTableFilter>): Observable<ApiPagedListResponse<EmployeeRegistration_IndexTableList>> {
     debugger
     if (model.filters?.CanAccessERP == false) {
       model.filters.CanAccessERP = false;
@@ -103,7 +80,7 @@ export class EmployeeRegistrationService {
     } else if (model.filters?.CanAccessERP == 2) {
       model.filters.CanAccessERP = null;
     }
-    return this.apiService.post<ApiPagedListResponse<EmployeeRegistrationIndexTableResponse>>(`${this.endpoint}/PopulateGrid`, model);
+    return this.apiService.post<ApiPagedListResponse<EmployeeRegistration_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
   GetDetails(EmployeeID: number): Observable<ApiDataResponse<EmployeeRegistration>> {
@@ -119,24 +96,23 @@ export class EmployeeRegistrationService {
   }
 
   DeleteRecord(model: EmployeeRegistration): Observable<ApiResponse> {
-    debugger;
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
 
+  TerminateEmployee(model: EmployeeRegistration): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Terminate`, model);
+  }
+
   // UploadFile(model: FormData): Observable<ApiResponse> {
-  //   return this.apiService.post<ApiResponse>(`${this.endpoint}/FileUpload`, model);
+  //   return this.http.post<ApiResponse>(`${this.apiUrl}Admin/EmployeeRegistration/FileUpload`, model);
   // }
 
-  UploadFile(model: FormData): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this.apiUrl}Admin/EmployeeRegistration/FileUpload`, model);
-  }
-
-  ResetPassword(model: EmployeeRegistration): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/ResetPassword`, model);
-  }
+  // ResetPassword(model: EmployeeRegistration): Observable<ApiResponse> {
+  //   return this.apiService.post<ApiResponse>(`${this.endpoint}/ResetPassword`, model);
+  // }
 
   //#region Form Configuration
-  GetFormConfig_DataTableFilter(): DataTableFilterFormConfigType<EmployeeRegistrationIndexTableRequest> {
+  GetFormConfig_DataTableFilter(): DataTableFilterFormConfigType<EmployeeRegistration_IndexTableFilter> {
     return {
       EmployeeCode: '',
       EmployeeName: '',
@@ -145,7 +121,6 @@ export class EmployeeRegistrationService {
       DepartmentID: 0,
       DesignationID: 0,
       CanAccessERP: 2,
-      ActiveStatusID: 0,
       PopulateType: 'PopulateGrid'
     }
   }
@@ -198,7 +173,7 @@ export class EmployeeRegistrationService {
         type: 'control'
       },
       FatherSpouse: {
-        label: 'Father Spouse',
+        label: 'Father/Spouse',
         defaultValue: null,
       },
       MaritalStatus: {
@@ -217,19 +192,19 @@ export class EmployeeRegistrationService {
       MobileNo: {
         label: 'Mobile No',
         defaultValue: null,
-        validators: [Validators.required, Validators.pattern(/^([0]|\+91)?[6-9][0-9]{9}$/)],
+        validators: [Validators.required, Validators.pattern(/^\+[1-9]\d{1,14}$/)],
         validationMessages: {
-          required: 'Mobile No is Required.',
-          pattern: 'Please provide correct Mobile No.',
+          required: 'Mobile No is required.',
+          pattern: 'Please provide a correct Mobile No with country code.'
         },
         type: 'control'
       },
       AlternateMobileNo: {
         label: 'Alternate No',
         defaultValue: null,
-        validators: [Validators.pattern('^[0-9]{10,14}$')],
+        validators: [ Validators.pattern(/^\+[1-9]\d{1,14}$/)],
         validationMessages: {
-          pattern: 'Please provide correct Alternate Mobile No.',
+          pattern: 'Please provide a correct Alternate Mobile No with country code.'
         },
         type: 'control'
       },
@@ -306,57 +281,6 @@ export class EmployeeRegistrationService {
         },
         type: 'control'
       },
-      DifferentPermanentAddress: {
-        label: 'Different Permanent Address',
-        defaultValue: false,
-        type: 'control'
-      },
-      PermanentAddress: {
-        label: 'Address',
-        defaultValue: null,
-        validators: [RequiredIf('DifferentPermanentAddress', Operator.EqualTo, true)],
-        validationMessages: {
-          requiredIf: 'Permanent Address is Required.',
-        },
-        type: 'control'
-      },
-      PermanentCity: {
-        label: 'City',
-        defaultValue: null,
-        validators: [RequiredIf('DifferentPermanentAddress', Operator.EqualTo, true)],
-        validationMessages: {
-          requiredIf: 'Permanent City is Required.',
-        },
-        type: 'control'
-      },
-      PermanentStateID: {
-        label: 'State',
-        defaultValue: null,
-        validators: [RequiredIf('DifferentPermanentAddress', Operator.EqualTo, true)],
-        validationMessages: {
-          requiredIf: 'Please select an option from the State List.',
-        },
-        type: 'control'
-      },
-      PermanentCountryID: {
-        label: 'Country',
-        defaultValue: null,
-        validators: [RequiredIf('DifferentPermanentAddress', Operator.EqualTo, true)],
-        validationMessages: {
-          requiredIf: 'Please select an option from the Country List.',
-        },
-        type: 'control'
-      },
-      PermanentPinCode: {
-        label: 'Pin Code',
-        defaultValue: null,
-        validators: [RequiredIf('DifferentPermanentAddress', Operator.EqualTo, true), Validators.pattern(/^[0-9]{6}$/)],
-        validationMessages: {
-          requiredIf: 'Permanent PIN Code is Required.',
-          pattern: 'Permanent PIN Code must be a 6-digit number.'
-        },
-        type: 'control'
-      },
       EmergencyContactDetails: {
         label: 'Emergency Contact Details',
         defaultValue: false,
@@ -373,32 +297,19 @@ export class EmployeeRegistrationService {
       EmergencyContactMobileNo: {
         label: 'Mobile No',
         defaultValue: null,
-        validators: [RequiredIf('EmergencyContactDetails', Operator.EqualTo, true), Validators.pattern(/^([0]|\+91)?[6-9][0-9]{9}$/)],
+        validators: [RequiredIf('EmergencyContactDetails', Operator.EqualTo, true),  Validators.pattern(/^\+[1-9]\d{1,14}$/)],
         validationMessages: {
           requiredIf: 'Emergency Contact Mobile No is Required.',
-          pattern: 'Please provide correct mobile number.',
+          pattern: 'Please provide a correct Emergency Contact Mobile No with country code.'
         },
         type: 'control'
       },
       EmergencyContactRelationship: {
         label: 'Relationship',
         defaultValue: null,
-      },
-      EmployeeCategory: {
-        label: 'Category',
-        defaultValue: null,
-        validators: [Validators.required],
+        validators: [RequiredIf('EmergencyContactDetails', Operator.EqualTo, true)],
         validationMessages: {
-          required: 'Please select an option from the Employee Category List.',
-        },
-        type: 'control'
-      },
-      EmployeeTypeID: {
-        label: 'Employee Type',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'Please select an option from the Employee Type List.',
+          requiredIf: 'Relationship is Required.',
         },
         type: 'control'
       },
@@ -408,6 +319,25 @@ export class EmployeeRegistrationService {
         validators: [Validators.required],
         validationMessages: {
           required: 'Date of Joining is Required.',
+        },
+        type: 'control'
+      },
+      DOT: {
+        label: 'Date of Termination',
+        defaultValue: null,
+        type: 'control'
+      },
+      ReasonForTermination: {
+        label: "Reason for termination",
+        defaultValue: null,
+        type: 'control'
+      },
+      EmployeeTypeID: {
+        label: 'Employee Type',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Please select an option from the Employee Type List.',
         },
         type: 'control'
       },
@@ -429,6 +359,10 @@ export class EmployeeRegistrationService {
         },
         type: 'control'
       },
+      StatusID: {
+        label: 'Status ID',
+        defaultValue: null
+      },
       ReportingTo: {
         label: 'Reporting To',
         defaultValue: null,
@@ -445,42 +379,6 @@ export class EmployeeRegistrationService {
         label: 'Disable Payroll',
         defaultValue: false,
       },
-      SMCRegistrationNo: {
-        label: 'Registration No',
-        defaultValue: null,
-      },
-      ConsultationCharge: {
-        label: 'Consultation Charge',
-        defaultValue: null,
-      },
-      IsSurgeon: {
-        label: 'Is Surgeon',
-        defaultValue: false,
-      },
-      IsAnaesthetist: {
-        label: ' Is Anaesthetist',
-        defaultValue: false,
-      },
-      IsSuperSpecialist: {
-        label: 'Is Super Specialist',
-        defaultValue: false,
-      },
-      IsVisitingConsultant: {
-        label: 'Is Visiting Consultant',
-        defaultValue: false,
-      },
-      IsSignatory: {
-        label: 'Is Signatory',
-        defaultValue: false,
-      },
-      ConsultantSignatureImagePath: {
-        label: 'Consultant Signature Image Path',
-        defaultValue: null,
-      },
-      SignatoryArea: {
-        label: 'Signatory Area',
-        defaultValue: null,
-      },
       CanAccessERP: {
         label: '',
         defaultValue: false,
@@ -488,67 +386,47 @@ export class EmployeeRegistrationService {
       CanAccessEmployeePortal: {
         label: 'Can Access Employee Portal',
         defaultValue: false,
+        type: 'control'
       },
       RoleID: {
         label: 'Role',
         defaultValue: null,
-        disabled: true,
         validators: [RequiredIf('CanAccessERP', Operator.EqualTo, true)],
         validationMessages: {
           requiredIf: 'Please select an option from the Role List.',
         },
         type: 'control'
-      },
-      UserID: {
-        label: 'User ID',
-        defaultValue: null,
-      },
-      Password: {
-        label: 'Password',
-        defaultValue: "*********",
-      },
-      StatusText: {
-        label: 'Status',
-        defaultValue: null,
-      },
-      HexValue: {
-        label: '',
-        defaultValue: null,
-      },
-      CanUpdate: {
-        label: 'CanUpdate',
-        defaultValue: true,
-      },
+      }
     };
   }
 
-  GetFileUploadConfig(): FormConfigType<EmployeeRegistrationFileUpload> {
-    return {
-      FileType: {
-        label: 'File Type',
-        defaultValue: 'ConsultantSignatureImage',
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'FileType is Required.',
-        },
-        type: 'control'
-      },
-      FileName: {
-        label: 'File Name',
-        defaultValue: null,
-        type: 'control'
-      },
-      File: {
-        label: 'File',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'Please select the Signature Image.',
-        },
-        type: 'control'
-      }
-    }
-  }
+  // GetFileUploadConfig(): FormConfigType<EmployeeRegistration_FileUpload> {
+  //   return {
+  //     FileType: {
+  //       label: 'File Type',
+  //       defaultValue: 'ConsultantSignatureImage',
+  //       validators: [Validators.required],
+  //       validationMessages: {
+  //         required: 'FileType is Required.',
+  //       },
+  //       type: 'control'
+  //     },
+  //     FileName: {
+  //       label: 'File Name',
+  //       defaultValue: null,
+  //       type: 'control'
+  //     },
+  //     File: {
+  //       label: 'File',
+  //       defaultValue: null,
+  //       validators: [Validators.required],
+  //       validationMessages: {
+  //         required: 'Please select the Signature Image.',
+  //       },
+  //       type: 'control'
+  //     }
+  //   }
+  // }
   //#endregion
 }
 

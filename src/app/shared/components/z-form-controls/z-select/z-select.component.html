@@ -40,65 +40,42 @@
 <div [formGroup]="group">
     <ng-container *ngIf="multi; else singleSelect">
         <p-floatLabel>
-            <p-multiSelect
-            [styleClass]="styleClass"
-            [formControlName]="control"
-            [appShowValidationTooltip]="validationMessage"
-            [options]="options"
-            [optionLabel]="optionLabel" 
-            [optionValue]="optionValue"
-            [filter]="filterEnabled"
-            [filterBy]="optionLabel"
-            [showClear]="!!group.get(control)?.value"
-            [selectionLimit]="maxSelectionLimit"
-            [selectedItemsLabel]="'{0} options selected'"
-            (onChange)="onValueChange($event.value)"
-        >
-        </p-multiSelect>
+            <p-multiSelect [styleClass]="styleClass" [formControlName]="control"
+                [appShowValidationTooltip]="validationMessage" [options]="options" [optionLabel]="optionLabel"
+                [optionValue]="optionValue" [filter]="filterEnabled" [filterBy]="optionLabel"
+                [showClear]="!!group.get(control)?.value" [selectionLimit]="maxSelectionLimit"
+                [selectedItemsLabel]="'{0} options selected'" [readonly]="readonly"
+                (onChange)="onValueChange($event.value)">
+            </p-multiSelect>
             <label>{{ label }}</label>
         </p-floatLabel>
-        
+
     </ng-container>
     <ng-template #singleSelect>
         <ng-container *ngIf="showClear; else singleSelectWithoutClear">
             <div class="input-group">
                 <p-floatLabel class="flex-grow-1">
-                    <p-dropdown #dropdown
-                    [styleClass]="styleClass"
-                    [formControlName]="control"
-                    [options]="options"
-                    [optionLabel]="optionLabel" 
-                    [optionValue]="optionValue"
-                    [appShowValidationTooltip]="validationMessage"
-                    [filter]="filterEnabled"
-                    [filterBy]="optionLabel"
-                    [showClear]="false"
-                    (onChange)="onValueChange($event.value)"
-                >
-                </p-dropdown>
-                <label>{{ label }}</label>
+                    <p-dropdown #dropdown [styleClass]="styleClass" [formControlName]="control" [options]="options"
+                        [optionLabel]="optionLabel" [optionValue]="optionValue"
+                        [appShowValidationTooltip]="validationMessage" [filter]="filterEnabled" [filterBy]="optionLabel"
+                        [readonly]="readonly" [showClear]="false" (onChange)="onValueChange($event.value)">
+                    </p-dropdown>
+                    <label>{{ label }}</label>
                 </p-floatLabel>
-                <button class="input-group-addon" type="button" (click)="clearDropdown(dropdown)" tabindex="-1">
+                <button class="input-group-addon" type="button" [disabled]="readonly" (click)="clearDropdown(dropdown)"
+                    tabindex="-1">
                     <i class="pi pi-times"></i>
                 </button>
             </div>
         </ng-container>
         <ng-template #singleSelectWithoutClear>
             <p-floatLabel class="flex-grow-1">
-                <p-dropdown #dropdown
-                [styleClass]="styleClass"
-                [formControlName]="control"
-                [options]="options"
-                [optionLabel]="optionLabel" 
-                [optionValue]="optionValue"
-                [appShowValidationTooltip]="validationMessage"
-                [filter]="filterEnabled"
-                [filterBy]="optionLabel"
-                [showClear]="false"
-                (onChange)="onValueChange($event.value)"
-            >
-            </p-dropdown>
-            <label>{{ label }}</label>
+                <p-dropdown #dropdown [styleClass]="styleClass" [formControlName]="control" [options]="options"
+                    [optionLabel]="optionLabel" [optionValue]="optionValue"
+                    [appShowValidationTooltip]="validationMessage" [filter]="filterEnabled" [filterBy]="optionLabel"
+                    [readonly]="readonly" [showClear]="false" (onChange)="onValueChange($event.value)">
+                </p-dropdown>
+                <label>{{ label }}</label>
             </p-floatLabel>
         </ng-template>
     </ng-template>

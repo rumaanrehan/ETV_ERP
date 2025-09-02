@@ -25,6 +25,7 @@ export interface ProformaInvoice {
     NetAmountFC: number | null;
     NetAmountBC: number | null;
     Narration: number | null;
+    StatusID: number | null;
 
     ProductList: ProformaInvoiceDetail[];
 
@@ -49,4 +50,23 @@ export interface ProformaInvoiceDetail {
     SalesAmountBC: number | null;
     //Foreign Keys
     Product?: ProductMaster;
+}
+
+export interface ProformaInvoice_IndexTableFilter {
+    ProformaInvoiceNo: string | null;
+    CustomerName: string | null;
+    StatusID: number | null;
+}
+
+export interface ProformaInvoice_IndexTableList {
+    ProformaInvoiceID: number;
+    ProformaInvoiceNo: string;
+    ProformaInvoiceDate: Date;
+    BasedOn: string;
+    ExportOrderNo: string;
+    CustomerName: string;
+    SubtotalAmountFC: number;
+    TaxAmountFC: number;
+    NetAmountFC: number;
+    StatusID: number;
 }

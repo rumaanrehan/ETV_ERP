@@ -12,6 +12,7 @@ import { ModuleMaster_SelectList } from '../../ModuleMaster/module-master';
 import { ModuleMasterService } from '../../ModuleMaster/module-master.service';
 import { MenuMaster, MenuMaster_SelectList, MenuMasterRequest, MenuTypeItem } from '../menu-master';
 import { MenuMasterService } from '../menu-master.service';
+import { StaticList } from '../../../../../shared/models/select-list';
 
 @Component({
   selector: 'app-create',
@@ -23,7 +24,7 @@ import { MenuMasterService } from '../menu-master.service';
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
-  
+
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
@@ -32,10 +33,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<MenuMaster>;
 
-  menuTypeList: MenuTypeItem[] = [
-    { value: 1, label: 'Menu' },
-    { value: 2, label: 'Access Control Menu' },
-    { value: 3, label: 'Group Menu' }
+  menuTypeList: StaticList[] = [
+    { iValue: 1, Text: 'Group Menu', cValue: '' },
+    { iValue: 2, Text: 'Menu', cValue: '' }
   ];
   moduleList: ModuleMaster_SelectList[] = [];
   groupMenuList: MenuMaster_SelectList[] = [];
@@ -149,7 +149,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   //   }
   // }
 
-  loadGroupMenu(ModuleID: number): void {    
+  loadGroupMenu(ModuleID: number): void {
     const model: MenuMasterRequest = {
       MenuID: null,
       ModuleID: ModuleID,
@@ -194,7 +194,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   loadParentMenu(ModuleID: number, GroupMenuID: number): void {
-    
+
     const model: MenuMasterRequest = {
       MenuID: null,
       ModuleID: ModuleID,
@@ -250,12 +250,12 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-    
+
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    try{
+    try {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -278,7 +278,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-      } 
+      }
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
@@ -287,56 +287,56 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-    
+
   createRecord(model: MenuMaster): void {
-    try{
-    this.pageService.CreateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000,
-            });
-          } else {
-            this.alertService.showServerResponseAlert(response);
+    try {
+      this.pageService.CreateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000,
+              });
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
           }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        }
-      });
+        });
     }
     catch (error) {
 
     }
   }
-    
+
   updateRecord(model: MenuMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: "success",
-              text: response.Message,
-              timer: 5000
-            });
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: "success",
+                text: response.Message,
+                timer: 5000
+              });
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
           }
-          else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        }
-      });
+        });
     }
     catch (error) {
 

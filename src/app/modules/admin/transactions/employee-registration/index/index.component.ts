@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
@@ -8,7 +8,7 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormValidationService } from '../../../../../shared/services/form-validation.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { EmployeeRegistration, EmployeeRegistrationIndexTableRequest, EmployeeRegistrationIndexTableResponse } from '../employee-registration';
+import { EmployeeRegistration_IndexTableFilter, EmployeeRegistration_IndexTableList } from '../employee-registration';
 import { EmployeeRegistrationService } from '../employee-registration.service';
 
 
@@ -17,7 +17,7 @@ import { EmployeeRegistrationService } from '../employee-registration.service';
   standalone: true,
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  imports: [ZDataTable, CommonModule],
+  imports: [ZDataTable, CommonModule, RouterLink],
   providers: [FormValidationService]
 })
 
@@ -26,10 +26,10 @@ export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('employeeCodeTemplate', { static: true }) employeeCodeTemplate!: TemplateRef<any>;
   @ViewChild('canAccessERPTemplate', { static: true }) canAccessERPTemplate!: TemplateRef<any>;
-  @ViewChild('employeeActiveStatusTemplate', { static: true }) employeeActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  // @ViewChild('employeeActiveStatusTemplate', { static: true }) employeeActiveStatusTemplate!: TemplateRef<any>;
+  // @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
-  tableDef!: DataTableDef<EmployeeRegistrationIndexTableResponse>;
+  tableDef!: DataTableDef<EmployeeRegistration_IndexTableList>;
   tableEvent!: DataTableLazyLoadEvent;
 
   constructor(
@@ -46,7 +46,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       tableKey: 'Admin_EmployeeRegistration_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'EmployeeCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<EmployeeRegistrationIndexTableRequest>(this.pageService.GetFormConfig_DataTableFilter()),
+      filterForm: this.formService.createFormGroup_DataTableFilter<EmployeeRegistration_IndexTableFilter>(this.pageService.GetFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
@@ -61,9 +61,9 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'EmployeeTypeName', label: 'Employee Type', filterable: true, filterType: 'select', filterKey: 'EmployeeTypeID' ,cssClass: 'text-center' },
       { data: 'DepartmentName', label: 'Department', filterable: true, filterType: 'select', filterKey: 'DepartmentID', cssClass: 'text-center'},
       { data: 'DesignationName', label: 'Designation', filterable: true, filterType: 'select', filterKey: 'DesignationID', cssClass: 'text-center'},
-      { data: 'CanAccessERP', label: 'ERP Access', orderable: false, filterable: true, filterType: 'select', filterKey: 'CanAccessERP', cssClass: 'text-center', customTemplate: this.canAccessERPTemplate },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.employeeActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: "1%", customTemplate: this.actionColTemplate }
+      { data: 'CanAccessERP', label: 'ERP Access', orderable: false, filterable: true, filterType: 'select', filterKey: 'CanAccessERP', cssClass: 'text-center', customTemplate: this.canAccessERPTemplate }
+      // { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.employeeActiveStatusTemplate },
+      // { data: '', hideVisToggle: true, orderable: false, width: "1%", customTemplate: this.actionColTemplate }
     ];
   }
 
@@ -73,12 +73,12 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   OnClickPageHeaderAddButton(): void {
-    this.router.navigate(['/Admin/EmployeeRegistration/Create']);
+    this.router.navigate(['/admin/employee-registration/create']);
   }
 
-  OnClickEditDetails(EmployeeID: number) {
-    if (EmployeeID) {
-      this.router.navigate([`Admin/EmployeeRegistration/Edit/${EmployeeID}`]);
+  OnClickEditDetails(employeeID: number) {
+    if (employeeID) {
+      this.router.navigate([`/admin/employee-registration/edit/${employeeID}`]);
     }
   }
 
@@ -89,7 +89,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   LoadData() {
     try {
-      const model: DataTableParams<EmployeeRegistrationIndexTableRequest> = {
+      const model: DataTableParams<EmployeeRegistration_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
@@ -121,45 +121,45 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  OnClickDelete(row: any) {
-    try {
+  // OnClickDelete(row: any) {
+  //   try {
 
-      const ActionType = "Cancel";
-      const inputPlaceholder = "Cancellation Reason";
+  //     const ActionType = "Cancel";
+  //     const inputPlaceholder = "Cancellation Reason";
 
-      this.alertService.showConfirmationWithInput({
-        inputPlaceholder: inputPlaceholder,
-        text: `Do you really want to ${ActionType} the Employee Registration of : "<b>${row.EmployeeName}</b>"? This action cannot be undone.`,
-      }).then(result => {
-        if (result.isConfirmed) {
-          const model: EmployeeRegistration = {
-            ...row,
-            ActionType: ActionType,
-            CancellationReason: result.value
-          };
+  //     this.alertService.showConfirmationWithInput({
+  //       inputPlaceholder: inputPlaceholder,
+  //       text: `Do you really want to ${ActionType} the Employee Registration of : "<b>${row.EmployeeName}</b>"? This action cannot be undone.`,
+  //     }).then(result => {
+  //       if (result.isConfirmed) {
+  //         const model: EmployeeRegistration = {
+  //           ...row,
+  //           ActionType: ActionType,
+  //           CancellationReason: result.value
+  //         };
 
-          this.pageService.DeleteRecord(model)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  this.LoadData();
-                  this.alertService.showAlert({
-                    type: "success",
-                    text: response.Message,
-                    timer: 5000
-                  });
-                }
-                else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              }
-            });
-        }
-      });
-    }
-    catch (error) {
+  //         this.pageService.DeleteRecord(model)
+  //           .pipe(takeUntil(this.destroy$))
+  //           .subscribe({
+  //             next: (response) => {
+  //               if (response.IsSuccess) {
+  //                 this.LoadData();
+  //                 this.alertService.showAlert({
+  //                   type: "success",
+  //                   text: response.Message,
+  //                   timer: 5000
+  //                 });
+  //               }
+  //               else {
+  //                 this.alertService.showServerResponseAlert(response);
+  //               }
+  //             }
+  //           });
+  //       }
+  //     });
+  //   }
+  //   catch (error) {
 
-    }
-  }
+  //   }
+  // }
 }
