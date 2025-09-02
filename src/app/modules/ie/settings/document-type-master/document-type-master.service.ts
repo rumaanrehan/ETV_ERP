@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
-import {DocumentTypeMaster,DocumentTypeRequest,DocumentType_IndexFilter,DocumentType_IndexList,DocumentType_SelectList} from './document-type-master';
-import {ApiListResponse,ApiPagedListResponse,ApiDataResponse,ApiResponse} from '../../../../shared/models/api-response';
+import { DocumentTypeMaster, DocumentTypeRequest, DocumentType_IndexFilter, DocumentType_IndexList, DocumentType_SelectList } from './document-type-master';
+import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import {DataTableFilterFormConfigType,FormConfigType} from '../../../../shared/models/form.model';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 
 @Injectable({
@@ -16,7 +16,7 @@ export class DocumentTypeMasterService {
 
   constructor(
     private apiService: ApiService
-  ) {}
+  ) { }
 
   PopulateList(model: DocumentTypeRequest): Observable<ApiListResponse<DocumentType_SelectList>> {
     return this.apiService.post<ApiListResponse<DocumentType_SelectList>>(`${this.endpoint}/PopulateList`, model);

@@ -1,13 +1,13 @@
 import { ProductMaster } from "../../../ims/settings/product-master/product-master";
 import { CompanyMaster } from "../../settings/company-master/company-master";
 
-export interface ProformaInvoice {
-    ProformaInvoiceID: number | null;
-    ProformaInvoiceNo: string | null;
-    ProformaInvoiceDate: Date | null;
+export interface TaxInvoice {
+    TaxInvoiceID: number | null;
+    TaxInvoiceNo: string | null;
+    TaxInvoiceDate: Date | null;
     BasedOn: number | null;
-    ExportOrderID: number | null;
-    ExportOrderNo: string | null;
+    DocumentID: number | null;
+    DocumentNo: string | null;
     CustomerID: number | null;
     CustomerName: string | null;
     FCCurrencyID: number | null;
@@ -27,7 +27,7 @@ export interface ProformaInvoice {
     Narration: number | null;
     StatusID: number | null;
 
-    ProductList: ProformaInvoiceDetail[];
+    ProductList: TaxInvoiceDetail[];
 
     Customer?: CompanyMaster;
 
@@ -35,7 +35,7 @@ export interface ProformaInvoice {
     ProductName: string | null;
 }
 
-export interface ProformaInvoiceDetail {
+export interface TaxInvoiceDetail {
     ProductID: number | null;
     ProductName: string | null;
     SalesQty: number | null;
@@ -52,24 +52,24 @@ export interface ProformaInvoiceDetail {
     Product?: ProductMaster;
 }
 
-export interface ProformaInvoice_SelectList {
-    ProformaInvoiceID: number;
-    ProformaInvoiceNo: string;
+export interface TaxInvoice_SelectList {
+    TaxInvoiceID: number;
+    TaxInvoiceNo: string;
     CustomerName: string;
 }
 
-export interface ProformaInvoice_IndexTableFilter {
-    ProformaInvoiceNo: string | null;
+export interface TaxInvoice_IndexTableFilter {
+    TaxInvoiceNo: string | null;
     CustomerName: string | null;
     StatusID: number | null;
 }
 
-export interface ProformaInvoice_IndexTableList {
-    ProformaInvoiceID: number;
-    ProformaInvoiceNo: string;
-    ProformaInvoiceDate: Date;
+export interface TaxInvoice_IndexTableList {
+    TaxInvoiceID: number;
+    TaxInvoiceNo: string;
+    TaxInvoiceDate: Date;
     BasedOn: string;
-    ExportOrderNo: string;
+    DocumentNo: string;
     CustomerName: string;
     SubtotalAmountFC: number;
     TaxAmountFC: number;
@@ -77,7 +77,7 @@ export interface ProformaInvoice_IndexTableList {
     StatusID: number;
 }
 
-export interface ProformaInvoiceRequest {
+export interface TaxInvoiceRequest {
     SearchBy: number | null;
     SearchValue: string | null;
     PopulateType: string | null;

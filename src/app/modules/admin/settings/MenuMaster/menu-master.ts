@@ -27,7 +27,7 @@ export interface MenuTypeItem {
 
 export interface MenuMaster_IndexTableFilter {
   ModuleName: string | null;
-  MenuTypeName: string | null;
+  MenuType: number | null;
   ParentMenuName: string | null;
   MenuName: string | null;
   ControllerName: string | null;
@@ -48,7 +48,7 @@ export interface MenuMaster_IndexTableList {
   ActiveStatus: boolean;
 }
 
-export interface MenuMasterRequest{
+export interface MenuMasterRequest {
   MenuID: number | null;
   ModuleID: number | null;
   MenuType: number | null;

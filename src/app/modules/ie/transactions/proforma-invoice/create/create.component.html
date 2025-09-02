@@ -46,7 +46,8 @@
                                         [optionValue]="'iValue'" [options]="currencyList"
                                         [readonly]="isBasedOnExportOrder"></z-select>
                                 </div>
-                                <div class="col-xl-6"></div>
+                                <div class=" col-xl-6">
+                                </div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
                                         [label]="formConfig.ExchangeRateDate.label"
@@ -133,14 +134,14 @@
         <div class="col-xl-4">
             <div class="col-xl-3 px-1">
                 <button type="submit" class="btn btn-md btn-primary w-100"
-                    [disabled]="form.get('BasedOn')?.value == 1 || form.get('StatusID')?.value !== 1"
+                    [disabled]="(form.get('BasedOn')?.value == 1 && isEditMode) || form.get('StatusID')?.value !== 1"
                     (click)="onSubmit()"> {{ isEditMode ?
                     "Update" :
                     "Save" }} </button>
             </div>
             <div class="col-xl-3 px-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="form.get('BasedOn')?.value == 1"
-                    (click)=" resetForm()">Reset</button>
+                <button type="submit" class="btn btn-md btn-primary w-100"
+                    [disabled]="(form.get('BasedOn')?.value == 1 && isEditMode)" (click)=" resetForm()">Reset</button>
             </div>
         </div>
     </div>
@@ -161,7 +162,6 @@
 
 <ng-template #ratePerUnitFCColTemplate let-row let-i="index">
     <div class="input-group">
-        <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
         <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"
             [label]="formConfig.ProductList.items.RatePerUnitFC.label"
             [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [styleClass]="'text-end'"
@@ -180,7 +180,6 @@
 
 <ng-template #taxableAmountFCColTemplate let-row let-i="index">
     <div class="input-group">
-        <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
         <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxableAmountFC'"
             [label]="formConfig.ProductList.items.TaxableAmountFC.label"
             [validationMessage]="formConfig.ProductList.items.TaxableAmountFC.error?.[i]" [styleClass]="'text-end'"
@@ -190,7 +189,6 @@
 
 <ng-template #taxAmountFCColTemplate let-row let-i="index">
     <div class="input-group">
-        <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
         <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxAmountFC'"
             [label]="formConfig.ProductList.items.TaxAmountFC.label"
             [validationMessage]="formConfig.ProductList.items.TaxAmountFC.error?.[i]" [styleClass]="'text-end'"
@@ -204,35 +202,4 @@
             (click)="onClickRemoveProductItem(i)">
             <i class="pi pi-minus-circle"></i></span>
     </div>
-</ng-template>
-<!-- Export Order Item Table Related Templates End-->
-
-
-<!-- Export Order Document Related Templates Start-->
-<!-- <ng-template #documentActionColTemplate let-row let-i="index">
-    <div class="col-xl-12 d-flex justify-content-between">
-        <div class="d-flex justify-content-end px-2">
-            <span class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate"
-                (click)="onClickViewDocumentItem(row)">
-                <i class="pi pi-eye"></i></span>
-        </div>
-
-        <div class="d-flex justify-content-end px-2">
-            <span class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate"
-                (click)="onClickDownloadDocumentItem(row)">
-                <i class="pi pi-arrow-circle-down"></i></span>
-        </div>
-
-        <div class="d-flex justify-content-end px-2">
-            <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-                (click)="onClickRemoveDocumentItem(row)">
-                <i class="pi pi-minus-circle"></i></span>
-        </div>
-    </div>
-</ng-template> -->
-
-<ng-template #isDocumentVerifiedTemplate let-row let-i="index">
-    <span class="{{ row.IsVerified ? 'text-success' : 'text-danger' }}">
-        <i class="pi {{ row.IsVerified ? 'pi-check-circle' : 'pi-times-circle'}}"></i>
-    </span>
 </ng-template>
