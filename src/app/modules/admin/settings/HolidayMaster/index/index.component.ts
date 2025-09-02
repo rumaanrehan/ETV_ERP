@@ -10,6 +10,7 @@ import { PageHeaderService } from '../../../../../shared/services/page-header.se
 import { CreateComponent } from '../create/create.component';
 import { Holiday_IndexTableFilter, Holiday_IndexTableList, HolidayMaster } from '../holiday-master';
 import { HolidayMasterService } from '../holiday-master.service';
+import { DateUtils } from '../../../../../shared/utility/date-utils';
 
 @Component({
   selector: 'app-index',
@@ -80,6 +81,10 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              const model: HolidayMaster = {
+                ...response.Data,
+                HolidayDate: DateUtils.toDate(response.Data.HolidayDate)
+              };
               this.createSidebar.openSidebar(activeStatus, true, response.Data);
             }
             else {

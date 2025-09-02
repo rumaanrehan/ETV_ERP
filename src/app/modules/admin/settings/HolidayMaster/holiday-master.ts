@@ -15,8 +15,8 @@ export interface Holiday_SelectList {
 export interface Holiday_IndexTableFilter {
   HolidayCode: string | null;
   HolidayName: string | null;
-  HolidayYear: string | null;
-  HolidayTypeName: string | null;
+  HolidayYear: number | null;
+  HolidayTypeID: number | null;
   ActiveStatusID: number | null;
 }
 

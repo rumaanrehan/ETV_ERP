@@ -60,6 +60,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
     this.activeStatus = activeStatus;
     this.form.patchValue(model);
+    console.log(this.form.value);
     this.isFormSidebarVisible = true;
   }
 

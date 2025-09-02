@@ -47,8 +47,8 @@ export class HolidayMasterService {
     return {
       HolidayCode: '',
       HolidayName: '',
-      HolidayYear: '',
-      HolidayTypeName: '',
+      HolidayYear: 0,
+      HolidayTypeID: 0,
       ActiveStatusID: 0
     }
   }
@@ -90,7 +90,11 @@ export class HolidayMasterService {
       },
       HolidayDescription: {
         label: 'Description',
-        defaultValue: null
+        defaultValue: null,
+        validators: [NotOnlyWhitespaceValidator(), Validators.maxLength(150)],
+        validationMessages: {
+          maxlength: 'Holiday Name cannot be longer than 150 characters.'
+        }
       }
     }
   }
