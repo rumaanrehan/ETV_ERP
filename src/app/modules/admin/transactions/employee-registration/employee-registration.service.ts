@@ -6,26 +6,26 @@ import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } f
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { EmployeeRegistration, EmployeeRegistrationIndexTableRequest, EmployeeRegistrationIndexTableResponse, EmployeeRegistrationSelectListRequest, EmployeeRegistrationSelectListResponse, EmployeeRegistrationFileUpload } from './employee-registration';
+import { EmployeeRegistration, EmployeeRegistrationIndexTableRequest, EmployeeRegistrationIndexTableResponse, EmployeeRegistrationSelectListRequest, EmployeeRegistration_SelectList, EmployeeRegistrationFileUpload } from './employee-registration';
 import { ApiService } from '../../../../core/services/api.service';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { HttpClient } from '@angular/common/http';
 import { Environment } from '../../../../../environments/environment';
 import { CountryMasterService } from '../../settings/country-master/country-master.service';
-import { DepartmentMasterService } from '../DepartmentMaster/department-master.service';
-import { DesignationMasterService } from '../DesignationMaster/designation-master.service';
-import { EmployeeTypeMasterService } from '../EmployeeTypeMaster/employee-type-master.service';
-import { PrefixMasterService } from '../PrefixMaster/prefix-master.service';
-import { RelationshipMasterService } from '../RelationshipMaster/relationship-master.service';
-import { RoleMasterService } from '../RoleMaster/role-master.service';
-import { StateMasterService } from '../StateMaster/state-master.service';
+import { DesignationMasterService } from '../../settings/designation-master/designation-master.service';
+import { DepartmentMasterService } from '../../settings/department-master/department-master.service';
+import { EmployeeTypeMasterService } from '../../settings/employee-type-master/employee-type-master.service';
+import { PrefixMasterService } from '../../settings/PrefixMaster/prefix-master.service';
+import { RelationshipMasterService } from '../../settings/RelationshipMaster/relationship-master.service';
+import { RoleMasterService } from '../../settings/RoleMaster/role-master.service';
+import { StateMasterService } from '../../settings/state-master/state-master.service';
 // import { DesignationMaster_SelectList } from '../DesignationMaster/designation-master';
-import { CountryMaster, CountryRequest } from '../country-master/country-master';
-import { StateMaster, StateRequest, State_SelectList } from '../StateMaster/state-master';
-import { DesignationMaster_SelectList } from '../DesignationMaster/designation-master';
-import { Department_SelectList } from '../DepartmentMaster/department-master';
-import { EmployeeType_SelectList, EmployeeTypeRequest } from '../EmployeeTypeMaster/employee-type-master';
+import { CountryMaster, CountryRequest } from '../../settings/country-master/country-master';
+import { StateMaster, StateRequest, State_SelectList } from '../../settings/state-master/state-master';
+import { Department_SelectList } from '../../settings/department-master/department-master';
+import { EmployeeType_SelectList, EmployeeTypeRequest } from '../../settings/employee-type-master/employee-type-master';
+import { Designation_SelectList, DesignationMaster, DesignationRequest } from '../../settings/designation-master/designation-master';
 // import { CountryMasterSelectListResponse } from '../../settings/country-master/country-master';
 
 
@@ -53,7 +53,7 @@ export class EmployeeRegistrationService {
     this.apiUrl = Environment.apiUrl;
   }
 
-  GetReportingList(model: EmployeeRegistrationSelectListRequest): Observable<ApiListResponse<EmployeeRegistrationSelectListResponse>> {
+  GetReportingList(model: EmployeeRegistrationSelectListRequest): Observable<ApiListResponse<EmployeeRegistration_SelectList>> {
     return this.PopulateList(model);
   }
 
@@ -70,7 +70,7 @@ export class EmployeeRegistrationService {
     // RelationshipList: ApiListResponse<RelationshipMasterSelectListResponse>;
     EmployeeTypeList: ApiListResponse<EmployeeType_SelectList>;
     DepartmentList: ApiListResponse<Department_SelectList>;
-    DesignationList: ApiListResponse<DesignationMaster_SelectList>;
+    DesignationList: ApiListResponse<Designation_SelectList>;
     // RoleList: ApiListResponse<RoleMasterSelectListResponse>;
     CountryList: ApiListResponse<CountryMaster>;
     StateList: ApiListResponse<State_SelectList>;
@@ -80,8 +80,8 @@ export class EmployeeRegistrationService {
       // PrefixList: this.prefixMasterService.PopulateList("SelectList"),
       // RelationshipList: this.relationshipService.PopulateList("SelectList"),
       EmployeeTypeList: this.employeeTypeService.PopulateList({PopulateType: 'SelectList'} as EmployeeTypeRequest),
-      DepartmentList: this.departmentService.PopulateList({ DepartmentID: 0, PopulateType: "MainDepartment" }),
-      DesignationList: this.designationService.PopulateList("SelectList"),
+      DepartmentList: this.departmentService.PopulateList({ DepartmentTypeID: 0, PopulateType: "MainDepartment" }),
+      DesignationList: this.designationService.PopulateList("SelectList" as DesignationRequest),
       // RoleList: this.roleMasterService.PopulateList("SelectList"),
       CountryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
       StateList: this.stateService.PopulateList({PopulateType: 'SelectList'} as StateRequest),
@@ -89,8 +89,8 @@ export class EmployeeRegistrationService {
   }
 
   /*Page Service Call*/
-  PopulateList(model: EmployeeRegistrationSelectListRequest): Observable<ApiListResponse<EmployeeRegistrationSelectListResponse>> {
-    return this.apiService.post<ApiListResponse<EmployeeRegistrationSelectListResponse>>(`${this.endpoint}/PopulateList`, model);
+  PopulateList(model: EmployeeRegistrationSelectListRequest): Observable<ApiListResponse<EmployeeRegistration_SelectList>> {
+    return this.apiService.post<ApiListResponse<EmployeeRegistration_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<EmployeeRegistrationIndexTableRequest>): Observable<ApiPagedListResponse<EmployeeRegistrationIndexTableResponse>> {

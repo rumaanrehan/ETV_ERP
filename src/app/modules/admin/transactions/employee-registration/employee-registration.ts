@@ -68,7 +68,7 @@ export interface EmployeeRegistrationSelectListRequest {
   PopulateType?: string;
 }
 
-export interface EmployeeRegistrationSelectListResponse {
+export interface EmployeeRegistration_SelectList {
   EmployeeID: number;
   EmployeeCode: string;
   EmployeeName: string;

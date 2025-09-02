@@ -4,17 +4,36 @@ export interface HolidayMaster {
   HolidayName: string | null;
   HolidayTypeID: number | null;
   HolidayDate: Date | null;
-  HolidayDescriptions: string | null;
+  HolidayDescription: string | null;
 }
-export interface HolidayMasterList {
+
+export interface Holiday_SelectList {
+  HolidayID: number;
+  HolidayName: string;
+}
+
+export interface Holiday_IndexTableFilter {
+  HolidayCode: string | null;
+  HolidayName: string | null;
+  HolidayYear: string | null;
+  HolidayTypeName: string | null;
+  ActiveStatusID: number | null;
+}
+
+export interface Holiday_IndexTableList {
   RowID: number;
   HolidayID: number;
   HolidayCode: string;
   HolidayName: string;
   HolidayYear: string;
-  HolidayTypeID: number;
   HolidayTypeName: string;
   HolidayDate: Date;
-  HolidayDescriptions: string;
-  ActiveStatus: any;
+  HolidayDescription: string;
+  ActiveStatus: boolean;
+}
+
+export interface HolidayRequest{
+  HolidayName?: string | null;
+  HolidayTypeID?: number | null;
+  PopulateType: string | null
 }

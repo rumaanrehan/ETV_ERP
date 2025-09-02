@@ -3,8 +3,7 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
-import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
-import { Environment } from '../../../../../../environments/environment';
+import { Subject, takeUntil } from 'rxjs';
 import { ZDialogComponent } from '../../../../../shared/components/z-dialog/z-dialog.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
@@ -13,30 +12,18 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-// // import { CountryMasterSelectListResponse } from '../../../settings/country-master/country-master';
-// import { DepartmentMasterSelectListResponse } from '../../../settings/department-master/department-master';
-// import { DesignationMasterSelectListResponse } from '../../../settings/designation-master/designation-master';
-// import { EmployeeTypeMasterSelectListResponse } from '../../../settings/employee-type-master/employee-type-master';
-// import { PrefixMasterSelectListResponse } from '../../../settings/prefix-master/prefix-master';
-// import { RelationshipMasterSelectListResponse } from '../../../settings/relationship-master/relationship-master';
-// import { RoleMasterSelectListResponse } from '../../../settings/role-master/role-master';
-// import { StateMasterSelectListResponse } from '../../../settings/state-master/state-master';
-// import { EmployeeRegistration, EmployeeRegistrationSelectListRequest, EmployeeRegistrationFileUpload } from '../../employee-registration/employee-registration';
+import { CountryMaster } from '../../../settings/country-master/country-master';
+import { Department_SelectList } from '../../../settings/department-master/department-master';
+import { Designation_SelectList } from '../../../settings/designation-master/designation-master';
+import { State_SelectList } from '../../../settings/state-master/state-master';
+import { EmployeeRegistration_SelectList } from '../../../transactions/employee-registration/employee-registration';
+import { EmployeeRegistration } from '../employee-registration';
 import { EmployeeRegistrationService } from '../employee-registration.service';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
-import { EmployeeRegistration, EmployeeRegistrationFileUpload, EmployeeRegistrationSelectListRequest } from '../employee-registration';
-import { CountryMaster } from '../../country-master/country-master';
-import { State_SelectList } from '../../StateMaster/state-master';
-import { EmployeeType_SelectList } from '../../EmployeeTypeMaster/employee-type-master';
-import { Department_SelectList } from '../../DepartmentMaster/department-master';
-import { DesignationMaster_SelectList } from '../../DesignationMaster/designation-master';
-// import { WithPagePermissions } from '../../../../../core/base/with-page-permissions';
-
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZDialogComponent, TooltipModule],
+  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, TooltipModule],
   providers: [FormService],
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
@@ -65,17 +52,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   defaultPermanentCountryID: number | null = null;
   defaultPermanentStateID: number | null = null;
   relationshipList: any[] = [];
-  employeeTypeList: EmployeeType_SelectList[] = [];
+  employeeTypeList: EmployeeRegistration_SelectList[] = [];
   departmentList: Department_SelectList[] = [];
-  designationList: DesignationMaster_SelectList[] = [];
-  // roleList: any[] = [];
-  // reportingToList: EmployeeRegistrationSelectListRequest[] = [];
-
-  /** selectlist */       
-  // genderList: StaticList[] = [];
-  // maritalStatusList: StaticList[] = [];
-  // bloodGroupList: StaticList[] = [];
-  // categoryList: StaticList[] = [];
+  designationList: Designation_SelectList[] = [];
   signatoryAreaList: StaticList[] = [];
   
   genderList: any[] = [
