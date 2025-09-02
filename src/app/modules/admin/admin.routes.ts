@@ -88,6 +88,20 @@ export const adminRoute: Routes = [
             }
           },
           {
+            path: 'holiday-master',
+            loadComponent: () => import('./settings/HolidayMaster/index/index.component').then((m) => m.IndexComponent),
+            canActivate: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              permission: 'CanRead',
+              menu: 'Admin/HolidayMaster',
+              breadcrumb: 'Holiday Master'
+            }
+          },
+          {
+            path: 'state-master',
+            loadComponent: () => import('./settings/state-master/index/index.component').then((m) => m.IndexComponent),
+          },
+          {
             path: 'designation-master',
             loadComponent: () => import('./settings/designation-master/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],
@@ -106,6 +120,36 @@ export const adminRoute: Routes = [
               menu: 'Admin/EmployeeTypeMaster',
               breadcrumb: 'Employee Type Master'
             }
+          },
+          {
+            path: 'employee-registration',
+            loadComponent: () => import('./transactions/employee-registration/index/index.component').then((m) => m.IndexComponent)
+            // canActivate: [AuthenticationGuard, AuthorizationGuard],
+            // data: {
+            //   permission: 'CanRead',
+            //   menu: 'Admin/EmployeeTypeMaster',
+            //   breadcrumb: 'Employee Type Master'
+            // }
+          },
+          {
+            path: 'employee-registration/create',
+            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent)
+            // canActivate: [AuthenticationGuard, AuthorizationGuard],
+            // data: {
+            //   permission: 'CanRead',
+            //   menu: 'Admin/EmployeeTypeMaster',
+            //   breadcrumb: 'Employee Type Master'
+            // }
+          },
+          {
+            path: 'employee-registration/edit/:id',
+            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent)
+            // canActivate: [AuthenticationGuard, AuthorizationGuard],
+            // data: {
+            //   permission: 'CanRead',
+            //   menu: 'Admin/EmployeeTypeMaster',
+            //   breadcrumb: 'Employee Type Master'
+            // }
           }
         ]
       }

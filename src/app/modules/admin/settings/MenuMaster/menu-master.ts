@@ -26,10 +26,10 @@ export interface MenuTypeItem {
 }
 
 export interface MenuMaster_IndexTableFilter {
+  MenuName: string | null;
   ModuleName: string | null;
   MenuType: number | null;
   ParentMenuName: string | null;
-  MenuName: string | null;
   ControllerName: string | null;
   ActiveStatusID: number | null;
 }

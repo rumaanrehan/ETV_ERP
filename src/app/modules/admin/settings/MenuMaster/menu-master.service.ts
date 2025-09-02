@@ -51,10 +51,10 @@ export class MenuMasterService {
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<MenuMaster_IndexTableFilter> {
     return {
+      MenuName: '',
       ModuleName: '',
       MenuType: 0,
       ParentMenuName: '',
-      MenuName: '',
       ControllerName: '',
       ActiveStatusID: 0
     }
