@@ -24,10 +24,9 @@
 <ng-template #proformaInvoiceStatusTemplate let-row>
     <span class="table-row-status">
         <i class="pi pi-circle-fill text-{{ row.StatusID == 1 ? 'success' : 'danger' }}"></i>
-        {{ row.StatusID == 1 ? 'Created' : 'Canceled' }}
+        {{ row.StatusID == 1 ? 'Generated' : 'Canceled' }}
     </span>
 </ng-template>
-
 
 <ng-template #actionColTemplate let-row>
     <div class="d-flex justify-content-end" *ngIf="row.StatusID == 1">

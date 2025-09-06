@@ -1,68 +1,64 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { IndexTableComponent, IndexTableParams } from '../../../../../shared/components/index-table/index-table.component';
+import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { FormValidationService } from '../../../../../shared/services/form-validation.service';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { HolidayMaster } from '../holiday-master';
-import { HolidayMasterList } from '../holiday-master';
-import { HolidayMasterService } from '../holiday-master.service';
-import { CreateComponent } from '../create/create.component';
-import { DatePipe } from '@angular/common';
-import { CommonModule } from '@angular/common';
 import { FormService } from '../../../../../shared/services/form.service';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { CreateComponent } from '../create/create.component';
+import { Holiday_IndexTableFilter, Holiday_IndexTableList, HolidayMaster } from '../holiday-master';
+import { HolidayMasterService } from '../holiday-master.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
 
 @Component({
   selector: 'app-index',
   standalone: true,
+  imports: [ZDataTable, CreateComponent, CommonModule],
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss'],
-  imports: [IndexTableComponent, CreateComponent, CommonModule],
-  providers: [FormValidationService, DatePipe]
+  styleUrl: './index.component.scss'
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
   @ViewChild('holidayCodeTemplate', { static: true }) holidayCodeTemplate!: TemplateRef<any>;
   @ViewChild('holidayDateTemplate', { static: true }) holidayDateTemplate!: TemplateRef<any>;
   @ViewChild('holidayActiveStatusTemplate', { static: true }) holidayActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
 
-  tableDef!: IndexTableParams<HolidayMasterList>;
-  tableParameters!: TableLazyLoadEvent;
+  tableDef!: DataTableDef<Holiday_IndexTableList>;
+  tableEvent!: TableLazyLoadEvent;
 
   constructor(
-    private pageService: HolidayMasterService,
     private pageHeaderService: PageHeaderService,
+    private pageService: HolidayMasterService,
     private formService: FormService,
-    private alertService: AlertNotificationService,
-    private datePipe: DatePipe
+    private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-
     this.tableDef = {
+      tableKey: 'Admin_HolidayMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: '', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'HolidayCode', sortOrder: 1 },
+      filterForm: this.formService.createFormGroup_DataTableFilter<Holiday_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false
     };
-
     this.tableDef.columnDef = [
-      { data: 'HolidayID', visible: false, orderable: false },
-      { data: 'HolidayCode', label: 'Code', customTemplate: this.holidayCodeTemplate },
-      { data: 'HolidayName', label: 'Holiday Name' },
-      { data: 'HolidayYear', label: 'Year' },
-      { data: 'HolidayTypeName', label: 'Holiday Type' },
-      { data: 'HolidayDate', label: 'Date',customTemplate: this.holidayDateTemplate },
-      { data: 'HolidayDescriptions', label: 'Descriptions', orderable: false },
-      { data: 'ActiveStatus', label: 'Status', cssClass: 'text-center', customTemplate: this.holidayActiveStatusTemplate },
-      { data: '', orderable: false, cssClass: 'text-center', customTemplate: this.actionColTemplate }
+      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
+      { data: 'HolidayCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.holidayCodeTemplate },
+      { data: 'HolidayName', label: 'Holiday Name', filterable: true, width: "10%"},
+      { data: 'HolidayYear', label: 'Holiday Year', filterable: true, width: "5%"},
+      { data: 'HolidayTypeName', label: 'Holiday Type', filterable: true, width: "7%", cssClass: 'text-center'},
+      { data: 'HolidayDate', label: 'Date', customTemplate: this.holidayDateTemplate },
+      { data: 'HolidayDescription', label: 'Description', orderable: false },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.holidayActiveStatusTemplate },
+      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
   }
 
@@ -71,63 +67,31 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onIndexTableLazyLoad(event: TableLazyLoadEvent) {
-    this.tableParameters = event;
-    this.loadData(this.tableParameters);
-  }
-
-  onCloseSidebar(): void {
-    this.loadData(this.tableParameters);
-  }
-
-  loadData(event: TableLazyLoadEvent) {
-    try {
-      this.pageService.PopulateGrid(event)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.tableDef.loading = false;
-          }
-        });
-    } catch (error) {
-
-    }
-  }
-
   onClickPageHeaderAddButton(): void {
     if (this.createSidebar) {
       this.createSidebar.openSidebar(true, false, this.formService.createNullObject<HolidayMaster>());
     }
   }
 
-  onClickEditDetails(HolidayID: number, ActiveStatus: boolean) {
+  onClickEditDetails(holidayID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && HolidayID) {
-        this.pageService.GetDetails(HolidayID)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                const model: HolidayMaster = {
-                  ...response.Data,
-                  HolidayDate: DateUtils.toDate(response.Data.HolidayDate),
-                };
-                this.createSidebar.openSidebar(ActiveStatus, true, model);
-              }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
+      if (this.createSidebar && holidayID) {
+        this.pageService.GetDetails(holidayID)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              const model: HolidayMaster = {
+                ...response.Data,
+                HolidayDate: DateUtils.toDate(response.Data.HolidayDate)
+              };
+              this.createSidebar.openSidebar(activeStatus, true, response.Data);
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+        });
       }
     }
     catch (error) {
@@ -135,7 +99,49 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickDelete(row: any) {
+  onCloseSidebar(): void {
+    this.loadData();
+  }
+
+  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
+    this.tableEvent = event;
+    this.loadData();
+  }
+
+  loadData(): void {
+    try {
+      const model: DataTableParams<Holiday_IndexTableFilter> = {
+        first: this.tableEvent.first,
+        last: this.tableEvent.last,
+        sortField: this.tableEvent.sortField,
+        sortOrder: this.tableEvent.sortOrder,
+        filters: this.tableDef.filterForm?.value
+      };
+      this.pageService.PopulateGrid(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.tableDef.data = response.Data.Items;
+            this.tableDef.totalRecords = response.Data.TotalRecords;
+          }
+          else {
+            this.tableDef.data = [];
+            this.tableDef.totalRecords = 0;
+            this.alertService.showServerResponseToast(response);
+          }
+        },
+        complete: () => {
+          this.tableDef.loading = false;
+        }
+      });
+    }
+    catch (error) {
+
+    }
+  }
+
+  onClickDeleteReactivate(row: any): void {
     try {
       const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
@@ -144,33 +150,33 @@ export class IndexComponent implements OnInit, OnDestroy {
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.HolidayName}</b>"?`,
       })
-        .then(result => {
-          if (result.isConfirmed) {
-            const model: HolidayMaster = {
-              ...row,
-              ActionType: ActionType,
-              ReasonToUpdate: result.value
-            };
+      .then(result => {
+        if (result.isConfirmed) {
+          const model: HolidayMaster = {
+            ...row,
+            ActionType: ActionType,
+            ReasonToUpdate: result.value
+          };
 
-            this.pageService.DeleteRecord(model)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: (response) => {
-                  if (response.IsSuccess) {
-                    this.loadData(this.tableParameters);
-                    this.alertService.showAlert({
-                      type: "success",
-                      text: response.Message,
-                      timer: 5000
-                    });
-                  }
-                  else {
-                    this.alertService.showServerResponseAlert(response);
-                  }
-                }
-              });
-          }
-        });
+          this.pageService.DeleteReactivate(model)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.loadData();
+                this.alertService.showAlert({
+                  type: "success",
+                  text: response.Message,
+                  timer: 5000
+                });
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            }
+          });
+        }
+      });
     }
     catch (error) {
 

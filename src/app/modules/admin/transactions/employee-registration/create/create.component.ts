@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
-import { Subject, takeUntil } from 'rxjs';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
@@ -18,6 +17,7 @@ import { EmployeeType_SelectList } from '../../../settings/employee-type-master/
 import { State_SelectList } from '../../../settings/state-master/state-master';
 import { EmployeeRegistration } from '../../employee-registration/employee-registration';
 import { EmployeeRegistrationService } from '../employee-registration.service';
+import { Subject, takeUntil } from 'rxjs';
 
 
 @Component({
@@ -48,17 +48,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   employeeTypeList: EmployeeType_SelectList[] = [];
   departmentList: Department_SelectList[] = [];
   designationList: Designation_SelectList[] = [];
-
-  genderList: StaticList[] = [
-    { Text: "Male", iValue: 1, cValue: "Male" },
-    { Text: "Female", iValue: 2, cValue: "Female" },
-    { Text: "Non-binary", iValue: 3, cValue: "NonBinary" },
-    { Text: "Transgender", iValue: 4, cValue: "Transgender" },
-    { Text: "Genderqueer", iValue: 5, cValue: "Genderqueer" },
-    { Text: "Agender", iValue: 6, cValue: "Agender" },
-    { Text: "Prefer not to say", iValue: 7, cValue: "PreferNotToSay" },
-    { Text: "Other", iValue: 8, cValue: "Other" }
-  ];
+  signatoryAreaList: StaticList[] = [];
+  
+  genderList: any[] = [
+    { GenderID: 1, GenderName: 'Male' },
+    { GenderID: 3, GenderName: 'FeMale' },
+    { GenderID: 1, GenderName: 'Other' },
+  ]
 
   bloodGroupList: StaticList[] = [
     { Text: "A+", iValue: 1, cValue: "A+" },

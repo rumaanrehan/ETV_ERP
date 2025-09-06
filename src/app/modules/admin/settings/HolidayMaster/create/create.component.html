@@ -3,30 +3,30 @@
     <h5 class="text-white">Holiday Master</h5>
   </div>
   <div sidebarContent>
-    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" control="HolidayCode" [label]="formConfig.HolidayCode.label"></z-inputtext>
-      </div>
+        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+            <div class="col-xl-12 form-group">
+                <z-span [text]="form.get('HolidayCode')?.value" [label]="formConfig.HolidayCode.label"></z-span>
+            </div>
       <div class="col-xl-12 form-group">
         <z-inputtext [group]="form" control="HolidayName" [label]="formConfig.HolidayName.label" [validationMessage]="formConfig.HolidayName.error"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
         <z-select [group]="form" [control]="'HolidayTypeID'" [label]="formConfig.HolidayTypeID.label" [validationMessage]="formConfig.HolidayTypeID.error"
-                  [options]="HolidayTypeList" [optionLabel]="'Text'" [optionValue]="'Value'">
+                  [options]="holidayTypeList" [optionLabel]="'cValue'" [optionValue]="'iValue'">
         </z-select>
       </div>
       <div class="col-xl-12 form-group">
         <z-datepicker [group]="form" [control]="'HolidayDate'" [label]="formConfig.HolidayDate.label" [validationMessage]="formConfig.HolidayDate.error"></z-datepicker>
       </div>
       <div class="col-xl-12 form-group">
-        <z-textarea [group]="form" [control]="'HolidayDescriptions'" [label]="formConfig.HolidayDescriptions.label" [validationMessage]="formConfig.HolidayDescriptions.error"></z-textarea>
+        <z-textarea [group]="form" [control]="'HolidayDescription'" [label]="formConfig.HolidayDescription.label"></z-textarea>
       </div>
     </form>
   </div>
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !ActiveStatus">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>

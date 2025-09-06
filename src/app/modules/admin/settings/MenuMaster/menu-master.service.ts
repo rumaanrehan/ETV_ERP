@@ -17,7 +17,7 @@ export class MenuMasterService {
 
   constructor(
     private apiService: ApiService,
-  ) {}
+  ) { }
 
   //PopulateList(MenuID: number, ModuleID: number, MenuType: number, GroupMenuID: number, ParentMenuName: string, MenuName: string, ControllerName: string, PopulateType: any): Observable<ApiListResponse<MenuMasterList>> {
   //  return this.http.post<ApiListResponse<MenuMasterList>>(`${this.apiUrl}Admin/MenuMaster/PopulateList?MenuID=${MenuID}&ModuleID=${ModuleID}&MenuType=${MenuType}&GroupMenuID=${GroupMenuID}&ParentMenuName=${ParentMenuName}&MenuName=${MenuName}&ControllerName=${ControllerName}&PopulateType=${PopulateType}`, {});
@@ -47,7 +47,7 @@ export class MenuMasterService {
   DeleteReactivate(model: MenuMaster): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
-  
+
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<MenuMaster_IndexTableFilter> {
     return {
@@ -59,7 +59,7 @@ export class MenuMasterService {
       ActiveStatusID: 0
     }
   }
-  
+
   getFormConfig(): FormConfigType<MenuMaster> {
     return {
       MenuID: {
@@ -99,11 +99,6 @@ export class MenuMasterService {
       ParentMenuID: {
         label: 'Parent Menu',
         defaultValue: null,
-        validators: [RequiredIf('MenuType', Operator.EqualTo, 2)],
-        validationMessages: {
-          requiredIf: 'Please select an option from the Parent Menu List.'
-        },
-        type: 'control'
       },
       MenuName: {
         label: 'Menu Name',

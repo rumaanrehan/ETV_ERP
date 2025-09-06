@@ -20,6 +20,7 @@ import { ProformaInvoiceService } from '../proforma-invoice.service';
 import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { CommonModule } from '@angular/common';
+import { Currency_SelectList } from '../../../../admin/settings/CurrencyMaster/currency-master';
 
 @Component({
   selector: 'app-create',
@@ -39,38 +40,28 @@ export class CreateComponent {
   @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
 
-  //Export Order Document Table Related Template
-  @ViewChild('documentUploadDateTemplate', { static: true }) documentUploadDateTemplate!: TemplateRef<any>;
-  @ViewChild('isDocumentVerifiedTemplate', { static: true }) isDocumentVerifiedTemplate!: TemplateRef<any>;
-  @ViewChild('documentActionColTemplate', { static: true }) documentActionColTemplate!: TemplateRef<any>;
-
-  //Export Order Payment Table Related Template
-  @ViewChild('paymentDateTemplate', { static: true }) paymentDateTemplate!: TemplateRef<any>;
-  @ViewChild('paymentActionColTemplate', { static: true }) paymentActionColTemplate!: TemplateRef<any>;
-
-  selectedCustomerAddress!: string | null;
+  selectedCustomerAddress: string = '';
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  isLoadDocumentVisible: boolean = true;
-  isLoadPaymentVisible: boolean = true;
   form!: FormGroup;
   formConfig!: FormConfigType<ProformaInvoice>;
   tableDef!: TableDef<ProformaInvoiceDetail>;
 
-  customerList: Company_SelectList[] = [];
+  // customerList: Company_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
+  currencyList: Currency_SelectList[] = [];
 
   exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
-  currencyList: StaticList[] = [
-    { Text: 'USD - US Dollar', iValue: 1, cValue: 'USD - US Dollar' },
-    { Text: 'EUR - Euro', iValue: 2, cValue: 'EUR - Euro' },
-    { Text: 'JPY - Japanese Yen', iValue: 3, cValue: 'JPY - Japanese Yen' },
-    { Text: 'GBP - British Pound', iValue: 4, cValue: 'GBP - British Pound' },
-    { Text: 'INR - Indian Rupee', iValue: 5, cValue: 'INR - Indian Rupee' }
-  ];
+  // currencyList: StaticList[] = [
+  //   { Text: 'USD - US Dollar', iValue: 1, cValue: 'USD - US Dollar' },
+  //   { Text: 'EUR - Euro', iValue: 2, cValue: 'EUR - Euro' },
+  //   { Text: 'JPY - Japanese Yen', iValue: 3, cValue: 'JPY - Japanese Yen' },
+  //   { Text: 'GBP - British Pound', iValue: 4, cValue: 'GBP - British Pound' },
+  //   { Text: 'INR - Indian Rupee', iValue: 5, cValue: 'INR - Indian Rupee' }
+  // ];
 
   basedOnList: StaticList[] = [
     { Text: 'Export Order', iValue: 1, cValue: '' },
@@ -116,21 +107,22 @@ export class CreateComponent {
     return this.form.get('BasedOn')?.value === 1;
   }
 
+  get productListArray(): FormArray<FormGroup> {
+    return this.form.get('ProductList') as FormArray<FormGroup>;
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   loadDropdownList(): void {
-    // this.loadStaticLists([
-    //   { fieldName: 'Incoterm', targetList: 'incotermList' },
-    //   { fieldName: 'ShipmentMode', targetList: 'shipmentModeList' },
-    // ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
           this.taxSlabList = data.taxSlabList.Data.Items;
+          this.currencyList = data.currencyList.Data.Items;
         },
       });
   }
@@ -171,10 +163,6 @@ export class CreateComponent {
     this.formService.resetFormValue<ProformaInvoice>(this.formConfig, this.form);
   }
 
-  get productListArray(): FormArray<FormGroup> {
-    return this.form.get('ProductList') as FormArray<FormGroup>;
-  }
-
   onClickRemoveProductItem(index: number): void {
     this.alertService.showConfirmation({
       text: 'Do you really want to remove this product item?',
@@ -187,13 +175,13 @@ export class CreateComponent {
     });
   }
 
-  getAmount(index: number): number[] {
-    const group = this.productListArray.at(index);
-    const quantity = group.get('SalesQty')?.value || 0;
-    const rate = group.get('RatePerUnitBC')?.value || 0;
-    const salesTaxRate = group.get('SalesTaxRate')?.value || 0;
+  onBasedOnChange(): void {
+    const basedOnValue = this.form.get('BasedOn')?.value;
+    this.formService.resetFormValue<ProformaInvoice>(this.formConfig, this.form);
+    this.form.get('BasedOn')?.patchValue(basedOnValue);
 
-    return [quantity * rate, quantity * rate * (salesTaxRate / 100)];
+    this.productListArray.clear();
+    this.tableDef.data = [];
   }
 
   loadExportOrder(event: string): void {
@@ -216,7 +204,6 @@ export class CreateComponent {
           },
         });
     } catch (error) {
-
     }
   }
 
@@ -229,9 +216,7 @@ export class CreateComponent {
   }
 
   onClear_ExportOrder(): void {
-    this.form.get('ExportOrderID')?.patchValue(null);
-    this.form.get('ExportOrderNo')?.patchValue(null);
-
+    this.formService.resetFormValue<ProformaInvoice>(this.formConfig, this.form);
     this.productListArray.clear();
     this.tableDef.data = [];
   }
@@ -263,13 +248,14 @@ export class CreateComponent {
 
   onSelect_Company(event: Company_SelectList): void {
     if (event.CompanyID) {
-      this.form.patchValue({ CompanyID: event.CompanyID, CompanyName: event.CompanyName });
+      this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
+      this.selectedCustomerAddress = event?.BillingAddress || '';
     }
   }
 
   onClear_Company(): void {
-    this.form.get('CompanyID')?.patchValue(null);
-    this.form.get('CompanyName')?.patchValue(null);
+    this.form.get('CustomerID')?.patchValue(null);
+    this.form.get('CustomerName')?.patchValue(null);
   }
 
   onSearch_Product(event: string): void {
@@ -319,7 +305,10 @@ export class CreateComponent {
   }
 
   productCalculation(): void {
+    var subtotalAmount: number = 0;
+    var taxAmount: number = 0;
     var netAmount: number = 0;
+
     this.productListArray.controls.forEach((group: FormGroup) => {
       const quantity = group.get('SalesQty')?.value || 0;
       const rate = group.get('RatePerUnitFC')?.value || 0;
@@ -327,17 +316,19 @@ export class CreateComponent {
 
       const taxableAmountFC = quantity * rate;
       const taxAmountFC = (taxableAmountFC * salesTaxRate) / 100;
+
       group.patchValue({
         TaxAmountFC: taxAmountFC,
         TaxableAmountFC: taxableAmountFC,
         SalesAmountFC: taxableAmountFC + taxAmountFC
       }, { emitEvent: true });
 
-
-      netAmount += taxableAmountFC + taxAmountFC;
+      subtotalAmount += taxableAmountFC;
+      taxAmount += taxAmountFC;
+      netAmount += (taxableAmountFC + taxAmountFC);
     });
 
-    this.form.patchValue({ NetAmountFC: netAmount }, { emitEvent: true });
+    this.form.patchValue({ NetAmountFC: netAmount, SubtotalAmountFC: subtotalAmount, TaxAmountFC: taxAmount }, { emitEvent: true });
   }
 
   convertAmountsToBC(): void {
@@ -393,11 +384,6 @@ export class CreateComponent {
     }, 0);
   }
 
-  OnCustomerSelect(event: Company_SelectList): void {
-    this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
-    this.selectedCustomerAddress = event?.BillingAddress || '';
-  }
-
   onSubmit(): void {
     if (this.isSubmitted) return;
 
@@ -417,6 +403,8 @@ export class CreateComponent {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
+
+        // this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -569,7 +557,7 @@ export class CreateComponent {
           next: (response) => {
             if (response.IsSuccess) {
               console.log(response.Data);
-              this.GetOrderItemDetails(response.Data)
+              this.GetExportOrderItemDetails(response.Data)
             } else {
               this.alertService.showServerResponseAlert(response);
             }
@@ -581,7 +569,7 @@ export class CreateComponent {
     }
   }
 
-  GetOrderItemDetails(model: ExportOrder): void {
+  GetExportOrderItemDetails(model: ExportOrder): void {
     this.pageService.GetExportOrderItemDetails(model.ExportOrderID!)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -611,14 +599,23 @@ export class CreateComponent {
       });
   }
 
-  onBasedOnChange(): void {
-    this.formService.resetFormValue<ProformaInvoice>(this.formConfig, this.form);
-
-    this.productListArray.clear();
-    this.tableDef.data = [];
-  }
-
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
+
+  // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
+  //   Object.keys(form.controls).forEach(key => {
+  //     const control = form.get(key);
+  //     const controlPath = parentKey ? `${parentKey}.${key}` : key;
+
+  //     if (control instanceof FormGroup || control instanceof FormArray) {
+  //       this.logInvalidControls(control, controlPath);
+  //     } else if (control && control.invalid) {
+  //       console.warn(
+  //         `❌ Invalid Control: ${controlPath}`,
+  //         control.errors
+  //       );
+  //     }
+  //   });
+  // }
 }

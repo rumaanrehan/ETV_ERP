@@ -48,7 +48,7 @@ export interface MenuMaster_IndexTableList {
   ActiveStatus: boolean;
 }
 
-export interface MenuMasterRequest{
+export interface MenuMasterRequest {
   MenuID: number | null;
   ModuleID: number | null;
   MenuType: number | null;
