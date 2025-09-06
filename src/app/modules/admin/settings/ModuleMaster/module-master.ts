@@ -9,6 +9,7 @@ export interface ModuleMaster {
 export interface ModuleMaster_SelectList {
   ModuleID: number | null;
   ModuleName: string | null;
+  ModuleCode: string | null;
 }
 
 export interface ModuleMaster_IndexTableFilter {

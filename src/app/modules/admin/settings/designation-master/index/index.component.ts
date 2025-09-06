@@ -1,16 +1,14 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { CreateComponent } from '../create/create.component';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { DataTableFilterList } from '../../../../../shared/models/select-list';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { Designation_IndexTableList, Designation_IndexTableFilter, DesignationMaster } from '../designation-master';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { CreateComponent } from '../create/create.component';
+import { Designation_IndexTableFilter, Designation_IndexTableList, DesignationMaster } from '../designation-master';
 import { DesignationMasterService } from '../designation-master.service';
-
 
 @Component({
   selector: 'app-index',

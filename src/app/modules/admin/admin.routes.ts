@@ -48,6 +48,16 @@ export const adminRoute: Routes = [
             }
           },
           {
+            path: 'number-format',
+            loadComponent: () => import('./settings/NumberFormat/index/index.component').then((m) => m.IndexComponent),
+            // canActivate: [AuthenticationGuard, AuthorizationGuard],
+            // data: {
+            //   permission: 'CanRead',
+            //   menu: 'Admin/NumberFormat',
+            //   breadcrumb: 'Number Format'
+            // }
+          },
+          {
             path: 'role-master',
             loadComponent: () => import('./settings/RoleMaster/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],

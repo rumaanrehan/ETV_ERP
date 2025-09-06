@@ -28,7 +28,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<ModuleMaster>;
 
-
   constructor(
     private pageService: ModuleMasterService,
     private formService: FormService,

@@ -12,7 +12,7 @@ import { ModuleMaster_SelectList } from '../../ModuleMaster/module-master';
 import { ModuleMasterService } from '../../ModuleMaster/module-master.service';
 import { FormatForList, NumberFormat, NumberFormatList } from '../../NumberFormat/number-format';
 import { NumberFormatService } from '../../NumberFormat/number-format.service';
-import { SelectList } from '../../SelectList/select-list';
+import { SelectList, SelectListRequest } from '../../SelectList/select-list';
 import { SelectListService } from '../../SelectList/select-list.service';
 
 @Component({
@@ -25,16 +25,19 @@ import { SelectListService } from '../../SelectList/select-list.service';
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+
+  IsCreated: boolean = false;
   isSubmitted: boolean = false;
+
+  tableData: NumberFormatList[] = [];
+
+  moduleList: ModuleMaster_SelectList[] = [];
+  formatForList: FormatForList[] = [];
+  restartTypeList: SelectList[] = [];
+
   form!: FormGroup;
   formConfig!: FormConfigType<NumberFormat>;
-  tableData: NumberFormatList[] = [];
-  moduleList: ModuleMaster_SelectList[] = [];
-  CounterList: SelectList[] = [];
-  BillingSectionList: SelectList[] = [];
-  RestartTypeList: SelectList[] = [];
-  FormatForList: FormatForList[] = [];
-  IsCreated: boolean = false;
+
   constructor(
     private pageService: NumberFormatService,
     private moduleService: ModuleMasterService,
@@ -48,9 +51,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.form = this.formService.createFormGroup<NumberFormat>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.loadModule();
-    this.loadRestartType('RestartType');
-    //this.loadCounter('BillingCounter');
-    //this.loadBillingSection('BillingSection');
+    this.loadRestartType();
   };
 
   ngOnDestroy(): void {
@@ -76,10 +77,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
+  loadRestartType(): void {
+    this.commonSelectService.PopulateList({AreaName: 'Admin', ControllerName: 'NumberFormat', FieldName: 'RestartType', PopulateType: 'SelectList'} as SelectListRequest)
+      .subscribe(response => {
+        console.log(response.Data.Items)
+      this.restartTypeList = response.Data.Items; 
+    });
+  }
+
   onModuleChange(): void {
-    this.form.get('FormatFor')?.patchValue('');
-    this.form.get('BillingSection')?.patchValue(null);
-    this.form.get('CounterID')?.patchValue(null);
     const ModuleCode = this.form.get('ModuleCode')?.value;
     if (ModuleCode) {
       this.loadFormatFor(ModuleCode);
@@ -87,244 +93,25 @@ export class IndexComponent implements OnInit, OnDestroy {
     } else {
       this.tableData = [];
     }
-    if (this.CounterList) {
-      this.CounterList = [];
-    }
-    if (ModuleCode === 'PHR') {
-      this.getSectionAndCounter('SaleStore');
-    }
-    else if (ModuleCode === 'PCR') {
-      this.loadCounter('PurchaseStore');
-    }
-    else {
-      this.loadCounter('BillingCounter');
-    }
-    this.loadBillingSection('BillingSection');
-    if (!ModuleCode) {
-      this.form.get('FormatFor')?.patchValue('');
-      this.form.get('BillingSection')?.patchValue(null);
-      this.form.get('CounterID')?.patchValue(null);
-    }
   }
 
-  loadFormatFor(ModuleCode: string): void {
-    const lst: FormatForList[] = [];
-
-    // Clear the current FormatForList
-    this.FormatForList = [];
-
-    switch (ModuleCode) {
-      case "ADMIN":
-        lst.push({ Value: "EmployeeCode", Text: "Emp Code" });
-        break;
-      case "BMS":
-        lst.push({ Value: "ServiceInvoiceNo", Text: "Bill Number" });
-        lst.push({ Value: "CreditNoteNo", Text: "Credit Note Number" });
-        lst.push({ Value: "ReceiptVoucherNo", Text: "Receipt Voucher Number" });
-        lst.push({ Value: "RefundVoucherNo", Text: "Refund Voucher Number" });
-        break;
-      case "HR":
-        lst.push({ Value: "EmployeeLoanNo", Text: "Employee Loan No." });
-        break;
-      case "IMS":
-        lst.push({ Value: "ConsumptionNoteNo", Text: "Consumption No." });
-        lst.push({ Value: "DisposalNoteNo", Text: "Disposal No." });
-        lst.push({ Value: "IndentNoteNo", Text: "Indent No." });
-        lst.push({ Value: "IssueNoteNo", Text: "Issue No." });
-        lst.push({ Value: "OutwardNoteNo", Text: "Outward No." });
-        lst.push({ Value: "ReturnNoteNo", Text: "Return No." });
-        lst.push({ Value: "StockAdjustmentNo", Text: "Stock Adjustment No." });
-        lst.push({ Value: "StockEntryNo", Text: "Stock Entry No." });
-        lst.push({ Value: "TransferNoteNo", Text: "Transfer No." });
-        break;
-      case "IPC":
-        lst.push({ Value: "InsuranceCaseNo", Text: "Insurance Case Number" });
-        lst.push({ Value: "SettlementReceiptNo", Text: "Settlement Receipt Number" });
-        break;
-      case "LB":
-        lst.push({ Value: "BookingNo", Text: "Booking Number" });
-        lst.push({ Value: "CollectionNo", Text: "Sample Collection Number" });
-        lst.push({ Value: "ReportNo", Text: "Report Number" });
-        break;
-      case "MRD":
-        lst.push({ Value: "IPCertificate", Text: "IP Certificate Number" });
-        lst.push({ Value: "OPCertificate", Text: "OP Certificate Number" });
-        lst.push({ Value: "ThalassemiaCertificate", Text: "Thalassemia Certificate Number" });
-        break;
-      case "NS":
-        lst.push({ Value: "PharmaIndentNo", Text: "Indent No." });
-        break;
-      case "OT":
-        lst.push({ Value: "ScheduleNo", Text: "OT Schedule No" });
-        lst.push({ Value: "SurgeryNo", Text: "OT Surgery No" });
-        break;
-      case "PCR":
-        lst.push({ Value: "PurOrderNo", Text: "PO No." });
-        lst.push({ Value: "POAmendmentNo", Text: "POA No." });
-        lst.push({ Value: "PurChallanNo", Text: "Purchase Challan No." });
-        lst.push({ Value: "PurInvoiceNo", Text: "Purchase Invoice No." });
-        lst.push({ Value: "PurReturnNo", Text: "Purchase Return No." });
-        lst.push({ Value: "CreditNoteNo", Text: "Credit Note No." });
-        lst.push({ Value: "PaymentVoucherNo", Text: "Payment Voucher No." });
-        break;
-      case "PHR":
-        lst.push({ Value: "SalesInvoiceNo", Text: "Sales Bill Number" });
-        lst.push({ Value: "SalesReturnNo", Text: "Sales Return Number" });
-        lst.push({ Value: "ReceiptVoucherNo", Text: "Receipt Voucher Number" });
-        lst.push({ Value: "RefundVoucherNo", Text: "Refund Voucher Number" });
-        break;
-      case "PMS":
-        lst.push({ Value: "AppointmentNo", Text: "Appointment Number" });
-        lst.push({ Value: "PRNO", Text: "Patient Registration Number" });
-        lst.push({ Value: "OPNO", Text: "Out-Patient Number" });
-        lst.push({ Value: "IPNO", Text: "In-Patient Number" });
-        lst.push({ Value: "BirthEntryNo", Text: "Birth Entry Number" });
-        lst.push({ Value: "DeathEntryNo", Text: "Death Entry Number" });
-        lst.push({ Value: "MLCEntryNo", Text: "MLC Entry Number" });
-        break;
-      case "PR":
-        lst.push({ Value: "LeaveRequestNo", Text: "Leave Request No." });
-        lst.push({ Value: "SalarySlipNo", Text: "Salary Slip No." });
-        break;
-      case "RD":
-        lst.push({ Value: "BookingNo", Text: "Booking Number" });
-        lst.push({ Value: "ReportNo", Text: "Report Number" });
-        break;
-      default:
-        break;
-    }
-    this.FormatForList.push(...lst);
+ loadFormatFor(ModuleCode: string): void {
+    this.commonSelectService.PopulateList({AreaName: ModuleCode, ControllerName: 'NumberFormat', FieldName: 'FormatFor', PopulateType: 'SelectList'} as SelectListRequest)
+      .subscribe(response => {
+        console.log(response.Data.Items)
+      this.formatForList = response.Data.Items; 
+    });
   }
 
   onFormatForChange(): void {
     const ModuleCode = this.form.get('ModuleCode')?.value;
     const FormatFor = this.form.get('FormatFor')?.value;
-    const BillingSection = this.form.get('BillingSection')?.value;
-    const CounterID = this.form.get('CounterID')?.value;
-    if (FormatFor && (ModuleCode !== 'BMS' && ModuleCode !== 'PHR')) {
-      this.loadData(FormatFor, ModuleCode, BillingSection, CounterID);
-    } else {
-      this.tableData = [];
-    }
-    this.form.get('BillingSection')?.patchValue(null);
-    this.form.get('CounterID')?.patchValue(null);
+      this.loadData({ ModuleCode: ModuleCode, FormatFor: FormatFor, PopulateType: "SelectList"} as NumberFormat);
   }
 
-  onCounterChange(): void {
-    const ModuleCode = this.form.get('ModuleCode')?.value;
-    const FormatFor = this.form.get('FormatFor')?.value;
-    const BillingSection = this.form.get('BillingSection')?.value;
-    const CounterID = this.form.get('CounterID')?.value;
-    if (ModuleCode === 'BMS' || ModuleCode === 'PHR' && FormatFor) {
-      if (CounterID > 0) {
-        this.loadData(FormatFor, ModuleCode, BillingSection, CounterID);
-      }
-    }
-    else {
-      this.tableData = [];
-    }
-    if (!CounterID) {
-      this.tableData = [];
-    }
-  }
-
-  onBillingSectionChange(): void {
-    const ModuleCode = this.form.get('ModuleCode')?.value;
-    const FormatFor = this.form.get('FormatFor')?.value;
-    const BillingSection = this.form.get('BillingSection')?.value;
-    const CounterID = this.form.get('CounterID')?.value;
-    if (ModuleCode === 'BMS' || ModuleCode === 'PHR' && FormatFor) {
-      if (BillingSection > 0) {
-        this.loadData(FormatFor, ModuleCode, BillingSection, CounterID);
-      }
-    }
-    else {
-      this.tableData = [];
-    }
-    if (!BillingSection) {
-      this.tableData = [];
-    }
-  }
-
-  loadRestartType(FieldName: string) {
+  loadData(model: NumberFormat) {
     try {
-      this.commonSelectService.PopulateList('Admin', 'NumberFormat', FieldName)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.RestartTypeList = response.Data.Items;
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-      });
-    } catch (error) {
-
-    }
-  }
-
-  loadCounter(FieldName: string) {
-    try {
-      this.commonSelectService.PopulateList('Admin', 'NumberFormat', FieldName)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.CounterList = response.Data.Items;
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-      });
-    } catch (error) {
-
-    }
-  }
-
-  loadBillingSection(FieldName: string) {
-    try {
-      this.commonSelectService.PopulateList('Admin', 'NumberFormat', FieldName)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.BillingSectionList = response.Data.Items;
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-      });
-    } catch (error) {
-
-    }
-  }
-
-  getSectionAndCounter(FieldName: string) {
-    try {
-      this.commonSelectService.PopulateList('Admin', 'NumberFormat', FieldName)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.CounterList = response.Data.Items;
-          } else {
-            this.alertService.showServerResponseAlert({
-              Status: response.Status,
-              Message: response.Message,
-              ValidationErrors: response.ValidationErrors,
-            });
-          }
-        },
-      });
-    } catch (error) {
-
-    }
-  }
-
-  loadData(FormatFor: string, ModuleCode: string, BillingSection: string, CounterID: number) {
-    try {
-      this.pageService.GetDetails(FormatFor, ModuleCode, BillingSection, CounterID)
+      this.pageService.GetDetails(model)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -332,6 +119,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             this.tableData = response.Data.Items;
           }
           else {
+            this.tableData = [];
             this.alertService.showServerResponseAlert(response);
           }
         }
@@ -371,10 +159,12 @@ export class IndexComponent implements OnInit, OnDestroy {
             this.alertService.showToast({
                 type: "success",
                 text: response.Message,
+
                 timer: 5000
             });
-            this.resetForm();
-            this.loadData(model.FormatFor as string, model.ModuleCode as string, model.BillingSection as string, model.CounterID as number);
+            const ModuleCode = this.form.get('ModuleCode')?.value;
+            const FormatFor = this.form.get('FormatFor')?.value;
+            this.loadData({ModuleCode: ModuleCode, FormatFor: FormatFor, PopulateType: "SelectList"} as  NumberFormat);
           }
           else {
               this.alertService.showServerResponseAlert(response);
@@ -413,5 +203,4 @@ export class IndexComponent implements OnInit, OnDestroy {
       });
     }
   }
-
 }

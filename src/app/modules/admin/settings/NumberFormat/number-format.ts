@@ -1,10 +1,7 @@
 export interface NumberFormat {
-  NumberFormatID: number | null;
   SampleNumberFormat: string | null;
   ModuleCode: string | null;
   FormatFor: string | null;
-  BillingSection: string | null;
-  CounterID: number | null;
   StartNumber: number | null;
   WidthOfNumberPart: number | null;
   PrefillZero: boolean | null;
@@ -12,7 +9,11 @@ export interface NumberFormat {
   PrefixRear: string | null;
   Suffix: string | null;
   EffectiveFromDate: Date | null;
-  RestartType: string;
+  RestartType: number;
+  PopulateType: string | null;
+  // BillingSection: string | null;
+  // CounterID: number | null;
+  // NumberFormatID: number | null;
 }
 
 export interface NumberFormatList {
@@ -20,8 +21,6 @@ export interface NumberFormatList {
   SampleNumberFormat: string;
   ModuleCode: string;
   FormatFor: string;
-  BillingSection: string;
-  CounterID: number;
   StartNumber: number;
   WidthOfNumberPart: number;
   PrefillZero: boolean;

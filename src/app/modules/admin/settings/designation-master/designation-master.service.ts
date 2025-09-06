@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { forkJoin, Observable } from 'rxjs';
-import { CountryMasterService } from '../country-master/country-master.service';
-// import { State_IndexTableFilter, State_IndexTableList, State_SelectList, StateMaster, StateRequest } from './state-master';
-import { Country_SelectList, CountryRequest } from '../country-master/country-master';
-import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { DesignationRequest, Designation_SelectList, Designation_IndexTableFilter, Designation_IndexTableList, DesignationMaster } from './designation-master';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { Designation_IndexTableFilter, Designation_IndexTableList, Designation_SelectList, DesignationMaster, DesignationRequest } from './designation-master';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +17,6 @@ export class DesignationMasterService {
   constructor(
     private apiService: ApiService,
   ) {}
-
- 
 
   PopulateList(model: DesignationRequest): Observable<ApiListResponse<Designation_SelectList>> {
     return this.apiService.post<ApiListResponse<Designation_SelectList>>(`${this.endpoint}/PopulateList`, model);
@@ -73,9 +68,7 @@ export class DesignationMasterService {
         validationMessages: {
           required: 'Designation Name is required'
         }
-      },
-     
-      
+      }      
     }
   }
 }
