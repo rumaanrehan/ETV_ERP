@@ -29,7 +29,7 @@ export const adminRoute: Routes = [
         children: [
           {
             path: 'module-master',
-            loadComponent: () => import('./settings/ModuleMaster/index/index.component').then((m) => m.IndexComponent),
+            loadComponent: () => import('./settings/module-master/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
@@ -39,7 +39,7 @@ export const adminRoute: Routes = [
           },
           {
             path: 'menu-master',
-            loadComponent: () => import('./settings/MenuMaster/index/index.component').then((m) => m.IndexComponent),
+            loadComponent: () => import('./settings/menu-master/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
@@ -49,7 +49,7 @@ export const adminRoute: Routes = [
           },
           {
             path: 'number-format',
-            loadComponent: () => import('./settings/NumberFormat/index/index.component').then((m) => m.IndexComponent),
+            loadComponent: () => import('./settings/number-format/index/index.component').then((m) => m.IndexComponent),
             // canActivate: [AuthenticationGuard, AuthorizationGuard],
             // data: {
             //   permission: 'CanRead',
@@ -59,7 +59,7 @@ export const adminRoute: Routes = [
           },
           {
             path: 'role-master',
-            loadComponent: () => import('./settings/RoleMaster/index/index.component').then((m) => m.IndexComponent),
+            loadComponent: () => import('./settings/role-master/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
@@ -69,7 +69,7 @@ export const adminRoute: Routes = [
           },
           {
             path: 'role-permission',
-            loadComponent: () => import('./settings/RolePermission/index/index.component').then((m) => m.IndexComponent),
+            loadComponent: () => import('./settings/role-permission/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
@@ -79,7 +79,7 @@ export const adminRoute: Routes = [
           },
           {
             path: 'tax-slab-master',
-            loadComponent: () => import('./settings/TaxSlabMaster/index/index.component').then((m) => m.IndexComponent),
+            loadComponent: () => import('./settings/tax-slab-master/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
@@ -89,7 +89,7 @@ export const adminRoute: Routes = [
           },
           {
             path: 'currency-master',
-            loadComponent: () => import('./settings/CurrencyMaster/index/index.component').then((m) => m.IndexComponent),
+            loadComponent: () => import('./settings/currency-master/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',

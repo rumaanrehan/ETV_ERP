@@ -1,1 +1,37 @@
-<p>index works!</p>
+<!-- Page Header Action Button Template -->
+<ng-template #pageHeaderActionTemplate>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()">
+        <i class="pi pi-plus"></i>&nbsp;Add Tax Invoice
+    </button>
+</ng-template>
+
+<!-- Index Table Component -->
+<div class="col-xl-12 index-page-content">
+    <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)">
+    </z-datatable>
+</div>
+
+<!-- Table Column Custom Template -->
+<ng-template #taxInvoiceCodeTemplate let-row>
+    <span class="table-action-link" (click)="onClickEditDetails(row.TaxInvoiceID)" style="cursor: pointer;">{{
+        row.TaxInvoiceNo }}</span>
+</ng-template>
+
+<ng-template #taxInvoiceDateTemplate let-row>
+    {{formatDate(row.TaxInvoiceDate)}}
+</ng-template>
+
+<ng-template #taxInvoiceStatusTemplate let-row>
+    <span class="table-row-status">
+        <i class="pi pi-circle-fill text-{{ row.StatusID == 1 ? 'success' : 'danger' }}"></i>
+        {{ row.StatusID == 1 ? 'Generated' : 'Canceled' }}
+    </span>
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+    <div class="d-flex justify-content-end" *ngIf="row.StatusID == 1">
+        <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+            (click)="onClickDeleteReactivate(row)"><i class="pi pi-times-circle"></i>
+        </span>
+    </div>
+</ng-template>

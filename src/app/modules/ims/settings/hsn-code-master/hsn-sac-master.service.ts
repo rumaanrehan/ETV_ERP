@@ -12,7 +12,7 @@ import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-on
   providedIn: 'root'
 })
 export class HsnSacMasterService {
-  private endpoint = 'IMS/HsnSacMaster';
+  private endpoint = 'IMS/HSNCodeMaster';
 
   constructor(
     private apiService: ApiService,
@@ -26,8 +26,8 @@ export class HsnSacMasterService {
     return this.apiService.post<ApiPagedListResponse<HsnSacMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(HsnSacID: number): Observable<ApiDataResponse<HsnSacMaster>> {
-    return this.apiService.post<ApiDataResponse<HsnSacMaster>>(`${this.endpoint}/GetDetails?StateID=${HsnSacID}`, {});
+  GetDetails(HSNCodeID: number): Observable<ApiDataResponse<HsnSacMaster>> {
+    return this.apiService.post<ApiDataResponse<HsnSacMaster>>(`${this.endpoint}/GetDetails?hsnCodeID=${HSNCodeID}`, {});
   }
 
   CreateRecord(model: HsnSacMaster): Observable<ApiResponse> {
@@ -35,7 +35,7 @@ export class HsnSacMasterService {
   }
 
   UpdateRecord(model: HsnSacMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Update`, model);
   }
 
   DeleteReactivate(model: HsnSacMaster): Observable<ApiResponse> {
@@ -45,14 +45,18 @@ export class HsnSacMasterService {
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<HsnSacMaster_IndexTableFilter> {
     return {
-      HsnCode: '',
+      HSNCode: '',
       ActiveStatusID: 0
     }
   }
 
   getFormConfig(): FormConfigType<HsnSacMaster> {
     return {
-      HsnCode: {
+      HSNCodeID: {
+        label: 'HSN Code ID',
+        defaultValue: null
+      },
+      HSNCode: {
         label: 'HSN Code',
         defaultValue: 'NEW'
       },
@@ -62,7 +66,7 @@ export class HsnSacMasterService {
         validators: [],
         validationMessages: {}
       },
-      Description: {
+      HSNCodeDescription: {
         label: 'Description',
         defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],

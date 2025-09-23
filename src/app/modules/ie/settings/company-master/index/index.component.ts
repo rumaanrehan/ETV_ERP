@@ -52,8 +52,8 @@ private destroy$ = new Subject<void>();
       { data: 'CompanyCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.companyCodeTemplate },
       { data: 'CompanyName', label: 'Company Name', width: "15%", filterable: true },
       { data: 'CompanyTypeName', label: 'Company Type', width: "15%", filterable: true, filterType: 'select', filterKey: 'CompanyTypeID', customTemplate: this.companyTypeTemplate },
-      { data: 'CompanyEmailID', label: 'EmailID', width: "20%" },
-      { data: 'ImportLicenseNo', label: 'Import License No', width: "20%" },
+      { data: 'CompanyEmailID', label: 'EmailID', orderable: false, width: "20%" },
+      { data: 'ImportLicenseNo', label: 'Import License No', orderable: false, width: "20%" },
       { data: 'ActiveStatus', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.companyActiveStatusTemplate},
       { data: '', hideVisToggle: true, orderable: false, width: "6%", customTemplate: this.actionColTemplate },
     ];

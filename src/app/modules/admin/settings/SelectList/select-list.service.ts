@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Environment } from '../../../../../environments/environment';
 import { ApiPagedListResponse } from '../../../../shared/models/api-response';
 import { SelectList, SelectListRequest } from './select-list';
+import { StaticList } from '../../../../shared/models/select-list';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +16,7 @@ export class SelectListService {
     this.apiUrl = Environment.apiUrl;
   }
 
-  PopulateList(model: SelectListRequest): Observable<ApiPagedListResponse<SelectList>> {
-    // const model = { AreaName, ControllerName, FieldName, PopulateType: 'SelectList' };
-    return this.http.post<ApiPagedListResponse<SelectList>>(`${this.apiUrl}Common/SelectListEntry/GetSelectList`, model);
+  PopulateList(model: SelectListRequest): Observable<ApiPagedListResponse<StaticList>> {
+    return this.http.post<ApiPagedListResponse<StaticList>>(`${this.apiUrl}Common/SelectListEntry/GetSelectList`, model);
   }
 }

@@ -9,10 +9,6 @@ import { DataTableFilterFormConfigType, FormConfigType } from '../../../../share
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/CurrencyMaster/currency-master';
-import { CurrencyMasterService } from '../../../admin/settings/CurrencyMaster/currency-master.service';
-import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
-import { TaxSlabMasterService } from '../../../admin/settings/TaxSlabMaster/tax-slab-master.service';
 import { Product_SelectList, ProductRequest } from '../../../ims/settings/product-master/product-master';
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
@@ -20,6 +16,10 @@ import { CompanyMasterService } from '../../settings/company-master/company-mast
 import { ExportOrder, ExportOrder_SelectList, ExportOrderDetail, ExportOrderRequest } from '../export-order/export-order';
 import { ExportOrderService } from '../export-order/export-order.service';
 import { ProformaInvoice, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from './proforma-invoice';
+import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
+import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
+import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
 
 @Injectable({
   providedIn: 'root'
@@ -104,8 +104,11 @@ export class ProformaInvoiceService {
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ProformaInvoice_IndexTableFilter> {
     return {
       ProformaInvoiceNo: '',
+      ProformaInvoiceDate: '',
+      BasedOnID: 0,
+      ExportOrderNo: '',
       CustomerName: '',
-      StatusID: 0
+      ActiveStatusID: 0
     }
   }
 

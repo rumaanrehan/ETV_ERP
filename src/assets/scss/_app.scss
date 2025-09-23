@@ -727,6 +727,9 @@ span {
 
 .form-horizontal {
   padding: 0.75rem 0.75rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .form-horizontal [class*="col-"] {
@@ -803,3 +806,9 @@ span {
 .status-pill span {
   color: #fff;
 }
+
+
+// display: flex
+// ;
+//     flex-wrap: wrap;
+// }

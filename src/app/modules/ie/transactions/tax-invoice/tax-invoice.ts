@@ -60,8 +60,9 @@ export interface TaxInvoice_SelectList {
 
 export interface TaxInvoice_IndexTableFilter {
     TaxInvoiceNo: string | null;
+    BasedOn: number | null;
     CustomerName: string | null;
-    StatusID: number | null;
+    ActiveStatusID: number | null;
 }
 
 export interface TaxInvoice_IndexTableList {
@@ -81,4 +82,10 @@ export interface TaxInvoiceRequest {
     SearchBy: number | null;
     SearchValue: string | null;
     PopulateType: string | null;
+}
+
+export interface Document_SelectList {
+    DocumentID: number;
+    DocumentNo: string;
+    CustomerName: string
 }

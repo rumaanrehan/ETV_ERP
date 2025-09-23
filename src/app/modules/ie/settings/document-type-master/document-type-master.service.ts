@@ -46,6 +46,8 @@ export class DocumentTypeMasterService {
     return {
       DocumentTypeCode: '',
       DocumentTypeName: '',
+      ShortCode: '',
+      IsApprovalRequired: 0,
       ActiveStatusID: 0
     };
   }

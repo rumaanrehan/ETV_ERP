@@ -19,6 +19,7 @@ export class UserService {
   ) { }
 
   Authenticate(request: UserAuthenticateRequest): Observable<ApiDataResponse<UserAuthenticateResponse>> {
+    console.log(this.endpoint);
     return this.apiService.post<any>(`${this.endpoint}/Authenticate`, request);
   }
 

@@ -15,6 +15,8 @@ export interface DocumentType_SelectList {
 export interface DocumentType_IndexFilter {
   DocumentTypeCode: string | null;
   DocumentTypeName: string | null;
+  ShortCode: string | null;
+  IsApprovalRequired: number | null;
   ActiveStatusID: number | null;
 }
 
