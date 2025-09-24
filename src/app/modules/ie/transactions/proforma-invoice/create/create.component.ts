@@ -309,6 +309,9 @@ export class CreateComponent {
     var taxAmount: number = 0;
     var netAmount: number = 0;
 
+    const freightCharge = this.form.get('FreightChargeFC')?.value || 0;
+    const bankCharges = this.form.get('BankChargesFC')?.value || 0;
+
     this.productListArray.controls.forEach((group: FormGroup) => {
       const quantity = group.get('SalesQty')?.value || 0;
       const rate = group.get('RatePerUnitFC')?.value || 0;
@@ -327,6 +330,8 @@ export class CreateComponent {
       taxAmount += taxAmountFC;
       netAmount += (taxableAmountFC + taxAmountFC);
     });
+
+    netAmount += (freightCharge + bankCharges);
 
     this.form.patchValue({ NetAmountFC: netAmount, SubtotalAmountFC: subtotalAmount, TaxAmountFC: taxAmount }, { emitEvent: true });
   }
