@@ -51,11 +51,11 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'HolidayCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.holidayCodeTemplate },
-      { data: 'HolidayName', label: 'Holiday Name', filterable: true, width: "10%"},
-      { data: 'HolidayYear', label: 'Holiday Year', filterable: true, width: "5%"},
-      { data: 'HolidayTypeName', label: 'Holiday Type', filterable: true, width: "7%", cssClass: 'text-center'},
-      { data: 'HolidayDate', label: 'Date', customTemplate: this.holidayDateTemplate },
+      { data: 'HolidayCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "7%", customTemplate: this.holidayCodeTemplate },
+      { data: 'HolidayName', label: 'Holiday Name', filterable: true, width: "17%"},
+      { data: 'HolidayYear', label: 'Holiday Year', filterable: true, width: "15%"},
+      { data: 'HolidayTypeName', label: 'Holiday Type', width: "13%", cssClass: 'text-center'},
+      { data: 'HolidayDate', label: 'Date', orderable: false, customTemplate: this.holidayDateTemplate },
       { data: 'HolidayDescription', label: 'Description', orderable: false },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.holidayActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },

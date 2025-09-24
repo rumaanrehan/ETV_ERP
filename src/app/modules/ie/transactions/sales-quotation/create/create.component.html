@@ -1,0 +1,169 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderBackButton()">
+    <i class="pi pi-arrow-left"></i>&nbsp;Back</button>
+</ng-template>
+
+<div class="col-xl-12">
+  <div class="col-xl-12 page-content">
+    <div class="col-xl-12 page-content-scrollable">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="col-xl-12 card m-auto mb-2">
+          <div class="card-body">
+            <div class="horizontal-form">
+              <div class="row">
+                <!-- Order Details -->
+                <div class="col-xl-2 form-group px-2">
+                  <z-span [text]="form.get('QuotationNo')?.value" [label]="formConfig.QuotationNo.label"></z-span>
+                </div>
+                <div class="col-xl-2 form-group px-2">
+                  <z-datepicker [group]="form" [control]="'QuotationDate'" [label]="formConfig.QuotationDate.label"
+                    [validationMessage]="formConfig.QuotationDate.error"></z-datepicker>
+                </div>
+                <div class="col-xl-8"></div>
+
+                <!-- Customer Details -->
+                <div class="col-xl-3 form-group px-2">
+                  <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCompany($event)"
+                    (onSelect)="OnCustomerSelect($event)" (onClear)="onClear_Company()"></z-autocomplete>
+                </div>
+                <div class="col-xl-9"></div>
+                <div class="col-xl-12 form-group px-2">
+                  <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
+                </div>
+
+                <!-- Currency & Exchange -->
+                <h6 class="form-group px-2">Exchange Rate Details</h6>
+                <div class="col-xl-3 form-group px-2">
+                  <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
+                    [optionLabel]="'cValue'" [optionValue]="'iValue'" [options]="currencyList"></z-select>
+                </div>
+                <div class="col-xl-5"></div>
+                <div class="col-xl-2 form-group px-2">
+                  <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
+                    [label]="formConfig.ExchangeRateToBC.label" (onChange)="productCalculation()"></z-inputnumber>
+                </div>
+                <div class="col-xl-2 form-group px-2">
+                  <z-datepicker [group]="form" [control]="'ValidityDate'" [label]="formConfig.ValidityDate.label"
+                    [validationMessage]="formConfig.ValidityDate.error"></z-datepicker>
+                </div>
+
+                <!-- Incoterm and Charges -->
+                <div class="col-xl-3 form-group px-2">
+                  <z-select [group]="form" [control]="'IncotermID'" [label]="formConfig.IncotermID.label"
+                    [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="incotermList"></z-select>
+                </div>
+                <div class="col-xl-5"></div>
+                <!-- Product List -->
+                <div class="col-12 px-2">
+                  <h6 class="form-group">Product List</h6>
+                  <div class="col-xl-3 form-group">
+                    <z-autocomplete [controlDef]="productAutoCompleteDef" (onSearch)="onSearch_Product($event)"
+                      (onSelect)="onSelect_Product($event)"></z-autocomplete>
+                  </div>
+                  <z-table [tableDef]="this.tableDef">
+                  </z-table>
+                </div>
+                <!-- Payment & Shipment -->
+                <div class="col-xl-2 form-group px-3">
+                  <z-select [group]="form" [control]="'PaymentTermID'" [label]="formConfig.PaymentTermID.label"
+                    [options]="paymentTermList" [optionLabel]="'PaymentTermName'"
+                    [optionValue]="'PaymentTermID'"></z-select>
+                </div>
+                <!-- Narration -->
+                <div class="col-md-6 form-group px-3">
+                  <z-textarea [group]="form" [control]="'Narration'" [label]="formConfig.Narration.label"></z-textarea>
+                </div>
+                <!-- Status -->
+                <div class="col-md-2 form-group px-2" *ngIf="!isEditMode">
+                  <z-select [group]="form" [control]="'StatusID'" [label]="formConfig.StatusID.label"
+                    [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="statusList"></z-select>
+                </div>
+                <div class="col-xl-1"></div>
+                <div class="col-xl-1 form-group">
+                  <z-checkbox [group]="form" [control]="'IsRoundOff'" [label]="formConfig.IsRoundOff.label"></z-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="page-action-panel">
+    <div class="col-xl-4"></div>
+    <div class="col-xl-4">
+      <div class="status-pill" [ngStyle]="{ 'background-color': getStatus(form.get('StatusID')?.value)?.cValue }" *ngIf="isEditMode">
+        <span>Status: {{ getStatus(form.get('StatusID')?.value)?.Text }}</span>
+      </div>
+    </div>
+
+    <div class="col-xl-4">
+      <div class="col-xl-3 px-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"> {{ isEditMode ? "Update" :
+          "Save" }} </button>
+      </div>
+      <div class="col-xl-3 px-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="resetForm()"> Reset </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Export Order Item Table Related Templates Start-->
+<ng-template #serialNoColTemplate let-row let-i="index">
+  {{i + 1}}
+</ng-template>
+
+<ng-template #quotedQtyColTemplate let-row let-i="index">
+  <z-inputnumber [group]="productListArray.at(i)" [control]="'QuotedQty'"
+    [label]="formConfig.ProductList.items.QuotedQty.label"
+    [validationMessage]="formConfig.ProductList.items.QuotedQty.error?.[i]" (onChange)="productCalculation()">
+  </z-inputnumber>
+</ng-template>
+
+<ng-template #ratePerUnitFCColTemplate let-row let-i="index">
+  <div class="input-group">
+    <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
+    <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"
+      [label]="formConfig.ProductList.items.RatePerUnitFC.label"
+      [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [styleClass]="'text-end'"
+      (onChange)="productCalculation()"></z-inputnumber>
+  </div>
+</ng-template>
+
+<ng-template #taxRateColTemplate let-row let-i="index">
+  <z-select [group]="productListArray.at(i)" [control]="'TaxRate'"
+    [label]="formConfig.ProductList.items.TaxRate.label"
+    [validationMessage]="formConfig.ProductList.items.TaxRate.error?.[i]" [options]="taxSlabList"
+    [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="productCalculation();">
+  </z-select>
+</ng-template>
+
+<ng-template #taxableAmountBCColTemplate let-row let-i="index">
+  <div class="input-group">
+    <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
+    <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxableAmountFC'"
+      [label]="formConfig.ProductList.items.TaxableAmountFC.label"
+      [validationMessage]="formConfig.ProductList.items.TaxableAmountFC.error?.[i]"
+      [styleClass]="'text-end'"></z-inputnumber>
+  </div>
+</ng-template>
+
+<ng-template #taxAmountBCColTemplate let-row let-i="index">
+  <div class="input-group">
+    <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
+    <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxAmountFC'"
+      [label]="formConfig.ProductList.items.TaxAmountFC.label"
+      [validationMessage]="formConfig.ProductList.items.TaxAmountFC.error?.[i]"
+      [styleClass]="'text-end'"></z-inputnumber>
+    <!-- <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[1].toString()"></z-span> -->
+  </div>
+</ng-template>
+
+<ng-template #removeProductItemColTemplate let-row let-i="index">
+  <div class="d-flex justify-content-end">
+    <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+      (click)="onClickRemoveProductItem(i)">
+      <i class="pi pi-minus-circle"></i></span>
+  </div>
+</ng-template>

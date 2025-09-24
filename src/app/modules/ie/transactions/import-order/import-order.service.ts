@@ -9,8 +9,6 @@ import { FormConfigType } from '../../../../shared/models/form.model';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
-import { TaxSlabMasterService } from '../../../admin/settings/TaxSlabMaster/tax-slab-master.service';
 import { Product_SelectList, ProductRequest } from '../../../ims/settings/product-master/product-master';
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
@@ -18,6 +16,8 @@ import { CompanyMasterService } from '../../settings/company-master/company-mast
 import { Port_SelectList, PortRequest } from '../../settings/port-master/port-master';
 import { PortMasterService } from '../../settings/port-master/port-master.service';
 import { ImportOrder, ImportOrder_IndexTableFilter, ImportOrder_IndexTableList, ImportOrder_SelectList, ImportOrderDetail, ImportOrderRequest } from './import-order';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
+import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
 
 @Injectable({
   providedIn: 'root'

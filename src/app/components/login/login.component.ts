@@ -20,7 +20,7 @@ import { LoaderService } from '../../shared/services/loader.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterModule, FormsModule, ReactiveFormsModule, NgbModule, CommonModule, ShowValidationTooltipDirective],
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, NgbModule, CommonModule],
   providers: [FormValidationService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -108,9 +108,7 @@ export class LoginComponent implements OnInit {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
     try {
-      // Handle invalid form
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);

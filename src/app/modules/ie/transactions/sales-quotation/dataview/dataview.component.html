@@ -1,0 +1,85 @@
+<!--Page Header Action Button Template-->
+<ng-template #pageHeaderActionTemplate>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
+            class="pi pi-plus"></i>&nbsp;Add Quotation</button>
+</ng-template>
+
+<div class="col-xl-12 index-page-content">
+    <z-data-view [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+        [itemTemplate]="customTemplate" [sortFieldList]="sortFieldList">
+
+        <div sidebarContent>
+            <form class="form-sidebar" [formGroup]="filterForm">
+                <div class="col-xl-12 form-group">
+                    <z-inputtext [group]="filterForm" [control]="'QuotationNo'"
+                        [label]="filterFormConfig.QuotationNo.label"></z-inputtext>
+                </div>
+                <div class="col-xl-12 form-group">
+                    <z-inputtext [group]="filterForm" [control]="'CustomerName'"
+                        [label]="filterFormConfig.CustomerName.label"></z-inputtext>
+                </div>
+                <div class="col-xl-12 form-group">
+                    <z-select [group]="filterForm" [control]="'IncotermID'" [label]="filterFormConfig.IncotermID.label"
+                        [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                </div>
+                <div class="col-xl-12 form-group">
+                    <z-select [group]="filterForm" [control]="'StatusID'" [label]="filterFormConfig.StatusID.label"
+                        [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                </div>
+            </form>
+        </div>
+    </z-data-view>
+</div>
+
+<ng-template #customTemplate let-exportOrders>
+    <div class="col-12 border rounded my-2" *ngFor="let item of exportOrders; let first = first">
+        <div class="col-12 p-3">
+            <div class="d-flex justify-content-between">
+                <a (click)="onClickEditDetails(item.QuotationID)">
+                    <h5 class="text-primary mb-2">{{item.QuotationNo}} | {{item.CompanyName}}</h5>
+                </a>
+                <div class="text-end">
+                    <span class="badge bg-outline-primary">{{populateStatus(item.StatusID)}}</span>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="col-xl-12">
+                    <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
+                        <div class="col-xl-4 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Quotation Date:</span>
+                            </div>
+                            <div class="col-xl-7">
+                                <span class="fs-6 text-secondary"> {{formatDate(item.QuotationDate)}} </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Validity Date:</span>
+                            </div>
+                            <div class="col-xl-7">
+                                <span class="fs-6 text-secondary"> {{formatDate(item.ValidityDate)}} </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
+                        <div class="col-xl-4 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Quotation Total:</span>
+                            </div>
+                            <div class="col-xl-7">
+                                <span class="fs-6 text-secondary"> <i
+                                        class="pi pi-indian-rupee"></i>{{item.NetAmountBC}} </span>
+                            </div>
+                        </div>
+                        <div class="ms-auto" *ngIf="item.StatusID == 1 || item.StatusID == 2">
+                            <button class="btn btn-primary" (click)="onClickCancel(item)">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #container></ng-template>

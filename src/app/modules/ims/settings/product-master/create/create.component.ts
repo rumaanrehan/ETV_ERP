@@ -19,7 +19,7 @@ import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { TaxSlab_SelectList } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
+import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
 
 @Component({
   selector: 'app-create',

@@ -52,15 +52,15 @@ export class IndexComponent {
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'ProformaInvoiceNo', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.proformaInvoiceCodeTemplate },
-      { data: 'ProformaInvoiceDate', label: 'Date', width: "15%", filterable: true, customTemplate: this.proformaInvoiceDateTemplate },
-      { data: 'BasedOn', label: 'Based On', width: "15%", filterable: true, filterType: 'select', filterKey: 'BasedOnID' },
-      { data: 'ExportOrderNo', label: 'Export Order No', width: "20%" },
-      { data: 'CustomerName', label: 'Customer', width: "20%" },
-      { data: 'SubtotalAmountFC', label: 'Subtotal Amount', width: "20%" },
-      { data: 'TaxAmountFC', label: 'Tax Amount', width: "20%" },
-      { data: 'NetAmountFC', label: 'Net Amount', width: "20%" },
-      { data: 'StatusID', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.proformaInvoiceStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: "6%", customTemplate: this.actionColTemplate },
+      { data: 'ProformaInvoiceDate', label: 'Date', width: "10%", filterable: true, customTemplate: this.proformaInvoiceDateTemplate },
+      { data: 'BasedOn', label: 'Based On', width: "8%", filterable: true, filterType: 'select', filterKey: 'BasedOnID' },
+      { data: 'ExportOrderNo', label: 'Export Order No', orderable: false, filterable: true, width: "12%" },
+      { data: 'CustomerName', label: 'Customer', filterable: true, width: "20%" },
+      { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "10%" },
+      { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "10%" },
+      { data: 'NetAmountFC', label: 'Net Amount', width: "10%" },
+      { data: 'StatusID', label: 'Status', width: "8%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.proformaInvoiceStatusTemplate },
+      { data: '', hideVisToggle: true, orderable: false, width: "4%", customTemplate: this.actionColTemplate },
     ];
   }
 

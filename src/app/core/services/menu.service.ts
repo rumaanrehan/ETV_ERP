@@ -36,7 +36,6 @@ export class MenuService {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            console.log('Menu loaded:', response.Data.Items);
             this.menu.set(response.Data.Items);
           }
           else {

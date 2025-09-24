@@ -51,10 +51,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'HsnCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.hsnCodeTemplate },
-      { data: 'Description', label: 'Description', orderable: false },
+      { data: 'HSNCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.hsnCodeTemplate },
+      { data: 'HSNCodeDescription', label: 'Description', orderable: false },
       { data: 'IsServiceAccountCode', label: 'Is SAC', orderable: false, cssClass: 'text-center', width: "5%", customTemplate: this.isSACTemplate },
-      { data: 'TaxSlabName', label: 'Tax Rate', orderable: false, cssClass: 'text-center', width: "8%", customTemplate: this.taxRateTemplate },
+      { data: 'TaxRate', label: 'Tax Rate', orderable: false, cssClass: 'text-center', width: "8%", customTemplate: this.taxRateTemplate },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.hsnActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
@@ -71,10 +71,11 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
   
-  onClickEditDetails(hsnID: number, activeStatus: boolean): void {
+  onClickEditDetails(HSNCodeID: number, activeStatus: boolean): void {
     try {
-      if (this.createSidebar && hsnID) {
-        this.pageService.GetDetails(hsnID)
+      console.log(HSNCodeID);
+      if (this.createSidebar && HSNCodeID) {
+        this.pageService.GetDetails(HSNCodeID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -116,6 +117,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
+            console.log(response.Data.Items);
             this.tableDef.data = response.Data.Items;
             this.tableDef.totalRecords = response.Data.TotalRecords;
           }

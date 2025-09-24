@@ -2,21 +2,11 @@ export interface DesignationMaster {
     DesignationID: number | null;
     DesignationCode: string | null;
     DesignationName: string | null;
-   
 }
 
-export interface Designation_IndexTableList {
-    DesignationID: number;
-    DesignationCode: string;
-    DesignationName: string;
-    ActiveStatus: boolean;
-}
-
-
-export interface Designation_IndexTableFilter {
-    DesignationCode: string | null;
-    DesignationName: string | null;
-    ActiveStatusID: number | null;
+export interface DesignationRequest {
+    DesignationName?: number | null;
+    PopulateType?: string | null;
 }
 
 export interface Designation_SelectList {
@@ -24,9 +14,15 @@ export interface Designation_SelectList {
     DesignationName: string;
 }
 
+export interface Designation_IndexTableFilter {
+    DesignationCode: string | null;
+    DesignationName: string | null;
+    ActiveStatusID: number | null;
+}
 
-
-export interface DesignationRequest {
-    DesignationName?: number | null;
-    PopulateType?: string | null;
+export interface Designation_IndexTableList {
+    DesignationID: number;
+    DesignationCode: string;
+    DesignationName: string;
+    ActiveStatus: boolean;
 }

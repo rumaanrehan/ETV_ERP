@@ -46,8 +46,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  
-
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: DesignationMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
@@ -108,22 +106,18 @@ export class CreateComponent implements OnInit, OnDestroy {
     try{
     this.pageService.CreateRecord(model)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000,
-            });
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
+      .subscribe((response) => {
+        if (response.IsSuccess) {
+          this.closeSidebar();
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+        } else {
+          this.alertService.showServerResponseAlert(response);
         }
+        this.isSubmitted = false;
       });
     }
     catch (error) {

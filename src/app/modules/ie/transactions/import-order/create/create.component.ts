@@ -14,12 +14,12 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { TaxSlab_SelectList } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
 import { Product_SelectList, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 import { Company_SelectList, CompanyRequest } from '../../../settings/company-master/company-master';
 import { Port_SelectList, PortRequest } from '../../../settings/port-master/port-master';
 import { ImportOrder, ImportOrderDetail } from '../import-order';
 import { ImportOrderService } from '../import-order.service';
+import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
 
 @Component({
   selector: 'app-create',
@@ -155,7 +155,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   
   onClickPageHeaderBackButton(): void {
     try {
-      this.router.navigate(['/ie/import-order/dataview']);
+      this.router.navigate(['/ie/import-order/index']);
     } catch (error) {}
   }
 
@@ -449,7 +449,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               timer: 5000,
             });
             setTimeout(() => {
-              this.router.navigate(['/ie/import-order/dataview']);
+              this.router.navigate(['/ie/import-order/index']);
             }, 2000);
           } else {
             this.alertService.showServerResponseAlert(response);
