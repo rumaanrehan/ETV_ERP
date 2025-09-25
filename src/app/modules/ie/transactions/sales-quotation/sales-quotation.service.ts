@@ -33,7 +33,7 @@ export class SalesQuotationService {
     private taxSlabMasterService: TaxSlabMasterService,
     private selectListService: SelectListService
   ) { }
-  
+
   GetMasterDropdownLists(): Observable<{
     paymentTermList: ApiListResponse<PaymentTerm_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
@@ -43,7 +43,7 @@ export class SalesQuotationService {
       taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest)
     });
   }
-  
+
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
     return this.selectListService.GetStaticList(model);
   }
@@ -55,7 +55,7 @@ export class SalesQuotationService {
   GetProductList(model: ProductRequest): Observable<ApiListResponse<Product_SelectList>> {
     return this.productMasterService.PopulateList(model);
   }
-  
+
   PopulateList(model: SalesQuotationRequest): Observable<ApiListResponse<SalesQuotation_SelectList>> {
     return this.apiService.post<ApiListResponse<SalesQuotation_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }
@@ -67,7 +67,7 @@ export class SalesQuotationService {
   GetDetails(quotationID: number): Observable<ApiDataResponse<SalesQuotation>> {
     return this.apiService.post<ApiDataResponse<SalesQuotation>>(`${this.endpoint}/GetDetails?quotationID=${quotationID}`, {});
   }
-  
+
   GetQuotationDetails(quotationID: number): Observable<ApiListResponse<SalesQuotationDetail>> {
     return this.apiService.post<ApiListResponse<SalesQuotationDetail>>(`${this.endpoint}/GetQuotationDetails?quotationID=${quotationID}`, {});
   }
@@ -88,7 +88,7 @@ export class SalesQuotationService {
   CancelQuotation(model: SalesQuotation): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
-  
+
   getFormConfig_DataTableFilter(): FormConfigType<SalesQuotation_IndexTableFilter> {
     return {
       QuotationNo: {
@@ -128,7 +128,7 @@ export class SalesQuotationService {
           required: "Quotation Date is required"
         }
       },
-      EnquiryID:{
+      EnquiryID: {
         label: 'Enquiry ID',
         defaultValue: null
       },
@@ -190,8 +190,8 @@ export class SalesQuotationService {
       },
       ProductList: {
         type: 'array',
-        items: 
-          {
+        items:
+        {
           ProductID: {
             label: '',
             defaultValue: null,
@@ -332,11 +332,7 @@ export class SalesQuotationService {
         label: 'Round Off',
         defaultValue: true
       },
-      CoinAdjustmentFC: {
-        label: '',
-        defaultValue: null
-      },
-      CoinAdjustmentBC: {
+      CoinAdjustment: {
         label: '',
         defaultValue: null
       }
@@ -359,7 +355,7 @@ export class SalesQuotationService {
       ],
     }
   }
-  
+
   getProductMasterAutoCompleteDef(formConfig: FormConfigType<SalesQuotation>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',

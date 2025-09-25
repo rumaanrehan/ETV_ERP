@@ -80,7 +80,8 @@
                 </div>
                 <div class="col-xl-1"></div>
                 <div class="col-xl-1 form-group">
-                  <z-checkbox [group]="form" [control]="'IsRoundOff'" [label]="formConfig.IsRoundOff.label"></z-checkbox>
+                  <z-checkbox [group]="form" [control]="'IsRoundOff'"
+                    [label]="formConfig.IsRoundOff.label"></z-checkbox>
                 </div>
               </div>
             </div>
@@ -92,7 +93,8 @@
   <div class="page-action-panel">
     <div class="col-xl-4"></div>
     <div class="col-xl-4">
-      <div class="status-pill" [ngStyle]="{ 'background-color': getStatus(form.get('StatusID')?.value)?.cValue }" *ngIf="isEditMode">
+      <div class="status-pill" [ngStyle]="{ 'background-color': getStatus(form.get('StatusID')?.value)?.cValue }"
+        *ngIf="isEditMode">
         <span>Status: {{ getStatus(form.get('StatusID')?.value)?.Text }}</span>
       </div>
     </div>
@@ -127,13 +129,12 @@
     <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"
       [label]="formConfig.ProductList.items.RatePerUnitFC.label"
       [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [styleClass]="'text-end'"
-      (onChange)="productCalculation()"></z-inputnumber>
+      (onChange)="productCalculation()" [maxFractionDigits]="3"></z-inputnumber>
   </div>
 </ng-template>
 
 <ng-template #taxRateColTemplate let-row let-i="index">
-  <z-select [group]="productListArray.at(i)" [control]="'TaxRate'"
-    [label]="formConfig.ProductList.items.TaxRate.label"
+  <z-select [group]="productListArray.at(i)" [control]="'TaxRate'" [label]="formConfig.ProductList.items.TaxRate.label"
     [validationMessage]="formConfig.ProductList.items.TaxRate.error?.[i]" [options]="taxSlabList"
     [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="productCalculation();">
   </z-select>
@@ -144,8 +145,8 @@
     <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
     <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxableAmountFC'"
       [label]="formConfig.ProductList.items.TaxableAmountFC.label"
-      [validationMessage]="formConfig.ProductList.items.TaxableAmountFC.error?.[i]"
-      [styleClass]="'text-end'"></z-inputnumber>
+      [validationMessage]="formConfig.ProductList.items.TaxableAmountFC.error?.[i]" [styleClass]="'text-end'"
+      [maxFractionDigits]="3"></z-inputnumber>
   </div>
 </ng-template>
 
@@ -154,8 +155,8 @@
     <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
     <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxAmountFC'"
       [label]="formConfig.ProductList.items.TaxAmountFC.label"
-      [validationMessage]="formConfig.ProductList.items.TaxAmountFC.error?.[i]"
-      [styleClass]="'text-end'"></z-inputnumber>
+      [validationMessage]="formConfig.ProductList.items.TaxAmountFC.error?.[i]" [styleClass]="'text-end'"
+      [maxFractionDigits]="3"></z-inputnumber>
     <!-- <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[1].toString()"></z-span> -->
   </div>
 </ng-template>

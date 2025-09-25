@@ -20,24 +20,23 @@ export interface SalesQuotation {
     ProductID: number | null;
     ProductName: string | null;
 
-    SubtotalAmountFC : number | null;
-    SubtotalAmountBC : number | null;
-    TaxAmountFC : number | null;
-    TaxAmountBC : number | null;
-    NetAmountFC : number | null;
-    NetAmountBC : number | null;
+    SubtotalAmountFC: number | null;
+    SubtotalAmountBC: number | null;
+    TaxAmountFC: number | null;
+    TaxAmountBC: number | null;
+    NetAmountFC: number | null;
+    NetAmountBC: number | null;
     StatusID: number | null;
     IsRoundOff: boolean | null;
-    CoinAdjustmentFC: number | null;
-    CoinAdjustmentBC: number | null;
-    
+    CoinAdjustment: number | null;
+
     Customer?: CompanyMaster;
 }
 
 export interface SalesQuotationDetail {
     ProductID: number | null;
     ProductName: string | null;
-    QuotedQty : number | null;
+    QuotedQty: number | null;
     TaxRate: number | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
@@ -45,8 +44,8 @@ export interface SalesQuotationDetail {
     TaxableAmountBC: number | null;
     TaxAmountFC: number | null;
     TaxAmountBC: number | null;
-    QuotationAmountFC : number | null;
-    QuotationAmountBC : number | null;
+    QuotationAmountFC: number | null;
+    QuotationAmountBC: number | null;
 
     //Foreign Keys
     Product?: ProductMaster;

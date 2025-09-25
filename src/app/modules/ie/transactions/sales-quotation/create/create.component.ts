@@ -38,7 +38,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountBCColTemplate', { static: true }) taxableAmountBCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountBCColTemplate', { static: true }) taxAmountBCColTemplate!: TemplateRef<any>;
-  
+
   selectedCustomerAddress!: string | null;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
@@ -70,7 +70,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     { Text: 'Accepted', iValue: 3, cValue: '#28a745' },
     { Text: 'Rejected', iValue: 4, cValue: '#dc3545' }
   ];
-  
+
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: SalesQuotationService,
@@ -79,7 +79,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute
   ) { }
-  
+
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.formConfig = this.pageService.getFormConfig();
@@ -109,7 +109,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
+
   loadDropdownList(): void {
     this.loadStaticLists([
       { fieldName: 'Incoterm', targetList: 'incotermList' }
@@ -118,7 +118,6 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          console.log(data);
           this.paymentTermList = data.paymentTermList.Data.Items;
           this.taxSlabList = data.taxSlabList.Data.Items;
         },
@@ -137,20 +136,20 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
 
     forkJoin(sources)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (response) => {
-        listConfigs.forEach(({ targetList }) => {
-          if (response[targetList]?.IsSuccess) {
-            (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
-          } else {
-            (this[targetList] as StaticList[]) = [];
-          }
-        });
-      },
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as StaticList[]) = [];
+            }
+          });
+        },
+      });
   }
-  
+
   onClickPageHeaderBackButton(): void {
     try {
       this.router.navigate(['/ie/sales-quotation/dataview']);
@@ -185,7 +184,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     return [quantity * rate, quantity * rate * (salesTaxRate / 100)];
   }
-  
+
   loadCompany(event: string): void {
     try {
       const dto: CompanyRequest = {
@@ -270,43 +269,30 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   productCalculation(): void {
     let netAmount = 0;
-    const isRoundOff = this.form.get('IsRoundOff')?.value;
 
     this.productListArray.controls.forEach((group: FormGroup) => {
-      const quantity = Number(group.get('QuotedQty')?.value) || 0;
-      const rate = Number((group.get('RatePerUnitFC')?.value || 0).toFixed(3)) || 0;
-      const quotedTaxRate = Number((group.get('TaxRate')?.value || 0).toFixed(3)) || 0;
+      const quantity = group.get('QuotedQty')?.value || 0;
+      const rate = group.get('RatePerUnitFC')?.value || 0;
+      const taxRate = group.get('TaxRate')?.value || 0;
 
-      const taxableAmountFC = Number((quantity * rate).toFixed(3));
-      const taxAmountFC = Number(((taxableAmountFC * quotedTaxRate) / 100).toFixed(3));
-      const salesAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
-
-      // Apply rounding logic
-      // const taxable = this.roundValue(taxableAmountFC, isRoundOff);
-      // const tax = this.roundValue(taxAmountFC, isRoundOff);
-      // const sales = this.roundValue(salesAmountFC, isRoundOff);
-
-      // totalCoins += taxable.coins + tax.coins + sales.coins;
+      const taxableAmountFC = quantity * rate;
+      const taxAmountFC = taxableAmountFC * taxRate / 100;
+      const quotationAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
 
       group.patchValue({
-        TaxRate: quotedTaxRate,
         TaxableAmountFC: taxableAmountFC,
         TaxAmountFC: taxAmountFC,
-        QuotationAmountFC: salesAmountFC
+        QuotationAmountFC: quotationAmountFC
       }, { emitEvent: true });
 
-      netAmount += salesAmountFC;
-      
+      netAmount += quotationAmountFC;
+
     });
 
-    let { rounded: netAmountRounded, coins: totalCoins } = isRoundOff ? this.roundValue(netAmount) : { rounded: netAmount, coins: 0 };
-
-    this.form.patchValue({ 
-      NetAmountFC: netAmountRounded,
-      CoinAdjustmentFC: totalCoins,
-      SubTotalAmountFC: this.getproductTaxableAmountFC(),
-      TaxAmountFC: this.getproductTaxAmountFCSum(),
-      // CoinAdjustmentBC: totalCoins * (this.form.get('ExchangeRateToBC')?.value || 1)
+    this.form.patchValue({
+      NetAmountFC: Number(netAmount.toFixed(3)),
+      SubtotalAmountFC: Number(this.getproductTaxableAmountFC().toFixed(3)),
+      TaxAmountFC: Number(this.getproductTaxAmountFCSum().toFixed(3)),
     }, { emitEvent: true });
   }
 
@@ -343,14 +329,9 @@ export class CreateComponent implements OnInit, OnDestroy {
       const taxAmountFC = Number((group.get('TaxAmountFC')?.value || 0).toFixed(3));
       const quotedAmountFC = Number((group.get('QuotationAmountFC')?.value || 0).toFixed(3));
 
-      // const rate = this.roundValue(ratePerUnitFC * exchangeRate, isRoundOff);
-      // const taxable = this.roundValue(taxableAmountFC * exchangeRate, isRoundOff);
-      // const tax = this.roundValue(taxAmountFC * exchangeRate, isRoundOff);
-      // const quotation = this.roundValue(quotedAmountFC * exchangeRate, isRoundOff);
-
       group.patchValue({
         RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
-        TaxableAmountBC:  Number((taxableAmountFC * exchangeRate).toFixed(3)),
+        TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
         TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
         QuotationAmountBC: Number((quotedAmountFC * exchangeRate).toFixed(3))
       }, { emitEvent: true });
@@ -360,18 +341,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     const subtotalAmountFC = this.getproductTaxableAmountFC();
     const taxAmountFC = this.getproductTaxAmountFCSum();
     const isRoundOff = this.form.get('IsRoundOff')?.value === true;
-
-    // const subtotal = this.roundValue(subtotalAmountFC * exchangeRate);
-    // const tax = this.roundValue(taxAmountFC * exchangeRate);
-
-    // totalCoins += subtotal.coins + tax.coins;
-    let { rounded: netAmountRounded, coins: totalCoins } = isRoundOff ? this.roundValue((this.form.get('NetAmountFC')?.value || 0) * exchangeRate) : { rounded: (this.form.get('NetAmountFC')?.value || 0) * exchangeRate, coins: 0 };
+    const netAmountFC = this.form.get('NetAmountFC')?.value;
 
     this.form.patchValue({
       SubtotalAmountBC: Number((subtotalAmountFC * exchangeRate).toFixed(3)),
       TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
-      NetAmountBC: netAmountRounded,
-      CoinAdjustmentBC: totalCoins
+      NetAmountBC: isRoundOff ? Math.round(netAmountFC * exchangeRate) : (netAmountFC * exchangeRate),
+      CoinAdjustment: isRoundOff ? Number(((netAmountFC * exchangeRate) - Math.round(netAmountFC * exchangeRate)).toFixed(3)) : 0
     });
   }
 
@@ -429,12 +405,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
     this.selectedCustomerAddress = event?.BillingAddress || '';
   }
-  
+
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
     this.convertAmountsToBC();
+    console.log(this.form.value);
     try {
       if (this.form.value.ProductList.length === 0) {
         this.alertService.showToast({
@@ -449,7 +426,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
-        
+
         this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
@@ -572,75 +549,59 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.pageService.GetQuotationDetails(QuotationID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            response.Data.Items.forEach(item => {
+          next: (response) => {
+            if (response.IsSuccess) {
+              response.Data.Items.forEach(item => {
+                const patchedModel = {
+                  ...item,
+                  ProductName: item.Product!.ProductName,
+                };
+                const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                productForm.patchValue(patchedModel);
+                this.productListArray.push(productForm);
+              });
+              this.tableDef.data = this.productListArray.value;
+              this.selectedCustomerAddress = model.Customer?.BillingAddress!;
+              console.log(model.Customer)
               const patchedModel = {
-                ...item,
-                ProductName: item.Product!.ProductName,
+                ...model,
+                CustomerID: model.Customer?.CompanyID,
+                CustomerName: model.Customer?.CompanyName,
+                QuotationDate: DateUtils.toDate(model.QuotationDate),
+                ValidityDate: DateUtils.toDate(model.ValidityDate)
               };
-              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue(patchedModel);
-              this.productListArray.push(productForm);
-            });
-            this.tableDef.data = this.productListArray.value;
-            this.selectedCustomerAddress = model.Customer?.BillingAddress!;
-            console.log(model.Customer)
-            const patchedModel = {
-              ...model,
-              CustomerID: model.Customer?.CompanyID,
-              CustomerName: model.Customer?.CompanyName,
-              QuotationDate: DateUtils.toDate(model.QuotationDate),
-              ValidityDate: DateUtils.toDate(model.ValidityDate)
-            };
 
-            this.form.patchValue(patchedModel);
-          }
-          else {
-            // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
-          }
-        },
-      });
+              this.form.patchValue(patchedModel);
+            }
+            else {
+              // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
+            }
+          },
+        });
     });
   }
-  
-  ///////Helper Methods///////
+
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
-  } 
- 
+  }
+
 
   private roundValue(value: number): { rounded: number, coins: number } {
-
     if (isNaN(value)) {
-      return {rounded : value, coins: 0};
+      return { rounded: value, coins: 0 };
     }
+
     const factor = Math.pow(10, 3);
     const rounded = Math.round(value * factor) / factor;
     const coins = +(value - rounded).toFixed(3);
 
-     console.log("Value:", value);
-    console.log("Rounded Value:", rounded);
-    console.log("Coint", coins);
-
-    return {rounded : rounded, coins: coins};
-    // return Math.round(value * factor) / factor;
-    // 57.855
-
-    // 57855
-    // const rounded = Number((Math.round(value * 1000) / 1000).toFixed(3));
-    // const coins = +(value - rounded).toFixed(3);
-
-    // console.log("Value:", value);
-    // console.log("Rounded Value:", rounded);
-    // console.log("Coint", coins);
-    // return { rounded, coins };
+    return { rounded: rounded, coins: coins };
   }
 
   getStatus(statusId: number | null | undefined): StaticList | undefined {
     return this.statusList.find(s => s.iValue === statusId);
   }
-  
+
   private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
     Object.keys(form.controls).forEach(key => {
       const control = form.get(key);
