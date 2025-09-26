@@ -3,7 +3,6 @@ export interface MenuMaster {
   ModuleID: number | null;
   MenuType: number | null;
   MenuName: string | null;
-  GroupMenuID: number | null;
   ParentMenuID: number | null;
   ControllerName: string | null;
   ActionName: string | null;

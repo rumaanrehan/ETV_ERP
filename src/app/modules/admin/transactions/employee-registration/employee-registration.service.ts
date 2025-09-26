@@ -58,11 +58,11 @@ export class EmployeeRegistrationService {
     designationList: ApiListResponse<Designation_SelectList>;
   }> {
     return forkJoin({
-      stateList: this.stateService.PopulateList({PopulateType: 'SelectList'} as StateRequest),
-      countryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
-      employeeTypeList: this.employeeTypeService.PopulateList({PopulateType: 'SelectList'} as EmployeeTypeRequest),
+      stateList: this.stateService.PopulateList({ PopulateType: 'SelectList' } as StateRequest),
+      countryList: this.countryService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),
+      employeeTypeList: this.employeeTypeService.PopulateList({ PopulateType: 'SelectList' } as EmployeeTypeRequest),
       departmentList: this.departmentService.PopulateList({ PopulateType: "SelectList" } as DepartmentRequest),
-      designationList: this.designationService.PopulateList({PopulateType: 'SelectList'} as EmployeeTypeRequest),
+      designationList: this.designationService.PopulateList({ PopulateType: 'SelectList' } as EmployeeTypeRequest),
     });
   }
 
@@ -71,15 +71,6 @@ export class EmployeeRegistrationService {
   }
 
   PopulateGrid(model: DataTableParams<EmployeeRegistration_IndexTableFilter>): Observable<ApiPagedListResponse<EmployeeRegistration_IndexTableList>> {
-    debugger
-    if (model.filters?.CanAccessERP == false) {
-      model.filters.CanAccessERP = false;
-    }
-    else if (model.filters?.CanAccessERP == true) {
-      model.filters.CanAccessERP = true;
-    } else if (model.filters?.CanAccessERP == 2) {
-      model.filters.CanAccessERP = null;
-    }
     return this.apiService.post<ApiPagedListResponse<EmployeeRegistration_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
@@ -202,7 +193,7 @@ export class EmployeeRegistrationService {
       AlternateMobileNo: {
         label: 'Alternate No',
         defaultValue: null,
-        validators: [ Validators.pattern(/^\+[1-9]\d{1,14}$/)],
+        validators: [Validators.pattern(/^\+[1-9]\d{1,14}$/)],
         validationMessages: {
           pattern: 'Please provide a correct Alternate Mobile No with country code.'
         },
@@ -297,7 +288,7 @@ export class EmployeeRegistrationService {
       EmergencyContactMobileNo: {
         label: 'Mobile No',
         defaultValue: null,
-        validators: [RequiredIf('EmergencyContactDetails', Operator.EqualTo, true),  Validators.pattern(/^\+[1-9]\d{1,14}$/)],
+        validators: [RequiredIf('EmergencyContactDetails', Operator.EqualTo, true), Validators.pattern(/^\+[1-9]\d{1,14}$/)],
         validationMessages: {
           requiredIf: 'Emergency Contact Mobile No is Required.',
           pattern: 'Please provide a correct Emergency Contact Mobile No with country code.'

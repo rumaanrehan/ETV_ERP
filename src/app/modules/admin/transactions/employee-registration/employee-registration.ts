@@ -93,10 +93,3 @@ export interface EmployeeRegistration_IndexTableList {
   CanAccessERP: boolean | null;
   CanDelete: boolean;
 }
-
-// export interface EmployeeRegistration_FileUpload {
-//   FileType: string | null;
-//   FileName: string | null;
-//   File: File | null;
-// }
-

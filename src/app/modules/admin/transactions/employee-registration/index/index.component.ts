@@ -58,9 +58,9 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'EmployeeCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.employeeCodeTemplate },
       { data: 'EmployeeName', label: 'Employee Name', filterable: true },
       { data: 'MobileNo', label: 'Mobile No', orderable: false, filterable: true },
-      { data: 'EmployeeTypeName', label: 'Employee Type', filterable: true, filterType: 'select', filterKey: 'EmployeeTypeID' ,cssClass: 'text-center' },
-      { data: 'DepartmentName', label: 'Department', filterable: true, filterType: 'select', filterKey: 'DepartmentID', cssClass: 'text-center'},
-      { data: 'DesignationName', label: 'Designation', filterable: true, filterType: 'select', filterKey: 'DesignationID', cssClass: 'text-center'},
+      { data: 'EmployeeTypeName', label: 'Employee Type', filterable: true, filterType: 'select', filterKey: 'EmployeeTypeID', cssClass: 'text-center' },
+      { data: 'DepartmentName', label: 'Department', filterable: true, filterType: 'select', filterKey: 'DepartmentID', cssClass: 'text-center' },
+      { data: 'DesignationName', label: 'Designation', filterable: true, filterType: 'select', filterKey: 'DesignationID', cssClass: 'text-center' },
       { data: 'CanAccessERP', label: 'ERP Access', orderable: false, filterable: true, filterType: 'select', filterKey: 'CanAccessERP', cssClass: 'text-center', customTemplate: this.canAccessERPTemplate }
       // { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.employeeActiveStatusTemplate },
       // { data: '', hideVisToggle: true, orderable: false, width: "1%", customTemplate: this.actionColTemplate }
@@ -120,46 +120,4 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     }
   }
-
-  // OnClickDelete(row: any) {
-  //   try {
-
-  //     const ActionType = "Cancel";
-  //     const inputPlaceholder = "Cancellation Reason";
-
-  //     this.alertService.showConfirmationWithInput({
-  //       inputPlaceholder: inputPlaceholder,
-  //       text: `Do you really want to ${ActionType} the Employee Registration of : "<b>${row.EmployeeName}</b>"? This action cannot be undone.`,
-  //     }).then(result => {
-  //       if (result.isConfirmed) {
-  //         const model: EmployeeRegistration = {
-  //           ...row,
-  //           ActionType: ActionType,
-  //           CancellationReason: result.value
-  //         };
-
-  //         this.pageService.DeleteRecord(model)
-  //           .pipe(takeUntil(this.destroy$))
-  //           .subscribe({
-  //             next: (response) => {
-  //               if (response.IsSuccess) {
-  //                 this.LoadData();
-  //                 this.alertService.showAlert({
-  //                   type: "success",
-  //                   text: response.Message,
-  //                   timer: 5000
-  //                 });
-  //               }
-  //               else {
-  //                 this.alertService.showServerResponseAlert(response);
-  //               }
-  //             }
-  //           });
-  //       }
-  //     });
-  //   }
-  //   catch (error) {
-
-  //   }
-  // }
 }
