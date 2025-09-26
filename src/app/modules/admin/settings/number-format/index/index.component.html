@@ -1,0 +1,161 @@
+<div class="col-xl-12">
+  <div class="col-xl-12 page-content">
+    <div class="col-xl-12 page-content-scrollable">
+      <form class="form-sidebar" [formGroup]="form" autocomplete="off">
+        <div class="col-xl-8 card card-body p-3 m-auto">
+          <div class="form-horizontal">
+            <div class="col-xl-3 form-group px-2">
+              <z-select
+                [group]="form"
+                [control]="'ModuleCode'"
+                (onChange)="onModuleChange()"
+                [label]="formConfig.ModuleCode.label"
+                [validationMessage]="formConfig.ModuleCode.error"
+                [options]="moduleList"
+                [optionLabel]="'ModuleName'"
+                [optionValue]="'ModuleCode'"
+              ></z-select>
+            </div>
+            <div class="col-xl-6"></div>
+            <div class="col-xl-3 form-group px-2">
+              <z-select
+                [group]="form"
+                [control]="'FormatFor'"
+                (onChange)="loadNumberFormats()"
+                [label]="formConfig.FormatFor.label"
+                [validationMessage]="formConfig.FormatFor.error"
+                [options]="formatForList"
+                [optionLabel]="'Text'"
+                [optionValue]="'Text'"
+              ></z-select>
+            </div>
+            <div class="col-xl-2 form-group px-2">
+              <z-inputnumber
+                [group]="form"
+                [control]="'StartNumber'"
+                [label]="formConfig.StartNumber.label"
+                [validationMessage]="formConfig.FormatFor.error"
+              >
+              </z-inputnumber>
+            </div>
+            <div class="col-xl-1"></div>
+            <div class="col-xl-3 form-group px-2">
+              <z-inputtext
+                [group]="form"
+                [control]="'PrefixFront'"
+                [label]="formConfig.PrefixFront.label"
+                [validationMessage]="formConfig.PrefixFront.error"
+              ></z-inputtext>
+            </div>
+            <div class="col-xl-3 form-group px-2">
+              <z-inputtext
+                [group]="form"
+                [control]="'PrefixRear'"
+                [label]="formConfig.PrefixRear.label"
+                [validationMessage]="formConfig.PrefixRear.error"
+              ></z-inputtext>
+            </div>
+            <div class="col-xl-3 form-group px-2">
+              <z-inputtext
+                [group]="form"
+                [control]="'Suffix'"
+                [label]="formConfig.Suffix.label"
+                [validationMessage]="formConfig.Suffix.error"
+              ></z-inputtext>
+            </div>
+            <div class="col-xl-2 form-group px-2">
+              <z-checkbox
+                [group]="form"
+                [control]="'PrefillZero'"
+                [label]="formConfig.PrefillZero.label"
+                [validationMessage]="formConfig.PrefillZero.error"
+              ></z-checkbox>
+            </div>
+            <div class="col-xl-1"></div>
+            <div class="col-xl-3 form-group px-2">
+              <z-inputnumber
+                [group]="form"
+                [control]="'WidthOfNumberPart'"
+                [label]="formConfig.WidthOfNumberPart.label"
+                [validationMessage]="formConfig.WidthOfNumberPart.error"
+              ></z-inputnumber>
+            </div>
+            <div class="col-xl-3 form-group px-2">
+              <z-datepicker
+                [group]="form"
+                [control]="'EffectiveFromDate'"
+                [label]="formConfig.EffectiveFromDate.label"
+                [validationMessage]="formConfig.EffectiveFromDate.error"
+              ></z-datepicker>
+            </div>
+            <div class="col-xl-3 form-group px-2">
+              <z-select
+                [group]="form"
+                [control]="'RestartType'"
+                [label]="formConfig.RestartType.label"
+                [validationMessage]="formConfig.RestartType.error"
+                [options]="restartTypeList"
+                [optionLabel]="'Text'"
+                [optionValue]="'cValue'"
+              ></z-select>
+            </div>
+          </div>
+        </div>
+      </form>
+      <!-- Table Component -->
+      <div class="col-xl-12 index-page-content">
+        <z-table [tableDef]="tableDef"></z-table>
+      </div>
+    </div>
+  </div>
+  <div class="page-action-panel">
+    <div class="col-xl-4"></div>
+    <div class="col-xl-4">
+    </div>
+    <div class="col-xl-4">
+      <div class="col-xl-3 px-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"> Save </button>
+      </div>
+      <div class="col-xl-3 px-1">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="resetForm()"> Reset </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Templates -->
+<ng-template #serialNoColTemplate let-rowData let-index="index">
+  {{ index + 1 }}
+</ng-template>
+
+<ng-template #effectiveFromTemplate let-rowData>
+  {{ rowData.EffectiveFromDate | date : "dd/MM/yyyy" }}
+</ng-template>
+
+<ng-template #termEndDateTemplate let-rowData>
+  {{ rowData.TermEndDate | date : "dd/MM/yyyy" }}
+</ng-template>
+
+<ng-template #prefillZeroTemplate let-rowData>
+  <span
+    class="badge"
+    [ngClass]="rowData.PrefillZero ? 'bg-success text-white' : 'text-warning'"
+  >
+    {{ rowData.PrefillZero ? "Yes" : "No" }}
+  </span>
+</ng-template>
+
+<ng-template #restartTypeTemplate let-rowData>
+  <span [ngSwitch]="rowData.RestartType">
+    <span *ngSwitchCase="'N'" class="badge bg-secondary">Never</span>
+    <span *ngSwitchCase="'D'" class="badge bg-light text-dark">Daily</span>
+    <span *ngSwitchCase="'M'" class="badge bg-light text-dark">Monthly</span>
+    <span *ngSwitchCase="'Y'" class="badge bg-light text-dark">Yearly</span>
+    <span *ngSwitchCase="'F'" class="badge bg-light text-dark">Financial Year</span>
+    <span *ngSwitchDefault class="badge bg-warning">Unknown</span>
+  </span>
+</ng-template>
+
+<ng-template #createdDateTemplate let-rowData>
+  {{ rowData.CreatedDateTime | date : "dd/MM/yyyy HH:mm" }}
+</ng-template>

@@ -35,7 +35,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     private pageService: PortMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
@@ -50,14 +50,14 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
 
     this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN',  width: "5%", hideVisToggle: true, orderable: false },
+      { data: 'RowID', label: 'SN', width: "5%", hideVisToggle: true, orderable: false },
       { data: 'PortID', visible: false, hideVisToggle: true, orderable: false },
       { data: 'PortCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.portCodeTemplate },
       { data: 'PortName', label: 'Port Name', filterable: true },
-      { data: 'PortTypeName', label: ' Port Type', filterable: true, filterType: 'select', filterKey: 'PortTypeID' },
+      { data: 'PortTypeName', label: ' Port Type', orderable: false, filterable: true, filterType: 'select', filterKey: 'PortTypeID' },
       { data: 'CountryName', label: ' Country', orderable: false, filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.portActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false,  cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
+      { data: '', hideVisToggle: true, orderable: false, cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
     ];
   }
 
@@ -85,14 +85,14 @@ export class IndexComponent implements OnInit, OnDestroy {
                   ...response.Data,
                 };
                 this.createSidebar.openSidebar(activeStatus, true, model);
-                
+
               } else {
                 this.alertService.showServerResponseAlert(response);
               }
             },
           });
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   onCloseSidebar(): void {
@@ -102,7 +102,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   onIndexTableLazyLoad(event: DataTableLazyLoadEvent) {
     this.tableEvent = event;
     this.loadData();
-  }  
+  }
 
   loadData() {
     try {
@@ -114,24 +114,24 @@ export class IndexComponent implements OnInit, OnDestroy {
         filters: this.tableDef.filterForm?.value,
       };
       this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
-          } else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        },
-      });
-    } catch (error) {}
-    
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            } else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
+          },
+        });
+    } catch (error) { }
+
   }
 
   onClickDeleteReactivate(row: any) {
@@ -167,6 +167,6 @@ export class IndexComponent implements OnInit, OnDestroy {
             });
         }
       });
-    } catch (error) {}
+    } catch (error) { }
   }
 }

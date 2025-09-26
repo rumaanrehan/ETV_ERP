@@ -60,8 +60,11 @@ export interface ProformaInvoice_SelectList {
 
 export interface ProformaInvoice_IndexTableFilter {
     ProformaInvoiceNo: string | null;
+    ProformaInvoiceDate: string | null;
+    BasedOnID: number | null;
+    ExportOrderNo: string | null;
     CustomerName: string | null;
-    StatusID: number | null;
+    ActiveStatusID: number | null;
 }
 
 export interface ProformaInvoice_IndexTableList {
@@ -78,6 +81,7 @@ export interface ProformaInvoice_IndexTableList {
 }
 
 export interface ProformaInvoiceRequest {
+    // ProformaInvoiceNo?: string | null;
     SearchBy: number | null;
     SearchValue: string | null;
     PopulateType: string | null;

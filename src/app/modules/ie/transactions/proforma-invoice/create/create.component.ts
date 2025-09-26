@@ -11,7 +11,6 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { TaxSlab_SelectList } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
 import { Product_SelectList, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 import { Company_SelectList, CompanyRequest } from '../../../settings/company-master/company-master';
 import { ExportOrder, ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
@@ -20,7 +19,8 @@ import { ProformaInvoiceService } from '../proforma-invoice.service';
 import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { CommonModule } from '@angular/common';
-import { Currency_SelectList } from '../../../../admin/settings/CurrencyMaster/currency-master';
+import { Currency_SelectList } from '../../../../admin/settings/currency-master/currency-master';
+import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
 
 @Component({
   selector: 'app-create',
@@ -309,6 +309,9 @@ export class CreateComponent {
     var taxAmount: number = 0;
     var netAmount: number = 0;
 
+    const freightCharge = this.form.get('FreightChargeFC')?.value || 0;
+    const bankCharges = this.form.get('BankChargesFC')?.value || 0;
+
     this.productListArray.controls.forEach((group: FormGroup) => {
       const quantity = group.get('SalesQty')?.value || 0;
       const rate = group.get('RatePerUnitFC')?.value || 0;
@@ -327,6 +330,8 @@ export class CreateComponent {
       taxAmount += taxAmountFC;
       netAmount += (taxableAmountFC + taxAmountFC);
     });
+
+    netAmount += (freightCharge + bankCharges);
 
     this.form.patchValue({ NetAmountFC: netAmount, SubtotalAmountFC: subtotalAmount, TaxAmountFC: taxAmount }, { emitEvent: true });
   }

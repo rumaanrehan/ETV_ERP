@@ -168,6 +168,76 @@ export const ieRoute: Routes = [
               }
             ]
           }
+          {
+            path: 'sales-quotation',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Sales Quotation'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/sales-quotation/dataview/dataview.component').then((m) => m.DataviewComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/SalesQuotation',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/sales-quotation/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/SalesQuotation',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/sales-quotation/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/SalesQuotation',
+                  breadcrumb: 'Edit'
+                }
+              }
+            ]
+          },
+          {
+            path: 'tax-invoice',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Tax Invoice'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/tax-invoice/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/TaxInvoice',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/tax-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/TaxInvoice',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/tax-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/TaxInvoice',
+                  breadcrumb: 'Edit'
+                }
+              }
+            ]
+          }
         ]
       },
 

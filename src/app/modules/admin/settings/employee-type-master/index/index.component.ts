@@ -52,7 +52,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'EmployeeTypeCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.employeeTypeCodeTemplate },
       { data: 'EmployeeTypeName', label: 'Employee Type Name', filterable: true },
-      { data: 'IsAllowedOverTime', label: 'IS Allowed Over Time', customTemplate: this.employeeTypeIsAllowedOverTimeTemplate },
+      { data: 'IsAllowedOverTime', label: 'IS Allowed Over Time', orderable: false, customTemplate: this.employeeTypeIsAllowedOverTimeTemplate },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.employeeTypeActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];

@@ -8,8 +8,8 @@ import { ZFormControlsModule } from '../../../../../shared/components/z-form-con
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { TaxSlab_SelectList, TaxSlabRequest } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master';
-import { TaxSlabMasterService } from '../../../../admin/settings/TaxSlabMaster/tax-slab-master.service';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
+import { TaxSlabMasterService } from '../../../../admin/settings/tax-slab-master/tax-slab-master.service';
 
 @Component({
   selector: 'app-create',

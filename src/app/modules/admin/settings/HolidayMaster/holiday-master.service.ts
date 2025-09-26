@@ -48,7 +48,6 @@ export class HolidayMasterService {
       HolidayCode: '',
       HolidayName: '',
       HolidayYear: 0,
-      HolidayTypeID: 0,
       ActiveStatusID: 0
     }
   }

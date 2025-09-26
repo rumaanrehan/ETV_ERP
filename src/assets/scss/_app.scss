@@ -38,7 +38,8 @@
 }
 
 [data-vertical-style=overlay][data-toggled=icon-overlay-close] .page-header-breadcrumb {
-  width: calc(100% - 79px);
+  // width: calc(100% - 79px);
+  width: 100%;
 }
 
 /*Page Header End*/
@@ -727,6 +728,9 @@ span {
 
 .form-horizontal {
   padding: 0.75rem 0.75rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .form-horizontal [class*="col-"] {
@@ -802,4 +806,15 @@ span {
 
 .status-pill span {
   color: #fff;
+}
+
+
+@media (min-width: 992px) {
+  .app-content {
+    min-height: calc(100vh - 7rem);
+    margin-block-end: 0;
+    margin-block-start: 2.75rem;
+    margin-inline-start: 15rem;
+    transition: all 0.05s ease;
+  }
 }

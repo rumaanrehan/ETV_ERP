@@ -1,26 +1,27 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { RequiredIf, Operator } from '../../../../shared/validators/required-if.validator';
-import { TaxInvoice_IndexTableFilter, TaxInvoice, TaxInvoiceRequest, TaxInvoice_SelectList, TaxInvoiceDetail, TaxInvoice_IndexTableList } from './tax-invoice';
+import { TaxInvoice_IndexTableFilter, TaxInvoice, TaxInvoiceRequest, TaxInvoice_SelectList, TaxInvoiceDetail, TaxInvoice_IndexTableList, Document_SelectList } from './tax-invoice';
 import { ApiService } from '../../../../core/services/api.service';
-import { CurrencyMasterService } from '../../../admin/settings/CurrencyMaster/currency-master.service';
-import { TaxSlabMasterService } from '../../../admin/settings/TaxSlabMaster/tax-slab-master.service';
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
 import { ExportOrderService } from '../export-order/export-order.service';
 import { Observable, forkJoin } from 'rxjs';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { StaticListRequest, StaticList } from '../../../../shared/models/select-list';
-import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/CurrencyMaster/currency-master';
-import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { ProductRequest, Product_SelectList } from '../../../ims/settings/product-master/product-master';
 import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
 import { ExportOrder, ExportOrderDetail, ExportOrderRequest, ExportOrder_SelectList } from '../export-order/export-order';
-import { ProformaInvoice, ProformaInvoice_SelectList, ProformaInvoiceDetail } from '../proforma-invoice/proforma-invoice';
+import { ProformaInvoice, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from '../proforma-invoice/proforma-invoice';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ProformaInvoiceService } from '../proforma-invoice/proforma-invoice.service';
+import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
+import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
+import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
 
 @Injectable({
   providedIn: 'root'
@@ -30,13 +31,13 @@ export class TaxInvoiceService {
 
   constructor(
     private apiService: ApiService,
+    private proformaInvoiceService: ProformaInvoiceService,
     private exportOrderService: ExportOrderService,
     private companyMasterService: CompanyMasterService,
     private productMasterService: ProductMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
     private currencyMasterService: CurrencyMasterService,
-    private selectListService: SelectListService,
-    private proformaInvoiceService: ProformaInvoiceService
+    private selectListService: SelectListService
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -51,6 +52,10 @@ export class TaxInvoiceService {
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
     return this.selectListService.GetStaticList(model);
+  }
+
+  GetProformaInvoiceList(model: ProformaInvoiceRequest): Observable<ApiListResponse<ProformaInvoice_SelectList>> {
+    return this.proformaInvoiceService.PopulateList(model);
   }
 
   GetExportOrderList(model: ExportOrderRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
@@ -69,12 +74,12 @@ export class TaxInvoiceService {
     return this.exportOrderService.GetDetails(exportOrderID);
   }
 
-  GetExportOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
-    return this.exportOrderService.GetOrderItemDetails(exportOrderID);
-  }
-
   GetProformaInvoiceDetails(proformaInvoice: number): Observable<ApiDataResponse<ProformaInvoice>> {
     return this.proformaInvoiceService.GetDetails(proformaInvoice);
+  }
+
+  GetExportOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
+    return this.exportOrderService.GetOrderItemDetails(exportOrderID);
   }
 
   GetProformaInvoiceItemDetails(proformaInvoice: number): Observable<ApiListResponse<ProformaInvoiceDetail>> {
@@ -98,6 +103,7 @@ export class TaxInvoiceService {
   }
 
   CreateRecord(model: TaxInvoice): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
@@ -115,8 +121,9 @@ export class TaxInvoiceService {
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<TaxInvoice_IndexTableFilter> {
     return {
       TaxInvoiceNo: '',
+      BasedOn: 0,
       CustomerName: '',
-      StatusID: 0
+      ActiveStatusID: 0
     }
   }
 
@@ -131,6 +138,22 @@ export class TaxInvoiceService {
         label: 'Tax Invoice No',
         defaultValue: "NEW"
       },
+      BasedOn: {
+        label: 'Based On',
+        defaultValue: 1, // 1 is for Proforma Invoice. 2 is for Export Order, 3 is for Direct
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Based On is required"
+        }
+      },
+      // ProformaInvoiceDate: {
+      //   label: 'Proforma Invoice Date',
+      //   defaultValue: null,
+      //   validators: [Validators.required],
+      //   validationMessages: {
+      //     required: "Proforma Invoice is required"
+      //   }
+      // },
       TaxInvoiceDate: {
         label: 'Tax Invoice Date',
         defaultValue: null,
@@ -139,21 +162,29 @@ export class TaxInvoiceService {
           required: "Tax Invoice is required"
         }
       },
-      BasedOn: {
-        label: 'Based On',
-        defaultValue: 1, // 1 is for Export Order. 2 is for Proforma Invoice, 3 is for Direct
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Based On is required"
-        }
-      },
+      // ProformaInvoiceNo: {
+      //   label: 'Proforma Invoice',
+      //   defaultValue: null,
+      //   validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
+      //   validationMessages: {
+      //     required: "Proforma Invoice is required"
+      //   }
+      // },
+      // ExportOrderNo: {
+      //   label: 'Export Order',
+      //   defaultValue: null,
+      //   validators: [RequiredIf("BasedOn", Operator.EqualTo, 2)],
+      //   validationMessages: {
+      //     required: "Export Order is required"
+      //   }
+      // },
       DocumentID: {
-        label: 'Document',
+        label: 'Document ID',
         defaultValue: null,
-        validators: [RequiredIf("BasedOn", Operator.NotEqualTo, 3)],
-        validationMessages: {
-          required: "Document is required"
-        }
+        // validators: [RequiredIf("BasedOn", Operator.NotEqualTo, 3)],
+        // validationMessages: {
+        //   required: "Document is required"
+        // }
       },
       DocumentNo: {
         label: 'Document No',
@@ -359,5 +390,90 @@ export class TaxInvoiceService {
         defaultValue: 1
       }
     };
+  }
+
+  getDocumentAutoCompleteDef(formConfig: FormConfigType<TaxInvoice>, form: FormGroup): AutoCompleteDef<Document_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'DocumentNo',
+      label: formConfig.DocumentNo.label,
+      validationMessage: formConfig.DocumentNo.error,
+      placeholder: 'Search Document',
+      options: [],
+      optionLabel: 'DocumentNo',
+      columns: [
+        { data: 'DocumentNo', label: 'Document No', width: '100px' },
+        { data: 'CustomerName', label: 'Customer Name', width: '200px' }
+      ],
+    }
+  }
+  
+  // getProformaInvoiceAutoCompleteDef(formConfig: FormConfigType<TaxInvoice>, form: FormGroup): AutoCompleteDef<ProformaInvoice_SelectList> {
+  //   return {
+  //     type: 'formControl',
+  //     group: form,
+  //     control: 'ProformaInvoiceNo',
+  //     label: formConfig.ProformaInvoiceNo.label,
+  //     validationMessage: formConfig.ProformaInvoiceNo.error,
+  //     placeholder: 'Search ProformaInvoice',
+  //     options: [],
+  //     optionLabel: 'ProformaInvoiceNo',
+  //     columns: [
+  //       { data: 'ProformaInvoiceNo', label: 'ProformaInvoiceNo', width: '100px' },
+  //       { data: 'CustomerName', label: 'Customer Name', width: '200px' }
+  //     ],
+  //   }
+  // }
+  
+  // getExportOrderAutoCompleteDef(formConfig: FormConfigType<TaxInvoice>, form: FormGroup): AutoCompleteDef<ExportOrder_SelectList> {
+  //   return {
+  //     type: 'formControl',
+  //     group: form,
+  //     control: 'ExportOrderNo',
+  //     label: formConfig.ExportOrderNo.label,
+  //     validationMessage: formConfig.ExportOrderNo.error,
+  //     placeholder: 'Search ExportOrder',
+  //     options: [],
+  //     optionLabel: 'ExportOrderNo',
+  //     columns: [
+  //       { data: 'ExportOrderNo', label: 'Export Order No', width: '100px' },
+  //       { data: 'CustomerName', label: 'Customer Name', width: '200px' }
+  //     ],
+  //   }
+  // }
+
+  getCompanyMasterAutoCompleteDef(formConfig: FormConfigType<TaxInvoice>, form: FormGroup): AutoCompleteDef<Company_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'CustomerName',
+      label: formConfig.CustomerID.label,
+      validationMessage: formConfig.CustomerID.error,
+      placeholder: 'Search Customer',
+      options: [],
+      optionLabel: 'CompanyName',
+      columns: [
+        { data: 'CompanyCode', label: 'Code', width: '150px' },
+        { data: 'CompanyName', label: 'Name', width: '150px' }
+      ],
+    }
+  }
+
+  getProductMasterAutoCompleteDef(formConfig: FormConfigType<TaxInvoice>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'ProductName',
+      label: formConfig.ProductName.label,
+      validationMessage: formConfig.ProductName.error,
+      placeholder: 'Search Product',
+      options: [],
+      optionLabel: 'ProductName',
+      columns: [
+        { data: 'ProductCode', label: 'Product Code', width: '100px' },
+        { data: 'ProductName', label: 'Product Name', width: '200px' }
+      ],
+    }
   }
 }

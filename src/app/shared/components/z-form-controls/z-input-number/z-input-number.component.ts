@@ -7,7 +7,7 @@ import { ShowValidationTooltipDirective } from '../../../layouts/directives/show
 @Component({
   selector: 'z-inputnumber',
   standalone: true,
-  imports: [ReactiveFormsModule,FloatLabelModule,InputNumberModule,ShowValidationTooltipDirective],
+  imports: [ReactiveFormsModule, FloatLabelModule, InputNumberModule, ShowValidationTooltipDirective],
   templateUrl: './z-input-number.component.html',
   styleUrl: './z-input-number.component.scss'
 })
@@ -20,9 +20,10 @@ export class ZInputNumberComponent {
   @Input() mode: 'decimal' | 'currency' = 'decimal';
   @Input() min: number | null = 0; //Mininum boundary value.
   @Input() max: number | null = null; //Maximum boundary value.
+  @Input() maxFractionDigits: number = 2;
   @Input() readonly: boolean = false;
-  
-  
+
+
   @Output() onChange = new EventEmitter<any>(); // Event emitter for value changes
 
   onValueChange(value: any): void {

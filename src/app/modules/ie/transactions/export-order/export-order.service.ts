@@ -16,13 +16,13 @@ import { PortMasterService } from '../../settings/port-master/port-master.servic
 import { Port_SelectList, PortRequest } from '../../settings/port-master/port-master';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
-import { TaxSlabMasterService } from '../../../admin/settings/TaxSlabMaster/tax-slab-master.service';
-import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/TaxSlabMaster/tax-slab-master';
 import { TableDef } from '../../../../shared/components/z-table/z-table';
 import { ExportOrderDocumentTemplate } from '../export-order-document/export-order-document';
 import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
+import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
 
 @Injectable({
   providedIn: 'root'

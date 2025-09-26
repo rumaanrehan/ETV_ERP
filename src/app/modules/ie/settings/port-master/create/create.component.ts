@@ -29,10 +29,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   activeStatus: boolean = false;
-  
+
   form!: FormGroup;
   formConfig!: FormConfigType<PortMaster>;
-  
+
   countryList: Country_SelectList[] = [];
   portTypeList: StaticList[] = [];
 
@@ -40,7 +40,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private pageService: PortMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
@@ -54,17 +54,17 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList(): void  {
+  loadDropdownList(): void {
     this.loadStaticLists([
       { fieldName: 'PortTypeID', targetList: 'portTypeList' },
     ]);
     this.pageService.GetMasterDropdownLists()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        this.countryList = data.countryList.Data.Items;
-      },
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.countryList = data.countryList.Data.Items;
+        },
+      });
   }
 
   loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
@@ -79,18 +79,18 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
 
     forkJoin(sources)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (response) => {
-        listConfigs.forEach(({ targetList }) => {
-          if (response[targetList]?.IsSuccess) {
-            (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
-          } else {
-            (this[targetList] as StaticList[]) = [];
-          }
-        });
-      },
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as StaticList[]) = [];
+            }
+          });
+        },
+      });
   }
 
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: PortMaster): void {
@@ -118,7 +118,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.isSubmitted = true;
 
     try {
-     
+
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -127,7 +127,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         return;
       }
 
-      
+
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
           text: 'Do you really want to Update?',
@@ -152,7 +152,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-  
+
   createRecord(model: PortMaster): void {
     try {
       this.pageService.CreateRecord(model)
