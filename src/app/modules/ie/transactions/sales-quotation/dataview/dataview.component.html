@@ -36,7 +36,7 @@
         <div class="col-12 p-3">
             <div class="d-flex justify-content-between">
                 <a (click)="onClickEditDetails(item.QuotationID)">
-                    <h5 class="text-primary mb-2">{{item.QuotationNo}} | {{item.CompanyName}}</h5>
+                    <h5 class="text-primary mb-2">{{item.QuotationNo}} | {{item.CustomerName}}</h5>
                 </a>
                 <div class="text-end">
                     <span class="badge bg-outline-primary">{{populateStatus(item.StatusID)}}</span>
@@ -55,21 +55,28 @@
                         </div>
                         <div class="col-xl-4 d-flex align-items-center">
                             <div class="col-xl-4">
-                                <span class="fs-6 text-secondary">Validity Date:</span>
+                                <span class="fs-6 text-secondary">Valid  Till:</span>
                             </div>
                             <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{formatDate(item.ValidityDate)}} </span>
+                                <span class="fs-6 text-secondary"> {{formatDate(item.ValidTill)}} </span>
                             </div>
                         </div>
                     </div>
                     <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
                         <div class="col-xl-4 d-flex align-items-center">
                             <div class="col-xl-4">
-                                <span class="fs-6 text-secondary">Quotation Total:</span>
+                                <span class="fs-6 text-secondary">Net Amount (FC):</span>
                             </div>
                             <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> <i
-                                        class="pi pi-indian-rupee"></i>{{item.NetAmountBC}} </span>
+                                <span class="fs-6 text-secondary"> {{item.NetAmountFC}} </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">No of Products:</span>
+                            </div>
+                            <div class="col-xl-7">
+                                <span class="fs-6 text-secondary"> {{item.NoOfProducts}} </span>
                             </div>
                         </div>
                         <div class="ms-auto" *ngIf="item.StatusID == 1 || item.StatusID == 2">

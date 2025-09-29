@@ -108,14 +108,13 @@ export class TaxInvoiceService {
   }
 
   UpdateRecord(model: TaxInvoice): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
   CancelRecord(model: TaxInvoice): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
-
-
 
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<TaxInvoice_IndexTableFilter> {
@@ -236,6 +235,10 @@ export class TaxInvoiceService {
       },
       FreightChargeFC: {
         label: 'Freight Charge (FC)',
+        defaultValue: null
+      },
+      FreightChargeBC:{
+        label: 'Freight Charge (BC)',
         defaultValue: null
       },
       InsuranceAmountFC: {
@@ -388,6 +391,14 @@ export class TaxInvoiceService {
       StatusID: {
         label: '',
         defaultValue: 1
+      },
+      IsRoundOff: {
+        label: 'Is Round Off',
+        defaultValue: true
+      },
+      CoinAdjustment: {
+        label: 'Coin Adjustment',
+        defaultValue: null
       }
     };
   }

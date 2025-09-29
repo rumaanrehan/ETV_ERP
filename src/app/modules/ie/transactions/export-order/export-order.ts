@@ -5,6 +5,9 @@ export interface ExportOrder {
     ExportOrderID: number | null;
     ExportOrderNo: string | null;
     ExportOrderDate: Date | null;
+    BasedOn: number | null;
+    QuotationID: number | null;
+    QuotationNo: string | null;
     ReferenceDate: Date | null;
     ReferenceNo: string | null;
     CustomerID: number | null;
@@ -40,6 +43,8 @@ export interface ExportOrder {
     FinalDestination: string | null;
     Narration: string | null;
     StatusID: number | null;
+    IsRoundOff: boolean | null;
+    CoinAdjustment: number | null;
 
     ProductID: number | null;
     ProductName: string | null;

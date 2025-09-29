@@ -73,7 +73,8 @@ export class SalesQuotationService {
   }
 
   GetQuotationItemDetails(quotationID: number): Observable<ApiListResponse<SalesQuotationDetail>> {
-    return this.apiService.post<ApiListResponse<SalesQuotationDetail>>(`${this.endpoint}/GetOrderItemDetails?exportOrderID=${quotationID}`, {});
+    console.log(quotationID);
+    return this.apiService.post<ApiListResponse<SalesQuotationDetail>>(`${this.endpoint}/GetQuotationDetails?quotationID=${quotationID}`, {});
   }
 
   CreateRecord(model: SalesQuotation): Observable<ApiResponse> {
@@ -291,19 +292,19 @@ export class SalesQuotationService {
         }
       },
       SubtotalAmountFC: {
-        label: 'Subtotal Amount(FC)',
+        label: '',
         defaultValue: null
       },
       SubtotalAmountBC: {
-        label: 'Subtotal Amount (BC)',
+        label: '',
         defaultValue: null
       },
       TaxAmountFC: {
-        label: 'Tax Amount (FC)',
+        label: '',
         defaultValue: null
       },
       TaxAmountBC: {
-        label: 'Tax Amount (BC)',
+        label: '',
         defaultValue: null
       },
       NetAmountFC: {

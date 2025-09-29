@@ -41,7 +41,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
 
     this.tableDef = {
-      tableKey: 'Admin_HsnSacMaster_IndexTable',
+      tableKey: 'IMS_HsnSacMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'HsnCode', sortOrder: 1 },
       filterForm: this.formService.createFormGroup_DataTableFilter<HsnSacMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
@@ -52,9 +52,9 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'HSNCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.hsnCodeTemplate },
-      { data: 'HSNCodeDescription', label: 'Description', orderable: false },
-      { data: 'IsServiceAccountCode', label: 'Is SAC', orderable: false, cssClass: 'text-center', width: "5%", customTemplate: this.isSACTemplate },
-      { data: 'TaxRate', label: 'Tax Rate', orderable: false, cssClass: 'text-center', width: "8%", customTemplate: this.taxRateTemplate },
+      { data: 'HSNCodeDescription', label: 'Description', filterable: true, orderable: false },
+      { data: 'IsServiceAccountCode', label: 'SAC', filterable: true, filterType: 'select', filterKey: 'IsServiceAccountCodeID', cssClass: 'text-center', width: "5%", customTemplate: this.isSACTemplate },
+      { data: 'TaxRate', label: 'Tax Rate', filterable: true, orderable: false, filterType: 'select', filterKey: 'TaxRate', cssClass: 'text-center', width: "8%", customTemplate: this.taxRateTemplate },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.hsnActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];

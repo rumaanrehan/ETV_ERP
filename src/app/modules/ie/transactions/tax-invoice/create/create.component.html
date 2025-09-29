@@ -96,40 +96,82 @@
                                     <z-textarea [group]="form" [control]="'Narration'"
                                         [label]="formConfig.Narration.label" [validationMessage]="formConfig.Narration.error"></z-textarea>
                                 </div>
-                                <div class="col-12 px-2 d-flex flex-column align-items-end gap-2">
-                                    <div class="col-12 col-xl-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <p class="mb-0">Subtotal Amount: </p>
-                                            <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
-                                                [label]="formConfig.SubtotalAmountFC.label"
-                                                [validationMessage]="formConfig.SubtotalAmountFC.error"
-                                                [readonly]="true"></z-inputnumber>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-xl-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <p class="mb-0">Tax Amount: </p>
-                                            <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
-                                                [label]="formConfig.TaxAmountFC.label"
-                                                [validationMessage]="formConfig.TaxAmountFC.error"
-                                                [readonly]="true"></z-inputnumber>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-xl-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <p class="mb-0">Net Amount: </p>
-                                            <z-inputnumber [group]="form" [control]="'NetAmountFC'"
-                                                [label]="formConfig.NetAmountFC.label"
-                                                [validationMessage]="formConfig.NetAmountFC.error"
-                                                [readonly]="true"></z-inputnumber>
-                                        </div>
-                                    </div>
+                                <div class="col-xl-1"></div>
+                                <div class="col-xl-1 pe-2 form-group">
+                                    <z-checkbox [group]="form" [control]="'IsRoundOff'"
+                                        [label]="formConfig.IsRoundOff.label">
+                                    </z-checkbox>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
+            <!-- <div class="card-body">                        
+                <div class="row px-2">
+                    <div class="col-xl-1"></div>
+                    <div class="col-12 col-xl-3">
+                        <div class="d-flex justify-content-between align-items-center ps-5 pt-2">
+                            <p class="mb-1">Subtotal Amount:</p>
+                            <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
+                            [label]="formConfig.SubtotalAmountFC.label"
+                            [validationMessage]="formConfig.SubtotalAmountFC.error"
+                            [readonly]="true"></z-inputnumber>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-3">
+                        <div class="d-flex justify-content-between align-items-center ps-5 pt-2">
+                            <p class="mb-1">Tax Amount:</p>
+                            <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
+                            [label]="formConfig.TaxAmountFC.label"
+                            [validationMessage]="formConfig.TaxAmountFC.error"
+                            [readonly]="true"></z-inputnumber>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-3">
+                        <div class="d-flex justify-content-between align-items-center ps-5 pt-2">
+                            <p class="mb-1">Net Amount:</p>
+                            <z-inputnumber [group]="form" [control]="'NetAmountFC'"
+                            [label]="formConfig.NetAmountFC.label"
+                            [validationMessage]="formConfig.NetAmountFC.error"
+                            [readonly]="true"></z-inputnumber>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="card-body">                        
+                <div class="col-12 px-2 d-flex flex-column align-items-end gap-2">
+                    <div class="col-12 col-xl-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="mb-0">Subtotal Amount: </p>
+                            <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
+                                [label]="formConfig.SubtotalAmountFC.label"
+                                [validationMessage]="formConfig.SubtotalAmountFC.error"
+                                [readonly]="true"></z-inputnumber>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="mb-0">Tax Amount: </p>
+                            <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
+                                [label]="formConfig.TaxAmountFC.label"
+                                [validationMessage]="formConfig.TaxAmountFC.error"
+                                [readonly]="true"></z-inputnumber>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="mb-0">Net Amount: </p>
+                            <z-inputnumber [group]="form" [control]="'NetAmountFC'"
+                                [label]="formConfig.NetAmountFC.label"
+                                [validationMessage]="formConfig.NetAmountFC.error"
+                                [readonly]="true"></z-inputnumber>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="page-action-panel">

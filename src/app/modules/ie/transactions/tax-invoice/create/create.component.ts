@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
@@ -29,7 +29,7 @@ import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/t
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
-export class CreateComponent {
+export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
@@ -342,20 +342,22 @@ export class CreateComponent {
     var subtotalAmount: number = 0;
     var taxAmount: number = 0;
     var netAmount: number = 0;
-  
+
     const freightCharge = this.form.get('FreightChargeFC')?.value || 0;
-    const bankChargeRate = this.form.get('BankChargesFC')?.value || 0;
+    const bankCharges = this.form.get('BankChargesFC')?.value || 0;
+
     this.productListArray.controls.forEach((group: FormGroup) => {
-      const quantity = group.get('SalesQty')?.value || 0;
       const rate = group.get('RatePerUnitFC')?.value || 0;
+      const quantity = group.get('SalesQty')?.value || 0;
       const salesTaxRate = group.get('SalesTaxRate')?.value || 0;
 
       const taxableAmountFC = quantity * rate;
       const taxAmountFC = (taxableAmountFC * salesTaxRate) / 100;
+      // const salesAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
 
       group.patchValue({
-        TaxAmountFC: taxAmountFC,
         TaxableAmountFC: taxableAmountFC,
+        TaxAmountFC: taxAmountFC,
         SalesAmountFC: taxableAmountFC + taxAmountFC
       }, { emitEvent: true });
 
@@ -364,7 +366,7 @@ export class CreateComponent {
       netAmount += (taxableAmountFC + taxAmountFC);
     });
 
-    netAmount += (freightCharge + bankChargeRate);
+    netAmount += (freightCharge + bankCharges);
 
     this.form.patchValue({ NetAmountFC: netAmount, SubtotalAmountFC: subtotalAmount, TaxAmountFC: taxAmount }, { emitEvent: true });
   }
@@ -377,33 +379,36 @@ export class CreateComponent {
       TaxAmountBC: this.form.get('TaxAmountFC')?.value * exchangeRate,
       InsuranceAmountBC: this.form.get('InsuranceAmountFC')?.value * exchangeRate,
       BankChargesBC: this.form.get('BankChargesFC')?.value * exchangeRate,
-      FreightChargeBC: this.form.get('FreightChargeFC')?.value * exchangeRate,
       NetAmountBC: this.form.get('NetAmountFC')?.value * exchangeRate
     }, { emitEvent: true });
 
     this.productListArray.controls.forEach((group: FormGroup) => {
-      const ratePerUnitFC = group.get('RatePerUnitFC')?.value || 0;
-      const taxableAmountFC = group.get('TaxableAmountFC')?.value || 0;
-      const taxAmountFC = group.get('TaxAmountFC')?.value || 0;
-      const salesAmountFC = group.get('SalesAmountFC')?.value || 0;
+      const ratePerUnitFC = Number(((group.get('RatePerUnitFC')?.value) || 0).toFixed(3));
+      const taxableAmountFC = Number(((group.get('TaxableAmountFC')?.value) || 0).toFixed(3));
+      const taxAmountFC = Number(((group.get('TaxAmountFC')?.value) || 0).toFixed(3));
+      const salesAmountFC = Number(((group.get('SalesAmountFC')?.value) || 0).toFixed(3));
 
       group.patchValue({
-        RatePerUnitBC: ratePerUnitFC * exchangeRate,
-        TaxableAmountBC: taxableAmountFC * exchangeRate,
-        TaxAmountBC: taxAmountFC * exchangeRate,
-        SalesAmountBC: salesAmountFC * exchangeRate,
+        TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
+        RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
+        TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
+        SalesAmountBC: Number((salesAmountFC * exchangeRate).toFixed(3)),
       }, { emitEvent: true });
     });
 
-    // After updating all rows, update the totals
     const subtotalAmountFC = this.getproductTaxableAmountFC();
     const taxAmountFC = this.getproductTaxAmountFCSum();
+    const isRoundOff = this.form.get('IsRoundOff')?.value === true;
+    const netAmountFC = this.form.get('NetAmountFC')?.value;
 
     this.form.patchValue({
-      SubtotalAmountFC: subtotalAmountFC,
-      SubtotalAmountBC: subtotalAmountFC * exchangeRate,
-      TaxAmountFC: taxAmountFC,
-      TaxAmountBC: taxAmountFC * exchangeRate
+      SubtotalAmountFC: Number(subtotalAmountFC.toFixed(3)),
+      SubtotalAmountBC: Number((subtotalAmountFC * exchangeRate).toFixed(3)),
+      FreightChargeBC: this.form.get('FreightChargeFC')?.value * exchangeRate,
+      TaxAmountFC: Number(taxAmountFC.toFixed(3)),
+      TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
+      NetAmountBC: isRoundOff ? Math.round(netAmountFC * exchangeRate) : (netAmountFC * exchangeRate),
+      CoinAdjustment: isRoundOff ? Number(((netAmountFC * exchangeRate)) - Math.round(netAmountFC * exchangeRate)).toFixed(3) : 0
     });
   }
 
@@ -570,6 +575,7 @@ export class CreateComponent {
               this.productListArray.push(productForm);
             });
             this.tableDef.data = this.productListArray.value;
+            this.selectedCustomerAddress = model.Customer?.BillingAddress!;
             const patchedModel = {
               ...model,
               TaxInvoiceDate: DateUtils.toDate(model.TaxInvoiceDate),

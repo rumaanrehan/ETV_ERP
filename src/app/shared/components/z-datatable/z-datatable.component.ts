@@ -33,6 +33,19 @@ export class ZDataTable<T> {
   showFilterPanel: boolean = false;
   selectedRow: any;
   tableLazyLoadEvent!: DataTableLazyLoadEvent;
+
+  isServiceAccountCodeList: any[] = [
+    { Value: 1, Text: 'Yes' },
+    { Value: 2, Text: 'No' },
+    { Value: 0, Text: 'All' }
+  ];
+  
+  isApprovalRequiredList: any[] = [
+    { Value: 1, Text: 'Yes' },
+    { Value: 2, Text: 'No' },
+    { Value: 0, Text: 'All' }
+  ];
+
   activeStatusList: any[] = [
     { Value: 1, Text: 'Active' },
     { Value: 2, Text: 'Inactive' },
@@ -83,6 +96,12 @@ export class ZDataTable<T> {
       if(col.filterable && col.filterType == 'select'){
         if(col.filterKey == 'ActiveStatusID'){
           col.filterSelectList = this.activeStatusList;
+        }
+        else if(col.filterKey == 'IsApprovalRequired'){
+          col.filterSelectList = this.isApprovalRequiredList;
+        }
+        else if(col.filterKey == 'IsServiceAccountCodeID'){
+          col.filterSelectList = this.isServiceAccountCodeList;
         }
         else{
           this.loadFilterList(col.filterKey);

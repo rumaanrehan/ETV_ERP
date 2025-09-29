@@ -66,9 +66,12 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   statusList: StaticList[] = [
     { Text: 'Draft', iValue: 1, cValue: '#6c757d' },
-    { Text: 'Sent', iValue: 2, cValue: '#007bff' },
-    { Text: 'Accepted', iValue: 3, cValue: '#28a745' },
-    { Text: 'Rejected', iValue: 4, cValue: '#dc3545' }
+    { Text: 'Pending Approval', iValue: 2, cValue: '#ffc107' },
+    { Text: 'Sent to Customer', iValue: 3, cValue: '#007bff' },
+    { Text: 'Accepted', iValue: 4, cValue: '#28a745' },
+    { Text: 'Rejected', iValue: 5, cValue: '#dc3545' },
+    { Text: 'Revised', iValue: 6, cValue: '#fd7e14' },
+    { Text: 'Converted', iValue: 7, cValue: '#20c997' }
   ];
 
   constructor(
@@ -585,18 +588,17 @@ export class CreateComponent implements OnInit, OnDestroy {
     return DateUtils.formatDate(date);
   }
 
+  // private roundValue(value: number): { rounded: number, coins: number } {
+  //   if (isNaN(value)) {
+  //     return { rounded: value, coins: 0 };
+  //   }
 
-  private roundValue(value: number): { rounded: number, coins: number } {
-    if (isNaN(value)) {
-      return { rounded: value, coins: 0 };
-    }
+  //   const factor = Math.pow(10, 3);
+  //   const rounded = Math.round(value * factor) / factor;
+  //   const coins = +(value - rounded).toFixed(3);
 
-    const factor = Math.pow(10, 3);
-    const rounded = Math.round(value * factor) / factor;
-    const coins = +(value - rounded).toFixed(3);
-
-    return { rounded: rounded, coins: coins };
-  }
+  //   return { rounded: rounded, coins: coins };
+  // }
 
   getStatus(statusId: number | null | undefined): StaticList | undefined {
     return this.statusList.find(s => s.iValue === statusId);

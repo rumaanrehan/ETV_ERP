@@ -56,9 +56,9 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'DocumentTypeCode', label: 'Code', filterable: true, customTemplate: this.documentTypeCodeTemplate },
       { data: 'DocumentTypeName', label: 'Document Type Name', filterable: true },
       { data: 'ShortCode', label: 'Short Code', filterable: true },
-      { data: 'IsApprovalRequired', label: 'Is Approval Required', orderable: false, filterable: true, filterType: 'select', filterKey: 'IsApprovalRequired', customTemplate: this.documentIsApprovalRequiredTemplate },
-      { data: 'ActiveStatus',label: 'Status',filterable: true,filterType: 'select',filterKey: 'ActiveStatusID',cssClass: 'text-center', width: '5%',customTemplate: this.documentTypeActiveStatusTemplate,},
-      {data: '',hideVisToggle: true,orderable: false,cssClass: 'text-center',width: '5%',customTemplate: this.actionColTemplate,}
+      { data: 'IsApprovalRequired', label: 'Approval', filterable: true, filterType: 'select', filterKey: 'IsApprovalRequired', cssClass: 'text-center', customTemplate: this.documentIsApprovalRequiredTemplate },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: '5%', customTemplate: this.documentTypeActiveStatusTemplate,},
+      {data: '',hideVisToggle: true, orderable: false,cssClass: 'text-center',width: '5%',customTemplate: this.actionColTemplate,}
     ];
   }
 

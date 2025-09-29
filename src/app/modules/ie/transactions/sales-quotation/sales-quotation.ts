@@ -74,8 +74,9 @@ export interface SalesQuotation_IndexTableList {
     QuotationID: number;
     QuotationNo: string;
     QuotationDate: string;
-    CompanyName: string;
-    ValidityDate: string;
-    NetAmountBC: number;
+    CustomerName: string;
+    ValidTill: string;
+    NetAmountFC: number;
+    NoOfProducts: number;
     StatusID: number;
 }
