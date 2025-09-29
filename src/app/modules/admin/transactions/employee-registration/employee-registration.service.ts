@@ -74,8 +74,8 @@ export class EmployeeRegistrationService {
     return this.apiService.post<ApiPagedListResponse<EmployeeRegistration_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(EmployeeID: number): Observable<ApiDataResponse<EmployeeRegistration>> {
-    return this.apiService.post<ApiDataResponse<EmployeeRegistration>>(`${this.endpoint}/GetDetails?EmployeeID=${EmployeeID}`, {});
+  GetDetails(employeeID: number): Observable<ApiDataResponse<EmployeeRegistration>> {
+    return this.apiService.post<ApiDataResponse<EmployeeRegistration>>(`${this.endpoint}/GetDetails?employeeID=${employeeID}`, {});
   }
 
   CreateRecord(model: EmployeeRegistration): Observable<ApiResponse> {

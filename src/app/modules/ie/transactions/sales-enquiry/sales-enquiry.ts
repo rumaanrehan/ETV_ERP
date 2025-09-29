@@ -1,62 +1,85 @@
+import { TList } from "../../../../shared/models/api-response";
 import { ProductMaster } from "../../../ims/settings/product-master/product-master";
 import { CompanyMaster } from "../../settings/company-master/company-master";
 
 export interface SalesEnquiry {
-    EnquiryID: number | null;
-    EnquiryNo: string | null;
+    SalesEnquiryID: number | null;
+    SalesEnquiryNo: string | null;
     EnquiryDate: Date | null;
     CustomerID: number | null;
     CustomerName: string | null;
-    ContactPersonName: string | null;
-    Email: string | null;
-    Phone: number | null;
-    Note: string | null;
+    ContactName: string | null;
+    ContactEmail: string | null;
+    ContactPhone: number | null;
     ExpectedDeliveryDate: Date | null;
+    Note: string | null;
+    ProductList: SalesEnquiryDetail[];
+
     ProductID: string | null;
     ProductName: string | null;
-    StatusID: number | null;
-
-    ProductList: SalesEnquiryDetail[];  
-
-    Customer?: CompanyMaster
+    Customer?: CompanyMaster;
 }
+
 export interface SalesEnquiryDetail {
     ProductID: number | null;
     ProductName: string | null;
     RequestedQty: number | null;
-    Remark: string | null;
+    Remarks: string | null;
 
-    Product?: ProductMaster;
-}
-
-export interface SalesEnquiryRequest {
-    EnquiryNo?: string | null;
-    CustomerName?: string | null;
-    PopulateType?: string | null;
+    Product?: ProductMaster; // Ye hatega
 }
 
 export interface SalesEnquiry_SelectList {
-    EnquiryID: number;
-    EnquiryNo: string;
+    SalesEnquiryID: number;
+    SalesEnquiryNo: string;
     CustomerName: string;
-    Remark: string | null;
 }
 
-
 export interface SalesEnquiry_IndexTableFilter {
-    EnquiryNo: string | null;
+    SalesEnquiryNo: string | null;
     CustomerName: string | null;
     StatusID: number | null;
 }
 
 export interface SalesEnquiry_IndexTableList {
+    SalesEnquiryID: number;
+    SalesEnquiryNo: string;
     CustomerName: string;
-    EnquiryID: number;
-    EnquiryNo: string;
-    ContactPersonName: string;
-    Email: string;
-    ExpectedDeliveryDate: Date | null;
-    StatusID: number;
+    ContactName: string;
+    ContactEmail: string;
+    EnquiryDate: Date;
+    ExpectedDeliveryDate: Date;
+    ProductCount: number;
+    StatusText: string;
+    StatusHex: string;
 }
 
+export interface SalesEnquiryRequest {
+    SalesEnquiryNo?: string | null;
+    CustomerName?: string | null;
+    PopulateType?: string | null;
+}
 
+export interface SalesEnquiry_Detail {
+    SalesEnquiryID: number;
+    SalesEnquiryNo: string;
+    EnquiryDate: Date;
+    CustomerID: number;
+    CustomerName: string;
+    ContactName: string;
+    CustomerAddress: string;
+    ContactEmail: string;
+    ContactPhone: number | null;
+    ExpectedDeliveryDate: Date | null;
+    Note: string | null;
+    StatusText: string;
+    StatusHex: string;
+    ProductList: TList<SalesEnquiryProduct_Detail>;
+}
+
+export interface SalesEnquiryProduct_Detail {
+    ProductID: number;
+    ProductName: string;
+    RequestedQty: number;
+    Remarks: string | null;
+}

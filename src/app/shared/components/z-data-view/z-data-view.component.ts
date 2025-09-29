@@ -1,5 +1,5 @@
 import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs';
+import { concat, Subject, takeUntil } from 'rxjs';
 import { DataViewDef, DataViewLazyLoadEvent, SortingForm } from './z-data-view';
 import { DataView, DataViewModule } from 'primeng/dataview';
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,7 @@ import { ZDataViewService } from './z-data-view.service';
 import { FormService } from '../../services/form.service';
 import { ZFormControlsModule } from '../z-form-controls/z-form-controls.module';
 import { StaticList } from '../../models/select-list';
+import { ApiListResponse } from '../../models/api-response';
 
 @Component({
   selector: 'z-data-view',
@@ -27,10 +28,11 @@ export class ZDataViewComponent<T> {
   @Input() sortFieldList!: any[];
 
   @Output() lazyLoad: EventEmitter<DataViewLazyLoadEvent> = new EventEmitter();
+  @Output() statusList = new EventEmitter<StaticList[]>();
 
   sortOrderList: any = [
-    {value: '1', text: 'ASC'},
-    {value: '-1', text: 'DESC'}
+    { value: '1', text: 'ASC' },
+    { value: '-1', text: 'DESC' }
   ]
 
   sortingForm!: FormGroup;
@@ -42,11 +44,17 @@ export class ZDataViewComponent<T> {
   constructor(
     private componentService: ZDataViewService,
     private formService: FormService
-  ){}
+  ) { }
 
-  ngOnInit(){
+  ngOnInit() {
     this.sortingFormConfig = this.componentService.getFormConfig_DataViewSorting();
     this.sortingForm = this.formService.createFormGroup(this.sortingFormConfig);
+    this.getStatusList();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadData(event: DataViewLazyLoadEvent) {
@@ -66,24 +74,24 @@ export class ZDataViewComponent<T> {
     });
   }
 
-  toggleFilterPanel(){
+  toggleFilterPanel() {
     this.isFilterPanelVisible = !this.isFilterPanelVisible;
   }
 
-  onClickApplyFilter(){
+  onClickApplyFilter() {
     this.toggleFilterPanel();
     setTimeout(() => {
       this.lazyLoad.emit(this.dataViewLazyLoadEvent);
     }, 1);
   }
 
-  refreshData(){
+  refreshData() {
     setTimeout(() => {
       this.lazyLoad.emit(this.dataViewLazyLoadEvent);
     }, 1);
   }
 
-  applySorting(){
+  applySorting() {
     this.dataViewLazyLoadEvent.sortField = this.sortingForm.value.sortField;
     this.dataViewLazyLoadEvent.sortOrder = this.sortingForm.value.sortOrder;
     setTimeout(() => {
@@ -93,5 +101,18 @@ export class ZDataViewComponent<T> {
         this.lazyLoad.emit(this.dataViewLazyLoadEvent);
       }, 1);
     });
+  }
+
+  getStatusList(): void {
+    const forTable = this.dataViewDef.tableKey.split('_')[0] + '_' + this.dataViewDef.tableKey.split('_')[1];;
+    this.componentService.GetStatusList(forTable)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: ApiListResponse<StaticList>) => {
+          const statusList = res.Data.Items;
+          this.statusList.emit(statusList);
+        },
+        error: (err) => console.error(err)
+      });
   }
 }

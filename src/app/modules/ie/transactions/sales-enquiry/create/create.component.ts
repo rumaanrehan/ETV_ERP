@@ -4,13 +4,11 @@ import { FormArray, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { SalesEnquiry, SalesEnquiryDetail } from "../sales-enquiry";
 import { SalesEnquiryService } from "../sales-enquiry.service";
 import { ActivatedRoute, Router } from "@angular/router";
-
 import { Subject, takeUntil } from "rxjs";
 import { ZFormControlsModule } from "../../../../../shared/components/z-form-controls/z-form-controls.module";
 import { TableDef } from "../../../../../shared/components/z-table/z-table";
 import { ZTableComponent } from "../../../../../shared/components/z-table/z-table.component";
 import { FormConfigType } from "../../../../../shared/models/form.model";
-import { StaticList } from "../../../../../shared/models/select-list";
 import { AlertNotificationService } from "../../../../../shared/services/alert-notification.service";
 import { FormService } from "../../../../../shared/services/form.service";
 import { PageHeaderService } from "../../../../../shared/services/page-header.service";
@@ -30,43 +28,24 @@ export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
-  @ViewChild('productNameColTemplate', { static: true }) productNameColTemplate!: TemplateRef<any>;
   @ViewChild('requestedQtyColTemplate', { static: true }) requestedQtyColTemplate!: TemplateRef<any>;
   @ViewChild('remarkColTemplate', { static: true }) remarkColTemplate!: TemplateRef<any>;
+  @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
 
   selectedCustomerAddress!: string | null;
+  statusText!: string | null;
+  statusHex!: string | null;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  isLoadDocumentVisible: boolean = true;
-  isLoadPaymentVisible: boolean = true;
 
   form!: FormGroup;
   formConfig!: FormConfigType<SalesEnquiry>;
   tableDef!: TableDef<SalesEnquiryDetail>;
- 
 
   customerList: Company_SelectList[] = [];
 
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
-
-  // currencyList: StaticList[] = [
-  //   { Text: 'USD - US Dollar', iValue: 1, cValue: 'USD - US Dollar' },
-  //   { Text: 'EUR - Euro', iValue: 2, cValue: 'EUR - Euro' },
-  //   { Text: 'JPY - Japanese Yen', iValue: 3, cValue: 'JPY - Japanese Yen' },
-  //   { Text: 'GBP - British Pound', iValue: 4, cValue: 'GBP - British Pound' },
-  //   { Text: 'INR - Indian Rupee', iValue: 5, cValue: 'INR - Indian Rupee' }
-  // ];
-  statusList: StaticList[] = [
-  { Text: 'Received', iValue: 1, cValue: '#6c757d' },         // Gray
-  { Text: 'Under Review', iValue: 2, cValue: '#007bff' },     // Blue
-  { Text: 'Quotation Generated', iValue: 3, cValue: '#28a745' }, // Green
-  { Text: 'Closed - Successful', iValue: 4, cValue: '#17a2b8' }, // Teal/Info
-  { Text: 'Closed - Lost', iValue: 5, cValue: '#ffc107' },    // Amber/Warning
-  { Text: 'Closed - Cancelled', iValue: 6, cValue: '#dc3545' } // Red/Danger
-];
-
-
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -76,7 +55,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute
   ) { }
-  
+
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.formConfig = this.pageService.getFormConfig();
@@ -84,35 +63,36 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
+
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%", customTemplate: this.productNameColTemplate },
+        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%" },
         { data: "RequestedQty", label: "Requested Qty", width: "10%", customTemplate: this.requestedQtyColTemplate },
-        { data: "Remark", label: "Remark", width: "15%", customTemplate: this.remarkColTemplate },
+        { data: "Remark", label: "Remark", width: "25%", customTemplate: this.remarkColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
       ],
       data: this.productListArray.value
     }
 
-    // this.loadDropdownList();
     this.getDetails();
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next(); 
+    this.destroy$.next();
     this.destroy$.complete();
   }
-    
+
   onClickPageHeaderBackButton(): void {
     try {
-      this.router.navigate(['/ie/sales-enquiry/dataview']);
+      this.router.navigate(['/ie/sales-enquiry/index']);
     } catch (error) { }
   }
 
   resetForm(): void {
     this.formService.resetFormValue<SalesEnquiry>(this.formConfig, this.form);
   }
-  
+
   get productListArray(): FormArray<FormGroup> {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
@@ -124,15 +104,11 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (result.isConfirmed) {
         this.productListArray.removeAt(index);
         this.tableDef.data = this.productListArray.value;
-        // this.productCalculation();
-
-        console.log(this.tableDef.data);
-        console.log(this.productListArray.value);
       }
     });
   }
-  
-  loadCompany(event: string): void {
+
+  loadCustomer(event: string): void {
     try {
       const dto: CompanyRequest = {
         CompanyTypeID: 1,
@@ -157,11 +133,17 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClear_Company(): void {
-    this.form.get('CompanyID')?.patchValue(null);
-    this.form.get('CompanyName')?.patchValue(null);
+  onSelect_Customer(event: Company_SelectList): void {
+    this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
+    this.selectedCustomerAddress = event?.BillingAddress || '';
   }
-  
+
+  onClear_Customer(): void {
+    this.form.get('CustomerID')?.patchValue(null);
+    this.form.get('CustomerName')?.patchValue(null);
+    this.selectedCustomerAddress = null;
+  }
+
   onSearch_Product(event: string): void {
     try {
       const dto: ProductRequest = {
@@ -200,37 +182,17 @@ export class CreateComponent implements OnInit, OnDestroy {
     const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
     productItemForm.patchValue({
       ProductID: event.ProductID,
-      ProductName: event.ProductName,
-      SalesTaxRate: event.PurTaxRate
+      ProductName: event.ProductName
     });
 
-    // this.productListArray = [...this.productListArray, productItemForm];
     this.productListArray.push(productItemForm);
-
-    console.log(this.form.value);
     this.tableDef.data = this.productListArray.value;
-
-    // console.log(this.form.value);
-    // console.log(this.productListArray.value);
-    // console.log(this.tableDef.data);
-
-    // const data: ExportOrder_ProductDetail = {
-    //   ProductID: event.ProductID, ProductName: event.ProductName, SalesQty: null, RatePerUnitBC: null, TaxRate: event.PurTaxRate
-    // }
-    // this.tableDef.data.push(data);
   }
 
-  OnCustomerSelect(event: Company_SelectList): void {
-    this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
-    this.selectedCustomerAddress = event?.BillingAddress || '';
-  }
-  
- 
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    // this.convertAmountsToBC();
     try {
       if (this.form.value.ProductList.length === 0) {
         this.alertService.showToast({
@@ -245,8 +207,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
-
-        this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -275,7 +235,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-    
+
   createRecord(model: SalesEnquiry): void {
     try {
       this.pageService
@@ -305,7 +265,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-      
+
   updateRecord(model: SalesEnquiry): void {
     try {
       this.pageService
@@ -320,7 +280,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 timer: 5000,
               });
               setTimeout(() => {
-                this.router.navigate(['/ie/sales-enquiry/dataview']);
+                this.router.navigate(['/ie/sales-enquiry/index']);
               }, 2000);
             } else {
               this.alertService.showServerResponseAlert(response);
@@ -338,16 +298,31 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getDetails(): void {
     this.route.params.subscribe((params) => {
-      const EnquiryID = +params['id'];
-      if (EnquiryID) {
+      const enquiryID = +params['id'];
+      if (enquiryID) {
         this.isEditMode = true;
         try {
-          this.pageService.GetDetails(EnquiryID)
+          this.pageService.GetDetails(enquiryID)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
-                  this.GetOrderItemDetails(response.Data)
+                  this.selectedCustomerAddress = response.Data.CustomerAddress;
+                  this.statusText = response.Data.StatusText;
+                  this.statusHex = response.Data.StatusHex;
+                  response.Data.ProductList.Items.forEach(item => {
+                    const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                    productForm.patchValue(item);
+                    this.productListArray.push(productForm);
+                  });
+                  this.tableDef.data = this.productListArray.value;
+                  const { ProductList, ...formValues } = response.Data;
+                  const data = {
+                    ...formValues,
+                    EnquiryDate: DateUtils.toDate(response.Data.EnquiryDate!),
+                    ExpectedDeliveryDate: DateUtils.toDate(response.Data.ExpectedDeliveryDate!)
+                  }
+                  this.form.patchValue(data);
                 } else {
                   this.alertService.showServerResponseAlert(response);
                 }
@@ -360,68 +335,4 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
-  GetOrderItemDetails(model: SalesEnquiry): void {
-    this.route.params.subscribe((params) => {
-      const EnquiryID = +params['id'];
-      this.pageService.GetOrderItemDetails(EnquiryID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              console.log(response.Data.Items);
-              // this.loadPortList();
-              response.Data.Items.forEach(item => {
-                const patchedModel = {
-                  ...item,
-                  ProductName: item.Product!.ProductName,
-                };
-                const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                productForm.patchValue(patchedModel);
-                this.productListArray.push(productForm);
-              });
-              this.tableDef.data = this.productListArray.value;
-              this.selectedCustomerAddress = model.Customer?.BillingAddress!;
-              const patchedModel = {
-                ...model,
-                CustomerID: model.Customer?.CompanyID,
-                CustomerName: model.Customer?.CompanyName,
-
-              };
-              this.form.patchValue(patchedModel);
-            }
-            else {
-              // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
-            }
-          },
-        });
-    });
-  }
-    
-  formatDate(date: Date) {
-    return DateUtils.formatDate(date);
-  }
-
-  getStatus(statusId: number | null | undefined): StaticList | undefined {
-    return this.statusList.find(s => s.iValue === statusId);
-  }
-
-  
-
-  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-    Object.keys(form.controls).forEach(key => {
-      const control = form.get(key);
-      const controlPath = parentKey ? `${parentKey}.${key}` : key;
-
-      if (control instanceof FormGroup || control instanceof FormArray) {
-        this.logInvalidControls(control, controlPath);
-      } else if (control && control.invalid) {
-        console.warn(
-          `❌ Invalid Control: ${controlPath}`,
-          control.errors
-        );
-      }
-    });
-  }
 }
-   

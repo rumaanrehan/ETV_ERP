@@ -141,7 +141,7 @@ export const ieRoute: Routes = [
             },
             children: [
               {
-                path: 'dataview',
+                path: 'index',
                 loadComponent: () => import('./transactions/sales-enquiry/dataview/dataview.component').then((m) => m.DataviewComponent),
                 data: {
                   permission: 'CanRead',

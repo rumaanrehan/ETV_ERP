@@ -15,7 +15,7 @@ import { ZSelectComponent } from '../z-form-controls/z-select/z-select.component
 @Component({
   selector: 'z-datatable',
   standalone: true,
-  imports: [CommonModule,FormsModule,ReactiveFormsModule,TableModule,OverlayPanelModule,CheckboxModule,ZInputTextComponent,ZSelectComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, OverlayPanelModule, CheckboxModule, ZInputTextComponent, ZSelectComponent],
   templateUrl: './z-datatable.component.html',
   styleUrl: './z-datatable.component.scss'
 })
@@ -41,37 +41,37 @@ export class ZDataTable<T> {
 
   constructor(
     private selectListService: SelectListService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.tableStateKey = `ZDataTable_${this.tableDef.tableKey}`;
     this.tableName = this.tableDef.tableKey.split('_');
-    
+
     this.generateHeaderStructure();
-    
+
     const tableSessionState = sessionStorage.getItem(this.tableStateKey);
     if (tableSessionState) {
       const tableSessionKeyData: { [key: string]: any } = JSON.parse(tableSessionState || '{}');
 
       /* Sort */
-      if(tableSessionKeyData['sortField']){
+      if (tableSessionKeyData['sortField']) {
         this.tableDef.defaultSortColumn.sortField = tableSessionKeyData['sortField'];
       }
-      if(tableSessionKeyData['sortOrder']){
+      if (tableSessionKeyData['sortOrder']) {
         this.tableDef.defaultSortColumn.sortOrder = tableSessionKeyData['sortOrder'];
       }
 
       /* Filters */
       const filters = tableSessionKeyData['filters'];
-      if(filters){
+      if (filters) {
         const filterFormValues: { [key: string]: string | null } = Object.keys(filters).reduce((acc: { [key: string]: string | null }, key: string) => {
-          if(filters[key]?.value){
+          if (filters[key]?.value) {
             acc[key] = filters[key]?.value;
           }
           return acc;
         }, {});
-        
-        if(filterFormValues){
+
+        if (filterFormValues) {
           this.tableDef.filterForm?.patchValue(filterFormValues);
         }
       }
@@ -80,11 +80,11 @@ export class ZDataTable<T> {
 
   generateHeaderStructure() {
     this.tableDef.columnDef.forEach((col) => {
-      if(col.filterable && col.filterType == 'select'){
-        if(col.filterKey == 'ActiveStatusID'){
+      if (col.filterable && col.filterType == 'select') {
+        if (col.filterKey == 'ActiveStatusID') {
           col.filterSelectList = this.activeStatusList;
         }
-        else{
+        else {
           this.loadFilterList(col.filterKey);
         }
       }
@@ -92,16 +92,16 @@ export class ZDataTable<T> {
       if (col.visible === false) {
         return;
       }
-  
+
       if (col.groupLabel) {
         const existingGroup = this.tableHeaderDef.find(
           (header) => header.label === col.groupLabel
         );
-  
+
         if (existingGroup && existingGroup.colSpan) {
           existingGroup.colSpan++;
           existingGroup.data += "," + col.data;
-        } 
+        }
         else {
           this.tableHeaderDef.push({
             data: col.data,
@@ -113,7 +113,7 @@ export class ZDataTable<T> {
             orderable: false
           });
         }
-        
+
         this.tableSubHeaderDef = this.tableSubHeaderDef ?? [];
         this.tableSubHeaderDef.push({
           data: col.data,
@@ -143,7 +143,7 @@ export class ZDataTable<T> {
         TableName: this.tableName[2],
         ColumnName: ColumnName
       };
-      
+
       this.selectListService.GetDataTableList(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -154,7 +154,7 @@ export class ZDataTable<T> {
                 targetRow.filterSelectList = response.Data.Items;
               }
             }
-            else{
+            else {
               //pending return message in toast mesage
             }
           },
@@ -165,11 +165,11 @@ export class ZDataTable<T> {
     }
   }
 
-  toggleFilterPanel(){
+  toggleFilterPanel() {
     this.showFilterPanel = !this.showFilterPanel;
   }
 
-  onFilter(event: any){
+  onFilter(event: any) {
     this.table.saveState();
   }
 
@@ -191,7 +191,7 @@ export class ZDataTable<T> {
   }
 
   onChangeColVisSwitch(toggledData: any): void {
-    if(toggledData.hasSubHeader){
+    if (toggledData.hasSubHeader) {
       toggledData.data.split(',').forEach((colName: string) => {
         this.tableDef.columnDef.forEach(col => {
           if (col.data === colName) {
@@ -205,7 +205,7 @@ export class ZDataTable<T> {
         });
       });
     }
-    else{
+    else {
       this.tableDef.columnDef.forEach(col => {
         if (col.data === toggledData.data) {
           col.visible = toggledData.visible;
@@ -213,8 +213,8 @@ export class ZDataTable<T> {
       });
     }
   }
-  
-  refreshData(){
+
+  refreshData() {
     setTimeout(() => {
       this.lazyLoad.emit(this.tableLazyLoadEvent);
     }, 1);

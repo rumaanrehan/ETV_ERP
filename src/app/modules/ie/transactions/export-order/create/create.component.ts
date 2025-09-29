@@ -191,9 +191,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.productListArray.removeAt(index);
         this.tableDef.data = this.productListArray.value;
         this.productCalculation();
-
-        console.log(this.tableDef.data);
-        console.log(this.productListArray.value);
       }
     });
   }
@@ -233,8 +230,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onClear_Company(): void {
-    this.form.get('CompanyID')?.patchValue(null);
-    this.form.get('CompanyName')?.patchValue(null);
+    this.form.get('CustomerID')?.patchValue(null);
+    this.form.get('CustomerName')?.patchValue(null);
+    this.selectedCustomerAddress = null;
   }
 
   onSearch_Product(event: string): void {
@@ -543,7 +541,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
               this.loadPortList();
               response.Data.Items.forEach(item => {
                 const patchedModel = {

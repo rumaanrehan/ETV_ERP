@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
+import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../../shared/services/form-validation.service';
@@ -10,7 +10,7 @@ import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { EmployeeRegistration_IndexTableFilter, EmployeeRegistration_IndexTableList } from '../employee-registration';
 import { EmployeeRegistrationService } from '../employee-registration.service';
-
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-index',
@@ -18,19 +18,19 @@ import { EmployeeRegistrationService } from '../employee-registration.service';
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
   imports: [ZDataTable, CommonModule, RouterLink],
-  providers: [FormValidationService]
+  providers: []
 })
 
-export class IndexComponent implements OnInit, OnDestroy {
+export class IndexComponent {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('employeeCodeTemplate', { static: true }) employeeCodeTemplate!: TemplateRef<any>;
   @ViewChild('canAccessERPTemplate', { static: true }) canAccessERPTemplate!: TemplateRef<any>;
-  // @ViewChild('employeeActiveStatusTemplate', { static: true }) employeeActiveStatusTemplate!: TemplateRef<any>;
-  // @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild('employeeActiveStatusTemplate', { static: true }) employeeActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
   tableDef!: DataTableDef<EmployeeRegistration_IndexTableList>;
-  tableEvent!: DataTableLazyLoadEvent;
+  tableEvent!: TableLazyLoadEvent;
 
   constructor(
     private pageService: EmployeeRegistrationService,
@@ -58,12 +58,11 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'EmployeeCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.employeeCodeTemplate },
       { data: 'EmployeeName', label: 'Employee Name', filterable: true },
       { data: 'MobileNo', label: 'Mobile No', orderable: false, filterable: true },
-      { data: 'EmployeeTypeName', label: 'Employee Type', filterable: true, filterType: 'select', filterKey: 'EmployeeTypeID', cssClass: 'text-center' },
-      { data: 'DepartmentName', label: 'Department', filterable: true, filterType: 'select', filterKey: 'DepartmentID', cssClass: 'text-center' },
-      { data: 'DesignationName', label: 'Designation', filterable: true, filterType: 'select', filterKey: 'DesignationID', cssClass: 'text-center' },
-      { data: 'CanAccessERP', label: 'ERP Access', orderable: false, filterable: true, filterType: 'select', filterKey: 'CanAccessERP', cssClass: 'text-center', customTemplate: this.canAccessERPTemplate }
-      // { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.employeeActiveStatusTemplate },
-      // { data: '', hideVisToggle: true, orderable: false, width: "1%", customTemplate: this.actionColTemplate }
+      { data: 'EmployeeTypeName', label: 'Company Type', width: "15%", filterable: true, filterType: 'select', filterKey: 'EmployeeTypeID' },
+
+      // { data: 'DepartmentName', label: 'Department', filterable: true, filterType: 'select', filterKey: 'DepartmentID', cssClass: 'text-center' },
+      // { data: 'DesignationName', label: 'Designation', filterable: true, filterType: 'select', filterKey: 'DesignationID', cssClass: 'text-center' },
+      // { data: 'CanAccessERP', label: 'ERP Access', orderable: false, filterable: true, filterType: 'select', filterKey: 'CanAccessERP', cssClass: 'text-center', customTemplate: this.canAccessERPTemplate }
     ];
   }
 
@@ -72,22 +71,22 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  OnClickPageHeaderAddButton(): void {
+  onClickPageHeaderAddButton(): void {
     this.router.navigate(['/admin/employee-registration/create']);
   }
 
-  OnClickEditDetails(employeeID: number) {
+  onClickEditDetails(employeeID: number): void {
     if (employeeID) {
       this.router.navigate([`/admin/employee-registration/edit/${employeeID}`]);
     }
   }
 
-  OnIndexTableLazyLoad(event: DataTableLazyLoadEvent) {
+  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
     this.tableEvent = event;
-    this.LoadData();
+    this.loadData();
   }
 
-  LoadData() {
+  loadData(): void {
     try {
       const model: DataTableParams<EmployeeRegistration_IndexTableFilter> = {
         first: this.tableEvent.first,

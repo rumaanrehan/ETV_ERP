@@ -10,41 +10,38 @@
         <div class="col-xl-12 card m-auto mb-2">
           <div class="card-body">
             <div class="horizontal-form">
-              <div class="row"> <!-- Customer Details -->
-                <div class="col-xl-3 form-group px-2">
-                  <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCompany($event)"
-                    (onSelect)="OnCustomerSelect($event)" (onClear)="onClear_Company()"></z-autocomplete>
+              <div class="row">
+                <!-- Customer Details -->
+                <div class="col-xl-2 form-group px-2">
+                  <z-span [text]="form.get('SalesEnquiryNo')?.value" [label]="formConfig.SalesEnquiryNo.label"></z-span>
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-datepicker [group]="form" [control]="'EnquiryDate'" [label]="formConfig.EnquiryDate.label"
                     [validationMessage]="formConfig.EnquiryDate.error"></z-datepicker>
                 </div>
-                <div class="col-xl-4"></div>
+                <div class="col-xl-6"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-inputtext [group]="form" [control]="'ContactPersonName'" [label]="formConfig.ContactPersonName.label"
-                    [validationMessage]="formConfig.ContactPersonName.error"></z-inputtext>
-                </div>
-                <div class="col-xl-2 form-group px-2">
-                  <z-inputtext [group]="form" [control]="'Email'" [label]="formConfig.Email.label"
-                    [validationMessage]="formConfig.Email.error"></z-inputtext>
-                </div>
-                <div class="col-xl-2 form-group px-2">
-                  <z-inputtext [group]="form" [control]="'Phone'" [label]="formConfig.Phone.label"
-                    [validationMessage]="formConfig.Phone.error"></z-inputtext>
-                </div>
-                <div class="col-xl-2 form-group px-2">
-                  <z-datepicker [group]="form" [control]="'ExpectedDeliveryDate'" [label]="formConfig.ExpectedDeliveryDate.label"
+                  <z-datepicker [group]="form" [control]="'ExpectedDeliveryDate'"
+                    [label]="formConfig.ExpectedDeliveryDate.label"
                     [validationMessage]="formConfig.ExpectedDeliveryDate.error"></z-datepicker>
                 </div>
-                <div class="col-xl-4 form-group px-2">
-                  <z-textarea [group]="form" [control]="'Note'" [label]="formConfig.Note.label"
-                    [validationMessage]="formConfig.Note.error"></z-textarea>
+                <div class="col-xl-3 form-group px-2">
+                  <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCustomer($event)"
+                    (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()"></z-autocomplete>
                 </div>
-
-                
-
-               
-                <div class="col-xl-9"></div>
+                <div class="col-xl-3"></div>
+                <div class="col-xl-2 form-group px-2">
+                  <z-inputtext [group]="form" [control]="'ContactName'" [label]="formConfig.ContactName.label"
+                    [validationMessage]="formConfig.ContactName.error"></z-inputtext>
+                </div>
+                <div class="col-xl-2 form-group px-2">
+                  <z-inputtext [group]="form" [control]="'ContactEmail'" [label]="formConfig.ContactEmail.label"
+                    [validationMessage]="formConfig.ContactEmail.error"></z-inputtext>
+                </div>
+                <div class="col-xl-2 form-group px-2">
+                  <z-inputtext [group]="form" [control]="'ContactPhone'" [label]="formConfig.ContactPhone.label"
+                    [validationMessage]="formConfig.ContactPhone.error"></z-inputtext>
+                </div>
                 <div class="col-xl-12 form-group px-2">
                   <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
                 </div>
@@ -58,20 +55,34 @@
                   <z-table [tableDef]="this.tableDef">
                   </z-table>
                 </div>
-                
+                <div class="col-xl-6 form-group px-2">
+                  <z-textarea [group]="form" [control]="'Note'" [label]="formConfig.Note.label"
+                    [validationMessage]="formConfig.Note.error"></z-textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
   <div class="page-action-panel">
-    <div class="col-xl-4"></div><div class="col-xl-4">
-      <div class="status-pill" [ngStyle]="{ 'background-color': getStatus(form.get('StatusID')?.value)?.cValue }" *ngIf="isEditMode">
-        <span>Status: {{ getStatus(form.get('StatusID')?.value)?.Text }}</span>
+    <div class="col-xl-4"></div>
+    <div class="col-xl-4">
+      <div class="status-pill" [ngStyle]="{'background-color': '#'+statusHex}" *ngIf="isEditMode">
+        <span>Status: {{statusText}}</span>
       </div>
-    </div>
+    </div>
     <div class="col-xl-4">
       <div class="col-xl-3 px-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"> {{ isEditMode ? "Update" :
+        <button type="submit" class="btn btn-md btn-primary w-100"
+          [disabled]="statusText != null && statusText != 'Received'" (click)="onSubmit()"> {{ isEditMode ?
+          "Update" :
           "Save" }} </button>
       </div>
       <div class="col-xl-3 px-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="resetForm()"> Reset </button>
+        <button type="button" class="btn btn-md btn-primary w-100" [disabled]="isEditMode" (click)="resetForm()"> Reset
+        </button>
       </div>
     </div>
   </div>
@@ -84,29 +95,21 @@
 <ng-template #requestedQtyColTemplate let-row let-i="index">
   <z-inputnumber [group]="productListArray.at(i)" [control]="'RequestedQty'"
     [label]="formConfig.ProductList.items.RequestedQty.label"
-    [validationMessage]="formConfig.ProductList.items.RequestedQty.error?.[i]" >
+    [validationMessage]="formConfig.ProductList.items.RequestedQty.error?.[i]">
   </z-inputnumber>
 </ng-template>
 
 <ng-template #remarkColTemplate let-row let-i="index">
-  <z-inputtext [group]="productListArray.at(i)" [control]="'Remark'"
-    [label]="formConfig.ProductList.items.Remark.label"
-    [validationMessage]="formConfig.ProductList.items.Remark.error?.[i]">
+  <z-inputtext [group]="productListArray.at(i)" [control]="'Remarks'"
+    [label]="formConfig.ProductList.items.Remarks.label"
+    [validationMessage]="formConfig.ProductList.items.Remarks.error?.[i]">
   </z-inputtext>
 </ng-template>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<ng-template #removeProductItemColTemplate let-row let-i="index">
+  <div class="d-flex justify-content-end">
+    <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+      (click)="onClickRemoveProductItem(i)">
+      <i class="pi pi-minus-circle"></i></span>
+  </div>
+</ng-template>

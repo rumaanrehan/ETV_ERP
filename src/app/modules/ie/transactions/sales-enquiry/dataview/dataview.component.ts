@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -12,14 +12,13 @@ import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { SalesEnquiry, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList } from '../sales-enquiry';
 import { SalesEnquiryService } from '../sales-enquiry.service';
 import { CommonModule } from '@angular/common';
-import { DataViewModule } from 'primeng/dataview';
 import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -29,7 +28,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
-  // componentRef?: ComponentRef<any>;
+  componentRef?: ComponentRef<any>;
 
   dataViewDef!: DataViewDef<SalesEnquiry_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
@@ -44,7 +43,9 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ]
 
   sortFieldList: any[] = [
-    { value: "StatusID", text: "Status" }
+    { value: "SalesEnquiryNo", text: "Sales Enquiry No" },
+    { value: "EnquiryDate", text: "Enquiry Date" },
+    { value: "ExpectedDeliveryDate", text: "Expected Delivery Date" }
   ]
 
   constructor(
@@ -54,120 +55,108 @@ export class DataviewComponent implements OnInit, OnDestroy {
     private alertService: AlertNotificationService,
     private router: Router
   ) { }
+
   ngOnInit(): void {
-      this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-      this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
-      this.filterForm = this.formService.createFormGroup<SalesEnquiry_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
-      this.dataViewDef = {
-        tableKey: 'Admin_SalesEnquiry_IndexDataView',
-        defaultSortColumn: { sortField: 'EnquiryNo', sortOrder: 1 },
-        filterForm: this.filterForm,
-        data: [],
-        totalRecords: 0,
-        loading: false
+    this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
+    this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
+    this.filterForm = this.formService.createFormGroup<SalesEnquiry_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
+    this.dataViewDef = {
+      tableKey: 'IE_SalesEnquiry_IndexDataView',
+      defaultSortColumn: { sortField: 'EnquiryNo', sortOrder: 1 },
+      filterForm: this.filterForm,
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
+    this.dataViewEvent = event;
+    this.loadData();
+  }
+
+  onClickPageHeaderAddButton() {
+    this.router.navigate(['ie/sales-enquiry/create']);
+  }
+
+  loadData() {
+    try {
+      const model: DataViewParams<SalesEnquiry_IndexTableFilter> = {
+        first: this.dataViewEvent.first,
+        last: this.dataViewEvent.rows,
+        sortField: this.dataViewEvent.sortField,
+        sortOrder: this.dataViewEvent.sortOrder,
+        filters: this.filterForm.value
       };
-    }
-  
-    ngOnDestroy(): void {
-      this.destroy$.next();
-      this.destroy$.complete();
-    }
-  
-    onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
-      this.dataViewEvent = event;
-      this.loadData();
-    }
-  
-    onClickPageHeaderAddButton() {
-      this.router.navigate(['ie/sales-enquiry/create']);
-    }
-  
-    loadData() {
-      try {
-        const model: DataViewParams<SalesEnquiry_IndexTableFilter> = {
-          first: this.dataViewEvent.first,
-          last: this.dataViewEvent.rows,
-          sortField: this.dataViewEvent.sortField,
-          sortOrder: this.dataViewEvent.sortOrder,
-          filters: this.filterForm.value
-        };
-        this.pageService.PopulateGrid(this.formService.transformFormData(model))
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                console.log(response.Data.Items)
-                this.dataViewDef.data = response.Data.Items;
-                this.dataViewDef.totalRecords = response.Data.TotalRecords;
-              }
-              else {
-                this.dataViewDef.data = [];
-                this.dataViewDef.totalRecords = 0;
-                this.alertService.showServerResponseToast(response);
-              }
-            },
-            complete: () => {
-              this.dataViewDef.loading = false;
+      this.pageService.PopulateGrid(this.formService.transformFormData(model))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.dataViewDef.data = response.Data.Items;
+              this.dataViewDef.totalRecords = response.Data.TotalRecords;
             }
-          });
-      }
+            else {
+              this.dataViewDef.data = [];
+              this.dataViewDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.dataViewDef.loading = false;
+          }
+        });
+    }
 
-  catch (error) {
+    catch (error) {
 
-  }
-}
-
-onClickEditDetails(EnquiryID: number) {
-  if (EnquiryID) {
-    this.router.navigate([`ie/sales-enquiry/edit/${EnquiryID}`]);
-  }
-}
-
-onClickCancel(row: any) {
-  this.alertService
-    .showConfirmationWithInput({
-      text: 'Do you want to cancel?',
-      inputPlaceholder: 'Reason to cancel'
-    })
-    .then((result) => {
-      if (result.isConfirmed) {
-        const model: SalesEnquiry = {
-          ...row,
-          ReasonToUpdate: result.Message
-        }
-
-        this.pageService.CancelOrder(model)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              this.loadData();
-              if (response.IsSuccess) {
-                this.alertService.showAlert({
-                  type: 'success',
-                  text: response.Message,
-                  timer: 5000,
-                });
-              } else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
-      }
-    });
-}
-populateStatus(statusID: number): string {
-    switch (statusID) {
-      case 1:
-        return 'Processing';
-      case 2:
-        return 'Ready to ship';
-      case 3:
-        return 'Canceled';
-      default:
-        return 'Undefined';
     }
   }
-  
+
+  onClickEditDetails(enquiryID: number) {
+    if (enquiryID) {
+      this.router.navigate([`ie/sales-enquiry/edit/${enquiryID}`]);
+    }
+  }
+
+  onClickCancel(row: any) {
+    this.alertService
+      .showConfirmationWithInput({
+        text: 'Do you want to cancel?',
+        inputPlaceholder: 'Reason to cancel'
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const model: SalesEnquiry = {
+            ...row,
+            ReasonToUpdate: result.Message
+          }
+
+          this.pageService.CancelOrder(model)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                this.loadData();
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: 'success',
+                    text: response.Message,
+                    timer: 5000,
+                  });
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+      });
+  }
+
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
