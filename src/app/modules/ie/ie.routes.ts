@@ -134,6 +134,41 @@ export const ieRoute: Routes = [
             ]
           },
           {
+            path: 'sales-enquiry',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Sales Enquiry'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/sales-enquiry/dataview/dataview.component').then((m) => m.DataviewComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/SalesEnquiry',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/sales-enquiry/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/SalesEnquiry',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/sales-enquiry/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/SalesEnquiry',
+                  breadcrumb: 'Edit'
+                }
+              }
+            ]
+          },
+          {
             path: 'sales-quotation',
             canActivateChild: [AuthenticationGuard, AuthorizationGuard],
             data: {

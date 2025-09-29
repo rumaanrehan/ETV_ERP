@@ -78,14 +78,6 @@ export class MenuMasterService {
           required: 'Menu type is required'
         }
       },
-      GroupMenuID: {
-        label: 'Group Menu',
-        defaultValue: null,
-        validators: [RequiredIf('MenuType', Operator.NotEqualTo, 1)],
-        validationMessages: {
-          requiredIf: 'Group menu is required'
-        }
-      },
       ParentMenuID: {
         label: 'Parent Menu',
         defaultValue: null,

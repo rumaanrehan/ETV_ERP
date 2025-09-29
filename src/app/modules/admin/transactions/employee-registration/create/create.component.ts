@@ -49,7 +49,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   departmentList: Department_SelectList[] = [];
   designationList: Designation_SelectList[] = [];
   signatoryAreaList: StaticList[] = [];
-  
+
   genderList: any[] = [
     { GenderID: 1, GenderName: 'Male' },
     { GenderID: 3, GenderName: 'FeMale' },
@@ -109,7 +109,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     { Text: "Guardian", iValue: 9, cValue: "Guardian" },
     { Text: "Other", iValue: 10, cValue: "Other" }
   ];
-  
+
   constructor(
     private pageService: EmployeeRegistrationService,
     private pageHeaderService: PageHeaderService,
@@ -134,7 +134,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   OnClickPageHeaderAddButton(): void {
-    this.router.navigate(['/admin/employee-registration']);
+    this.router.navigate(['/admin/employee-registration/index']);
   }
 
   // OnClickPageHeaderBackToListButton(): void {
@@ -171,26 +171,26 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   LoadDropdownList(): void {
     this.pageService.GetMasterDropdownLists()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        if (data.employeeTypeList.IsSuccess) {
-          this.employeeTypeList = data.employeeTypeList.Data.Items;
-        }
-        if (data.departmentList.IsSuccess) {
-          this.departmentList = data.departmentList.Data.Items;
-        }
-        if (data.countryList.IsSuccess) {
-          this.countryList = data.countryList.Data.Items;
-        }
-        if (data.stateList.IsSuccess) {
-          this.stateList = data.stateList.Data.Items;
-        }
-        if (data.designationList.IsSuccess) {
-          this.designationList = data.designationList.Data.Items;
-        }
-      },
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          if (data.employeeTypeList.IsSuccess) {
+            this.employeeTypeList = data.employeeTypeList.Data.Items;
+          }
+          if (data.departmentList.IsSuccess) {
+            this.departmentList = data.departmentList.Data.Items;
+          }
+          if (data.countryList.IsSuccess) {
+            this.countryList = data.countryList.Data.Items;
+          }
+          if (data.stateList.IsSuccess) {
+            this.stateList = data.stateList.Data.Items;
+          }
+          if (data.designationList.IsSuccess) {
+            this.designationList = data.designationList.Data.Items;
+          }
+        },
+      });
   }
 
   OnChangeCountry(): void {
@@ -368,24 +368,24 @@ export class CreateComponent implements OnInit, OnDestroy {
             ReasonForTermination: result.value
           };
           this.pageService.TerminateEmployee(model)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.alertService.showAlert({
-                type: "success",
-                text: response.Message,
-                timer: 5000
-              });
-              setTimeout(() => {
-                this.router.navigate(['/admin/employee-registration']);
-              }, 2000);
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: "success",
+                    text: response.Message,
+                    timer: 5000
+                  });
+                  setTimeout(() => {
+                    this.router.navigate(['/admin/employee-registration']);
+                  }, 2000);
+                }
+                else {
+                  this.alertService.showServerResponseAlert(response);
+                }
               }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            }
-          });
+            });
         }
       });
     }

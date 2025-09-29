@@ -50,12 +50,12 @@ export const adminRoute: Routes = [
           {
             path: 'number-format',
             loadComponent: () => import('./settings/number-format/index/index.component').then((m) => m.IndexComponent),
-            // canActivate: [AuthenticationGuard, AuthorizationGuard],
-            // data: {
-            //   permission: 'CanRead',
-            //   menu: 'Admin/NumberFormat',
-            //   breadcrumb: 'Number Format'
-            // }
+            canActivate: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              permission: 'CanRead',
+              menu: 'Admin/NumberFormat',
+              breadcrumb: 'Number Format'
+            }
           },
           {
             path: 'role-master',
@@ -132,34 +132,34 @@ export const adminRoute: Routes = [
             }
           },
           {
-            path: 'employee-registration',
-            loadComponent: () => import('./transactions/employee-registration/index/index.component').then((m) => m.IndexComponent)
-            // canActivate: [AuthenticationGuard, AuthorizationGuard],
-            // data: {
-            //   permission: 'CanRead',
-            //   menu: 'Admin/EmployeeTypeMaster',
-            //   breadcrumb: 'Employee Type Master'
-            // }
+            path: 'employee-registration/index',
+            loadComponent: () => import('./transactions/employee-registration/index/index.component').then((m) => m.IndexComponent),
+            canActivate: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              permission: 'CanRead',
+              menu: 'Admin/EmployeeTypeMaster',
+              breadcrumb: 'Employee Type Master'
+            }
           },
           {
             path: 'employee-registration/create',
-            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent)
-            // canActivate: [AuthenticationGuard, AuthorizationGuard],
-            // data: {
-            //   permission: 'CanRead',
-            //   menu: 'Admin/EmployeeTypeMaster',
-            //   breadcrumb: 'Employee Type Master'
-            // }
+            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent),
+            canActivate: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              permission: 'CanRead',
+              menu: 'Admin/EmployeeTypeMaster',
+              breadcrumb: 'Employee Type Master'
+            }
           },
           {
             path: 'employee-registration/edit/:id',
-            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent)
-            // canActivate: [AuthenticationGuard, AuthorizationGuard],
-            // data: {
-            //   permission: 'CanRead',
-            //   menu: 'Admin/EmployeeTypeMaster',
-            //   breadcrumb: 'Employee Type Master'
-            // }
+            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent),
+            canActivate: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              permission: 'CanRead',
+              menu: 'Admin/EmployeeTypeMaster',
+              breadcrumb: 'Employee Type Master'
+            }
           }
         ]
       }

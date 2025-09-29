@@ -18,7 +18,7 @@ import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datat
   styleUrl: './index.component.scss'
 })
 export class IndexComponent {
-private destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('companyCodeTemplate', { static: true }) companyCodeTemplate!: TemplateRef<any>;
   @ViewChild('companyTypeTemplate', { static: true }) companyTypeTemplate!: TemplateRef<any>;
@@ -49,12 +49,12 @@ private destroy$ = new Subject<void>();
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'CompanyCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.companyCodeTemplate },
+      { data: 'CompanyCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.companyCodeTemplate },
       { data: 'CompanyName', label: 'Company Name', width: "15%", filterable: true },
       { data: 'CompanyTypeName', label: 'Company Type', width: "15%", filterable: true, filterType: 'select', filterKey: 'CompanyTypeID', customTemplate: this.companyTypeTemplate },
       { data: 'CompanyEmailID', label: 'EmailID', orderable: false, width: "20%" },
       { data: 'ImportLicenseNo', label: 'Import License No', orderable: false, width: "20%" },
-      { data: 'ActiveStatus', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.companyActiveStatusTemplate},
+      { data: 'ActiveStatus', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.companyActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "6%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -74,28 +74,28 @@ private destroy$ = new Subject<void>();
     try {
       if (this.createSidebar && companyID) {
         this.pageService.GetDetails(companyID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
       }
     }
     catch (error) {
 
     }
   }
-  
+
   onCloseSidebar(): void {
     this.loadData();
   }
-  
+
   onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
     this.tableEvent = event;
     this.loadData();
@@ -111,23 +111,23 @@ private destroy$ = new Subject<void>();
         filters: this.tableDef.filterForm?.value
       };
       this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            }
+            else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
           }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
+        });
     }
     catch (error) {
 
@@ -143,33 +143,33 @@ private destroy$ = new Subject<void>();
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.CompanyName}</b>"?`,
       })
-      .then(result => {
-        if (result.isConfirmed) {
-          const model: CompanyMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
+        .then(result => {
+          if (result.isConfirmed) {
+            const model: CompanyMaster = {
+              ...row,
+              ActionType: ActionType,
+              ReasonToUpdate: result.value
+            };
 
-          this.pageService.DeleteReactivate(model)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.loadData();
-                this.alertService.showAlert({
-                  type: "success",
-                  text: response.Message,
-                  timer: 5000
-                });
-              }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            }
-          });
-        }
-      });
+            this.pageService.DeleteReactivate(model)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response) => {
+                  if (response.IsSuccess) {
+                    this.loadData();
+                    this.alertService.showAlert({
+                      type: "success",
+                      text: response.Message,
+                      timer: 5000
+                    });
+                  }
+                  else {
+                    this.alertService.showServerResponseAlert(response);
+                  }
+                }
+              });
+          }
+        });
     }
     catch (error) {
 

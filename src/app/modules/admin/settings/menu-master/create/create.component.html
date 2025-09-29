@@ -7,8 +7,7 @@
       <div class="col-xl-12 form-group">
         <z-select [group]="form" [control]="'ModuleID'" [label]="formConfig.ModuleID.label"
           [validationMessage]="formConfig.ModuleID.error" [options]="moduleList" [optionLabel]="'ModuleName'"
-          [optionValue]="'ModuleID'"
-          onselect="loadMenuType($event)" (onChange)="onModuleChange($event)">
+          [optionValue]="'ModuleID'" onselect="loadMenuType($event)" (onChange)="onModuleChange($event)">
         </z-select>
       </div>
       <div class="col-xl-12 form-group">
@@ -18,25 +17,17 @@
         </z-select>
       </div>
       <div class="col-xl-12 form-group" *ngIf="form.get('MenuType')?.value == 2">
-        <z-select [group]="form" [control]="'GroupMenuID'" [label]="formConfig.GroupMenuID.label"
-          [validationMessage]="formConfig.GroupMenuID.error"
-          [options]="groupMenuList" [optionLabel]="'MenuName'" [optionValue]="'MenuID'">
-        </z-select>
-      </div>
-      <div class="col-xl-12 form-group" *ngIf="form.get('MenuType')?.value == 3">
         <z-select [group]="form" [control]="'ParentMenuID'" [label]="formConfig.ParentMenuID.label"
           [validationMessage]="formConfig.ParentMenuID.error" [options]="parentMenuList" [optionLabel]="'MenuName'"
           [optionValue]="'MenuID'">
         </z-select>
       </div>
       <div class="col-xl-12 form-group" *ngIf="[1,2].includes(form.get('MenuType')?.value)">
-        <z-inputtext [group]="form" control="MenuName"
-          [label]="formConfig.MenuName.label"
+        <z-inputtext [group]="form" control="MenuName" [label]="formConfig.MenuName.label"
           [validationMessage]="formConfig.MenuName.error"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group" *ngIf="form.get('MenuType')?.value == 2">
-        <z-inputtext [group]="form" control="ControllerName"
-          [label]="formConfig.ControllerName.label"
+        <z-inputtext [group]="form" control="ControllerName" [label]="formConfig.ControllerName.label"
           [validationMessage]="formConfig.ControllerName.error"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group" *ngIf="form.get('MenuType')?.value == 2">

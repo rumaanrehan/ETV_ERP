@@ -818,3 +818,7 @@ span {
     transition: all 0.05s ease;
   }
 }
+
+.primary-color {
+  color: var(--primary-color) !important;
+}
