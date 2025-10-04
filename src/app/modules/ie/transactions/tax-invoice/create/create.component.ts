@@ -235,7 +235,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Document(event: Document_SelectList): void {
+  onSelect_BasedOn(event: Document_SelectList): void {
     this.productListArray.clear();
     this.tableDef.data = [];
     const basedOn = this.form.get('BasedOn')?.value;
@@ -249,7 +249,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClear_Document(): void {
+  onClear_BasedOn(): void {
     this.formService.resetFormValue<TaxInvoice>(this.formConfig, this.form);
     this.productListArray.clear();
     this.tableDef.data = [];

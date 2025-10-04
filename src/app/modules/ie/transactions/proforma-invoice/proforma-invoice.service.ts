@@ -88,6 +88,7 @@ export class ProformaInvoiceService {
   }
 
   CreateRecord(model: ProformaInvoice): Observable<ApiResponse> {
+    console.log('CreateRecord model', model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 

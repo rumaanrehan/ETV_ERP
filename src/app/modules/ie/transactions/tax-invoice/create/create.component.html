@@ -29,8 +29,8 @@
                                 </div>
                                 <div class="col-xl-3 form-group px-2" *ngIf="isBasedOnDocument">
                                     <z-autocomplete [controlDef]="documentAutoCompleteDef"
-                                        (onSearch)="loadDocument($event)" (onSelect)="onSelect_Document($event)"
-                                        (onClear)="onClear_Document()"></z-autocomplete>
+                                        (onSearch)="loadDocument($event)" (onSelect)="onSelect_BasedOn($event)"
+                                        (onClear)="onClear_BasedOn()"></z-autocomplete>
                                 </div>
                                 <div class="col-xl-3 form-group px-2">
                                     <z-autocomplete [controlDef]="companyMasterAutoCompleteDef"
@@ -59,8 +59,8 @@
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
-                                        [label]="formConfig.ExchangeRateToBC.label" [validationMessage]="formConfig.ExchangeRateToBC.error" (onChange)="productCalculation()"
-                                        [readonly]="isBasedOnDocument"></z-inputnumber>
+                                        [label]="formConfig.ExchangeRateToBC.label" [validationMessage]="formConfig.ExchangeRateToBC.error" 
+                                        (onChange)="productCalculation()"></z-inputnumber>
                                 </div>
 
                                 <div class="col-md-2 form-group px-2">

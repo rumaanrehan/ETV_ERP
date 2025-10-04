@@ -6,8 +6,8 @@ export interface ExportOrder {
     ExportOrderNo: string | null;
     ExportOrderDate: Date | null;
     BasedOn: number | null;
-    QuotationID: number | null;
-    QuotationNo: string | null;
+    SalesQuotationID: number | null;
+    SalesQuotationNo: string | null;
     ReferenceDate: Date | null;
     ReferenceNo: string | null;
     CustomerID: number | null;

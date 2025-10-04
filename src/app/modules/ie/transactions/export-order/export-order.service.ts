@@ -23,7 +23,7 @@ import { PaymentTermMasterService } from '../../settings/payment-term-master/pay
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
 import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
-import { SalesQuotation, SalesQuotation_SelectList, SalesQuotationDetail, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
+import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationDetail, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
 
 @Injectable({
@@ -89,12 +89,8 @@ export class ExportOrderService {
     return this.apiService.post<ApiListResponse<ExportOrderDetail>>(`${this.endpoint}/GetOrderItemDetails?exportOrderID=${exportOrderID}`, {});
   }
 
-  GetSalesQuotationDetails(quotationID: number): Observable<ApiDataResponse<SalesQuotation>> {
-    return this.salesQuotationService.GetDetails(quotationID);
-  }
-
-  GetSalesQuotationItemDetails(quotationID: number): Observable<ApiListResponse<SalesQuotationDetail>> {
-    return this.salesQuotationService.GetQuotationItemDetails(quotationID);
+  GetSalesQuotationDetails(salesQuotationID: number): Observable<ApiDataResponse<SalesQuotation_Detail>> {
+    return this.salesQuotationService.GetDetails(salesQuotationID);
   }
 
   CreateRecord(model: ExportOrder): Observable<ApiResponse> {
@@ -194,7 +190,7 @@ export class ExportOrderService {
           required: "Order Date is required"
         }
       },
-      QuotationID: {
+      SalesQuotationID: {
         label: 'Sales Quotation',
         defaultValue: null,
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
@@ -202,7 +198,7 @@ export class ExportOrderService {
           required: "Sales Quotation is required"
         }
       },
-      QuotationNo: {
+      SalesQuotationNo: {
         label: 'Sales Quotation',
         defaultValue: null,
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
@@ -496,14 +492,14 @@ export class ExportOrderService {
     return {
       type: 'formControl',
       group: form,
-      control: 'QuotationNo',
-      label: formConfig.QuotationNo.label,
-      validationMessage: formConfig.QuotationNo.error,
+      control: 'SalesQuotationNo',
+      label: formConfig.SalesQuotationNo.label,
+      validationMessage: formConfig.SalesQuotationNo.error,
       placeholder: 'Search ExportOrder',
       options: [],
-      optionLabel: 'QuotationNo',
+      optionLabel: 'SalesQuotationNo',
       columns: [
-        { data: 'QuotationNo', label: 'Quotation No', width: '100px' },
+        { data: 'SalesQuotationNo', label: 'Quotation No', width: '100px' },
         { data: 'CustomerName', label: 'Customer Name', width: '200px' }
       ],
     }

@@ -7,23 +7,23 @@ import { AutoCompleteDef } from '../../../../../shared/components/z-form-control
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { TableDef } from '../../../../../shared/components/z-table/z-table';
 import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
+import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
 import { Product_SelectList, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 import { Company_SelectList, CompanyRequest } from '../../../settings/company-master/company-master';
+import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
 import { Port_SelectList, PortRequest } from '../../../settings/port-master/port-master';
+import { ExportOrderDocumentTemplate } from '../../export-order-document/export-order-document';
+import { ExportOrderPaymentTemplate } from '../../export-order-payment/export-payment';
+import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../../sales-quotation/sales-quotation';
 import { ExportOrder, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
-import { ExportOrderDocumentTemplate } from '../../export-order-document/export-order-document';
-import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
-import { ExportOrderPaymentTemplate } from '../../export-order-payment/export-payment';
-import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
-import { SalesQuotation, SalesQuotation_SelectList, SalesQuotationRequest } from '../../sales-quotation/sales-quotation';
 
 @Component({
   selector: 'app-create',
@@ -219,7 +219,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   loadSalesQuotation(event: string): void {
     try {
       const dto: SalesQuotationRequest = {
-        QuotationNo: event,
+        SalesQuotationNo: event,
         PopulateType: 'AutoSuggest'
       }
       this.pageService.GetSalesQuotationList(dto)
@@ -242,9 +242,18 @@ export class CreateComponent implements OnInit, OnDestroy {
   onSelect_SalesQuotation(event: SalesQuotation_SelectList): void {
     this.productListArray.clear();
     this.tableDef.data = [];
-    if (event.QuotationID) {
-      this.GetSalesQuotationDetails(event.QuotationID);
+    if (event.StatusID === 3 || event.StatusID === 4 || event.StatusID === 5) {
+      if (event.SalesQuotationID) {
+        this.GetSalesQuotationDetails(event.SalesQuotationID);
+      }
+    } 
+    else {
+      this.alertService.showToast({
+        text: "Cannot select this Sales Quotation. Only quotations with 'Sent to Customer', 'Accepted', or 'Revised' status can be processed."
+      });
     }
+
+    return;
   }
 
   onClear_SalesQuotation(): void {
@@ -335,18 +344,8 @@ export class CreateComponent implements OnInit, OnDestroy {
       SalesTaxRate: event.PurTaxRate
     });
 
-    // this.productListArray = [...this.productListArray, productItemForm];
     this.productListArray.push(productItemForm);
     this.tableDef.data = this.productListArray.value;
-
-    // console.log(this.form.value);
-    // console.log(this.productListArray.value);
-    // console.log(this.tableDef.data);
-
-    // const data: ExportOrder_ProductDetail = {
-    //   ProductID: event.ProductID, ProductName: event.ProductName, SalesQty: null, RatePerUnitBC: null, TaxRate: event.PurTaxRate
-    // }
-    // this.tableDef.data.push(data);
   }
 
   productCalculation(): void {
@@ -488,6 +487,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
+
+        // this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -640,14 +641,46 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  GetSalesQuotationDetails(quotationID: number): void {
+  GetSalesQuotationDetails(salesQuotationID: number): void {
     try {
-      this.pageService.GetSalesQuotationDetails(quotationID)
+      this.pageService.GetSalesQuotationDetails(salesQuotationID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.GetSalesQuotationItemDetails(response.Data)
+              const keysToPatch = Object.keys(this.formConfig).filter(
+              k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration'].includes(k)
+            );
+
+            const filteredModel = keysToPatch.reduce((acc, key) => {
+              const typedKey = key as keyof SalesQuotation_Detail;
+              const value = response.Data[typedKey] ?? undefined;
+              (acc as any)[typedKey] = value;
+              return acc;
+            }, {} as Partial<SalesQuotation_Detail>);
+
+            this.selectedCustomerAddress= response.Data.CustomerAddress ?? '';
+            this.form.patchValue({ ...filteredModel,
+              CustomerID: response.Data.CustomerID,
+              CustomerName: response.Data.CustomerName
+            });
+            
+            this.productListArray.clear();
+
+            response.Data.ProductList.forEach(item => {
+              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productForm.patchValue({
+                ProductID: item.ProductID,
+                ProductName: item.ProductName,
+                SalesQty: item.QuotedQty,
+                RatePerUnitFC: item.RatePerUnitFC,
+                SalesTaxRate: item.TaxRate
+              });
+              this.productListArray.push(productForm);
+            });
+
+            this.tableDef.data = this.productListArray.value;
+            this.productCalculation();
             } else {
               this.alertService.showServerResponseAlert(response);
             }
@@ -816,36 +849,71 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  GetSalesQuotationItemDetails(model: SalesQuotation): void {
-    this.pageService.GetSalesQuotationItemDetails(model.QuotationID!)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            response.Data.Items.forEach(item => {
-              const patchedModel = {
-                ...item,
-                ProductName: item.Product!.ProductName,
-              };
-              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue(patchedModel);
-              this.productListArray.push(productForm);
-            });
-            this.tableDef.data = this.productListArray.value;
-            const patchedModel = {
-              ...model
-            };
-            this.form.patchValue({ CustomerID: model.Customer?.CountryID, CustomerName: model.Customer?.CompanyName });
-            this.form.patchValue(patchedModel);
-          }
-          else {
-            // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
-          }
-        },
-      });
-  }
+  // GetSalesQuotationItemDetails(model: SalesQuotation): void {
+  //   this.pageService.GetSalesQuotationItemDetails(model.QuotationID!)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (response) => {
+  //         if (response.IsSuccess) {
+
+  //           const keysToPatch = Object.keys(this.formConfig).filter(
+  //             k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration'].includes(k)
+  //           );
+
+  //           const filteredModel = keysToPatch.reduce((acc, key) => {
+  //             const typedKey = key as keyof SalesQuotation;
+  //             const value = model[typedKey] ?? undefined;
+  //             (acc as any)[typedKey] = value;
+  //             return acc;
+  //           }, {} as Partial<SalesQuotation>);
+
+  //           this.selectedCustomerAddress= model.Customer?.BillingAddress ?? '';
+  //           this.form.patchValue({ ...filteredModel,
+  //             CustomerID: model.Customer?.CompanyID,
+  //             CustomerName: model.Customer?.CompanyName
+  //           });
+            
+  //           this.productListArray.clear();
+
+  //           response.Data.Items.forEach(item => {
+  //             const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //             productForm.patchValue({
+  //               ProductID: item.ProductID,
+  //               ProductName: item.Product!.ProductName,
+  //               SalesQty: item.QuotedQty,
+  //               RatePerUnitFC: item.RatePerUnitFC,
+  //               SalesTaxRate: item.TaxRate
+  //             });
+  //             this.productListArray.push(productForm);
+  //           });
+
+  //           this.tableDef.data = this.productListArray.value;
+  //           this.productCalculation();
+  //         }
+  //         else {
+  //           this.alertService.showServerResponseAlert(response);
+  //         }
+  //       },
+  //     });
+  // }
 
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
+
+  // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
+  //   Object.keys(form.controls).forEach(key => {
+  //     const control = form.get(key);
+  //     const controlPath = parentKey ? `${parentKey}.${key}` : key;
+
+  //     if (control instanceof FormGroup || control instanceof FormArray) {
+  //       this.logInvalidControls(control, controlPath);
+  //     } else if (control && control.invalid) {
+  //       console.warn(
+  //         `❌ Invalid Control: ${controlPath}`,
+  //         control.errors
+  //       );
+  //     }
+  //   });
+  // }
 }
