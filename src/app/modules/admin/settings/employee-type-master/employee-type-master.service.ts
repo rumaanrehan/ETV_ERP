@@ -65,7 +65,7 @@ export class EmployeeTypeMasterService {
         defaultValue: 'NEW'
       },
       EmployeeTypeName: {
-        label: 'Employee Name',
+        label: 'Employee Type Name',
         defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {

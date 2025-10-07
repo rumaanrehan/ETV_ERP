@@ -1,3 +1,5 @@
+import { TList } from "../../../../shared/models/api-response";
+
 export interface SalesQuotation {
     SalesQuotationID: number | null;
     SalesQuotationNo: string | null;
@@ -93,7 +95,7 @@ export interface SalesQuotation_Detail {
   NetAmountFC: number;
   StatusText: string;
   StatusHex: string;
-  ProductList: SalesQuotationProduct_Detail[];
+  ProductList: TList<SalesQuotationProduct_Detail>;
 }
 
 export interface SalesQuotationProduct_Detail {

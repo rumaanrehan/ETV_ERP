@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DataViewModule } from 'primeng/dataview';
 import { Subject, takeUntil } from 'rxjs';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-data-view/z-data-view';
 import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';

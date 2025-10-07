@@ -47,9 +47,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   manufacturerList: Manufacturer_SelectList[] = [];
   uomList: UOM_SelectList[] = [];
 
-  purTaxOnList: StaticList[] = [
-    {iValue: 1, Text: "Pur Value", cValue: ""}
-  ];
+  purTaxOnList: StaticList[] = [];
+  
   taxSlabList: TaxSlab_SelectList[] = []
 
   constructor(
@@ -76,9 +75,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   loadDropdownList() {
-    // this.loadStaticLists([
-    //   { fieldName: 'PurTaxOn', targetList: 'purTaxOnList' },
-    // ]);
+    this.loadStaticLists([
+      { fieldName: 'PurTaxOn', targetList: 'purTaxOnList' },
+    ]);
 
     this.pageService.GetMasterDropdownLists()
     .pipe(takeUntil(this.destroy$))
@@ -118,29 +117,27 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
   
-  
-  
-    openSidebar(activeStatus: boolean, isEditMode: boolean, model: ProductMaster): void {
-      if (isEditMode && model) {
-        // this.loadItemGroup(model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID!);
-        // this.loadItemCategory(model.ItemCategory?.ItemGroup?.ItemGroupID!);
-        this.isEditMode = isEditMode;
-      }
-      this.activeStatus = activeStatus;
-      this.form.patchValue(model);
-      // this.form.patchValue({ItemTypeID: model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID, ItemGroupID: model.ItemCategory?.ItemGroup?.ItemGroupID});
-      this.isFormSidebarVisible = true;
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ProductMaster): void {
+    if (isEditMode && model) {
+      // this.loadItemGroup(model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID!);
+      // this.loadItemCategory(model.ItemCategory?.ItemGroup?.ItemGroupID!);
+      this.isEditMode = isEditMode;
     }
-    
-    closeSidebar(): void {
-      this.isFormSidebarVisible = false;
-      this.isEditMode = false;
-      this.formService.resetFormValue<ProductMaster>(this.formConfig, this.form);
+    this.activeStatus = activeStatus;
+    this.form.patchValue(model);
+    // this.form.patchValue({ItemTypeID: model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID, ItemGroupID: model.ItemCategory?.ItemGroup?.ItemGroupID});
+    this.isFormSidebarVisible = true;
+  }
   
-      setTimeout(() => {
-        this.closeSidebarEvent.emit();
-      }, 1);
-    }
+  closeSidebar(): void {
+    this.isFormSidebarVisible = false;
+    this.isEditMode = false;
+    this.formService.resetFormValue<ProductMaster>(this.formConfig, this.form);
+
+    setTimeout(() => {
+      this.closeSidebarEvent.emit();
+    }, 1);
+  }
 
   onChange_ItemType(): void{
     this.itemGroupList = [];

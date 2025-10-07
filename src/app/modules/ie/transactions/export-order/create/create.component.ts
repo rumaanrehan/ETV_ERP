@@ -611,6 +611,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(model);
               this.loadPortList();
               response.Data.Items.forEach(item => {
                 const patchedModel = {
@@ -648,39 +649,40 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data);
               const keysToPatch = Object.keys(this.formConfig).filter(
-              k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration'].includes(k)
-            );
+                k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration'].includes(k)
+              );
 
-            const filteredModel = keysToPatch.reduce((acc, key) => {
-              const typedKey = key as keyof SalesQuotation_Detail;
-              const value = response.Data[typedKey] ?? undefined;
-              (acc as any)[typedKey] = value;
-              return acc;
-            }, {} as Partial<SalesQuotation_Detail>);
+              const filteredModel = keysToPatch.reduce((acc, key) => {
+                const typedKey = key as keyof SalesQuotation_Detail;
+                const value = response.Data[typedKey] ?? undefined;
+                (acc as any)[typedKey] = value;
+                return acc;
+              }, {} as Partial<SalesQuotation_Detail>);
 
-            this.selectedCustomerAddress= response.Data.CustomerAddress ?? '';
-            this.form.patchValue({ ...filteredModel,
-              CustomerID: response.Data.CustomerID,
-              CustomerName: response.Data.CustomerName
-            });
-            
-            this.productListArray.clear();
-
-            response.Data.ProductList.forEach(item => {
-              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue({
-                ProductID: item.ProductID,
-                ProductName: item.ProductName,
-                SalesQty: item.QuotedQty,
-                RatePerUnitFC: item.RatePerUnitFC,
-                SalesTaxRate: item.TaxRate
+              this.selectedCustomerAddress= response.Data.CustomerAddress ?? '';
+              this.form.patchValue({ ...filteredModel,
+                CustomerID: response.Data.CustomerID,
+                CustomerName: response.Data.CustomerName
               });
-              this.productListArray.push(productForm);
-            });
+              
+              this.productListArray.clear();
 
-            this.tableDef.data = this.productListArray.value;
-            this.productCalculation();
+              response.Data.ProductList.Items.forEach(item => {
+                const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                productForm.patchValue({
+                  ProductID: item.ProductID,
+                  ProductName: item.ProductName,
+                  SalesQty: item.QuotedQty,
+                  RatePerUnitFC: item.RatePerUnitFC,
+                  SalesTaxRate: item.TaxRate
+                });
+                this.productListArray.push(productForm);
+              });
+
+              this.tableDef.data = this.productListArray.value;
+              this.productCalculation();
             } else {
               this.alertService.showServerResponseAlert(response);
             }

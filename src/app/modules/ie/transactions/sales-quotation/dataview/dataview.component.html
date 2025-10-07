@@ -45,43 +45,59 @@
             <div class="col-12">
                 <div class="col-xl-12">
                     <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
-                        <div class="col-xl-4 d-flex align-items-center">
-                            <div class="col-xl-4">
+                        <div class="col-xl-3 d-flex align-items-center">
+                            <div class="col-xl-5">
                                 <span class="fs-6 text-secondary">Quotation Date:</span>
                             </div>
                             <div class="col-xl-7">
                                 <span class="fs-6 text-secondary"> {{formatDate(item.SalesQuotationDate)}} </span>
                             </div>
                         </div>
-                        <div class="col-xl-4 d-flex align-items-center">
-                            <div class="col-xl-4">
+                        <div class="col-xl-3 d-flex align-items-center">
+                            <div class="col-xl-5">
                                 <span class="fs-6 text-secondary">Valid  Till:</span>
                             </div>
                             <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{formatDate(item.ValidTill)}} </span>
+                                <span class="fs-6 text-secondary"> {{formatDate(item.ValidityDate)}} </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 d-flex align-items-center">
+                            <div class="col-xl-8">
+                                <span class="fs-6 text-secondary">No of Products:</span>
+                            </div>
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary"> {{item.NoOfProducts}} </span>
                             </div>
                         </div>
                     </div>
                     <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
-                        <div class="col-xl-4 d-flex align-items-center">
-                            <div class="col-xl-4">
+                        <div class="col-xl-3 d-flex align-items-center">
+                            <div class="col-xl-7">
+                                <span class="fs-6 text-secondary">Subtotal Amount (FC):</span>
+                            </div>
+                            <div class="col-xl-5">
+                                <span class="fs-6 text-secondary"> {{item.SubtotalAmountFC}} </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 d-flex align-items-center">
+                            <div class="col-xl-6">
+                                <span class="fs-6 text-secondary">Tax Amount (FC):</span>
+                            </div>
+                            <div class="col-xl-6">
+                                <span class="fs-6 text-secondary"> {{item.TaxAmountFC}} </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 d-flex align-items-center">
+                            <div class="col-xl-6">
                                 <span class="fs-6 text-secondary">Net Amount (FC):</span>
                             </div>
-                            <div class="col-xl-7">
+                            <div class="col-xl-6">
                                 <span class="fs-6 text-secondary"> {{item.NetAmountFC}} </span>
                             </div>
                         </div>
-                        <div class="col-xl-4 d-flex align-items-center">
-                            <div class="col-xl-4">
-                                <span class="fs-6 text-secondary">No of Products:</span>
-                            </div>
-                            <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{item.NoOfProducts}} </span>
-                            </div>
-                        </div>
-                        <div class="ms-auto" *ngIf="item.StatusID == 1 || item.StatusID == 2">
+                        <!-- <div class="ms-auto" *ngIf="item.StatusID == 1 || item.StatusID == 2">
                             <button class="btn btn-primary" (click)="onClickCancel(item)">Cancel</button>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

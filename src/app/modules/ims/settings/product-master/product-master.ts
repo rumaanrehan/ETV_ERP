@@ -34,7 +34,7 @@ export interface ProductMaster_IndexTableFilter {
   ProductName: string | null;
   ItemGroupName: string | null;
   ItemCategoryName: string | null;
-  GenericName: string | null;
+  GenericItemName: string | null;
   ManufacturerName: string | null;
   UOMName: string | null;
   ActiveStatusID: number | null;

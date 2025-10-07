@@ -235,7 +235,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_BasedOn(event: Document_SelectList): void {
+  onSelect_Document(event: Document_SelectList): void {
     this.productListArray.clear();
     this.tableDef.data = [];
     const basedOn = this.form.get('BasedOn')?.value;
@@ -247,6 +247,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.GetExportOrderDetails(event.DocumentID);
       }
     }
+
+    this.form.patchValue({BasedOn: basedOn});
   }
 
   onClear_BasedOn(): void {

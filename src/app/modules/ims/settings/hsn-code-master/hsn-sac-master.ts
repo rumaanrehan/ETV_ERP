@@ -16,6 +16,7 @@ export interface HsnSacMaster_SelectList {
 
 export interface HsnSacMaster_IndexTableFilter {
   HSNCode: string | null;
+  HSNCodeDescription: string | null;
   ActiveStatusID: number | null;
 }
 

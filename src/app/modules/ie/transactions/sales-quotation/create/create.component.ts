@@ -14,14 +14,14 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
+import { Currency_SelectList } from '../../../../admin/settings/currency-master/currency-master';
 import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
 import { Product_SelectList, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 import { Company_SelectList, CompanyRequest } from '../../../settings/company-master/company-master';
 import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
+import { SalesEnquiry_Detail, SalesEnquiry_SelectList, SalesEnquiryRequest } from '../../sales-enquiry/sales-enquiry';
 import { SalesQuotation, SalesQuotation_Detail, SalesQuotationDetail } from '../sales-quotation';
 import { SalesQuotationService } from '../sales-quotation.service';
-import { SalesEnquiry_Detail, SalesEnquiry_SelectList, SalesEnquiryRequest } from '../../sales-enquiry/sales-enquiry';
-import { Currency_SelectList } from '../../../../admin/settings/currency-master/currency-master';
 
 @Component({
   selector: 'app-create',
@@ -525,6 +525,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
+                  console.log(response);
                   const model: SalesQuotation_Detail = response.Data;
 
                   this.statusText = response.Data.StatusText;
@@ -532,25 +533,43 @@ export class CreateComponent implements OnInit, OnDestroy {
                   this.selectedCustomerAddress = model.CustomerAddress,
 
                   this.form.patchValue({
+                    SalesQuotationID: model.SalesQuotationID,
+                    SalesQuotationNo: model.SalesQuotationNo,
+                    BasedOn: model.BasedOn,
                     SalesEnquiryID: model.SalesEnquiryID,
+                    SalesEnquiryNo: model.SalesEnquiryNo,
                     CustomerID: model.CustomerID,
                     CustomerName: model.CustomerName,
                     SalesQuotationDate: DateUtils.toDate(response.Data.SalesQuotationDate!),
+                    FCCurrencyID: model.FCCurrencyID,
+                    IncotermID: model.IncotermID,
+                    PaymentTermID: model.PaymentTermID,
+                    ExchangeRateToBC: model.ExchangeRateToBC,
+                    Narration: model.Narration,
+                    IsRoundOff: model.IsRoundOff,
+                    SubtotalAmountFC: model.SubtotalAmountFC,
+                    TaxAmountFC: model.TaxAmountFC,
+                    NetAmountFC: model.NetAmountFC,
                     ValidityDate: response.Data.ValidityDate ? DateUtils.toDate(response.Data.ValidityDate) : null
                   });
 
                   this.productListArray.clear();
-                  model.ProductList.forEach(item => {
+                  response.Data.ProductList.Items.forEach(item => {
                     const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
                     productForm.patchValue({
                       ProductID: item.ProductID,
                       ProductName: item.ProductName,
-                      QuotedQty: item.QuotedQty
+                      QuotedQty: item.QuotedQty,
+                      RatePerUnitFC: item.RatePerUnitFC,
+                      TaxRate: item.TaxRate,
+                      TaxableAmountFC: item.TaxableAmountFC,
+                      TaxAmountFC: item.TaxAmountFC
                     });
                     this.productListArray.push(productForm);
                   });
 
                   this.tableDef.data = this.productListArray.value;
+                  this.productCalculation();
                 } else {
                   this.alertService.showServerResponseAlert(response);
                 }
@@ -563,24 +582,6 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  // GetQuotationDetails(model: SalesQuotation): void {
-  //   this.route.params.subscribe((params) => {
-  //     const QuotationID = +params['id'];
-  //     this.pageService.GetQuotationDetails(QuotationID)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe({
-  //         next: (response) => {
-  //           if (response.IsSuccess) {
-              
-  //           }
-  //           else {
-  //             // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
-  //           }
-  //         },
-  //       });
-  //   });
-  // }
 
   GetSalesEnquiryDetails(salesEnquiryID: number): void {
     this.pageService.GetSalesEnquiryDetails(salesEnquiryID)
