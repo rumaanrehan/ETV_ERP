@@ -206,7 +206,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   onBasedOnChange(): void {
     const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<ExportOrder>(this.formConfig, this.form);
@@ -215,7 +215,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.productListArray.clear();
     this.tableDef.data = [];
   }
-  
+
   loadSalesQuotation(event: string): void {
     try {
       const dto: SalesQuotationRequest = {
@@ -246,7 +246,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (event.SalesQuotationID) {
         this.GetSalesQuotationDetails(event.SalesQuotationID);
       }
-    } 
+    }
     else {
       this.alertService.showToast({
         text: "Cannot select this Sales Quotation. Only quotations with 'Sent to Customer', 'Accepted', or 'Revised' status can be processed."
@@ -649,26 +649,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data);
-              const keysToPatch = Object.keys(this.formConfig).filter(
-                k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration'].includes(k)
-              );
-
-              const filteredModel = keysToPatch.reduce((acc, key) => {
-                const typedKey = key as keyof SalesQuotation_Detail;
-                const value = response.Data[typedKey] ?? undefined;
-                (acc as any)[typedKey] = value;
-                return acc;
-              }, {} as Partial<SalesQuotation_Detail>);
-
-              this.selectedCustomerAddress= response.Data.CustomerAddress ?? '';
-              this.form.patchValue({ ...filteredModel,
-                CustomerID: response.Data.CustomerID,
-                CustomerName: response.Data.CustomerName
-              });
-              
-              this.productListArray.clear();
-
               response.Data.ProductList.Items.forEach(item => {
                 const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
                 productForm.patchValue({
@@ -682,7 +662,10 @@ export class CreateComponent implements OnInit, OnDestroy {
               });
 
               this.tableDef.data = this.productListArray.value;
-              this.productCalculation();
+              const { ProductList, BasedOn, IsRoundOff, ExchangeRateToBC, Narration, ...formValues } = response.Data;
+              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
+              this.form.patchValue(formValues);
+
             } else {
               this.alertService.showServerResponseAlert(response);
             }
@@ -874,7 +857,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   //             CustomerID: model.Customer?.CompanyID,
   //             CustomerName: model.Customer?.CompanyName
   //           });
-            
+
   //           this.productListArray.clear();
 
   //           response.Data.Items.forEach(item => {
