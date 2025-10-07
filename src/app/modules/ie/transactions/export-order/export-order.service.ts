@@ -23,6 +23,8 @@ import { PaymentTermMasterService } from '../../settings/payment-term-master/pay
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
 import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
+import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationDetail, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
+import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +34,7 @@ export class ExportOrderService {
 
   constructor(
     private apiService: ApiService,
+    private salesQuotationService: SalesQuotationService,
     private companyMasterService: CompanyMasterService,
     private productMasterService: ProductMasterService,
     private paymentTermMasterService: PaymentTermMasterService,
@@ -58,6 +61,10 @@ export class ExportOrderService {
     return this.companyMasterService.PopulateList(model);
   }
 
+  GetSalesQuotationList(model: SalesQuotationRequest): Observable<ApiListResponse<SalesQuotation_SelectList>> {
+    return this.salesQuotationService.PopulateList(model);
+  }
+
   GetPortList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
     return this.portService.PopulateList(model);
   }
@@ -82,12 +89,17 @@ export class ExportOrderService {
     return this.apiService.post<ApiListResponse<ExportOrderDetail>>(`${this.endpoint}/GetOrderItemDetails?exportOrderID=${exportOrderID}`, {});
   }
 
+  GetSalesQuotationDetails(salesQuotationID: number): Observable<ApiDataResponse<SalesQuotation_Detail>> {
+    return this.salesQuotationService.GetDetails(salesQuotationID);
+  }
+
   CreateRecord(model: ExportOrder): Observable<ApiResponse> {
     console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
   UpdateRecord(model: ExportOrder): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
@@ -176,6 +188,30 @@ export class ExportOrderService {
         validators: [Validators.required],
         validationMessages: {
           required: "Order Date is required"
+        }
+      },
+      SalesQuotationID: {
+        label: 'Sales Quotation',
+        defaultValue: null,
+        validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
+        validationMessages: {
+          required: "Sales Quotation is required"
+        }
+      },
+      SalesQuotationNo: {
+        label: 'Sales Quotation',
+        defaultValue: null,
+        validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
+        validationMessages: {
+          required: "Sales Quotation is required"
+        }
+      },
+      BasedOn: {
+        label: 'Based On',
+        defaultValue: 1,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Based On is required"
         }
       },
       ReferenceNo: {
@@ -418,19 +454,19 @@ export class ExportOrderService {
         }
       },
       SubtotalAmountFC: {
-        label: 'Subtotal Amount(FC)',
+        label: '',
         defaultValue: null
       },
       TaxAmountFC: {
-        label: 'Tax Amount (FC)',
+        label: '',
         defaultValue: null
       },
       SubtotalAmountBC: {
-        label: 'Subtotal Amount (BC)',
+        label: '',
         defaultValue: null
       },
       TaxAmountBC: {
-        label: 'Tax Amount (BC)',
+        label: '',
         defaultValue: null
       },
       NetAmountFC: {
@@ -440,8 +476,33 @@ export class ExportOrderService {
       NetAmountBC: {
         label: '',
         defaultValue: null
+      },
+      IsRoundOff: {
+        label: 'Round Off',
+        defaultValue: true
+      },
+      CoinAdjustment: {
+        label: 'Coin Adjustment',
+        defaultValue: null
       }
     };
+  }
+  
+  getSalesQuotationAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<SalesQuotation_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'SalesQuotationNo',
+      label: formConfig.SalesQuotationNo.label,
+      validationMessage: formConfig.SalesQuotationNo.error,
+      placeholder: 'Search ExportOrder',
+      options: [],
+      optionLabel: 'SalesQuotationNo',
+      columns: [
+        { data: 'SalesQuotationNo', label: 'Quotation No', width: '100px' },
+        { data: 'CustomerName', label: 'Customer Name', width: '200px' }
+      ],
+    }
   }
 
   getExportOrderDocumentTableDef(templateList: ExportOrderDocumentTemplate): TableDef<ExportOrderDocumentList> {

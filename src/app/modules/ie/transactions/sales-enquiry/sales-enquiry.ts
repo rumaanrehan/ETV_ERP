@@ -33,6 +33,7 @@ export interface SalesEnquiry_SelectList {
     SalesEnquiryID: number;
     SalesEnquiryNo: string;
     CustomerName: string;
+    StatusID: number;
 }
 
 export interface SalesEnquiry_IndexTableFilter {
@@ -55,8 +56,8 @@ export interface SalesEnquiry_IndexTableList {
 }
 
 export interface SalesEnquiryRequest {
-    SalesEnquiryNo?: string | null;
-    CustomerName?: string | null;
+    SearchBy?: number | null;
+    SearchValue?: string | null;
     PopulateType?: string | null;
 }
 

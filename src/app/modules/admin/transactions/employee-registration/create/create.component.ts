@@ -52,7 +52,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   genderList: any[] = [
     { GenderID: 1, GenderName: 'Male' },
-    { GenderID: 3, GenderName: 'FeMale' },
+    { GenderID: 3, GenderName: 'Female' },
     { GenderID: 1, GenderName: 'Other' },
   ]
 

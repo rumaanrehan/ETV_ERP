@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DataViewModule } from 'primeng/dataview';
 import { Subject, takeUntil } from 'rxjs';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-data-view/z-data-view';
 import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';
@@ -19,7 +18,7 @@ import { SalesQuotationService } from '../sales-quotation.service';
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -27,8 +26,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
-
-  // componentRef?: ComponentRef<any>;
+  
+  componentRef?: ComponentRef<any>;
 
   dataViewDef!: DataViewDef<SalesQuotation_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
@@ -36,14 +35,11 @@ export class DataviewComponent implements OnInit, OnDestroy {
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<SalesQuotation_IndexTableFilter>
   
-  statusList: StaticList[] = [
-    { iValue: 0, Text: "All", cValue: "" },
-    { iValue: 1, Text: "processing", cValue: "" },
-    { iValue: 2, Text: "Ready To Ship", cValue: "" },
-  ]
+  statusList: StaticList[] = []
 
   sortFieldList: any[] = [
-    { value: "StatusID", text: "Status" }
+    { value: "SalesQuotationDate", text: "Quotation Date" },
+    { value: "StatusID", text: "Status" },
   ]
   
   constructor(
@@ -59,7 +55,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
     this.filterForm = this.formService.createFormGroup<SalesQuotation_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
     this.dataViewDef = {
-      tableKey: 'Admin_SalesQuotation_IndexDataView',
+      tableKey: 'IE_SalesQuotation_IndexDataView',
       defaultSortColumn: { sortField: 'QuotationNo', sortOrder: 1 },
       filterForm: this.filterForm,
       data: [],
@@ -115,9 +111,9 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(quotationID: number) {
-    if (quotationID) {
-      this.router.navigate([`ie/sales-quotation/edit/${quotationID}`]);
+  onClickEditDetails(salesQuotationID: number) {
+    if (salesQuotationID) {
+      this.router.navigate([`ie/sales-quotation/edit/${salesQuotationID}`]);
     }
   }
 
@@ -154,21 +150,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  populateStatus(statusID: number): string {
-    switch (statusID) {
-      case 1:
-        return 'Draft';
-      case 2:
-        return 'Sent';
-      case 3:
-        return 'Accepted';
-      case 4:
-        return 'Rejected';
-      default:
-        return 'Undefined';
-    }
-  }
-  
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }

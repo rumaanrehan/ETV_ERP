@@ -55,7 +55,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'ProductCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.productCodeTemplate },
       { data: 'ProductName', label: 'Product Name', filterable: true },
       { data: 'ItemCategoryName', label: 'Item Category', width: "10%", filterable: true },
-      { data: 'GenericName', label: 'Generic Item', width: "10%", filterable: true },
+      { data: 'GenericItemName', label: 'Generic Item', width: "10%", filterable: true },
       { data: 'ManufacturerName', label: 'Manufacturer Name', width: "10%", filterable: true },
       { data: 'UOMName', label: 'UOM Name', width: "10%", filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.productActiveStatusTemplate },
@@ -82,6 +82,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data);
               this.createSidebar.openSidebar(activeStatus, true, response.Data);
             }
             else {

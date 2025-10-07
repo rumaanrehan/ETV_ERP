@@ -46,6 +46,7 @@ export class HsnSacMasterService {
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<HsnSacMaster_IndexTableFilter> {
     return {
       HSNCode: '',
+      HSNCodeDescription: '',
       ActiveStatusID: 0
     }
   }

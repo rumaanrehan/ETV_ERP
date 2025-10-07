@@ -18,6 +18,7 @@ export interface ProformaInvoice {
     TaxAmountFC: number | null;
     TaxAmountBC: number | null;
     FreightChargeFC: number | null;
+    FreightChargeBC: number | null;
     InsuranceAmountFC: number | null;
     InsuranceAmountBC: number | null;
     BankChargesFC: number | null;
@@ -26,6 +27,8 @@ export interface ProformaInvoice {
     NetAmountBC: number | null;
     Narration: number | null;
     StatusID: number | null;
+    IsRoundOff: boolean | null;
+    CoinAdjustment: number | null;
 
     ProductList: ProformaInvoiceDetail[];
 

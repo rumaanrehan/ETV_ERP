@@ -88,17 +88,18 @@ export class ProformaInvoiceService {
   }
 
   CreateRecord(model: ProformaInvoice): Observable<ApiResponse> {
+    console.log('CreateRecord model', model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
   UpdateRecord(model: ProformaInvoice): Observable<ApiResponse> {
+    console.log('UpdateRecord model', model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
   CancelRecord(model: ProformaInvoice): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
-
 
   //#region Form Configuration
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ProformaInvoice_IndexTableFilter> {
@@ -111,7 +112,6 @@ export class ProformaInvoiceService {
       ActiveStatusID: 0
     }
   }
-
 
   getFormConfig(): FormConfigType<ProformaInvoice> {
     return {
@@ -197,6 +197,10 @@ export class ProformaInvoiceService {
       },
       FreightChargeFC: {
         label: 'Freight Charge (FC)',
+        defaultValue: null
+      },
+      FreightChargeBC: {
+        label: 'Freight Charge (BC)',
         defaultValue: null
       },
       InsuranceAmountFC: {
@@ -349,6 +353,14 @@ export class ProformaInvoiceService {
       StatusID: {
         label: '',
         defaultValue: 1
+      },
+      IsRoundOff: {
+        label: 'Round Off',
+        defaultValue: true
+      },
+      CoinAdjustment: {
+        label: 'Coin Adjustment',
+        defaultValue: null
       }
     };
   }

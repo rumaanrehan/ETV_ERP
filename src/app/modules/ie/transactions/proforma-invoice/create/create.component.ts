@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
@@ -29,7 +29,7 @@ import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/t
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
-export class CreateComponent {
+export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
@@ -47,7 +47,6 @@ export class CreateComponent {
   formConfig!: FormConfigType<ProformaInvoice>;
   tableDef!: TableDef<ProformaInvoiceDetail>;
 
-  // customerList: Company_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
   currencyList: Currency_SelectList[] = [];
 
@@ -55,18 +54,15 @@ export class CreateComponent {
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
-  // currencyList: StaticList[] = [
-  //   { Text: 'USD - US Dollar', iValue: 1, cValue: 'USD - US Dollar' },
-  //   { Text: 'EUR - Euro', iValue: 2, cValue: 'EUR - Euro' },
-  //   { Text: 'JPY - Japanese Yen', iValue: 3, cValue: 'JPY - Japanese Yen' },
-  //   { Text: 'GBP - British Pound', iValue: 4, cValue: 'GBP - British Pound' },
-  //   { Text: 'INR - Indian Rupee', iValue: 5, cValue: 'INR - Indian Rupee' }
-  // ];
-
   basedOnList: StaticList[] = [
     { Text: 'Export Order', iValue: 1, cValue: '' },
     { Text: 'Direct', iValue: 2, cValue: '' }
   ]
+  
+  statusList: StaticList[] = [
+    { Text: 'Generated', iValue: 1, cValue: '#28a745' },
+    { Text: 'Cancelled', iValue: 2, cValue: '#dc3545' }
+  ];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -313,16 +309,16 @@ export class CreateComponent {
     const bankCharges = this.form.get('BankChargesFC')?.value || 0;
 
     this.productListArray.controls.forEach((group: FormGroup) => {
-      const quantity = group.get('SalesQty')?.value || 0;
       const rate = group.get('RatePerUnitFC')?.value || 0;
+      const quantity = group.get('SalesQty')?.value || 0;
       const salesTaxRate = group.get('SalesTaxRate')?.value || 0;
 
       const taxableAmountFC = quantity * rate;
       const taxAmountFC = (taxableAmountFC * salesTaxRate) / 100;
 
       group.patchValue({
-        TaxAmountFC: taxAmountFC,
         TaxableAmountFC: taxableAmountFC,
+        TaxAmountFC: taxAmountFC,
         SalesAmountFC: taxableAmountFC + taxAmountFC
       }, { emitEvent: true });
 
@@ -344,34 +340,36 @@ export class CreateComponent {
       TaxAmountBC: this.form.get('TaxAmountFC')?.value * exchangeRate,
       InsuranceAmountBC: this.form.get('InsuranceAmountFC')?.value * exchangeRate,
       BankChargesBC: this.form.get('BankChargesFC')?.value * exchangeRate,
-      FreightChargeBC: this.form.get('FreightChargeFC')?.value * exchangeRate,
       NetAmountBC: this.form.get('NetAmountFC')?.value * exchangeRate
     }, { emitEvent: true });
 
     this.productListArray.controls.forEach((group: FormGroup) => {
-      const ratePerUnitFC = group.get('RatePerUnitFC')?.value || 0;
-      const taxableAmountFC = group.get('TaxableAmountFC')?.value || 0;
-      const taxAmountFC = group.get('TaxAmountFC')?.value || 0;
-      const salesAmountFC = group.get('SalesAmountFC')?.value || 0;
-      // const netAmountFC = group.get('NetAmountFC')?.value || 0;
+      const ratePerUnitFC = Number(((group.get('RatePerUnitFC')?.value) || 0).toFixed(3));
+      const taxableAmountFC = Number(((group.get('TaxableAmountFC')?.value) || 0).toFixed(3));
+      const taxAmountFC = Number(((group.get('TaxAmountFC')?.value) || 0).toFixed(3));
+      const salesAmountFC = Number(((group.get('SalesAmountFC')?.value) || 0).toFixed(3));
 
       group.patchValue({
-        RatePerUnitBC: ratePerUnitFC * exchangeRate,
-        TaxableAmountBC: taxableAmountFC * exchangeRate,
-        TaxAmountBC: taxAmountFC * exchangeRate,
-        SalesAmountBC: salesAmountFC * exchangeRate,
+        TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
+        RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
+        TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
+        SalesAmountBC: Number((salesAmountFC * exchangeRate).toFixed(3)),
       }, { emitEvent: true });
     });
 
-    // After updating all rows, update the totals
     const subtotalAmountFC = this.getproductTaxableAmountFC();
     const taxAmountFC = this.getproductTaxAmountFCSum();
+    const isRoundOff = this.form.get('IsRoundOff')?.value === true;
+    const netAmountFC = this.form.get('NetAmountFC')?.value;
 
     this.form.patchValue({
-      SubtotalAmountFC: subtotalAmountFC,
-      SubtotalAmountBC: subtotalAmountFC * exchangeRate,
-      TaxAmountFC: taxAmountFC,
-      TaxAmountBC: taxAmountFC * exchangeRate
+      SubtotalAmountFC: Number(subtotalAmountFC.toFixed(3)),
+      SubtotalAmountBC: Number((subtotalAmountFC * exchangeRate).toFixed(3)),
+      FreightChargeBC: this.form.get('FreightChargeFC')?.value * exchangeRate,
+      TaxAmountFC: Number(taxAmountFC.toFixed(3)),
+      TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
+      NetAmountBC: isRoundOff ? Math.round(netAmountFC * exchangeRate) : (netAmountFC * exchangeRate),
+      CoinAdjustment: isRoundOff ? Number(((netAmountFC * exchangeRate)) - Math.round(netAmountFC * exchangeRate)).toFixed(3) : 0
     });
   }
 
@@ -409,7 +407,7 @@ export class CreateComponent {
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
 
-        // this.logInvalidControls(this.form);
+        this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -540,10 +538,13 @@ export class CreateComponent {
               this.productListArray.push(productForm);
             });
             this.tableDef.data = this.productListArray.value;
+            this.selectedCustomerAddress = model.Customer?.BillingAddress!;
             const patchedModel = {
               ...model,
               ProformaInvoiceDate: DateUtils.toDate(model.ProformaInvoiceDate),
-              ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
+              ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate),
+              CustomerName: model.Customer?.CompanyName || '',
+              ExportOrderID: model.ExportOrderID || null
             };
             this.form.patchValue(patchedModel);
           }
@@ -561,7 +562,6 @@ export class CreateComponent {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data);
               this.GetExportOrderItemDetails(response.Data)
             } else {
               this.alertService.showServerResponseAlert(response);
@@ -580,25 +580,65 @@ export class CreateComponent {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
+            console.log(model, response.Data.Items);
+            const keysToPatch = Object.keys(this.formConfig).filter(
+              k => !['ProformaInvoiceNo','BasedOn','IsRoundOff','ExchangeRateDate','ExchangeRateToBC' ].includes(k)
+            );
+            
+            const filteredModel = keysToPatch.reduce((acc, key) => {
+              const typedKey = key as keyof ExportOrder;
+              const value = model[typedKey] ?? undefined;
+              (acc as any)[typedKey] = value;
+              return acc;
+            }, {} as Partial<ExportOrder>);
+
+            this.selectedCustomerAddress = model.Customer?.BillingAddress || '';
+            this.form.patchValue({ ...filteredModel,
+              CustomerID: model.Customer?.CompanyID,
+              CustomerName: model.Customer?.CompanyName,
+              ExportOrderID: model.ExportOrderID
+            });
+            
+            this.productListArray.clear();
+
             response.Data.Items.forEach(item => {
-              const patchedModel = {
-                ...item,
-                ProductName: item.Product!.ProductName,
-              };
               const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue(patchedModel);
+              productForm.patchValue({
+                ProductID: item.ProductID,
+                ProductName: item.Product!.ProductName,
+                SalesQty: item.SalesQty,
+                RatePerUnitFC: item.RatePerUnitFC,
+                TaxableAmountFC: item.TaxableAmountFC,
+                SalesTaxRate: item.SalesTaxRate,
+                TaxAmountFC: item.TaxAmountFC,
+                SalesAmountFC: item.SalesAmountFC
+              });
               this.productListArray.push(productForm);
             });
+
             this.tableDef.data = this.productListArray.value;
-            const patchedModel = {
-              ...model,
-              ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
-            };
-            this.form.patchValue({ CustomerID: model.Customer?.CountryID, CustomerName: model.Customer?.CompanyName });
-            this.form.patchValue(patchedModel);
+            this.productCalculation();
+
+            // response.Data.Items.forEach(item => {
+            //   const patchedModel = {
+            //     ProductID: item.ProductID,
+            //     ProductName: item.ProductName,
+            //     // ...item,
+            //     ProductName: item.Product!.ProductName,
+            //   };
+            //   const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+            //   productForm.patchValue(patchedModel);
+            //   this.productListArray.push(productForm);
+            // });
+            // this.tableDef.data = this.productListArray.value;
+            // const patchedModel = {
+            //   ...model,
+            //   ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
+            // };
+            // this.form.patchValue(patchedModel);
           }
           else {
-            // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
+            // this.alertService.showServerResponseAlert();
           }
         },
       });
@@ -607,20 +647,24 @@ export class CreateComponent {
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
+  
+  getStatus(statusId: number | null | undefined): StaticList | undefined {
+    return this.statusList.find(s => s.iValue === statusId);
+  }
 
-  // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-  //   Object.keys(form.controls).forEach(key => {
-  //     const control = form.get(key);
-  //     const controlPath = parentKey ? `${parentKey}.${key}` : key;
+  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+      const controlPath = parentKey ? `${parentKey}.${key}` : key;
 
-  //     if (control instanceof FormGroup || control instanceof FormArray) {
-  //       this.logInvalidControls(control, controlPath);
-  //     } else if (control && control.invalid) {
-  //       console.warn(
-  //         `❌ Invalid Control: ${controlPath}`,
-  //         control.errors
-  //       );
-  //     }
-  //   });
-  // }
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.logInvalidControls(control, controlPath);
+      } else if (control && control.invalid) {
+        console.warn(
+          `❌ Invalid Control: ${controlPath}`,
+          control.errors
+        );
+      }
+    });
+  }
 }

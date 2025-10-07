@@ -36,11 +36,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<SalesEnquiry_IndexTableFilter>
 
-  statusList: StaticList[] = [
-    { iValue: 0, Text: "Open", cValue: "" },
-    { iValue: 1, Text: "Quoted", cValue: "" },
-    { iValue: 2, Text: "Closed", cValue: "" },
-  ]
+  statusList: StaticList[] = []
 
   sortFieldList: any[] = [
     { value: "SalesEnquiryNo", text: "Sales Enquiry No" },
