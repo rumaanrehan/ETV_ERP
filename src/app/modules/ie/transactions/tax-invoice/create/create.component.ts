@@ -447,6 +447,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
+
+        this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -630,6 +632,8 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
+            
+            this.selectedCustomerAddress = model.Customer?.BillingAddress ?? '';
             response.Data.Items.forEach(item => {
               const patchedModel = {
                 ...item,
@@ -640,14 +644,18 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.productListArray.push(productForm);
             });
             this.tableDef.data = this.productListArray.value;
+          
+            const { BasedOn, ...filteredModel } = model;
+
             const patchedModel = {
-              ...model,
+              ...filteredModel,
               ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate),
               DocumentID: model.ProformaInvoiceID,
-              DocumentNo: model.ProformaInvoiceNo
+              DocumentNo: model.ProformaInvoiceNo,
+              CustomerID: model.Customer?.CompanyID, 
+              CustomerName: model.Customer?.CompanyName
             };
-            this.selectedCustomerAddress = model.Customer?.BillingAddress ?? '';
-            this.form.patchValue({ CustomerID: model.Customer?.CountryID, CustomerName: model.Customer?.CompanyName });
+
             this.form.patchValue(patchedModel);
           }
           else {
@@ -693,8 +701,12 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.productListArray.push(productForm);
             });
             this.tableDef.data = this.productListArray.value;
+          
+            // Destructure to ignore BasedOn and capture rest of properties
+            const { BasedOn, Narration, ...filteredModel } = model;
+
             const patchedModel = {
-              ...model,
+              ...filteredModel,
               ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate),
               DocumentID: model.ExportOrderID,
               DocumentNo: model.ExportOrderNo
@@ -713,19 +725,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     return DateUtils.formatDate(date);
   }
 
-  // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-  //   Object.keys(form.controls).forEach(key => {
-  //     const control = form.get(key);
-  //     const controlPath = parentKey ? `${parentKey}.${key}` : key;
+  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+      const controlPath = parentKey ? `${parentKey}.${key}` : key;
 
-  //     if (control instanceof FormGroup || control instanceof FormArray) {
-  //       this.logInvalidControls(control, controlPath);
-  //     } else if (control && control.invalid) {
-  //       console.warn(
-  //         `❌ Invalid Control: ${controlPath}`,
-  //         control.errors
-  //       );
-  //     }
-  //   });
-  // }
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.logInvalidControls(control, controlPath);
+      } else if (control && control.invalid) {
+        console.warn(
+          `❌ Invalid Control: ${controlPath}`,
+          control.errors
+        );
+      }
+    });
+  }
 }

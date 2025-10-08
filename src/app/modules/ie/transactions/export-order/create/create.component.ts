@@ -24,6 +24,7 @@ import { ExportOrderPaymentTemplate } from '../../export-order-payment/export-pa
 import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../../sales-quotation/sales-quotation';
 import { ExportOrder, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
+import { Currency_SelectList } from '../../../../admin/settings/currency-master/currency-master';
 
 @Component({
   selector: 'app-create',
@@ -80,14 +81,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     { Text: 'Sales Quotation', iValue: 1, cValue: '' },
     { Text: 'Direct', iValue: 2, cValue: '' }
   ]
-
-  currencyList: StaticList[] = [
-    { Text: 'USD - US Dollar', iValue: 1, cValue: 'USD - US Dollar' },
-    { Text: 'EUR - Euro', iValue: 2, cValue: 'EUR - Euro' },
-    { Text: 'JPY - Japanese Yen', iValue: 3, cValue: 'JPY - Japanese Yen' },
-    { Text: 'GBP - British Pound', iValue: 4, cValue: 'GBP - British Pound' },
-    { Text: 'INR - Indian Rupee', iValue: 5, cValue: 'INR - Indian Rupee' }
-  ];
+  
+  currencyList: Currency_SelectList[] = [];
 
   statusList: StaticList[] = [
     { Text: 'Processing', iValue: 1, cValue: '#28a745' },
@@ -151,6 +146,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         next: (data) => {
           this.paymentTermList = data.paymentTermList.Data.Items;
           this.taxSlabList = data.taxSlabList.Data.Items;
+          this.currencyList = data.currencyList.Data.Items;
         },
       });
   }
@@ -242,16 +238,20 @@ export class CreateComponent implements OnInit, OnDestroy {
   onSelect_SalesQuotation(event: SalesQuotation_SelectList): void {
     this.productListArray.clear();
     this.tableDef.data = [];
-    if (event.StatusID === 3 || event.StatusID === 4 || event.StatusID === 5) {
-      if (event.SalesQuotationID) {
-        this.GetSalesQuotationDetails(event.SalesQuotationID);
-      }
-    } 
-    else {
-      this.alertService.showToast({
-        text: "Cannot select this Sales Quotation. Only quotations with 'Sent to Customer', 'Accepted', or 'Revised' status can be processed."
-      });
+    if (event.SalesQuotationID) {
+      this.GetSalesQuotationDetails(event.SalesQuotationID);
     }
+    // if (event.StatusID === 3 || event.StatusID === 4 || event.StatusID === 5) {
+    //   if (event.SalesQuotationID) {
+    //     this.GetSalesQuotationDetails(event.SalesQuotationID);
+    //   }
+    // } 
+    // else {
+    //   this.alertService.showToast({
+    //     text: "Cannot create export "
+    //   });
+    //   this.onClear_SalesQuotation();
+    // }
 
     return;
   }
@@ -488,7 +488,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
 
-        // this.logInvalidControls(this.form);
+        this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -589,6 +589,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
+                  console.log(response);
                   this.GetOrderItemDetails(response.Data)
                 } else {
                   this.alertService.showServerResponseAlert(response);
@@ -649,9 +650,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data);
+              console.log(response);
               const keysToPatch = Object.keys(this.formConfig).filter(
-                k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration'].includes(k)
+                k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
               );
 
               const filteredModel = keysToPatch.reduce((acc, key) => {
@@ -903,19 +904,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     return DateUtils.formatDate(date);
   }
 
-  // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-  //   Object.keys(form.controls).forEach(key => {
-  //     const control = form.get(key);
-  //     const controlPath = parentKey ? `${parentKey}.${key}` : key;
+  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+      const controlPath = parentKey ? `${parentKey}.${key}` : key;
 
-  //     if (control instanceof FormGroup || control instanceof FormArray) {
-  //       this.logInvalidControls(control, controlPath);
-  //     } else if (control && control.invalid) {
-  //       console.warn(
-  //         `❌ Invalid Control: ${controlPath}`,
-  //         control.errors
-  //       );
-  //     }
-  //   });
-  // }
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.logInvalidControls(control, controlPath);
+      } else if (control && control.invalid) {
+        console.warn(
+          `❌ Invalid Control: ${controlPath}`,
+          control.errors
+        );
+      }
+    });
+  }
 }

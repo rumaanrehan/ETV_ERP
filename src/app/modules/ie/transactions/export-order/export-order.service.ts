@@ -25,6 +25,8 @@ import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-
 import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
 import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationDetail, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
+import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
+import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +38,7 @@ export class ExportOrderService {
     private apiService: ApiService,
     private salesQuotationService: SalesQuotationService,
     private companyMasterService: CompanyMasterService,
+    private currencyMasterService: CurrencyMasterService,
     private productMasterService: ProductMasterService,
     private paymentTermMasterService: PaymentTermMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
@@ -46,10 +49,12 @@ export class ExportOrderService {
   GetMasterDropdownLists(): Observable<{
     paymentTermList: ApiListResponse<PaymentTerm_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
+    currencyList: ApiListResponse<Currency_SelectList>;
   }> {
     return forkJoin({
       paymentTermList: this.paymentTermMasterService.PopulateList({ PopulateType: 'SelectList' } as PaymentTermRequest),
-      taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest)
+      taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest),
+      currencyList: this.currencyMasterService.PopulateList({ PopulateType: 'SelectList' } as CurrencyRequest)
     });
   }
 
