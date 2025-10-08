@@ -15,14 +15,14 @@
                   <div class="col-xl-3 div-center">
                     <div class="input-group justify-content-center">
                       <span class="input-group-text">Employee Code</span>
-                      <span class="input-span"> {{ form.get('EmployeeCode')?.value }}</span>
+                      <span class="input-span"> {{ form.get('EmployeeCode')?.value }} </span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div class="col-xl-12 card m-auto mb-2">
             <div class="card-body p-0">
               <div class="card-header text-start">
@@ -208,7 +208,7 @@
                     </div>
                   </div>
                 </div>
-               </div> 
+              </div>
             </div>
           </div>
           <div class="col-xl-12 card m-auto mb-2">
@@ -267,7 +267,8 @@
           *ngIf="[3].includes(form.get('EmployeeCategory')?.value)">Signature File</button>
       </div> -->
       <div class="col-xl-4 px-1" *ngIf="isEditMode">
-        <button class="btn btn-md btn-primary w-100" [disabled]="!form.get('DOT')?.value || form.get('StatusID')?.value == 2" (click)="terminateEmployee()">
+        <button class="btn btn-md btn-primary w-100"
+          [disabled]="!form.get('DOT')?.value || form.get('StatusID')?.value == 2" (click)="terminateEmployee()">
           {{ form.get('StatusID')?.value == 1 ? 'Terminate Employee' : 'Employee Terminated' }}
         </button>
       </div>

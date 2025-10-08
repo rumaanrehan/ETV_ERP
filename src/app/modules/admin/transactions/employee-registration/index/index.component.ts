@@ -58,11 +58,10 @@ export class IndexComponent {
       { data: 'EmployeeCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.employeeCodeTemplate },
       { data: 'EmployeeName', label: 'Employee Name', filterable: true },
       { data: 'MobileNo', label: 'Mobile No', orderable: false, filterable: true },
-      { data: 'EmployeeTypeName', label: 'Company Type', width: "15%", filterable: true, filterType: 'select', filterKey: 'EmployeeTypeID' },
-
-      // { data: 'DepartmentName', label: 'Department', filterable: true, filterType: 'select', filterKey: 'DepartmentID', cssClass: 'text-center' },
-      // { data: 'DesignationName', label: 'Designation', filterable: true, filterType: 'select', filterKey: 'DesignationID', cssClass: 'text-center' },
-      // { data: 'CanAccessERP', label: 'ERP Access', orderable: false, filterable: true, filterType: 'select', filterKey: 'CanAccessERP', cssClass: 'text-center', customTemplate: this.canAccessERPTemplate }
+      { data: 'EmployeeTypeName', label: 'Employee Type', width: "15%", filterable: true, filterType: 'select', filterKey: 'EmployeeTypeID' },
+      { data: 'DepartmentName', label: 'Department', filterable: true, filterType: 'select', filterKey: 'DepartmentID', cssClass: 'text-center' },
+      { data: 'DesignationName', label: 'Designation', filterable: true, filterType: 'select', filterKey: 'DesignationID', cssClass: 'text-center' },
+      { data: 'CanAccessERP', label: 'ERP Access', orderable: false, filterable: true, filterType: 'select', filterKey: 'CanAccessERP', cssClass: 'text-center', customTemplate: this.canAccessERPTemplate }
     ];
   }
 
