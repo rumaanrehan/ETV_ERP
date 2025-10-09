@@ -134,7 +134,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSelect_Customer(event: Company_SelectList): void {
-    this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
+    this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName, ContactPhone: event.CompanyPhoneNo, ContactEmail: event.CompanyEmailID });
     this.selectedCustomerAddress = event?.BillingAddress || '';
   }
 
@@ -315,6 +315,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                     productForm.patchValue(item);
                     this.productListArray.push(productForm);
                   });
+
                   this.tableDef.data = this.productListArray.value;
                   const { ProductList, ...formValues } = response.Data;
                   const data = {
@@ -322,6 +323,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                     EnquiryDate: DateUtils.toDate(response.Data.EnquiryDate!),
                     ExpectedDeliveryDate: DateUtils.toDate(response.Data.ExpectedDeliveryDate!)
                   }
+
                   this.form.patchValue(data);
                 } else {
                   this.alertService.showServerResponseAlert(response);

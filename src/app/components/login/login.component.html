@@ -1,19 +1,19 @@
 <div class="container-fluid d-flex justify-content-center align-items-center vh-100 login-bg">
   <div class="col-lg-3 col-md-6 col-sm-8 p-4 login-card">
-    <div class="signin-text-container">
+    <div class="col-5 signin-text-container">
       <div class="signin-text">
         Sign in to IEMS
       </div>
     </div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="mb-3">
-        <input type="text" class="py-2" id="Username" formControlName="Username" placeholder="Username" />
+        <input type="text" id="Username" formControlName="Username" placeholder="Username" />
       </div>
       <div class="mb-3">
-        <input [type]="showPassword ? 'text' : 'password'" class="input-lg py-2" id="Password"
-          formControlName="Password" placeholder="Password" (keydown)="checkCapsLock($event)" />
+        <input [type]="showPassword ? 'text' : 'password'" id="Password" formControlName="Password"
+          placeholder="Password" (keydown)="checkCapsLock($event)" />
       </div>
-      <button type="submit" class="btn btn-primary w-100 btn-grad">Sign in</button>
+      <button type="submit" class="btn-submit w-100 text-white">Sign in</button>
     </form>
   </div>
 </div>
