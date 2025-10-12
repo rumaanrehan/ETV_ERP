@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { CompanyMaster, State_SelectList } from '../company-master';
 import { CompanyMasterService } from '../company-master.service';
@@ -13,6 +13,7 @@ import { StaticList } from '../../../../../shared/models/select-list';
 import { Country } from '../../../../../shared/layouts/directives/soratable.directive';
 import { Country_SelectList, CountryMaster } from '../../../../admin/settings/country-master/country-master';
 import { CommonModule } from '@angular/common';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 
 @Component({
   selector: 'app-create',
@@ -33,23 +34,19 @@ export class CreateComponent {
   form!: FormGroup;
   formConfig!: FormConfigType<CompanyMaster>;
 
-  companyTypeList: StaticList[] = [
-    { iValue: 1, Text: "Client", cValue: "" },
-    { iValue: 2, Text: "Vendor", cValue: "" }
-  ]
-
-  countryList: Country_SelectList[] = [];   
+  companyTypeList: StaticList[] = [];
+  countryList: Country_SelectList[] = [];
 
   stateList: State_SelectList[] = [
-    { StateID: 1, StateName: "Delhi"},
-    { StateID: 2, StateName: "Bihar"},
-    { StateID: 3, StateName: "Karnataka"},
-    { StateID: 4, StateName: "Maharastra"},
-    { StateID: 5, StateName: "Uttar Pradesh"},
-    { StateID: 6, StateName: "Goa"},
-    { StateID: 7, StateName: "Sikkim"},
-    { StateID: 8, StateName: "Haryana"},
-    { StateID: 9, StateName: "Punjab"}
+    { StateID: 1, StateName: "Delhi" },
+    { StateID: 2, StateName: "Bihar" },
+    { StateID: 3, StateName: "Karnataka" },
+    { StateID: 4, StateName: "Maharastra" },
+    { StateID: 5, StateName: "Uttar Pradesh" },
+    { StateID: 6, StateName: "Goa" },
+    { StateID: 7, StateName: "Sikkim" },
+    { StateID: 8, StateName: "Haryana" },
+    { StateID: 9, StateName: "Punjab" }
 
   ]
 
@@ -63,7 +60,7 @@ export class CreateComponent {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<CompanyMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.LoadDropdownList();
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -91,8 +88,10 @@ export class CreateComponent {
   }
 
 
-  LoadDropdownList(): void {
-
+  loadDropdownList(): void {
+    this.loadStaticLists([
+      { fieldName: 'CompanyType', targetList: 'companyTypeList' }
+    ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -100,7 +99,33 @@ export class CreateComponent {
           if (data.CountryList.IsSuccess) {
             this.countryList = data.CountryList.Data.Items;
           }
-          },
+        },
+      });
+  }
+
+  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
+
+    listConfigs.forEach(({ fieldName, targetList }) => {
+      sources[targetList] = this.pageService.GetStaticList({
+        AreaName: 'IE',
+        ControllerName: 'CompanyMaster',
+        FieldName: fieldName,
+      });
+    });
+
+    forkJoin(sources)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as StaticList[]) = [];
+            }
+          });
+        },
       });
   }
 
@@ -108,7 +133,7 @@ export class CreateComponent {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    try{
+    try {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -127,7 +152,7 @@ export class CreateComponent {
             this.isSubmitted = false;
           }
         });
-      } 
+      }
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
@@ -138,55 +163,55 @@ export class CreateComponent {
   }
 
   createRecord(model: CompanyMaster): void {
-    try{
-    this.pageService.CreateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: "success",
-              text: response.Message,
-              timer: 5000
-            });
+    try {
+      this.pageService.CreateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: "success",
+                text: response.Message,
+                timer: 5000
+              });
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
           }
-          else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        }
-      });
+        });
     }
     catch (error) {
 
     }
-  }  
+  }
 
   updateRecord(model: CompanyMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: "success",
-              text: response.Message,
-              timer: 5000
-            });
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: "success",
+                text: response.Message,
+                timer: 5000
+              });
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
           }
-          else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        }
-      });
+        });
     }
     catch (error) {
 

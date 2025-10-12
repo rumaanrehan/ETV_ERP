@@ -113,8 +113,8 @@ export const imsRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/CompanyMaster',
-              breadcrumb: 'Company Master'
+              menu: 'IMS/GenericMaster',
+              breadcrumb: 'Generic Master'
             }
           },
           {
@@ -123,8 +123,8 @@ export const imsRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/DocumentTypeMaster',
-              breadcrumb: 'Document Type Master'
+              menu: 'IMS/HSNCodeMaster',
+              breadcrumb: 'HSN Code Master'
             }
           },
           {
@@ -133,8 +133,8 @@ export const imsRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/PaymentTermMaster',
-              breadcrumb: 'Payment Term Master'
+              menu: 'IMS/IndustryMaster',
+              breadcrumb: 'Industry Master'
             }
           },
           {
@@ -143,8 +143,8 @@ export const imsRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/PortMaster',
-              breadcrumb: 'Port Master'
+              menu: 'IMS/ItemCategoryMaster',
+              breadcrumb: 'Item Category Master'
             }
           },
           {
@@ -153,8 +153,8 @@ export const imsRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/PortMaster',
-              breadcrumb: 'Port Master'
+              menu: 'IMS/ItemGroupMaster',
+              breadcrumb: 'Item Group Master'
             }
           },
           {
@@ -163,8 +163,8 @@ export const imsRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/PortMaster',
-              breadcrumb: 'Port Master'
+              menu: 'IMS/ManufacturerMaster',
+              breadcrumb: 'Manufacturer Master'
             }
           },
           {
@@ -173,8 +173,8 @@ export const imsRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/PortMaster',
-              breadcrumb: 'Port Master'
+              menu: 'IMS/ProductMaster',
+              breadcrumb: 'Product Master'
             }
           },
           {
@@ -183,8 +183,8 @@ export const imsRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'IE/PortMaster',
-              breadcrumb: 'Port Master'
+              menu: 'IMS/UOMMaster',
+              breadcrumb: 'UOM Master'
             }
           },
         ]

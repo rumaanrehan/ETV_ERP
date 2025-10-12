@@ -59,8 +59,8 @@ export class ModuleMasterService {
         defaultValue: null
       },
       ModuleCode: {
-        label: 'Code',
-        defaultValue: "NEW"
+        label: 'Module Code',
+        defaultValue: ""
       },
       ModuleName: {
         label: 'Module Name',

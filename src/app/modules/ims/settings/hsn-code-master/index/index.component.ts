@@ -35,7 +35,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     private pageService: HsnSacMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
@@ -51,7 +51,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'HSNCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.hsnCodeTemplate },
+      { data: 'HSNCode', label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.hsnCodeTemplate },
       { data: 'HSNCodeDescription', label: 'Description', filterable: true, orderable: false },
       { data: 'IsServiceAccountCode', label: 'SAC', filterable: true, filterType: 'select', filterKey: 'IsServiceAccountCodeID', cssClass: 'text-center', width: "5%", customTemplate: this.isSACTemplate },
       { data: 'TaxRate', label: 'Tax Rate', filterable: true, orderable: false, filterType: 'select', filterKey: 'TaxRate', cssClass: 'text-center', width: "8%", customTemplate: this.taxRateTemplate },
@@ -70,23 +70,22 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.createSidebar.openSidebar(true, false, this.formService.createNullObject<HsnSacMaster>());
     }
   }
-  
+
   onClickEditDetails(HSNCodeID: number, activeStatus: boolean): void {
     try {
-      console.log(HSNCodeID);
       if (this.createSidebar && HSNCodeID) {
         this.pageService.GetDetails(HSNCodeID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
       }
     }
     catch (error) {
@@ -97,7 +96,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   onCloseSidebar(): void {
     this.loadData();
   }
-  
+
   onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
     this.tableEvent = event;
     this.loadData();
@@ -113,24 +112,23 @@ export class IndexComponent implements OnInit, OnDestroy {
         filters: this.tableDef.filterForm?.value
       };
       this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            console.log(response.Data.Items);
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            }
+            else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
           }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
+        });
     }
     catch (error) {
 
@@ -146,33 +144,33 @@ export class IndexComponent implements OnInit, OnDestroy {
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.HsnCode}</b>"?`,
       })
-      .then(result => {
-        if (result.isConfirmed) {
-          const model: HsnSacMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
+        .then(result => {
+          if (result.isConfirmed) {
+            const model: HsnSacMaster = {
+              ...row,
+              ActionType: ActionType,
+              ReasonToUpdate: result.value
+            };
 
-          this.pageService.DeleteReactivate(model)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.loadData();
-                this.alertService.showAlert({
-                  type: "success",
-                  text: response.Message,
-                  timer: 5000
-                });
-              }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            }
-          });
-        }
-      });
+            this.pageService.DeleteReactivate(model)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response) => {
+                  if (response.IsSuccess) {
+                    this.loadData();
+                    this.alertService.showAlert({
+                      type: "success",
+                      text: response.Message,
+                      timer: 5000
+                    });
+                  }
+                  else {
+                    this.alertService.showServerResponseAlert(response);
+                  }
+                }
+              });
+          }
+        });
     }
     catch (error) {
 
