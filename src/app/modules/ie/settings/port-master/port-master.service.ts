@@ -24,11 +24,11 @@ export class PortMasterService {
     private countryMasterService: CountryMasterService,
   ) { }
 
-  GetMasterDropdownLists(): Observable<{ 
+  GetMasterDropdownLists(): Observable<{
     countryList: ApiListResponse<Country_SelectList>;
-    }> {
+  }> {
     return forkJoin({
-      countryList: this.countryMasterService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
+      countryList: this.countryMasterService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),
     });
   }
 
@@ -37,8 +37,7 @@ export class PortMasterService {
   }
 
   PopulateList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
-    console.log("Loading ports...");
-    return this.apiService.post<ApiListResponse<Port_SelectList>>( `${this.endpoint}/PopulateList`, model );
+    return this.apiService.post<ApiListResponse<Port_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<Port_IndexFilter>): Observable<ApiPagedListResponse<Port_IndexList>> {
@@ -61,7 +60,7 @@ export class PortMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Port_IndexFilter>{
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Port_IndexFilter> {
     return {
       PortCode: '',
       PortName: '',
@@ -94,16 +93,16 @@ export class PortMasterService {
         defaultValue: 0,
         validators: [Validators.required],
         validationMessages: {
-        required: 'Port Type is required.'
-        }        
+          required: 'Port Type is required.'
+        }
       },
       CountryID: {
         label: 'Country',
         defaultValue: 0,
         validators: [Validators.required],
         validationMessages: {
-        required: 'Country is required.'
-        }        
+          required: 'Country is required.'
+        }
       }
     }
   }

@@ -28,6 +28,16 @@ export const adminRoute: Routes = [
         },
         children: [
           {
+            path: 'country-master',
+            loadComponent: () => import('./settings/country-master/index/index.component').then((m) => m.IndexComponent),
+            canActivate: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              permission: 'CanRead',
+              menu: 'Admin/CountryMaster',
+              breadcrumb: 'Country Master'
+            }
+          },
+          {
             path: 'module-master',
             loadComponent: () => import('./settings/module-master/index/index.component').then((m) => m.IndexComponent),
             canActivate: [AuthenticationGuard, AuthorizationGuard],
