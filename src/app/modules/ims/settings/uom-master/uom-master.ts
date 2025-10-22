@@ -28,3 +28,10 @@ export interface UOMRequest {
   UOMID?: number | null
   PopulateType?: string | null;
 }
+
+export interface UOM_Details {
+  UOMID: number | null;
+  UOMCode: string | null;
+  UOMName: string | null;
+  ShortCode: string | null;
+}

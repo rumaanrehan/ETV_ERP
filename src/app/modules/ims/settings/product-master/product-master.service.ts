@@ -8,7 +8,7 @@ import { Manufacturer_SelectList, ManufacturerRequest } from '../manufacturer-ma
 import { ManufacturerMasterService } from '../manufacturer-master/manufacturer-master.service';
 import { UOM_SelectList, UOMRequest } from '../uom-master/uom-master';
 import { UOMMasterService } from '../uom-master/uom-master.service';
-import { Product_SelectList, ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList, ProductRequest } from './product-master';
+import { Product_Details, Product_SelectList, ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList, ProductRequest } from './product-master';
 import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
 import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
 import { Injectable } from '@angular/core';
@@ -89,8 +89,8 @@ export class ProductMasterService {
     return this.apiService.post<ApiPagedListResponse<ProductMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(productID: number): Observable<ApiDataResponse<ProductMaster>> {
-    return this.apiService.post<ApiDataResponse<ProductMaster>>(`${this.endpoint}/GetDetails?productID=${productID}`, {});
+  GetDetails(productID: number): Observable<ApiDataResponse<Product_Details>> {
+    return this.apiService.post<ApiDataResponse<Product_Details>>(`${this.endpoint}/GetDetails?productID=${productID}`, {});
   }
 
   CreateRecord(model: ProductMaster): Observable<ApiResponse> {
@@ -246,7 +246,7 @@ export class ProductMasterService {
       },
       PurTaxOn: {
         label: 'Tax on',
-        defaultValue: 1,
+        defaultValue: "",
         validators: [Validators.required],
         validationMessages: {
           required: 'Purchase Tax On is required',
