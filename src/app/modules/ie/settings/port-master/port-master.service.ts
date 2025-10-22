@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
-import { PortMaster, PortRequest, Port_IndexFilter, Port_IndexList, Port_SelectList } from './port-master';
+import { PortMaster, PortRequest, Port_Details, Port_IndexFilter, Port_IndexList, Port_SelectList } from './port-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -45,8 +45,8 @@ export class PortMasterService {
     return this.apiService.post<ApiPagedListResponse<Port_IndexList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(portID: number): Observable<ApiDataResponse<PortMaster>> {
-    return this.apiService.post<ApiDataResponse<PortMaster>>(`${this.endpoint}/GetDetails?PortID=${portID}`, {});
+  GetDetails(portID: number): Observable<ApiDataResponse<Port_Details>> {
+    return this.apiService.post<ApiDataResponse<Port_Details>>(`${this.endpoint}/GetDetails?PortID=${portID}`, {});
   }
 
   CreateRecord(model: PortMaster): Observable<ApiResponse> {
