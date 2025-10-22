@@ -29,3 +29,11 @@ export interface EmployeeTypeRequest {
     EmployeeTypeID?: number | null;
     PopulateType?: string | null;
 }
+
+export interface EmployeeTypeDetails {
+    EmployeeTypeID?: number | null;
+    EmployeeTypeCode: string | null;
+    EmployeeTypeName: string;
+    IsAllowedOverTime: string | null;
+
+}

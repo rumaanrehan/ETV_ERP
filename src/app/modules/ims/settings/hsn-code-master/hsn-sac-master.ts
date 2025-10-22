@@ -16,6 +16,8 @@ export interface HsnSacMaster_SelectList {
 
 export interface HsnSacMaster_IndexTableFilter {
   HSNCode: string | null;
+  HSNCodeDescription: string | null;
+  IsServiceAccountCodeID: number | null;
   ActiveStatusID: number | null;
 }
 
@@ -27,4 +29,20 @@ export interface HsnSacMaster_IndexTableList {
   IsServiceAccountCode: boolean | null;
   TaxRate: string | null;
   ActiveStatus: boolean | null;
+}
+
+export interface HsnSacMaster_Details {
+  HSNCodeID: number | null;
+  HSNCode: string | null;
+  HSNCodeDescription: string | null;
+  IsServiceAccountCode: boolean | null;
+  SectionName: string | null;
+  ChapterName: string | null;
+  HeadingName: string | null;
+  TaxSlabID: number | null;
+}
+
+export interface HsnSacMasterRequest {
+  HSNCodeID: number | null;
+  PopulateType: string | null;
 }

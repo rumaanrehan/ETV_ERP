@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { PaymentTermMaster, PaymentTerm_IndexTableFilter, PaymentTerm_IndexTableList, PaymentTerm_SelectList, PaymentTermRequest } from './payment-term-master';
+import { PaymentTermMaster, PaymentTerm_IndexTableFilter, PaymentTerm_IndexTableList, PaymentTerm_SelectList, PaymentTermRequest, PaymentTerm_Details} from './payment-term-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -27,8 +27,8 @@ export class PaymentTermMasterService {
     return this.apiService.post<ApiPagedListResponse<PaymentTerm_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(paymentTermID: number): Observable<ApiDataResponse<PaymentTermMaster>> {
-    return this.apiService.post<ApiDataResponse<PaymentTermMaster>>(`${this.endpoint}/GetDetails?PaymentTermID=${paymentTermID}`, {});
+  GetDetails(paymentTermID: number): Observable<ApiDataResponse<PaymentTerm_Details>> {
+    return this.apiService.post<ApiDataResponse<PaymentTerm_Details>>(`${this.endpoint}/GetDetails?PaymentTermID=${paymentTermID}`, {});
   }
 
   CreateRecord(model: PaymentTermMaster): Observable<ApiResponse> {

@@ -67,13 +67,13 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: GenericMaster): void {
     if (isEditMode && model) {
-      this.loadItemGroup(model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID!);
-      this.loadItemCategory(model.ItemCategory?.ItemGroup?.ItemGroupID!);
+      this.loadItemGroup(model.ItemCategory?.ItemTypeID!);
+      this.loadItemCategory(model.ItemCategory?.ItemGroupID!);
       this.isEditMode = isEditMode;
     }
     this.activeStatus = activeStatus;
     this.form.patchValue(model);
-    this.form.patchValue({ ItemTypeID: model.ItemCategory?.ItemGroup?.ItemType?.ItemTypeID, ItemGroupID: model.ItemCategory?.ItemGroup?.ItemGroupID });
+    this.form.patchValue({ ItemTypeID: model.ItemCategory?.ItemTypeID, ItemGroupID: model.ItemCategory?.ItemGroupID });
     this.isFormSidebarVisible = true;
   }
 

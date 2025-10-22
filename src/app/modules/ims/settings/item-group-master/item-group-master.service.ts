@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
 import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
-import { ItemGroup_IndexTableFilter, ItemGroup_IndexTableList, ItemGroup_SelectList, ItemGroupMaster, ItemGroupRequest } from './item-group-master';
+import { ItemGroup_IndexTableFilter, ItemGroup_IndexTableList, ItemGroup_SelectList, ItemGroupMaster, ItemGroupRequest, ItemGroup_Details } from './item-group-master';
 import { ItemTypeMasterService } from './../item-type-master/item-type-master.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
@@ -37,8 +37,8 @@ export class ItemGroupMasterService {
     return this.apiService.post<ApiPagedListResponse<ItemGroup_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(itemGroupID: number): Observable<ApiDataResponse<ItemGroupMaster>> {
-    return this.apiService.post<ApiDataResponse<ItemGroupMaster>>(`${this.endpoint}/GetDetails?ItemGroupID=${itemGroupID}`, {});
+  GetDetails(itemGroupID: number): Observable<ApiDataResponse<ItemGroup_Details>> {
+    return this.apiService.post<ApiDataResponse<ItemGroup_Details>>(`${this.endpoint}/GetDetails?ItemGroupID=${itemGroupID}`, {});
   }
 
   CreateRecord(model: ItemGroupMaster): Observable<ApiResponse> {

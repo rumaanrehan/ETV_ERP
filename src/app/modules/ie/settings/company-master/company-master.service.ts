@@ -125,7 +125,7 @@ export class CompanyMasterService {
       ImportLicenseNo: {
         label: 'Import License No',
         defaultValue: null,
-        validators: [Validators.pattern(/^[0-9]{10}$/), RequiredIf("CompanyTypeID", Operator.EqualTo, 1)],
+        validators: [Validators.pattern(/^[0-9]{10}$/),Validators.pattern(/^[0-9]{10}$/),],
         validationMessages: {
           pattern: "Enter a valid Import License No",
           RequiredIf: "Import License No is required"

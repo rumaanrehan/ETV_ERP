@@ -36,3 +36,18 @@ export interface HolidayRequest{
   HolidayTypeID?: number | null;
   PopulateType: string | null
 }
+
+export interface HolidayDetails {
+  HolidayID?: number | null;
+  HolidayCode: string | null;
+  HolidayName: string;
+  HolidayTypeID: number | null;
+  HolidayDate: Date | null;
+  HolidayDescription: string | null;
+}
+
+
+
+
+
+
