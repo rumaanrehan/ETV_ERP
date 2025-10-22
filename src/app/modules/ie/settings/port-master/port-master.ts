@@ -34,5 +34,13 @@ export interface PortRequest {
   CountryID?: number | null;
   PortCode?: string | null;
   PortName?: string | null;
-  PopulateType?: string | null;
+  PopulateType: string | null;
+}
+
+export interface Port_Details {
+  PortID: number | null;
+  PortTypeID: number | null;
+  CountryID: number | null;
+  PortCode: string | null;
+  PortName: string | null;
 }

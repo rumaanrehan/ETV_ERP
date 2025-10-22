@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
-import { ItemGroup_SelectList, ItemGroupRequest } from '../item-group-master/item-group-master';
-import { ItemCategoryMaster, ItemCategoryRequest, ItemCategory_IndexFilter, ItemCategory_IndexList, ItemCategory_SelectList } from './item-category-master';
-import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
-import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
-import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
+import { ItemCategoryMaster, ItemCategoryRequest, ItemCategory_Details, ItemCategory_IndexFilter, ItemCategory_IndexList, ItemCategory_SelectList } from './item-category-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
+import { ItemGroupRequest, ItemGroup_SelectList } from '../item-group-master/item-group-master';
+import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
+import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
 
 @Injectable({
   providedIn: 'root',
@@ -44,8 +44,8 @@ export class ItemCategoryMasterService {
     return this.apiService.post<ApiPagedListResponse<ItemCategory_IndexList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(ItemCategoryID: number): Observable<ApiDataResponse<ItemCategoryMaster>> {
-    return this.apiService.post<ApiDataResponse<ItemCategoryMaster>>(`${this.endpoint}/GetDetails?ItemCategoryID=${ItemCategoryID}`, {});
+  GetDetails(ItemCategoryID: number): Observable<ApiDataResponse<ItemCategory_Details>> {
+    return this.apiService.post<ApiDataResponse<ItemCategory_Details>>(`${this.endpoint}/GetDetails?ItemCategoryID=${ItemCategoryID}`, {});
   }
 
   CreateRecord(model: ItemCategoryMaster): Observable<ApiResponse> {

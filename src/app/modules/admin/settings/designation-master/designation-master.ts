@@ -26,3 +26,8 @@ export interface Designation_IndexTableList {
     DesignationName: string;
     ActiveStatus: boolean;
 }
+export interface DesignationDetails{
+    DesignationID: number;
+    DesignationName: string;
+    
+}

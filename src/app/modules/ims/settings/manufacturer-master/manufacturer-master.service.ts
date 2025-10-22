@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ManufacturerMaster, Manufacturer_IndexTableFilter, Manufacturer_IndexTableList, Manufacturer_SelectList, ManufacturerRequest } from './manufacturer-master';
+import { ManufacturerMaster, Manufacturer_IndexTableFilter, Manufacturer_IndexTableList, Manufacturer_SelectList, ManufacturerRequest, Manufacturer_Details } from './manufacturer-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -26,8 +26,8 @@ export class ManufacturerMasterService {
     return this.apiService.post<ApiPagedListResponse<Manufacturer_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(manufacturerID: number): Observable<ApiDataResponse<ManufacturerMaster>> {
-    return this.apiService.post<ApiDataResponse<ManufacturerMaster>>(`${this.endpoint}/GetDetails?ManufacturerID=${manufacturerID}`, {});
+  GetDetails(manufacturerID: number): Observable<ApiDataResponse<Manufacturer_Details>> {
+    return this.apiService.post<ApiDataResponse<Manufacturer_Details>>(`${this.endpoint}/GetDetails?ManufacturerID=${manufacturerID}`, {});
   }
 
   CreateRecord(model: ManufacturerMaster): Observable<ApiResponse> {

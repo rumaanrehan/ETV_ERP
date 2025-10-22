@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
-import { DocumentTypeMaster, DocumentTypeRequest, DocumentType_IndexFilter, DocumentType_IndexList, DocumentType_SelectList } from './document-type-master';
+import { DocumentTypeDetails, DocumentTypeMaster, DocumentTypeRequest, DocumentType_IndexFilter, DocumentType_IndexList, DocumentType_SelectList } from './document-type-master';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
@@ -26,8 +26,8 @@ export class DocumentTypeMasterService {
     return this.apiService.post<ApiPagedListResponse<DocumentType_IndexList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(documentTypeID: number): Observable<ApiDataResponse<DocumentTypeMaster>> {
-    return this.apiService.post<ApiDataResponse<DocumentTypeMaster>>(`${this.endpoint}/GetDetails?DocumentTypeID=${documentTypeID}`, {});
+  GetDetails(documentTypeID: number): Observable<ApiDataResponse<DocumentTypeDetails>> {
+    return this.apiService.post<ApiDataResponse<DocumentTypeDetails>>(`${this.endpoint}/GetDetails?DocumentTypeID=${documentTypeID}`, {});
   }
 
   CreateRecord(model: DocumentTypeMaster): Observable<ApiResponse> {

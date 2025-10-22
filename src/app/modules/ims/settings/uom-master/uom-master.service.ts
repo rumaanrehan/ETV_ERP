@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UOMMaster, UOMRequest, UOM_IndexTableFilter, UOM_IndexTableList, UOM_SelectList } from './uom-master';
+import { UOMMaster, UOMRequest, UOM_Details, UOM_IndexTableFilter, UOM_IndexTableList, UOM_SelectList } from './uom-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -26,8 +26,8 @@ export class UOMMasterService {
     return this.apiService.post<ApiPagedListResponse<UOM_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(UOMID: number): Observable<ApiDataResponse<UOMMaster>> {
-    return this.apiService.post<ApiDataResponse<UOMMaster>>(`${this.endpoint}/GetDetails?UOMID=${UOMID}`, {});
+  GetDetails(UOMID: number): Observable<ApiDataResponse<UOM_Details>> {
+    return this.apiService.post<ApiDataResponse<UOM_Details>>(`${this.endpoint}/GetDetails?UOMID=${UOMID}`, {});
   }
 
   CreateRecord(model: UOMMaster): Observable<ApiResponse> {

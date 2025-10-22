@@ -75,13 +75,12 @@ export class IndexComponent implements OnInit, OnDestroy {
         this.pageService.GetDetails(manufacturerID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              } else {
+                this.alertService.showServerResponseAlert(response);
+              }
           },
         });
       }

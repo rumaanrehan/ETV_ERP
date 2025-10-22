@@ -8,7 +8,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeType_SelectList, EmployeeTypeMaster, EmployeeTypeRequest } from './employee-type-master';
+import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeType_SelectList, EmployeeTypeDetails, EmployeeTypeMaster, EmployeeTypeRequest } from './employee-type-master';
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +28,8 @@ export class EmployeeTypeMasterService {
     return this.apiService.post<ApiPagedListResponse<EmployeeType_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(employeeTypeID: number): Observable<ApiDataResponse<EmployeeTypeMaster>> {
-    return this.apiService.post<ApiDataResponse<EmployeeTypeMaster>>(`${this.endpoint}/GetDetails?employeeTypeID=${employeeTypeID}`, {});
+  GetDetails(employeeTypeID: number): Observable<ApiDataResponse<EmployeeTypeDetails>> {
+    return this.apiService.post<ApiDataResponse<EmployeeTypeDetails>>(`${this.endpoint}/GetDetails?employeeTypeID=${employeeTypeID}`, {});
   }
 
   CreateRecord(model: EmployeeTypeMaster): Observable<ApiResponse> {

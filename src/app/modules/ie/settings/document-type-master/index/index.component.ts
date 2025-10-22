@@ -24,7 +24,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('documentTypeCodeTemplate', { static: true }) documentTypeCodeTemplate!: TemplateRef<any>;
   @ViewChild('documentTypeActiveStatusTemplate', { static: true }) documentTypeActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('documentIsApprovalRequiredTemplate', { static: true }) documentIsApprovalRequiredTemplate!: TemplateRef<any>;
+  @ViewChild('documentIsVerificationRequiredTemplate', { static: true }) documentIsVerificationRequiredTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent) createSidebar!: CreateComponent;
 
@@ -56,7 +56,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'DocumentTypeCode', label: 'Code', filterable: true, customTemplate: this.documentTypeCodeTemplate },
       { data: 'DocumentTypeName', label: 'Document Type Name', filterable: true },
       { data: 'ShortCode', label: 'Short Code', filterable: true },
-      { data: 'IsApprovalRequired', label: 'Approval', filterable: true, filterType: 'select', filterKey: 'IsApprovalRequired', cssClass: 'text-center', customTemplate: this.documentIsApprovalRequiredTemplate },
+      { data: 'IsVerificationRequired', label: 'Approval', filterable: true, filterType: 'select', filterKey: 'IsApprovalRequired', cssClass: 'text-center', customTemplate: this.documentIsVerificationRequiredTemplate },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: '5%', customTemplate: this.documentTypeActiveStatusTemplate,},
       {data: '',hideVisToggle: true, orderable: false,cssClass: 'text-center',width: '5%',customTemplate: this.actionColTemplate,}
     ];
@@ -79,9 +79,19 @@ export class IndexComponent implements OnInit, OnDestroy {
       .GetDetails(documentTypeID)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.createSidebar.openSidebar(activeStatus, true, response.Data);
+        next: (response: any) => {
+          if (response?.IsSuccess && response?.Data) {
+            // this.createSidebar.openSidebar(activeStatus, true, response.Data){
+               const model: DocumentTypeMaster = {
+              DocumentTypeID: response.Data.DocumentTypeID ?? null,
+              DocumentTypeCode: response.Data.DocumentTypeCode ?? null,
+              DocumentTypeName: response.Data.DocumentTypeName ?? null,
+              ShortCode: response.Data.ShortCode ?? null,
+              IsVerificationRequired: response.Data.IsVerificationRequired ?? null,
+              Description: response.Data.Description ?? null
+            };
+            this.createSidebar.openSidebar(activeStatus, true, model)
+            
           } else {
             this.alertService.showServerResponseAlert(response);
           }
@@ -114,6 +124,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
+            console.log(response.Data);
             this.tableDef.data = response.Data.Items;
             this.tableDef.totalRecords = response.Data.TotalRecords;
           } else {
