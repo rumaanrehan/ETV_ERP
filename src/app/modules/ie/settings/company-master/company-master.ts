@@ -21,6 +21,9 @@ export interface Company_SelectList {
     CompanyID: number;
     CompanyCode: number | null;
     CompanyName: string;
+    ContactName: string | null;
+    CompanyEmailID: string | null;
+    CompanyPhoneNo: string | null;
     BillingAddress: string | null;
 }
 
@@ -38,7 +41,7 @@ export interface Company_IndexTableList {
     CompanyTypeName: number;
     CompanyEmailID: string;
     ImportLicenseNo: string;
-    AcitveStatus: string;   
+    AcitveStatus: string;
 }
 
 export interface CompanyRequest {

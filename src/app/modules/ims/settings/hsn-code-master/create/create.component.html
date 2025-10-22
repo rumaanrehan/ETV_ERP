@@ -4,16 +4,16 @@
   </div>
   <div sidebarContent>
     <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-goup">
-       <div class="col-xl-5">
-          <z-span [text]="form.get('HSNCode')?.value" [label]="formConfig.HSNCode.label"></z-span>
-      </div>
-      <div class="col-xl-5 p-1">
-        <z-checkbox [group]="form" [control]="'IsServiceAccountCode'" [label]="formConfig.IsServiceAccountCode.label"></z-checkbox>
-      </div>
+      <div class="col-xl-12 form-group">
+        <z-span [text]="form.get('HSNCode')?.value" [label]="formConfig.HSNCode.label"></z-span>
       </div>
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'HSNCodeDescription'" [label]="formConfig.HSNCodeDescription.label"></z-inputtext>
+        <z-checkbox [group]="form" [control]="'IsServiceAccountCode'"
+          [label]="formConfig.IsServiceAccountCode.label"></z-checkbox>
+      </div>
+      <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'HSNCodeDescription'"
+          [label]="formConfig.HSNCodeDescription.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
         <z-inputtext [group]="form" [control]="'SectionName'" [label]="formConfig.SectionName.label"></z-inputtext>
@@ -25,7 +25,8 @@
         <z-inputtext [group]="form" [control]="'HeadingName'" [label]="formConfig.HeadingName.label"></z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'TaxSlabID'" [label]="formConfig.TaxSlabID.label" [options]="taxSlabList" [optionLabel]="'TaxSlabName'" [optionValue]="'TaxSlabID'">
+        <z-select [group]="form" [control]="'TaxSlabID'" [label]="formConfig.TaxSlabID.label" [options]="taxSlabList"
+          [optionLabel]="'TaxSlabName'" [optionValue]="'TaxSlabID'">
         </z-select>
       </div>
     </form>
@@ -33,7 +34,8 @@
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"
+          [disabled]="isSubmitted || !activeStatus">
           {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>

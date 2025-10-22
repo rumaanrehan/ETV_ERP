@@ -9,6 +9,8 @@ import { FormConfigType } from '../../../../shared/models/form.model';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
+import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
+import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
 import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
 import { Product_SelectList, ProductRequest } from '../../../ims/settings/product-master/product-master';
@@ -17,7 +19,9 @@ import { Company_SelectList, CompanyRequest } from '../../settings/company-maste
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
 import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
-import { SalesQuotation, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_SelectList, SalesQuotationDetail, SalesQuotationRequest } from './sales-quotation';
+import { SalesEnquiry_Detail, SalesEnquiry_SelectList, SalesEnquiryRequest } from '../sales-enquiry/sales-enquiry';
+import { SalesEnquiryService } from '../sales-enquiry/sales-enquiry.service';
+import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_SelectList, SalesQuotationRequest } from './sales-quotation';
 
 @Injectable({
   providedIn: 'root'
@@ -27,20 +31,25 @@ export class SalesQuotationService {
 
   constructor(
     private apiService: ApiService,
+    private salesEnquiryService: SalesEnquiryService,
     private companyMasterService: CompanyMasterService,
     private productMasterService: ProductMasterService,
     private paymentTermMasterService: PaymentTermMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
-    private selectListService: SelectListService
+    private currencyMasterService: CurrencyMasterService,
+    private selectListService: SelectListService,
+
   ) { }
 
   GetMasterDropdownLists(): Observable<{
     paymentTermList: ApiListResponse<PaymentTerm_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
+    currencyList: ApiListResponse<Currency_SelectList>;
   }> {
     return forkJoin({
       paymentTermList: this.paymentTermMasterService.PopulateList({ PopulateType: 'SelectList' } as PaymentTermRequest),
-      taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest)
+      taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest),
+      currencyList: this.currencyMasterService.PopulateList({ PopulateType: 'SelectList' } as CurrencyRequest)
     });
   }
 
@@ -56,6 +65,14 @@ export class SalesQuotationService {
     return this.productMasterService.PopulateList(model);
   }
 
+  GetSalesEnquiryList(model: SalesEnquiryRequest): Observable<ApiListResponse<SalesEnquiry_SelectList>> {
+    return this.salesEnquiryService.PopulateList(model);
+  }
+
+  GetSalesEnquiryDetails(salesEnquiryID: number): Observable<ApiDataResponse<SalesEnquiry_Detail>> {
+    return this.salesEnquiryService.GetDetails(salesEnquiryID);
+  }
+
   PopulateList(model: SalesQuotationRequest): Observable<ApiListResponse<SalesQuotation_SelectList>> {
     return this.apiService.post<ApiListResponse<SalesQuotation_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }
@@ -64,21 +81,11 @@ export class SalesQuotationService {
     return this.apiService.post<ApiPagedListResponse<SalesQuotation_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(quotationID: number): Observable<ApiDataResponse<SalesQuotation>> {
-    return this.apiService.post<ApiDataResponse<SalesQuotation>>(`${this.endpoint}/GetDetails?quotationID=${quotationID}`, {});
-  }
-
-  GetQuotationDetails(quotationID: number): Observable<ApiListResponse<SalesQuotationDetail>> {
-    return this.apiService.post<ApiListResponse<SalesQuotationDetail>>(`${this.endpoint}/GetQuotationDetails?quotationID=${quotationID}`, {});
-  }
-
-  GetQuotationItemDetails(quotationID: number): Observable<ApiListResponse<SalesQuotationDetail>> {
-    console.log(quotationID);
-    return this.apiService.post<ApiListResponse<SalesQuotationDetail>>(`${this.endpoint}/GetQuotationDetails?quotationID=${quotationID}`, {});
+  GetDetails(salesQuotationID: number): Observable<ApiDataResponse<SalesQuotation_Detail>> {
+    return this.apiService.post<ApiDataResponse<SalesQuotation_Detail>>(`${this.endpoint}/GetDetails?salesQuotationID=${salesQuotationID}`, {});
   }
 
   CreateRecord(model: SalesQuotation): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
@@ -92,7 +99,7 @@ export class SalesQuotationService {
 
   getFormConfig_DataTableFilter(): FormConfigType<SalesQuotation_IndexTableFilter> {
     return {
-      QuotationNo: {
+      SalesQuotationNo: {
         label: 'Quotation No',
         defaultValue: ''
       },
@@ -100,8 +107,8 @@ export class SalesQuotationService {
         label: 'Customer Name',
         defaultValue: ''
       },
-      IncotermID: {
-        label: 'Incoterm',
+      BasedOn: {
+        label: 'Based On',
         defaultValue: 0
       },
       StatusID: {
@@ -113,15 +120,23 @@ export class SalesQuotationService {
 
   getFormConfig(): FormConfigType<SalesQuotation> {
     return {
-      QuotationID: {
+      SalesQuotationID: {
         label: '',
         defaultValue: null
       },
-      QuotationNo: {
+      SalesQuotationNo: {
         label: 'Quotation No',
         defaultValue: "NEW"
       },
-      QuotationDate: {
+      BasedOn: {
+        label: 'Based On',
+        defaultValue: 1,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Based On is required"
+        }
+      },
+      SalesQuotationDate: {
         label: 'Quotation Date',
         defaultValue: null,
         validators: [Validators.required],
@@ -129,25 +144,41 @@ export class SalesQuotationService {
           required: "Quotation Date is required"
         }
       },
-      EnquiryID: {
-        label: 'Enquiry ID',
+      ValidityDate: {
+        label: 'Validity Date',
         defaultValue: null
+      },
+      SalesEnquiryID: {
+        label: 'Enquiry ID',
+        defaultValue: null,
+      },
+      SalesEnquiryNo: {
+        label: 'Sales Enquiry',
+        defaultValue: null,
+        validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
+        validationMessages: {
+          required: "Sales Enquiry is required"
+        }
       },
       CustomerID: {
         label: 'Customer',
+        defaultValue: null,
+      },
+      CustomerName: {
+        label: 'Customer Name',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
           required: "Customer is required"
         }
       },
-      CustomerName: {
-        label: 'Customer Name',
-        defaultValue: ''
-      },
       FCCurrencyID: {
         label: 'Foreign Currency',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Foreign Currency is required"
+        }
       },
       ExchangeRateToBC: {
         label: 'Exchange Rate',
@@ -157,36 +188,8 @@ export class SalesQuotationService {
           RequiredIf: "Exchange Rate Date is required"
         }
       },
-      ValidityDate: {
-        label: 'Validity Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Validity Date is required"
-        }
-      },
-      PaymentTermID: {
-        label: 'Payment Term',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Payment Term is required"
-        }
-      },
       IncotermID: {
         label: 'Incoterm',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Incoterm is required"
-        }
-      },
-      ProductID: {
-        label: '',
-        defaultValue: null
-      },
-      ProductName: {
-        label: 'Product Name',
         defaultValue: null
       },
       ProductList: {
@@ -236,60 +239,40 @@ export class SalesQuotationService {
           RatePerUnitBC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Rate per unit in base currency is required"
-            }
           },
           TaxableAmountFC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Taxable amount in foreign currency is required"
-            }
           },
           TaxableAmountBC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Taxable amount in base currency is required"
-            }
           },
           TaxAmountFC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Tax amount in foreign currency is required"
-            }
           },
           TaxAmountBC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Tax amount in base currency is required"
-            }
           },
           QuotationAmountFC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Quotation amount in foreign currency is required"
-            }
           },
           QuotationAmountBC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Quotation amount in base currency is required"
-            }
           }
         }
+      },
+      PaymentTermID: {
+        label: 'Payment Term',
+        defaultValue: null
+      },
+      Narration: {
+        label: 'Narration',
+        defaultValue: null
       },
       SubtotalAmountFC: {
         label: '',
@@ -315,20 +298,6 @@ export class SalesQuotationService {
         label: '',
         defaultValue: null
       },
-      Narration: {
-        label: 'Narration',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
-      },
-      StatusID: {
-        label: 'Status',
-        defaultValue: 1,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Status is required"
-        }
-      },
       IsRoundOff: {
         label: 'Round Off',
         defaultValue: true
@@ -336,8 +305,33 @@ export class SalesQuotationService {
       CoinAdjustment: {
         label: '',
         defaultValue: null
+      },
+      ProductID: {
+        label: '',
+        defaultValue: null
+      },
+      ProductName: {
+        label: 'Product Name',
+        defaultValue: null
       }
     };
+  }
+    
+  getSalesEnquiryAutoCompleteDef(formConfig: FormConfigType<SalesQuotation>, form: FormGroup): AutoCompleteDef<SalesEnquiry_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'SalesEnquiryNo',
+      label: formConfig.SalesEnquiryNo.label,
+      validationMessage: formConfig.SalesEnquiryNo.error,
+      placeholder: 'Search Sales Enquiry',
+      options: [],
+      optionLabel: 'SalesEnquiryNo',
+      columns: [
+        { data: 'SalesEnquiryNo', label: 'Sales Enquiry No', width: '200px' },
+        { data: 'CustomerName', label: 'Customer Name', width: '200px' }
+      ],
+    }
   }
 
   getCompanyMasterAutoCompleteDef(formConfig: FormConfigType<SalesQuotation>, form: FormGroup): AutoCompleteDef<Company_SelectList> {

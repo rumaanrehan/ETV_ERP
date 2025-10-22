@@ -407,7 +407,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
 
-        // this.logInvalidControls(this.form);
+        this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -508,7 +508,6 @@ export class CreateComponent implements OnInit, OnDestroy {
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
-                  console.log(response.Data);
                   this.GetInvoiceItemDetails(response.Data)
                 } else {
                   this.alertService.showServerResponseAlert(response);
@@ -581,25 +580,65 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
+            console.log(model, response.Data.Items);
+            const keysToPatch = Object.keys(this.formConfig).filter(
+              k => !['ProformaInvoiceNo','BasedOn','IsRoundOff','ExchangeRateDate','ExchangeRateToBC' ].includes(k)
+            );
+            
+            const filteredModel = keysToPatch.reduce((acc, key) => {
+              const typedKey = key as keyof ExportOrder;
+              const value = model[typedKey] ?? undefined;
+              (acc as any)[typedKey] = value;
+              return acc;
+            }, {} as Partial<ExportOrder>);
+
+            this.selectedCustomerAddress = model.Customer?.BillingAddress || '';
+            this.form.patchValue({ ...filteredModel,
+              CustomerID: model.Customer?.CompanyID,
+              CustomerName: model.Customer?.CompanyName,
+              ExportOrderID: model.ExportOrderID
+            });
+            
+            this.productListArray.clear();
+
             response.Data.Items.forEach(item => {
-              const patchedModel = {
-                ...item,
-                ProductName: item.Product!.ProductName,
-              };
               const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue(patchedModel);
+              productForm.patchValue({
+                ProductID: item.ProductID,
+                ProductName: item.Product!.ProductName,
+                SalesQty: item.SalesQty,
+                RatePerUnitFC: item.RatePerUnitFC,
+                TaxableAmountFC: item.TaxableAmountFC,
+                SalesTaxRate: item.SalesTaxRate,
+                TaxAmountFC: item.TaxAmountFC,
+                SalesAmountFC: item.SalesAmountFC
+              });
               this.productListArray.push(productForm);
             });
+
             this.tableDef.data = this.productListArray.value;
-            const patchedModel = {
-              ...model,
-              ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
-            };
-            this.form.patchValue({ CustomerID: model.Customer?.CountryID, CustomerName: model.Customer?.CompanyName });
-            this.form.patchValue(patchedModel);
+            this.productCalculation();
+
+            // response.Data.Items.forEach(item => {
+            //   const patchedModel = {
+            //     ProductID: item.ProductID,
+            //     ProductName: item.ProductName,
+            //     // ...item,
+            //     ProductName: item.Product!.ProductName,
+            //   };
+            //   const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+            //   productForm.patchValue(patchedModel);
+            //   this.productListArray.push(productForm);
+            // });
+            // this.tableDef.data = this.productListArray.value;
+            // const patchedModel = {
+            //   ...model,
+            //   ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
+            // };
+            // this.form.patchValue(patchedModel);
           }
           else {
-            // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
+            // this.alertService.showServerResponseAlert();
           }
         },
       });
@@ -613,19 +652,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.statusList.find(s => s.iValue === statusId);
   }
 
-  // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-  //   Object.keys(form.controls).forEach(key => {
-  //     const control = form.get(key);
-  //     const controlPath = parentKey ? `${parentKey}.${key}` : key;
+  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+      const controlPath = parentKey ? `${parentKey}.${key}` : key;
 
-  //     if (control instanceof FormGroup || control instanceof FormArray) {
-  //       this.logInvalidControls(control, controlPath);
-  //     } else if (control && control.invalid) {
-  //       console.warn(
-  //         `❌ Invalid Control: ${controlPath}`,
-  //         control.errors
-  //       );
-  //     }
-  //   });
-  // }
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.logInvalidControls(control, controlPath);
+      } else if (control && control.invalid) {
+        console.warn(
+          `❌ Invalid Control: ${controlPath}`,
+          control.errors
+        );
+      }
+    });
+  }
 }

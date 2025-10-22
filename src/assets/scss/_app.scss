@@ -764,10 +764,6 @@ span {
   padding: 0;
 }
 
-// .p-datatable-wrapper {
-//   overflow: visible;
-// }
-
 .p-checkbox .p-checkbox-box.p-highlight {
   background-color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
@@ -821,4 +817,12 @@ span {
 
 .primary-color {
   color: var(--primary-color) !important;
+}
+
+.p-datatable>.p-datatable-wrapper {
+  overflow: visible;
+}
+
+.index-page-content .p-datatable>.p-datatable-wrapper {
+  overflow: auto;
 }

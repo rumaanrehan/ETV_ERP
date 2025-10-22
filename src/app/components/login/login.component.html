@@ -1,37 +1,22 @@
-<div class="container-fluid d-flex justify-content-center align-items-center vh-100 cool-bg">
-  <!-- <div class="row w-100 row h-90"> -->
-  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-8 bg-white p-4 shadow rounded login-container">
-    <div class="text-center text-primary mb-5 company-name-container">
-      <h3 class="fw-bold">ETV ERP</h3>
+<div class="container-fluid d-flex justify-content-center align-items-center vh-100 login-bg">
+  <div class="col-lg-3 col-md-6 col-sm-8 p-4 login-card">
+    <div class="col-5 signin-text-container">
+      <div class="signin-text">
+        Sign in to IEMS
+      </div>
     </div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="mb-3">
-        <div class="form-floating">
-          <input type="text" class="form-control input-lg" id="Username" formControlName="Username"
-            placeholder="Username" />
-          <label for="Username">Username</label>
-        </div>
+        <input type="text" id="Username" formControlName="Username" placeholder="Username" />
       </div>
-
-      <div class="mb-3 position-relative">
-        <div class="form-floating w-100">
-          <input [type]="showPassword ? 'text' : 'password'" class="form-control input-lg pe-5" id="Password"
-            formControlName="Password" placeholder="Password" (keydown)="checkCapsLock($event)" />
-          <label for="Password">Password</label>
-        </div>
-        <div class="password-toggle position-absolute top-50 end-0 translate-middle-y pe-3">
-          <button class="btn border-0 bg-transparent" (click)="togglePassword()" type="button">
-            <i class="{{ toggleClass }}"></i>
-          </button>
-        </div>
+      <div class="mb-3">
+        <input [type]="showPassword ? 'text' : 'password'" id="Password" formControlName="Password"
+          placeholder="Password" (keydown)="checkCapsLock($event)" />
       </div>
-
-      <div class="form-check mb-4">
-        <input class="form-check-input" type="checkbox" id="rememberMe" />
-        <label class="form-check-label" for="rememberMe">Remember password?</label>
-      </div>
-      <button type="submit" class="btn btn-primary w-100 btn-grad">Sign in</button>
+      <button type="submit" class="btn-submit w-100 text-white">Sign in</button>
     </form>
+    <div class="mt-3">
+      <p class="m-0 text-center text-danger">{{errorMessage}}</p>
+    </div>
   </div>
-  <!-- </div> -->
 </div>

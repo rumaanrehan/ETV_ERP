@@ -46,16 +46,14 @@
     <div class="header-content-right">
 
       <!-- Start::header-element Search-Box-->
-      <div class="header-element header-search">
+      <!-- <div class="header-element header-search">
         <a href="javascript:void(0);" class="header-link" data-bs-toggle="modal" data-bs-target="#searchModal"
           (click)="SearchModal(searchModal)">
           <span class="light-layout">
             <i class="bx bx-search-alt-2 header-link-icon"></i>
           </span>
-          <!--<i class="bi bi-search header-link-icon"></i>-->
-          <!--<i class="bx bx-search-alt-2 header-link-icon"></i>-->
         </a>
-      </div>
+      </div> -->
       <!-- End::header-element Search-Box-->
 
       <!-- Start::header-element Theme-Mode-->
@@ -75,17 +73,14 @@
 
       <!-- Start::header-element Notification-->
       <div ngbDropdown [autoClose]="'outside'" class="header-element notifications-dropdown">
-        <a ngbDropdownToggle href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-toggle="dropdown"
+        <!-- <a ngbDropdownToggle href="javascript:void(0);" class="header-link dropdown-toggle" data-bs-toggle="dropdown"
           data-bs-auto-close="outside" id="messageDropdown" aria-expanded="false">
           <span class="light-layout">
             <i class="bx bx-bell header-link-icon"></i>
           </span>
-
-          <!--<i class="bi bi-bell header-link-icon"></i>-->
-          <!--<i class="bx bx-bell header-link-icon"></i>-->
           <span class="badge bg-secondary rounded-pill header-icon-badge pulse pulse-secondary"
             id="notification-icon-badge">{{ notificationCount }}</span>
-        </a>
+        </a> -->
         <div ngbDropdownMenu id="notificationitemclose" class="main-header-dropdown dropdown-menu dropdown-menu-end"
           data-popper-placement="none">
           <div class="p-3">
@@ -391,7 +386,7 @@
                   </div>
                 </a>
               </div>-->
-              <div class="col-4">
+              <!-- <div class="col-4">
                 <a href="javascript:void(0);">
                   <div class="text-center p-2 related-app">
                     <span class="avatar avatar-md">
@@ -410,7 +405,7 @@
                     <span class="d-block fs-12">Ward</span>
                   </div>
                 </a>
-              </div>
+              </div> -->
             </div>
           </div>
           <!--<div class="p-3 border-top">
@@ -436,7 +431,7 @@
         <ul ngbDropdownMenu
           class="main-header-dropdown dropdown-menu pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end"
           aria-labelledby="mainHeaderProfile">
-          <li>
+          <!-- <li>
             <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item d-flex" href="javascript:void(0);"><i
                 class="ti ti-user-circle fs-18 me-2 op-7"></i>Profile</a>
           </li>
@@ -464,7 +459,7 @@
           <li>
             <a href="javascript:void(0)" ngbDropdownItem class="dropdown-item d-flex" href="javascript:void(0);"><i
                 class="ti ti-headset fs-18 me-2 op-7"></i>Support</a>
-          </li>
+          </li> -->
           <li>
             <a ngbDropdownItem class="dropdown-item d-flex" (click)="logout()"><i
                 class="ti ti-logout fs-18 me-2 op-7"></i>Log Out</a>
