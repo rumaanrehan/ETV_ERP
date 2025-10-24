@@ -11,6 +11,8 @@ import { Operator, RequiredIf } from '../../../../shared/validators/required-if.
 import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
 import { Country_SelectList, CountryMaster, CountryRequest } from '../../../admin/settings/country-master/country-master';
 import { StateRequest } from '../../../admin/settings/state-master/state-master';
+import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { SelectListService } from '../../../../shared/services/select-list.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,20 +22,22 @@ export class CompanyMasterService {
   
   constructor(
     private apiService: ApiService,
-    private countryService: CountryMasterService,
-    
+    private selectListService: SelectListService,
+    private countryService: CountryMasterService    
   ) {}
 
-    GetMasterDropdownLists(): Observable<{  
-      CountryList: ApiListResponse<Country_SelectList>;
-      
-      }> {
-   return forkJoin({
-      CountryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
-
-
-    });
+  GetMasterDropdownLists(): Observable<{  
+    CountryList: ApiListResponse<Country_SelectList>;
+    }> {
+  return forkJoin({
+    CountryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
+  });
   }
+  
+  GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
+    return this.selectListService.GetStaticList(model);
+  }
+
   PopulateList(model: CompanyRequest): Observable<ApiListResponse<Company_SelectList>> {
     return this.apiService.post<ApiListResponse<Company_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }

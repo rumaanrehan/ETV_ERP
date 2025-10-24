@@ -7,7 +7,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { DataTableDef, DataTableHeaderColDef, DataTableLazyLoadEvent } from './z-datatable';
 import { first, last, Subject, takeUntil } from 'rxjs';
-import { DataTableFilterListRequest } from '../../models/select-list';
+import { DataTableFilterList, DataTableFilterListRequest, StaticList } from '../../models/select-list';
 import { SelectListService } from '../../services/select-list.service';
 import { ZInputTextComponent } from '../z-form-controls/z-input-text/z-input-text.component';
 import { ZSelectComponent } from '../z-form-controls/z-select/z-select.component';
@@ -103,6 +103,9 @@ export class ZDataTable<T> {
         else if(col.filterKey == 'IsServiceAccountCodeID'){
           col.filterSelectList = this.isServiceAccountCodeList;
         }
+        else if(col.filterKey == 'Status'){
+          this.loadStatusList(col.filterKey);
+        }
         else{
           this.loadFilterList(col.filterKey);
         }
@@ -152,6 +155,35 @@ export class ZDataTable<T> {
         });
       }
     });
+  }
+
+  loadStatusList(ColumnName: string) {
+    try {
+      this.selectListService.GetStatusList(`${this.tableName[0]}_${this.tableName[1]}`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              const targetRow = this.tableDef.columnDef.find(row => (row.filterKey) === ColumnName);
+              if (targetRow && targetRow.filterType == 'select') {
+                const staticList: StaticList[] = response.Data.Items;
+                const mappedList: DataTableFilterList[] = staticList.map(item => ({
+                  Value: item.iValue,
+                  Text: item.Text
+                }));
+
+                targetRow.filterSelectList = mappedList;
+              }
+            }
+            else {
+              //pending return message in toast mesage
+            }
+          },
+        });
+    }
+    catch (error) {
+
+    }
   }
 
   loadFilterList(ColumnName: string) {

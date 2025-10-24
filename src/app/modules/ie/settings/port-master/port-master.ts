@@ -8,6 +8,7 @@ export interface PortMaster {
 
 export interface Port_SelectList {
   PortID: number | null;
+  PortCode: string | null;
   PortName: string | null;
 }
 
@@ -30,9 +31,9 @@ export interface Port_IndexList {
 }
 
 export interface PortRequest {
-  PortTypeID?: number | null;
-  CountryID?: number | null;
   PortCode?: string | null;
   PortName?: string | null;
+  PortTypeID?: number | null;
+  CountryID?: number | null;
   PopulateType?: string | null;
 }

@@ -822,3 +822,21 @@ span {
 .p-datatable>.p-datatable-wrapper {
   overflow: visible;
 }
+
+.z-text-primary {
+  color: var(--primary-color);
+}
+
+.action-input-group {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: 0.5rem;
+}
+
+.action-input-group z-inputnumber,
+.action-input-group z-inputtext,
+.action-input-group z-select,
+.action-input-group z-autocomplete {
+  flex: 1;
+}

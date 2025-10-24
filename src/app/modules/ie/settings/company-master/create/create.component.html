@@ -14,22 +14,22 @@
             </div>
             <div class="col-xl-12 form-group">
                 <z-select [group]="form" [control]="'CompanyTypeID'" [label]="formConfig.CompanyTypeID.label"
-                    [validationMessage]="formConfig.CompanyTypeID.error" [options]="companyTypeList" [optionLabel]="'Text'"
+                    [validationMessage]="formConfig.CompanyTypeID.error" [options]="vendorTypeList" [optionLabel]="'Text'"
                     [optionValue]="'iValue'">
                 </z-select>
             </div>
             <div class="col-xl-12 form-group">
-                  <z-select [group]="form" [control]="'CountryID'"
-                    [label]="formConfig.CountryID.label"
-                    [validationMessage]="formConfig.CountryID.error" [options]="countryList"
-                    [optionLabel]="'CountryName'" [optionValue]="'CountryID'">
-                  </z-select>
-                </div>
+                <z-select [group]="form" [control]="'CountryID'"
+                [label]="formConfig.CountryID.label"
+                [validationMessage]="formConfig.CountryID.error" [options]="countryList"
+                [optionLabel]="'CountryName'" [optionValue]="'CountryID'">
+                </z-select>
+            </div>
             
             <div *ngIf="form.get('CountryID')?.value !== null" class="col-xl-12 form-group">
                 <z-select [group]="form" [control]="'StateID'" [label]="formConfig.StateID.label"
-                    [validationMessage]="formConfig.StateID.error" [options]="stateList" [optionLabel]="'StateName'"
-                    [optionValue]="'StateID'">
+                    [validationMessage]="formConfig.StateID.error" [options]="stateList" [optionLabel]="'Text'"
+                    [optionValue]="'iValue'">
                 </z-select>
             </div>
             <div class="col-xl-12 form-group">

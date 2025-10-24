@@ -6,49 +6,40 @@
 
 <div class="col-xl-12 index-page-content">
     <z-data-view [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
-        [itemTemplate]="customTemplate" [sortFieldList]="sortFieldList">
-
+        (statusList)="statusList = $event" [itemTemplate]="customTemplate" [sortFieldList]="sortFieldList">
         <div sidebarContent>
             <form class="form-sidebar" [formGroup]="filterForm">
                 <div class="col-xl-12 form-group">
-                    <z-inputtext [group]="filterForm" [control]="'ExportOrderNo'"
-                        [label]="filterFormConfig.ExportOrderNo.label"></z-inputtext>
+                    <z-inputtext [group]="filterForm" [control]="'ExportOrderNo'" [label]="filterFormConfig.ExportOrderNo.label"></z-inputtext>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-inputtext [group]="filterForm" [control]="'ReferenceNo'"
-                        [label]="filterFormConfig.ReferenceNo.label"></z-inputtext>
+                    <z-inputtext [group]="filterForm" [control]="'ReferenceNo'" [label]="filterFormConfig.ReferenceNo.label"></z-inputtext>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-inputtext [group]="filterForm" [control]="'CustomerName'"
-                        [label]="filterFormConfig.CustomerName.label"></z-inputtext>
+                    <z-inputtext [group]="filterForm" [control]="'CustomerName'" [label]="filterFormConfig.CustomerName.label"></z-inputtext>
+                </div>
+                <div class="col-xl-12 form-group">
+                    <z-select [group]="filterForm" [control]="'BasedOn'" [label]="filterFormConfig.BasedOn.label"
+                        [options]="basedOnList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
                     <z-select [group]="filterForm" [control]="'IncotermID'" [label]="filterFormConfig.IncotermID.label"
-                        [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                        [options]="incotermList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'DutyDrawableID'"
-                        [label]="filterFormConfig.DutyDrawableID.label" [options]="statusList" [optionLabel]="'Text'"
-                        [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'DutyDrawableID'" [label]="filterFormConfig.DutyDrawableID.label" 
+                        [options]="isDutyDrawableList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
                     <z-select [group]="filterForm" [control]="'RoDTEPID'" [label]="filterFormConfig.RoDTEPID.label"
-                        [options]="statusList" [optionLabel]="'Text'" [optionValue]="'iValue'"></z-select>
+                        [options]="isRoDTEPList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'ShipmentModeID'"
-                        [label]="filterFormConfig.ShipmentModeID.label" [options]="statusList" [optionLabel]="'Text'"
-                        [optionValue]="'iValue'"></z-select>
+                    <z-select [group]="filterForm" [control]="'ShipmentModeID'" [label]="filterFormConfig.ShipmentModeID.label" 
+                        [options]="shipmentModeList" [optionLabel]="'Text'" [optionValue]="'Value'"></z-select>
                 </div>
                 <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'LoadingPortID'"
-                        [label]="filterFormConfig.LoadingPortID.label" [options]="statusList" [optionLabel]="'Text'"
-                        [optionValue]="'iValue'"></z-select>
-                </div>
-                <div class="col-xl-12 form-group">
-                    <z-select [group]="filterForm" [control]="'DischargePortID'"
-                        [label]="filterFormConfig.DischargePortID.label" [options]="statusList" [optionLabel]="'Text'"
-                        [optionValue]="'iValue'"></z-select>
+                    <z-inputtext [group]="filterForm" [control]="'FinalDestination'" [label]="filterFormConfig.FinalDestination.label"></z-inputtext>
                 </div>
                 <div class="col-xl-12 form-group">
                     <z-select [group]="filterForm" [control]="'StatusID'" [label]="filterFormConfig.StatusID.label"
@@ -67,7 +58,7 @@
                     <h5 class="primary-color mb-2">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
                 </a>
                 <div class="text-end">
-                    <span class="badge bg-outline-primary">{{populateStatus(item.StatusID)}}</span>
+                    <span class="badge bg-outline-primary">{{item.StatusText}}</span>
                 </div>
             </div>
             <div class="col-12">

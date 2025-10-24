@@ -1,3 +1,4 @@
+import { TList } from "../../../../shared/models/api-response";
 import { ProductMaster } from "../../../ims/settings/product-master/product-master";
 import { CompanyMaster } from "../../settings/company-master/company-master";
 
@@ -26,7 +27,7 @@ export interface TaxInvoice {
     NetAmountFC: number | null;
     NetAmountBC: number | null;
     Narration: number | null;
-    StatusID: number | null;
+    // StatusID: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
 
@@ -41,6 +42,7 @@ export interface TaxInvoice {
 export interface TaxInvoiceDetail {
     ProductID: number | null;
     ProductName: string | null;
+    UOM: string | null;
     SalesQty: number | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
@@ -64,8 +66,9 @@ export interface TaxInvoice_SelectList {
 export interface TaxInvoice_IndexTableFilter {
     TaxInvoiceNo: string | null;
     BasedOn: number | null;
+    DocumentNo: string | null;
     CustomerName: string | null;
-    ActiveStatusID: number | null;
+    Status: number | null;
 }
 
 export interface TaxInvoice_IndexTableList {
@@ -78,7 +81,8 @@ export interface TaxInvoice_IndexTableList {
     SubtotalAmountFC: number;
     TaxAmountFC: number;
     NetAmountFC: number;
-    StatusID: number;
+    StatusText: string;
+    StatusHex: string;
 }
 
 export interface TaxInvoiceRequest {
@@ -91,4 +95,43 @@ export interface Document_SelectList {
     DocumentID: number;
     DocumentNo: string;
     CustomerName: string
+}
+
+export interface TaxInvoice_Detail {
+  TaxInvoiceID: number;
+  TaxInvoiceNo: string;
+  BasedOn: number;
+  TaxInvoiceDate: Date;
+  ProformaInvoiceID?: number;
+  ProformaInvoiceNo?: string;
+  ExportOrderID?: number;
+  ExportOrderNo?: string;
+  CustomerID: number;
+  CustomerName: string;
+  CustomerAddress?: string;
+  FCCurrencyID: number;
+  ExchangeRateDate: Date;
+  ExchangeRateToBC: number;
+  InsuranceAmountFC?: number;
+  FreightChargeFC?: number;
+  BankChargesFC?: number;
+  IsRoundOff: boolean;
+  SubtotalAmountFC: number;
+  TaxAmountFC: number | null;
+  NetAmountFC: number;
+  StatusText: string;
+  StatusHex: string;
+  ProductList: TList<TaxInvoiceProductDetail>;
+}
+
+export interface TaxInvoiceProductDetail {
+  ProductID: number;
+  ProductName: string;
+  SalesQty: number;
+  UOM: string;
+  RatePerUnitFC: number;
+  TaxRate: number;
+  TaxableAmountFC: number;
+  TaxAmountFC: number;
+  SalesAmountFC: number;
 }

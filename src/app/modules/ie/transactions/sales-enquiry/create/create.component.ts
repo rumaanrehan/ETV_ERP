@@ -1,10 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from "@angular/core";
+import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
 import { FormArray, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { SalesEnquiry, SalesEnquiryDetail } from "../sales-enquiry";
-import { SalesEnquiryService } from "../sales-enquiry.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
+import { AutoCompleteDef } from "../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete";
 import { ZFormControlsModule } from "../../../../../shared/components/z-form-controls/z-form-controls.module";
 import { TableDef } from "../../../../../shared/components/z-table/z-table";
 import { ZTableComponent } from "../../../../../shared/components/z-table/z-table.component";
@@ -12,15 +11,17 @@ import { FormConfigType } from "../../../../../shared/models/form.model";
 import { AlertNotificationService } from "../../../../../shared/services/alert-notification.service";
 import { FormService } from "../../../../../shared/services/form.service";
 import { PageHeaderService } from "../../../../../shared/services/page-header.service";
-import { Company_SelectList, CompanyRequest } from "../../../settings/company-master/company-master";
-import { AutoCompleteDef } from "../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete";
-import { Product_SelectList, ProductRequest } from "../../../../ims/settings/product-master/product-master";
 import { DateUtils } from "../../../../../shared/utility/date-utils";
+import { Product_SelectList, ProductMaster, ProductRequest } from "../../../../ims/settings/product-master/product-master";
+import { Company_SelectList, CompanyMaster, CompanyRequest } from "../../../settings/company-master/company-master";
+import { SalesEnquiry, SalesEnquiryDetail } from "../sales-enquiry";
+import { SalesEnquiryService } from "../sales-enquiry.service";
+import { CreateComponent as CompanyCreateComponent} from "../../../settings/company-master/create/create.component";
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZTableComponent],
+  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZTableComponent ],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
@@ -31,6 +32,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('requestedQtyColTemplate', { static: true }) requestedQtyColTemplate!: TemplateRef<any>;
   @ViewChild('remarkColTemplate', { static: true }) remarkColTemplate!: TemplateRef<any>;
   @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
+  @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+
+  componentRef?: ComponentRef<any>;
 
   selectedCustomerAddress!: string | null;
   statusText!: string | null;
@@ -63,12 +67,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
-
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%" },
         { data: "RequestedQty", label: "Requested Qty", width: "10%", customTemplate: this.requestedQtyColTemplate },
+        { data: "UOM", label: "UOM", width: "7%" },
         { data: "Remark", label: "Remark", width: "25%", customTemplate: this.remarkColTemplate },
         { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
       ],
@@ -168,6 +172,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSelect_Product(event: Product_SelectList): void {
+    console.log(event);
     this.form.get('ProductID')?.patchValue(null);
     this.form.get('ProductName')?.patchValue(null);
 
@@ -180,9 +185,10 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-    productItemForm.patchValue({
-      ProductID: event.ProductID,
-      ProductName: event.ProductName
+      productItemForm.patchValue({
+        ProductID: event.ProductID,
+        ProductName: event.ProductName,
+        UOM: event.UOM
     });
 
     this.productListArray.push(productItemForm);
@@ -336,5 +342,50 @@ export class CreateComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  handleComponentLoad(componentName: string) {
+    if (this.componentRef) {
+      this.destroyComponent();
+    }
+
+    switch (componentName) {
+      case 'VendorCreateComponent':
+        return this.createVendorComponent();
+      case 'ProductCreateComponent':
+        return this.createProductComponent();
+      default:
+        throw new Error(`Component ${componentName} not found`);
+    }
+  }
+
+  loadDynamicComponent(model: any) {
+    setTimeout(() => {
+      this.componentRef?.instance.openSidebar(true, false, model);
+      this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
+        this.destroyComponent();
+      });
+    })
+  }
+
+  destroyComponent() {
+    if (this.componentRef) {
+      this.componentRef.destroy();
+      this.componentRef = undefined;
+    }
+  }
+  
+  async createVendorComponent() {
+    const { CreateComponent } = await import('../../../settings/company-master/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: CompanyMaster = this.formService.createNullObject<CompanyMaster>();
+    this.loadDynamicComponent(model);
+  }
+  
+  async createProductComponent() {
+    const { CreateComponent } = await import('../../../../ims/settings/product-master/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ProductMaster = this.formService.createNullObject<ProductMaster>();
+    this.loadDynamicComponent(model);
   }
 }

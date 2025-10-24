@@ -36,7 +36,7 @@
         </p-autoComplete>
         <label>{{ controlDef.label }}</label>
       </p-floatLabel>
-      <button *ngIf="isValueSelected" class="input-group-addon" type="button" (click)="clearHandler()" tabindex="-1">
+      <button *ngIf="isValueSelected && isClearable" class="input-group-addon" type="button" (click)="clearHandler()" tabindex="-1">
         <i class="pi pi-times"></i>
       </button>
     </div>

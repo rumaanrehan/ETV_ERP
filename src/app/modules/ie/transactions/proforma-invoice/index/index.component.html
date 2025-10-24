@@ -23,8 +23,8 @@
 
 <ng-template #proformaInvoiceStatusTemplate let-row>
     <span class="table-row-status">
-        <i class="pi pi-circle-fill text-{{ row.StatusID == 1 ? 'success' : 'danger' }}"></i>
-        {{ row.StatusID == 1 ? 'Generated' : 'Canceled' }}
+        <i class="pi pi-circle-fill" [style.color]="row.StatusHex"></i>
+        {{ row.StatusText }}
     </span>
 </ng-template>
 

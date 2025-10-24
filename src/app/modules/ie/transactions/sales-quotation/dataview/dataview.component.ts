@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-data-view/z-data-view';
 import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
@@ -14,6 +14,7 @@ import { PageHeaderService } from '../../../../../shared/services/page-header.se
 import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { SalesQuotation, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList } from '../sales-quotation';
 import { SalesQuotationService } from '../sales-quotation.service';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 
 @Component({
   selector: 'app-dataview',
@@ -34,8 +35,9 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<SalesQuotation_IndexTableFilter>
-  
+
   statusList: StaticList[] = []
+  basedOnList: StaticList[] = []
 
   sortFieldList: any[] = [
     { value: "SalesQuotationDate", text: "Quotation Date" },
@@ -62,11 +64,55 @@ export class DataviewComponent implements OnInit, OnDestroy {
       totalRecords: 0,
       loading: false
     };
+
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  loadDropdownList(): void {
+    this.loadStaticLists([
+      { fieldName: 'BasedOn', targetList: 'basedOnList' }
+
+    ]);
+    // this.pageService.GetMasterDropdownLists()
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe({
+    //     next: (data) => {
+    //       this.paymentTermList = data.paymentTermList.Data.Items;
+    //       this.taxSlabList = data.taxSlabList.Data.Items;
+    //       this.currencyList = data.currencyList.Data.Items;
+    //     },
+    //   });
+  }
+  
+  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof DataviewComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
+
+    listConfigs.forEach(({ fieldName, targetList }) => {
+      sources[targetList] = this.pageService.GetStaticList({
+        AreaName: 'IE',
+        ControllerName: 'SalesQuotation',
+        FieldName: fieldName,
+      });
+    });
+
+    forkJoin(sources)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as StaticList[]) = [];
+            }
+          });
+        },
+      });
   }
   
   onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
