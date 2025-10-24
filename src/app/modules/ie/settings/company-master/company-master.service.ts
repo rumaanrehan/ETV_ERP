@@ -11,9 +11,7 @@ import { Operator, RequiredIf } from '../../../../shared/validators/required-if.
 import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
 import { Country_SelectList, CountryMaster, CountryRequest } from '../../../admin/settings/country-master/country-master';
 import { StateRequest } from '../../../admin/settings/state-master/state-master';
-import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
-import { SelectListService } from '../../../../shared/services/select-list.service';
-import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { StaticListRequest, StaticList } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 
 @Injectable({
