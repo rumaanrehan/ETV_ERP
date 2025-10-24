@@ -45,10 +45,22 @@ export class ZDataTable<T> {
     { Value: 2, Text: 'No' },
     { Value: 0, Text: 'All' }
   ];
+  
+  companyTypeList: any[] = [
+    { Value: 1, Text: 'Client' },
+    { Value: 2, Text: 'Vendor' },
+    { Value: 0, Text: 'All' }
+  ];
 
   activeStatusList: any[] = [
     { Value: 1, Text: 'Active' },
     { Value: 2, Text: 'Inactive' },
+    { Value: 0, Text: 'All' }
+  ];
+
+  IsServiceAccountCodeID: any[] = [
+    { Value: 1, Text: 'Yes' },
+    { Value: 2, Text: 'No' },
     { Value: 0, Text: 'All' }
   ];
 
@@ -103,8 +115,11 @@ export class ZDataTable<T> {
         else if(col.filterKey == 'IsServiceAccountCodeID'){
           col.filterSelectList = this.isServiceAccountCodeList;
         }
-        else if(col.filterKey == 'Status'){
-          this.loadStatusList(col.filterKey);
+        else if(col.filterKey == 'CompanyTypeID'){
+          col.filterSelectList = this.companyTypeList;
+        }
+        else if(col.filterKey == 'IsServiceAccountCodeID'){
+          col.filterSelectList = this.companyTypeList;
         }
         else{
           this.loadFilterList(col.filterKey);

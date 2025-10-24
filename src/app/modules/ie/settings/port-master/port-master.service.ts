@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
-import { PortMaster, PortRequest, Port_IndexFilter, Port_IndexList, Port_SelectList } from './port-master';
+import { PortMaster, PortRequest, Port_Details, Port_IndexFilter, Port_IndexList, Port_SelectList } from './port-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -24,11 +24,11 @@ export class PortMasterService {
     private countryMasterService: CountryMasterService,
   ) { }
 
-  GetMasterDropdownLists(): Observable<{ 
+  GetMasterDropdownLists(): Observable<{
     countryList: ApiListResponse<Country_SelectList>;
-    }> {
+  }> {
     return forkJoin({
-      countryList: this.countryMasterService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
+      countryList: this.countryMasterService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),
     });
   }
 
@@ -37,16 +37,15 @@ export class PortMasterService {
   }
 
   PopulateList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
-    console.log(model);
-    return this.apiService.post<ApiListResponse<Port_SelectList>>( `${this.endpoint}/PopulateList`, model );
+    return this.apiService.post<ApiListResponse<Port_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<Port_IndexFilter>): Observable<ApiPagedListResponse<Port_IndexList>> {
     return this.apiService.post<ApiPagedListResponse<Port_IndexList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(portID: number): Observable<ApiDataResponse<PortMaster>> {
-    return this.apiService.post<ApiDataResponse<PortMaster>>(`${this.endpoint}/GetDetails?PortID=${portID}`, {});
+  GetDetails(portID: number): Observable<ApiDataResponse<Port_Details>> {
+    return this.apiService.post<ApiDataResponse<Port_Details>>(`${this.endpoint}/GetDetails?PortID=${portID}`, {});
   }
 
   CreateRecord(model: PortMaster): Observable<ApiResponse> {
@@ -61,7 +60,7 @@ export class PortMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
   }
 
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Port_IndexFilter>{
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Port_IndexFilter> {
     return {
       PortCode: '',
       PortName: '',
@@ -94,16 +93,16 @@ export class PortMasterService {
         defaultValue: 0,
         validators: [Validators.required],
         validationMessages: {
-        required: 'Port Type is required.'
-        }        
+          required: 'Port Type is required.'
+        }
       },
       CountryID: {
         label: 'Country',
         defaultValue: 0,
         validators: [Validators.required],
         validationMessages: {
-        required: 'Country is required.'
-        }        
+          required: 'Country is required.'
+        }
       }
     }
   }

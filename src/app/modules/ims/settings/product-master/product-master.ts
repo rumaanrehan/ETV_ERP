@@ -16,10 +16,10 @@ export interface ProductMaster {
   ReorderQty: number | null;
   IsApprovalRequiredToPurchase: boolean | null;
   IsApprovalRequiredToIssue: boolean | null;
-  NetWeight: number | null;
-  GrossWeight: number | null;
-  ProductDescription: string | null;
-  PurTaxOn: number | null;
+  NetWeight?: number | null;
+  GrossWeight?: number | null;
+  ProductDescription?: string | null;
+  PurTaxOn: string | null;
 }
 
 export interface Product_SelectList {
@@ -59,4 +59,25 @@ export interface ProductRequest {
   ProductCode?: string | null;
   ProductName?: string | null;
   PopulateType?: string | null;
+}
+
+export interface Product_Details {
+  ProductID: number | null;
+  ProductCode: string | null;
+  ItemTypeID: number | null;
+  ItemGroupID: number | null;
+  ItemCategoryID: number | null;
+  ProductName: string | null;
+  GenericID: number | null;
+  ManufacturerID: number | null;
+  UOMID: number | null;
+  Unit: number | null;
+  HSCode: string | null;
+  TaxSlabID: number | null;
+  PurTaxRate: number | null;
+  ReorderLevel: number | null;
+  ReorderQty: number | null;
+  IsApprovalRequiredToPurchase: boolean | null;
+  IsApprovalRequiredToIssue: boolean | null;
+  PurTaxOn: string | null;
 }

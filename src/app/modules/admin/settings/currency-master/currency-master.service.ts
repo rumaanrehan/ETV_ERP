@@ -8,7 +8,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { CurrencyRequest, Currency_SelectList, Currency_IndexTableFilter, Currency_IndexTableList, CurrencyMaster } from './currency-master';
+import { CurrencyRequest, Currency_SelectList, Currency_IndexTableFilter, Currency_IndexTableList, CurrencyMaster, Currency_Detail } from './currency-master';
 
 @Injectable({
   providedIn: 'root'
@@ -37,8 +37,8 @@ export class CurrencyMasterService {
     return this.apiService.post<ApiPagedListResponse<Currency_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
   
-  GetDetails(CurrencyID: number): Observable<ApiDataResponse<CurrencyMaster>> {
-    return this.apiService.post<ApiDataResponse<CurrencyMaster>>(`${this.endpoint}/GetDetails?CurrencyID=${CurrencyID}`, {});
+  GetDetails(CurrencyID: number): Observable<ApiDataResponse<Currency_Detail>> {
+    return this.apiService.post<ApiDataResponse<Currency_Detail>>(`${this.endpoint}/GetDetails?CurrencyID=${CurrencyID}`, {});
   }
 
   CreateRecord(model: CurrencyMaster): Observable<ApiResponse> {

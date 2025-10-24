@@ -34,3 +34,12 @@ export interface CurrencyRequest {
     CurrencyName?: number | null;
     PopulateType?: string | null;
 }
+
+export interface Currency_Detail {
+    CurrencyID: number | null;
+    CurrencyCode: string | null;
+    CountryID: number | null;
+    CurrencyName: string | null;
+    CurrencySymbol: string | null;
+    CurrencyISOCode: string | null;
+}

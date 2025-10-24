@@ -13,13 +13,15 @@ import { Country_SelectList, CountryMaster, CountryRequest } from '../../../admi
 import { StateRequest } from '../../../admin/settings/state-master/state-master';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
+import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { SelectListService } from '../../../../shared/services/select-list.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompanyMasterService {
   private endpoint = 'IE/CompanyMaster';
-  
+
   constructor(
     private apiService: ApiService,
     private selectListService: SelectListService,
@@ -41,7 +43,7 @@ export class CompanyMasterService {
   PopulateList(model: CompanyRequest): Observable<ApiListResponse<Company_SelectList>> {
     return this.apiService.post<ApiListResponse<Company_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }
-  
+
   PopulateGrid(model: DataTableParams<Company_IndexTableFilter>): Observable<ApiPagedListResponse<Company_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<Company_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
@@ -68,7 +70,7 @@ export class CompanyMasterService {
       CompanyCode: '',
       CompanyName: '',
       CompanyTypeID: null,
-      ActiveStatusID: 0 
+      ActiveStatusID: 0
     }
   }
 
@@ -129,7 +131,7 @@ export class CompanyMasterService {
       ImportLicenseNo: {
         label: 'Import License No',
         defaultValue: null,
-        validators: [Validators.pattern(/^[0-9]{10}$/), RequiredIf("CompanyTypeID", Operator.EqualTo, 1)],
+        validators: [Validators.pattern(/^[0-9]{10}$/),Validators.pattern(/^[0-9]{10}$/),],
         validationMessages: {
           pattern: "Enter a valid Import License No",
           RequiredIf: "Import License No is required"

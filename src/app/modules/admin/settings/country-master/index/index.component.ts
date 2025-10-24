@@ -40,7 +40,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             columnDef: [],
             tableKey: 'Admin_CountryMaster_IndexTable',
             defaultSortColumn: { sortField: '', sortOrder: 1 },
-            filterForm: this.formService.createFormGroup_DataTableFilter<Country_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),   
+            filterForm: this.formService.createFormGroup_DataTableFilter<Country_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
             data: [],
             totalRecords: 0,
             loading: false
@@ -48,10 +48,10 @@ export class IndexComponent implements OnInit, OnDestroy {
 
         this.tableDef.columnDef = [
             { data: 'CountryID', visible: false, orderable: false },
-            { data: 'CountryCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%" },
+            { data: 'CountryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%" },
             { data: 'CountryName', filterable: true, label: 'Country Name' },
-            { data: 'CountryISOCode', filterable: true, label: 'ISO Code', orderable: false},
-            { data: 'ActiveStatus', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.countryActiveStatusTemplate},
+            { data: 'CountryISOCode', filterable: true, label: 'ISO Code', orderable: false },
+            { data: 'ActiveStatus', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.countryActiveStatusTemplate },
             { data: '', orderable: false, cssClass: 'text-center', customTemplate: this.actionColTemplate }
         ];
     }
@@ -60,6 +60,12 @@ export class IndexComponent implements OnInit, OnDestroy {
         this.destroy$.next();
         this.destroy$.complete();
     }
+
+    // onClickPageHeaderAddButton(): void {
+    //     if (this.createSidebar) {
+    //         this.createSidebar.openSidebar(true, false, this.formService.createNullObject<CountryMaster>());
+    //     }
+    // }
 
     onIndexTableLazyLoad(event: TableLazyLoadEvent) {
         this.tableEvent = event;

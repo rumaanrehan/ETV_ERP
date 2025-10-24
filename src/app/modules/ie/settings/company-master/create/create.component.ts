@@ -120,7 +120,7 @@ export class CreateComponent {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    try{
+    try {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -139,7 +139,7 @@ export class CreateComponent {
             this.isSubmitted = false;
           }
         });
-      } 
+      }
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
@@ -150,55 +150,55 @@ export class CreateComponent {
   }
 
   createRecord(model: CompanyMaster): void {
-    try{
-    this.pageService.CreateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: "success",
-              text: response.Message,
-              timer: 5000
-            });
+    try {
+      this.pageService.CreateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: "success",
+                text: response.Message,
+                timer: 5000
+              });
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
           }
-          else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        }
-      });
+        });
     }
     catch (error) {
 
     }
-  }  
+  }
 
   updateRecord(model: CompanyMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: "success",
-              text: response.Message,
-              timer: 5000
-            });
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: "success",
+                text: response.Message,
+                timer: 5000
+              });
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
           }
-          else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        }
-      });
+        });
     }
     catch (error) {
 

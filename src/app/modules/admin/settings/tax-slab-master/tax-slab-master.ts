@@ -32,3 +32,12 @@ export interface TaxSlabRequest {
   TaxSlabID?: number | null;
   PopulateType: string | null;
 }
+
+export interface TaxSlab_Details {
+  TaxSlabID: number | null;
+  TaxSlabCode: string | null;
+  TaxSlabName: string | null;
+  TaxTypeID: number | null;
+  TaxTypeName: string | null;     
+  TaxRate: number | null;
+}

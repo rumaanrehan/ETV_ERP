@@ -23,6 +23,7 @@ export class HsnSacMasterService {
   }
   
   PopulateGrid(model: DataTableParams<HsnSacMaster_IndexTableFilter>): Observable<ApiPagedListResponse<HsnSacMaster_IndexTableList>> {
+    console.log(model);
     return this.apiService.post<ApiPagedListResponse<HsnSacMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
@@ -47,6 +48,7 @@ export class HsnSacMasterService {
     return {
       HSNCode: '',
       HSNCodeDescription: '',
+      IsServiceAccountCodeID: 0,
       ActiveStatusID: 0
     }
   }
@@ -63,9 +65,7 @@ export class HsnSacMasterService {
       },
       IsServiceAccountCode: {
         label: 'Is Service Account Code',
-        defaultValue: false,
-        validators: [],
-        validationMessages: {}
+        defaultValue: null,
       },
       HSNCodeDescription: {
         label: 'Description',

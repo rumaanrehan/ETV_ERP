@@ -35,3 +35,10 @@ export interface ItemGroupRequest {
     ItemGroupID?: number | null;
     PopulateType?: string | null;
 }
+
+export interface ItemGroup_Details {
+    ItemGroupID: number | null;
+    ItemGroupCode: string | null;
+    ItemGroupName: string | null;
+    ItemTypeID: number | null;
+}

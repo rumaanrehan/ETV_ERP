@@ -27,3 +27,10 @@ export interface PaymentTermRequest {
   PaymentTermID?: number | null;
   PopulateType?: string | null;
 }
+
+export interface PaymentTerm_Details {
+  PaymentTermID: number | null;
+  PaymentTermCode: string | null;
+  PaymentTermName: string | null;
+  Description: string | null;
+}

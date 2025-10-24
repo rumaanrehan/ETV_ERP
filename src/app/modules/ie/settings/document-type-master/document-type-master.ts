@@ -21,12 +21,11 @@ export interface DocumentType_IndexFilter {
 }
 
 export interface DocumentType_IndexList {
-  RowID: number;
   DocumentTypeID: number;
   DocumentTypeCode: string;
   DocumentTypeName: string;
   ShortCode: string;
-  IsApprovalRequired: boolean;
+  IsVerificationRequired: boolean;
   ActiveStatus: boolean | null; 
 }
 
@@ -34,5 +33,13 @@ export interface DocumentTypeRequest {
   DocumentTypeCode?: string | null;
   DocumentTypeName?: string | null;
   PopulateType?: string | null;
+}
+
+export interface DocumentTypeDetails{
+  DocumentTypeID: number;
+  DocumentTypeCode: string;
+  DocumentTypeName: string;
+  ShortCode: string | null;
+  IsVerificationRequired: boolean;
 }
 

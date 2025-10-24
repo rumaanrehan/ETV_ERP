@@ -77,7 +77,13 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              const model: EmployeeTypeMaster = {
+                EmployeeTypeID: response?.Data?.EmployeeTypeID ?? null,
+                EmployeeTypeCode: response?.Data?.EmployeeTypeCode ?? null,
+                EmployeeTypeName: response?.Data?.EmployeeTypeName ?? null,
+                IsAllowedOverTime: response?.Data?.IsAllowedOverTime ?? null,
+              };
+              this.createSidebar.openSidebar(activeStatus, true, model);
             }
             else {
               this.alertService.showServerResponseAlert(response);

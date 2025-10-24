@@ -21,3 +21,20 @@ export interface RoleMaster_IndexTableList {
   RoleName: string;
   ActiveStatus: boolean;
 }
+
+export interface RoleRequest {
+  RoleID: number | null;
+  RoleCode: string | null;
+  RoleName: string | null;
+}
+
+export interface RoleMaster_Details {
+  RoleID: number | null;
+  RoleCode: string | null;
+  RoleName: string | null;
+  ActiveStatus: boolean | null;
+  CreatedBy: number | null;
+  CreatedDateTime: string | null;
+  ModifiedBy: number | null;
+  ModifiedDateTime: string | null;
+}

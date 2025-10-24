@@ -88,7 +88,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     { Text: 'Sales Quotation', iValue: 1, cValue: '' },
     { Text: 'Direct', iValue: 2, cValue: '' }
   ]
-  
+
   currencyList: Currency_SelectList[] = [];
 
   statusList: StaticList[] = [
@@ -570,6 +570,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   // }
 
   onSubmit(): void {
+    console.log(this.form.value);
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
@@ -770,7 +771,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             if (response.IsSuccess) {
               console.log(response.Data);
               const keysToPatch = Object.keys(this.formConfig).filter(
-                k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
+                k => !['ExportOrderNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
               );
 
               const filteredModel = keysToPatch.reduce((acc, key) => {
@@ -780,13 +781,14 @@ export class CreateComponent implements OnInit, OnDestroy {
                 return acc;
               }, {} as Partial<SalesQuotation_Detail>);
 
-              this.selectedCustomerAddress= response.Data.CustomerAddress ?? '';
-              this.form.patchValue({ ...filteredModel,
+              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
+              this.form.patchValue({
+                ...filteredModel,
                 CustomerID: response.Data.CustomerID,
                 CustomerName: response.Data.CustomerName,
                 // SalesQuotationNo: response.Data.SalesQuotationNo
               });
-              
+
               this.productListArray.clear();
 
               response.Data.ProductList.Items.forEach(item => {

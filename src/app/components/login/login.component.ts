@@ -10,12 +10,10 @@ import { RequestContextService } from '../../core/services/request-context.servi
 import { UserRolePermissionsService } from '../../core/services/user-role-permissions.service';
 import { UserStateService } from '../../core/services/user-state.service';
 import { UserService } from '../../core/services/user.service';
-import { ShowValidationTooltipDirective } from '../../shared/layouts/directives/show-validation-tooltip.directive';
 import { FormConfigType } from '../../shared/models/form.model';
 import { AlertNotificationService } from '../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../shared/services/form-validation.service';
 import { FormService } from '../../shared/services/form.service';
-import { LoaderService } from '../../shared/services/loader.service';
 
 @Component({
   selector: 'app-login',
@@ -29,11 +27,9 @@ export class LoginComponent implements OnInit {
   private destroy$ = new Subject<void>();
 
   isSubmitted: boolean = false;
+  errorMessage: string = '';
   form!: FormGroup;
   formConfig!: FormConfigType<UserAuthenticateRequest>;
-  //public showLoader: boolean | undefined;
-  // public formValidationMessages: FormValidationMessages = {};
-  // public formErrors: FormErrors = {};
   public showPassword: boolean = false;
   public toggleClass = 'ri-eye-off-line';
 
@@ -45,13 +41,10 @@ export class LoginComponent implements OnInit {
     public userRolePermissionsService: UserRolePermissionsService,
     private route: ActivatedRoute,
     private router: Router,
-    // private formBuilder: FormBuilder,
-    // private formValidationService: FormValidationService,
     private alertService: AlertNotificationService,
     private requestContextService: RequestContextService,
     private userStateService: UserStateService,
-    private menuService: MenuService,
-    private loaderService: LoaderService
+    private menuService: MenuService
   ) { }
 
   ngOnInit(): void {
@@ -59,34 +52,9 @@ export class LoginComponent implements OnInit {
     this.form = this.formService.createFormGroup<UserAuthenticateRequest>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
 
-
-    // this.formErrors = {
-    //   'Username': '',
-    //   'Password': ''
-    // };
-
-    // this.formValidationMessages = {
-    //   'Username': {
-    //     'required': 'Username is required.'
-    //   },
-    //   'Password': {
-    //     'required': 'Password is required.',
-    //     'minlength': 'Password must be at least 5 characters long.'
-    //   }
-    // };
-
-    // this.form = this.formBuilder.group({
-    //   Username: ['', [Validators.required]],
-    //   Password: ['', [Validators.required, Validators.minLength(5)]],
-    // });
-    // this.formValidationService.setValidationMessages(this.formValidationMessages, this.formErrors, this.form);
-
     this.menuService.moduleCode.set(null);
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-
-    // throwError(() => 'error');
-
     if (this.requestContextService.AccessToken != null && this.returnUrl == '/') {
       this.userStateService.rehydrate();
       this.router.navigateByUrl("home");
@@ -122,35 +90,6 @@ export class LoginComponent implements OnInit {
     catch (error) {
 
     }
-
-    // if (this.form.invalid) {
-    //   this.form.markAllAsTouched();
-    //   //this.focusInvalidControl();
-    //   // this.formValidationService.validateForm(this.formValidationMessages, this.formErrors, this.form);
-    // }
-    // else {
-    //   //debugger;
-    //   //const { Username, Password } = this.loginForm.value;
-    //   const request: UserAuthenticateRequest = this.form.value;
-    //   this.pageService.Authenticate(request).subscribe(
-    //     {
-    //       next: (response: any) => {
-    //         // Handle successful login
-    //         if (response.Token) {
-    //           localStorage.setItem('authToken', response.Token);
-    //         }
-    //         // this.userRolePermissionsService.loadUserRolePermissions();
-    //         if(this.returnUrl !== '/'){
-    //           this.router.navigateByUrl(this.returnUrl);
-    //         }
-    //         else{
-    //           this.router.navigate(['/home']);
-    //         }
-    //         //this.router.navigateByUrl("crm");
-    //       }
-    //     }
-    //   );
-    // }
   }
 
   Authenticate(request: UserAuthenticateRequest): void {
@@ -162,11 +101,10 @@ export class LoginComponent implements OnInit {
             if (response.IsSuccess) {
               this.userStateService.setUser(response.Data.User);
               if (this.returnUrl !== '/') {
-                console.log("returnUrl", response);
                 this.router.navigateByUrl(this.returnUrl);
               }
               else {
-                console.log("Non Return URL", response);
+                this.errorMessage = response.Message || '';
                 this.router.navigate(['/home']);
               }
             }

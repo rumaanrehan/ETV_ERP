@@ -77,9 +77,12 @@ export class IndexComponent implements OnInit, OnDestroy {
           .GetDetails(itemCategoryID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.createSidebar.openSidebar(activeStatus, true, response.Data);
+          next: (response) => {
+            if (response.IsSuccess) {
+              const model: ItemCategoryMaster = {
+                ...response.Data,
+              };
+              this.createSidebar.openSidebar(activeStatus, true, model);
               } else {
                 this.alertService.showServerResponseAlert(response);
               }
