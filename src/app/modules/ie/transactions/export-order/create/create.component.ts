@@ -87,10 +87,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   currencyList: Currency_SelectList[] = [];
 
-  statusList: StaticList[] = [
-    { Text: 'Processing', iValue: 1, cValue: '#28a745' },
-    { Text: 'Ready to Ship', iValue: 2, cValue: '#dc3545' }
-  ];
+  statusList: StaticList[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -145,7 +142,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.loadStaticLists([
       { fieldName: 'Incoterm', targetList: 'incotermList' },
       { fieldName: 'ShipmentMode', targetList: 'shipmentModeList' },
-      { fieldName: 'BasedOn', targetList: 'basedOnList' }
+      { fieldName: 'BasedOn', targetList: 'basedOnList' },
+      { fieldName: 'StatusID', targetList: 'statusList' }
     ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
