@@ -506,7 +506,7 @@ export class ExportOrderService {
       }
     };
   }
-  
+
   getSalesQuotationAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<SalesQuotation_SelectList> {
     return {
       type: 'formControl',

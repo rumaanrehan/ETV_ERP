@@ -249,7 +249,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.productListArray.clear();
     this.tableDef.data = [];
     if (event.SalesQuotationID) {
-      this.form.patchValue({SalesQuotationID: event.SalesQuotationID, SalesQuotationNo: event.SalesQuotationNo});
+      this.form.patchValue({ SalesQuotationID: event.SalesQuotationID, SalesQuotationNo: event.SalesQuotationNo });
       this.GetSalesQuotation(event.SalesQuotationID);
     }
     // if (event.StatusID === 3 || event.StatusID === 4 || event.StatusID === 5) {
@@ -316,8 +316,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   loadLoadingPort(event: string): void {
     try {
       const shipmentModeID = this.form.get('ShipmentModeID')?.value;
-      if (shipmentModeID)
-      {
+      if (shipmentModeID) {
         const dto: PortRequest = {
           PortTypeID: this.form.get('ShipmentModeID')?.value,
           PortName: event,
@@ -336,14 +335,14 @@ export class CreateComponent implements OnInit, OnDestroy {
               }
             },
           });
-        }
-        else{
-          this.alertService.showAlert({
-            type: 'warning',
-            title: 'Shipment Mode Missing',
-            text: 'Please select a shipment mode before searching ports.'
-          });
-        }   
+      }
+      else {
+        this.alertService.showAlert({
+          type: 'warning',
+          title: 'Shipment Mode Missing',
+          text: 'Please select a shipment mode before searching ports.'
+        });
+      }
     } catch (error) {
 
     }
@@ -352,34 +351,33 @@ export class CreateComponent implements OnInit, OnDestroy {
   loadDischargePort(event: string): void {
     try {
       const shipmentModeID = this.form.get('ShipmentModeID')?.value;
-      if (shipmentModeID)
-      {
+      if (shipmentModeID) {
         const dto: PortRequest = {
           PortTypeID: shipmentModeID,
           PortName: event,
           PopulateType: 'AutoSuggest'
         }
         this.pageService.GetPortList(dto)
-        .pipe(takeUntil(this.destroy$)).subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.dischargePortAutoCompleteDef.options = response.Data.Items;
-            } else {
-              this.dischargePortAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
+          .pipe(takeUntil(this.destroy$)).subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.dischargePortAutoCompleteDef.options = response.Data.Items;
+              } else {
+                this.dischargePortAutoCompleteDef.options = [];
+                if (response.Message != "Record not found.") {
+                  this.alertService.showServerResponseAlert(response);
+                }
               }
-            }
-          },
-        });
+            },
+          });
       }
-      else{
+      else {
         this.alertService.showAlert({
           type: 'warning',
           title: 'Shipment Mode Missing',
           text: 'Please select a shipment mode before searching ports.'
         });
-      }   
+      }
     } catch (error) {
 
     }
@@ -534,11 +532,11 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   OnLoadingPortSelect(event: Port_SelectList): void {
-    this.form.patchValue({LoadingPortID: event.PortID});
+    this.form.patchValue({ LoadingPortID: event.PortID });
   }
 
   OnDischargePortSelect(event: Port_SelectList): void {
-    this.form.patchValue({DischargePortID: event.PortID});
+    this.form.patchValue({ DischargePortID: event.PortID });
   }
 
   onChangeShipmentMode(): void {
@@ -1060,28 +1058,28 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.componentRef = undefined;
     }
   }
-  
+
   async createVendorComponent() {
     const { CreateComponent } = await import('../../../settings/company-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CompanyMaster = this.formService.createNullObject<CompanyMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   async createCurrencyComponent() {
     const { CreateComponent } = await import('../../../../admin/settings/currency-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CurrencyMaster = this.formService.createNullObject<CurrencyMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   async createProductComponent() {
     const { CreateComponent } = await import('../../../../ims/settings/product-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: ProductMaster = this.formService.createNullObject<ProductMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   async createPortComponent() {
     const { CreateComponent } = await import('../../../settings/port-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
@@ -1106,6 +1104,6 @@ export class CreateComponent implements OnInit, OnDestroy {
           control.errors
         );
       }
-    });
-  }
+    });
+  }
 }
