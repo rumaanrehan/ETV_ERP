@@ -60,11 +60,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
-  basedOnList: StaticList[] = [
-    { Text: 'Proforma Invoice', iValue: 1, cValue: '' },
-    { Text: 'Export Order', iValue: 2, cValue: '' },
-    { Text: 'Direct', iValue: 3, cValue: '' }
-  ]
+  basedOnList: StaticList[] = [];
   
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -116,6 +112,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
   
   loadDropdownList(): void {
+    this.loadStaticLists([
+      { fieldName: 'BasedOn', targetList: 'basedOnList' }
+    ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({

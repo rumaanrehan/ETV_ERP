@@ -118,7 +118,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.loadStaticLists([
       { fieldName: 'IncotermID', targetList: 'incotermList' },
       { fieldName: 'BasedOn', targetList: 'basedOnList' }
-
     ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
