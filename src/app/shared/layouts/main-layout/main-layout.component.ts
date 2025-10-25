@@ -1,4 +1,4 @@
-import { Component,ElementRef,Renderer2,TemplateRef,ViewChild,inject } from '@angular/core';
+import { Component, ElementRef, Renderer2, TemplateRef, ViewChild, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { filter } from 'rxjs';
@@ -7,11 +7,12 @@ import { Menu, NavService } from '../../services/nav.service';
 import { SharedModule } from '../../shared.module';
 import { PageHeaderComponent } from '../../components/page-header/page-header.component';
 import { CommonModule } from '@angular/common';
+import { UserStateService } from '../../../core/services/user-state.service';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterModule,SharedModule,CommonModule],
+  imports: [RouterModule, SharedModule, CommonModule],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
@@ -25,7 +26,8 @@ export class MainLayoutComponent {
     private elementRef: ElementRef,
     public navServices: NavService,
     public SwitcherService: SwitcherService,
-    public renderer: Renderer2
+    public renderer: Renderer2,
+    public userStateService: UserStateService
   ) {
     this.navServices.items.subscribe((menuItems: any) => {
       this.menuItems = menuItems;
@@ -35,6 +37,12 @@ export class MainLayoutComponent {
       .subscribe(() => {
         window.scrollTo(0, 0);
       });
+  }
+
+  ngOnInit(): void {
+    if (!this.userStateService.user) {
+      this.userStateService.rehydrate(); // async trigger here is safe
+    }
   }
 
   openEnd(content: TemplateRef<any>) {
