@@ -73,7 +73,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   customerList: Company_SelectList[] = [];
   paymentTermList: PaymentTerm_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
-  // portList: Port_SelectList[] = [];
 
   incotermList: StaticList[] = [];
   shipmentModeList: StaticList[] = [];
@@ -84,10 +83,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   dischargePortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
-  basedOnList: StaticList[] = [
-    { Text: 'Sales Quotation', iValue: 1, cValue: '' },
-    { Text: 'Direct', iValue: 2, cValue: '' }
-  ]
+  basedOnList: StaticList[] = [];
 
   currencyList: Currency_SelectList[] = [];
 
@@ -149,6 +145,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.loadStaticLists([
       { fieldName: 'Incoterm', targetList: 'incotermList' },
       { fieldName: 'ShipmentMode', targetList: 'shipmentModeList' },
+      { fieldName: 'BasedOn', targetList: 'basedOnList' }
     ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))

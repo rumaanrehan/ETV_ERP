@@ -59,15 +59,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
-  basedOnList: StaticList[] = [
-    { Text: 'Export Order', iValue: 1, cValue: '' },
-    { Text: 'Direct', iValue: 2, cValue: '' }
-  ]
-  
-  statusList: StaticList[] = [
-    { Text: 'Generated', iValue: 1, cValue: '#28a745' },
-    { Text: 'Cancelled', iValue: 2, cValue: '#dc3545' }
-  ];
+  basedOnList: StaticList[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -119,6 +111,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   loadDropdownList(): void {
+    this.loadStaticLists([
+      { fieldName: 'BasedOn', targetList: 'basedOnList' }
+    ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -710,10 +705,6 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
-  }
-  
-  getStatus(statusId: number | null | undefined): StaticList | undefined {
-    return this.statusList.find(s => s.iValue === statusId);
   }
   
   handleComponentLoad(componentName: string) {
