@@ -85,7 +85,7 @@ export class CreateComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-            this.countryList = data.CountryList.Data.Items;
+            this.countryList = data.CountryList.Data?.Items ?? [];
           },
       });
   }

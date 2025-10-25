@@ -74,7 +74,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList() {
+  loadDropdownList(): void {
     this.loadStaticLists([
       { fieldName: 'PurTaxOn', targetList: 'purTaxOnList' },
     ]);
@@ -83,10 +83,10 @@ export class CreateComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data) => {
-        this.itemTypeList = data.itemTypeList.Data.Items;
-        this.manufacturerList = data.manufacturerList.Data.Items;
-        this.uomList = data.uomList.Data.Items;
-        this.taxSlabList = data.taxSlabList.Data.Items;
+        this.itemTypeList = data.itemTypeList.Data?.Items ?? [];
+        this.manufacturerList = data.manufacturerList.Data?.Items ?? [];
+        this.uomList = data.uomList.Data?.Items ?? [];
+        this.taxSlabList = data.taxSlabList.Data?.Items ?? [];
       },
     });
   }
@@ -308,30 +308,4 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-
-  // getDetails(): void {
-  //   this.route.params.subscribe((params) => {
-  //     const ProductID = +params['id'];
-  //     if (ProductID) {
-  //       this.isEditMode = true;
-  //       try {
-  //         this.pageService
-  //         .GetDetails(ProductID)
-  //         .pipe(takeUntil(this.destroy$))
-  //         .subscribe({
-  //           next: (response) => {
-  //             if (response.IsSuccess) {
-  //               this.form.patchValue(response.Data);
-  //             } else {
-  //               this.alertService.showServerResponseAlert(response);
-  //             }
-  //           },
-  //         });
-  //       }
-  //       catch (error) {
-
-  //       }
-  //     }
-  //   });
-  // }
 }

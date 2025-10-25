@@ -174,21 +174,11 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          if (data.employeeTypeList.IsSuccess) {
-            this.employeeTypeList = data.employeeTypeList.Data.Items;
-          }
-          if (data.departmentList.IsSuccess) {
-            this.departmentList = data.departmentList.Data.Items;
-          }
-          if (data.countryList.IsSuccess) {
-            this.countryList = data.countryList.Data.Items;
-          }
-          if (data.stateList.IsSuccess) {
-            this.stateList = data.stateList.Data.Items;
-          }
-          if (data.designationList.IsSuccess) {
-            this.designationList = data.designationList.Data.Items;
-          }
+          this.employeeTypeList = data.employeeTypeList.Data?.Items ?? [];
+          this.departmentList = data.departmentList.Data?.Items ?? [];
+          this.countryList = data.countryList.Data?.Items ?? [];
+          this.stateList = data.stateList.Data?.Items ?? [];
+          this.designationList = data.designationList.Data?.Items ?? [];
         },
       });
   }

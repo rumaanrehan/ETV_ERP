@@ -119,8 +119,8 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.taxSlabList = data.taxSlabList.Data.Items;
-          this.currencyList = data.currencyList.Data.Items;
+          this.taxSlabList = data.taxSlabList.Data?.Items ?? [];
+          this.currencyList = data.currencyList.Data?.Items ?? [];
         },
       });
   }

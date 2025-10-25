@@ -48,6 +48,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   statusHex!: string | null;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<ProformaInvoice>;
   tableDef!: TableDef<ProformaInvoiceDetail>;
@@ -55,11 +56,11 @@ export class CreateComponent implements OnInit, OnDestroy {
   taxSlabList: TaxSlab_SelectList[] = [];
   currencyList: Currency_SelectList[] = [];
 
+  basedOnList: StaticList[] = [];
+
   exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
-
-  basedOnList: StaticList[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -118,8 +119,8 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.taxSlabList = data.taxSlabList.Data.Items;
-          this.currencyList = data.currencyList.Data.Items;
+          this.taxSlabList = data?.taxSlabList?.Data?.Items ?? [];
+          this.currencyList = data?.currencyList?.Data?.Items ?? [];
         },
       });
   }
@@ -409,7 +410,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
 
-        this.logInvalidControls(this.form);
+        // this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -542,39 +543,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  // GetInvoiceItemDetails(model: ProformaInvoice): void {
-  //   this.pageService.GetInvoiceItemDetails(model.ProformaInvoiceID!)
-  //     .pipe(takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (response) => {
-  //         if (response.IsSuccess) {
-  //           response.Data.Items.forEach(item => {
-  //             const patchedModel = {
-  //               ...item,
-  //               ProductName: item.Product!.ProductName,
-  //             };
-  //             const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-  //             productForm.patchValue(patchedModel);
-  //             this.productListArray.push(productForm);
-  //           });
-  //           this.tableDef.data = this.productListArray.value;
-  //           this.selectedCustomerAddress = model.Customer?.BillingAddress!;
-  //           const patchedModel = {
-  //             ...model,
-  //             ProformaInvoiceDate: DateUtils.toDate(model.ProformaInvoiceDate),
-  //             ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate),
-  //             CustomerName: model.Customer?.CompanyName || '',
-  //             ExportOrderID: model.ExportOrderID || null
-  //           };
-  //           this.form.patchValue(patchedModel);
-  //         }
-  //         else {
-  //           // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
-  //         }
-  //       },
-  //     });
-  // }
-
   GetExportOrder(exportOrderID: number): void {
     try {
       this.pageService.GetExportOrderDetails(exportOrderID)
@@ -582,7 +550,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response);
               const keysToPatch = Object.keys(this.formConfig).filter(
                 k => !['ProformaInvoiceNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'ProductList'].includes(k)
               );
@@ -632,76 +599,6 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-
-  // GetExportOrderItemDetails(model: ExportOrder): void {
-  //   this.pageService.GetExportOrderItemDetails(model.ExportOrderID!)
-  //     .pipe(takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (response) => {
-  //         if (response.IsSuccess) {
-  //           console.log(model, response.Data.Items);
-  //           const keysToPatch = Object.keys(this.formConfig).filter(
-  //             k => !['ProformaInvoiceNo','BasedOn','IsRoundOff','ExchangeRateDate','ExchangeRateToBC' ].includes(k)
-  //           );
-            
-  //           const filteredModel = keysToPatch.reduce((acc, key) => {
-  //             const typedKey = key as keyof ExportOrder;
-  //             const value = model[typedKey] ?? undefined;
-  //             (acc as any)[typedKey] = value;
-  //             return acc;
-  //           }, {} as Partial<ExportOrder>);
-
-  //           this.selectedCustomerAddress = model.Customer?.BillingAddress || '';
-  //           this.form.patchValue({ ...filteredModel,
-  //             CustomerID: model.Customer?.CompanyID,
-  //             CustomerName: model.Customer?.CompanyName,
-  //             ExportOrderID: model.ExportOrderID
-  //           });
-            
-  //           this.productListArray.clear();
-
-  //           response.Data.Items.forEach(item => {
-  //             const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-  //             productForm.patchValue({
-  //               ProductID: item.ProductID,
-  //               ProductName: item.Product!.ProductName,
-  //               SalesQty: item.SalesQty,
-  //               RatePerUnitFC: item.RatePerUnitFC,
-  //               TaxableAmountFC: item.TaxableAmountFC,
-  //               SalesTaxRate: item.SalesTaxRate,
-  //               TaxAmountFC: item.TaxAmountFC,
-  //               SalesAmountFC: item.SalesAmountFC
-  //             });
-  //             this.productListArray.push(productForm);
-  //           });
-
-  //           this.tableDef.data = this.productListArray.value;
-  //           this.productCalculation();
-
-  //           // response.Data.Items.forEach(item => {
-  //           //   const patchedModel = {
-  //           //     ProductID: item.ProductID,
-  //           //     ProductName: item.ProductName,
-  //           //     // ...item,
-  //           //     ProductName: item.Product!.ProductName,
-  //           //   };
-  //           //   const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-  //           //   productForm.patchValue(patchedModel);
-  //           //   this.productListArray.push(productForm);
-  //           // });
-  //           // this.tableDef.data = this.productListArray.value;
-  //           // const patchedModel = {
-  //           //   ...model,
-  //           //   ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
-  //           // };
-  //           // this.form.patchValue(patchedModel);
-  //         }
-  //         else {
-  //           // this.alertService.showServerResponseAlert();
-  //         }
-  //       },
-  //     });
-  // }
 
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
@@ -761,19 +658,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.loadDynamicComponent(model);
   }
 
-  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-    Object.keys(form.controls).forEach(key => {
-      const control = form.get(key);
-      const controlPath = parentKey ? `${parentKey}.${key}` : key;
+  // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
+  //   Object.keys(form.controls).forEach(key => {
+  //     const control = form.get(key);
+  //     const controlPath = parentKey ? `${parentKey}.${key}` : key;
 
-      if (control instanceof FormGroup || control instanceof FormArray) {
-        this.logInvalidControls(control, controlPath);
-      } else if (control && control.invalid) {
-        console.warn(
-          `❌ Invalid Control: ${controlPath}`,
-          control.errors
-        );
-      }
-    });
-  }
+  //     if (control instanceof FormGroup || control instanceof FormArray) {
+  //       this.logInvalidControls(control, controlPath);
+  //     } else if (control && control.invalid) {
+  //       console.warn(
+  //         `❌ Invalid Control: ${controlPath}`,
+  //         control.errors
+  //       );
+  //     }
+  //   });
+  // }
 }

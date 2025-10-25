@@ -93,8 +93,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          console.log(data.moduleList.Data.Items);
-          this.moduleList = data.moduleList.Data.Items;
+          this.moduleList = data.moduleList.Data?.Items ?? [];
         },
       });
   }

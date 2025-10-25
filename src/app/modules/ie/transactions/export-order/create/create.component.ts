@@ -73,7 +73,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   customerList: Company_SelectList[] = [];
   paymentTermList: PaymentTerm_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
+  currencyList: Currency_SelectList[] = [];
 
+  basedOnList: StaticList[] = [];
+  statusList: StaticList[] = [];
   incotermList: StaticList[] = [];
   shipmentModeList: StaticList[] = [];
 
@@ -83,11 +86,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   dischargePortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
-  basedOnList: StaticList[] = [];
-
-  currencyList: Currency_SelectList[] = [];
-
-  statusList: StaticList[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -149,9 +147,9 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.paymentTermList = data.paymentTermList.Data.Items;
-          this.taxSlabList = data.taxSlabList.Data.Items;
-          this.currencyList = data.currencyList.Data.Items;
+          this.paymentTermList = data.paymentTermList.Data?.Items ?? [];
+          this.taxSlabList     = data.taxSlabList.Data?.Items ?? [];
+          this.currencyList    = data.currencyList.Data?.Items ?? [];
         },
       });
   }
@@ -172,6 +170,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           listConfigs.forEach(({ targetList }) => {
+            const targetResponse = response?.[targetList];
             if (response[targetList]?.IsSuccess) {
               (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
             } else {
@@ -540,30 +539,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     // this.loadPortList();
   }
 
-  // loadPortList(): void {
-  //   try {
-  //     const dto: PortRequest = {
-  //       PortTypeID: this.form.get('ShipmentModeID')?.value,
-  //       PopulateType: 'SelectList'
-  //     }
-  //     this.pageService.GetPortList(dto)
-  //       .pipe(takeUntil(this.destroy$)).subscribe({
-  //         next: (response) => {
-  //           if (response.IsSuccess) {
-  //             this.portList = response.Data.Items;
-  //           } else if (response.Status == "Info") {
-  //             this.portList = [];
-  //           }
-  //           else {
-  //             this.alertService.showServerResponseAlert(response);
-  //           }
-  //         },
-  //       });
-  //   } catch (error) {
-
-  //   }
-  // }
-
   onSubmit(): void {
     console.log(this.form.value);
     if (this.isSubmitted) return;
@@ -585,7 +560,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
 
-        this.logInvalidControls(this.form);
+        // this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -718,44 +693,6 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  // GetOrderItemDetails(model: ExportOrder): void {
-  //   this.route.params.subscribe((params) => {
-  //     const ExportOrderID = +params['id'];
-  //     this.pageService.GetOrderItemDetails(ExportOrderID)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe({
-  //         next: (response) => {
-  //           if (response.IsSuccess) {
-  //             this.loadPortList();
-  //             response.Data.Items.forEach(item => {
-  //               const patchedModel = {
-  //                 ...item,
-  //                 ProductName: item.Product!.ProductName,
-  //               };
-  //               const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-  //               productForm.patchValue(patchedModel);
-  //               this.productListArray.push(productForm);
-  //             });
-  //             this.tableDef.data = this.productListArray.value;
-  //             this.selectedCustomerAddress = model.Customer?.BillingAddress!;
-  //             const patchedModel = {
-  //               ...model,
-  //               CustomerID: model.Customer?.CompanyID,
-  //               CustomerName: model.Customer?.CompanyName,
-  //               ExportOrderDate: DateUtils.toDate(model.ExportOrderDate),
-  //               ReferenceDate: DateUtils.toDate(model.ReferenceDate),
-  //               ExchangeRateDate: DateUtils.toDate(model.ExchangeRateDate)
-  //             };
-  //             this.form.patchValue(patchedModel);
-  //           }
-  //           else {
-  //             // this.alertService.showServerResponseAlert(paymentInstallmentResponse);
-  //           }
-  //         },
-  //       });
-  //   });
-  // }
 
   GetSalesQuotation(salesQuotationID: number): void {
     try {
@@ -973,54 +910,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  // GetSalesQuotationItemDetails(model: SalesQuotation): void {
-  //   this.pageService.GetSalesQuotationItemDetails(model.QuotationID!)
-  //     .pipe(takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (response) => {
-  //         if (response.IsSuccess) {
-
-  //           const keysToPatch = Object.keys(this.formConfig).filter(
-  //             k => !['ExportOrderNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration'].includes(k)
-  //           );
-
-  //           const filteredModel = keysToPatch.reduce((acc, key) => {
-  //             const typedKey = key as keyof SalesQuotation;
-  //             const value = model[typedKey] ?? undefined;
-  //             (acc as any)[typedKey] = value;
-  //             return acc;
-  //           }, {} as Partial<SalesQuotation>);
-
-  //           this.selectedCustomerAddress= model.Customer?.BillingAddress ?? '';
-  //           this.form.patchValue({ ...filteredModel,
-  //             CustomerID: model.Customer?.CompanyID,
-  //             CustomerName: model.Customer?.CompanyName
-  //           });
-
-  //           this.productListArray.clear();
-
-  //           response.Data.Items.forEach(item => {
-  //             const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-  //             productForm.patchValue({
-  //               ProductID: item.ProductID,
-  //               ProductName: item.Product!.ProductName,
-  //               SalesQty: item.QuotedQty,
-  //               RatePerUnitFC: item.RatePerUnitFC,
-  //               SalesTaxRate: item.TaxRate
-  //             });
-  //             this.productListArray.push(productForm);
-  //           });
-
-  //           this.tableDef.data = this.productListArray.value;
-  //           this.productCalculation();
-  //         }
-  //         else {
-  //           this.alertService.showServerResponseAlert(response);
-  //         }
-  //       },
-  //     });
-  // }
-
   handleComponentLoad(componentName: string) {
     if (this.componentRef) {
       this.destroyComponent();
@@ -1088,19 +977,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     return DateUtils.formatDate(date);
   }
 
-  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-    Object.keys(form.controls).forEach(key => {
-      const control = form.get(key);
-      const controlPath = parentKey ? `${parentKey}.${key}` : key;
+//   private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
+//     Object.keys(form.controls).forEach(key => {
+//       const control = form.get(key);
+//       const controlPath = parentKey ? `${parentKey}.${key}` : key;
 
-      if (control instanceof FormGroup || control instanceof FormArray) {
-        this.logInvalidControls(control, controlPath);
-      } else if (control && control.invalid) {
-        console.warn(
-          `❌ Invalid Control: ${controlPath}`,
-          control.errors
-        );
-      }
-    });
-  }
+//       if (control instanceof FormGroup || control instanceof FormArray) {
+//         this.logInvalidControls(control, controlPath);
+//       } else if (control && control.invalid) {
+//         console.warn(
+//           `❌ Invalid Control: ${controlPath}`,
+//           control.errors
+//         );
+//       }
+//     });
+//   }
 }
