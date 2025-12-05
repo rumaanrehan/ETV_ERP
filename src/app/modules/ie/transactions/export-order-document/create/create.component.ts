@@ -167,7 +167,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         });
       }
       else {
-        console.log(formData);
         this.createRecord(formData);
       }
     }

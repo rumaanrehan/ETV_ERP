@@ -16,12 +16,12 @@ import { Product_SelectList, ProductMaster, ProductRequest } from "../../../../i
 import { Company_SelectList, CompanyMaster, CompanyRequest } from "../../../settings/company-master/company-master";
 import { SalesEnquiry, SalesEnquiryDetail } from "../sales-enquiry";
 import { SalesEnquiryService } from "../sales-enquiry.service";
-import { CreateComponent as CompanyCreateComponent} from "../../../settings/company-master/create/create.component";
+import { CreateComponent as CompanyCreateComponent } from "../../../settings/company-master/create/create.component";
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZTableComponent ],
+  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZTableComponent],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
@@ -123,12 +123,13 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data.Items);
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
             } else {
               this.companyMasterAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
+              // if (response.Message != "Record not found.") {
+              //   this.alertService.showServerResponseAlert(response);
+              // }
             }
           },
         });
@@ -138,7 +139,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSelect_Customer(event: Company_SelectList): void {
-    this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName, ContactPhone: event.CompanyPhoneNo, ContactEmail: event.CompanyEmailID });
+    this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName, ContactName: event.CompanyContactName, ContactPhone: event.CompanyPhoneNo, ContactEmail: event.CompanyEmailID });
     this.selectedCustomerAddress = event?.BillingAddress || '';
   }
 
@@ -158,6 +159,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data.Items);
               this.productAutoCompleteDef.options = response.Data.Items;
             } else {
               this.productAutoCompleteDef.options = [];
@@ -185,10 +187,10 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-      productItemForm.patchValue({
-        ProductID: event.ProductID,
-        ProductName: event.ProductName,
-        UOM: event.UOM
+    productItemForm.patchValue({
+      ProductID: event.ProductID,
+      ProductName: event.ProductName,
+      UOM: event.UOM
     });
 
     this.productListArray.push(productItemForm);
@@ -374,14 +376,14 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.componentRef = undefined;
     }
   }
-  
+
   async createVendorComponent() {
     const { CreateComponent } = await import('../../../settings/company-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CompanyMaster = this.formService.createNullObject<CompanyMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   async createProductComponent() {
     const { CreateComponent } = await import('../../../../ims/settings/product-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);

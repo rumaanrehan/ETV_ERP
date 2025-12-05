@@ -72,7 +72,7 @@
                 <div class="col-xl-2 px-2">
                   <z-checkbox [group]="form" [control]="'IsRoDTEP'" [label]="formConfig.IsRoDTEP.label"></z-checkbox>
                 </div> -->
-                <div class="col-xl-6"></div>
+                <div class="col-xl-10"></div>
                 <div class="col-md-2 form-group px-2">
                   <z-inputnumber [group]="form" [control]="'InsuranceAmountBC'"
                     [label]="formConfig.InsuranceAmountBC.label"></z-inputnumber>
@@ -96,7 +96,8 @@
                 <h6 class="form-group px-2">Shipment</h6>
                 <div class="col-xl-2 form-group px-2">
                   <z-select [group]="form" [control]="'ShipmentModeID'" [label]="formConfig.ShipmentModeID.label"
-                    [options]="shipmentModeList" [optionLabel]="'Text'" [optionValue]="'iValue'" (onChange)="onChangeShipmentMode()"></z-select>
+                    [options]="shipmentModeList" [optionLabel]="'Text'" [optionValue]="'iValue'"
+                    (onChange)="onChangeShipmentMode()"></z-select>
                 </div>
                 <div class="col-xl-1"></div>
                 <div class="col-md-3 form-group px-2">
@@ -106,8 +107,8 @@
                 </div>
                 <div class="col-md-3 form-group px-2">
                   <z-select [group]="form" [control]="'DischargePortID'" [label]="formConfig.DischargePortID.label"
-                    [validationMessage]="formConfig.DischargePortID.error" [options]="portList" [optionLabel]="'PortName'"
-                    [optionValue]="'PortID'"></z-select>
+                    [validationMessage]="formConfig.DischargePortID.error" [options]="portList"
+                    [optionLabel]="'PortName'" [optionValue]="'PortID'"></z-select>
                 </div>
                 <div class="col-md-3 form-group px-2">
                   <z-inputtext [group]="form" [control]="'FinalDestination'"
@@ -135,7 +136,8 @@
     <div class="col-xl-4"></div>
     <div class="col-xl-4">
       <div class="col-xl-3 px-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"> {{ isEditMode ? "Update" : "Save" }} </button>
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"> {{ isEditMode ? "Update" :
+          "Save" }} </button>
       </div>
       <div class="col-xl-3 px-1">
         <button type="submit" class="btn btn-md btn-primary w-100" (click)="resetForm()"> Reset </button>
@@ -150,22 +152,27 @@
 </ng-template>
 
 <ng-template #purchaseQtyColTemplate let-row let-i="index">
-  <z-inputnumber [group]="productListArray.at(i)" [control]="'PurchaseQty'" [label]="formConfig.ProductList.items.PurchaseQty.label" [validationMessage]="formConfig.ProductList.items.PurchaseQty.error"
-    (onChange)="productCalculation()">
+  <z-inputnumber [group]="productListArray.at(i)" [control]="'PurchaseQty'"
+    [label]="formConfig.ProductList.items.PurchaseQty.label"
+    [validationMessage]="formConfig.ProductList.items.PurchaseQty.error" (onChange)="productCalculation()">
   </z-inputnumber>
 </ng-template>
 
 <ng-template #ratePerUnitColTemplate let-row let-i="index">
   <div class="input-group">
     <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
-    <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitBC'" [mode]="'currency'" [label]="formConfig.ProductList.items.RatePerUnitBC.label"
-      [validationMessage]="formConfig.ProductList.items.RatePerUnitBC.error" (onChange)="productCalculation()"></z-inputnumber>
+    <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitBC'" [mode]="'currency'"
+      [label]="formConfig.ProductList.items.RatePerUnitBC.label"
+      [validationMessage]="formConfig.ProductList.items.RatePerUnitBC.error"
+      (onChange)="productCalculation()"></z-inputnumber>
   </div>
 </ng-template>
 
 <ng-template #taxRateColTemplate let-row let-i="index">
-  <z-select [group]="productListArray.at(i)" [control]="'PurchaseTaxRate'" [label]="formConfig.ProductList.items.PurchaseTaxRate.label" [validationMessage]="formConfig.ProductList.items.PurchaseTaxRate.error"
-    [options]="taxSlabList" [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="onTaxSlabChange();">
+  <z-select [group]="productListArray.at(i)" [control]="'PurchaseTaxRate'"
+    [label]="formConfig.ProductList.items.PurchaseTaxRate.label"
+    [validationMessage]="formConfig.ProductList.items.PurchaseTaxRate.error" [options]="taxSlabList"
+    [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="onTaxSlabChange();">
   </z-select>
 </ng-template>
 
@@ -185,8 +192,8 @@
 
 <ng-template #removeProductItemColTemplate let-row let-i="index">
   <div class="d-flex justify-content-end">
-    <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate" 
-     (click)="onClickRemoveProductItem(i)" >
-    <i class="pi pi-minus-circle"></i></span>
+    <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+      (click)="onClickRemoveProductItem(i)">
+      <i class="pi pi-minus-circle"></i></span>
   </div>
 </ng-template>

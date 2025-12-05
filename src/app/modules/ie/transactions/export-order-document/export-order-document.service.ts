@@ -24,16 +24,16 @@ export class ExportOrderDocumentService {
     private exportOrderService: ExportOrderService,
     private documentTypeMasterService: DocumentTypeMasterService,
     private http: HttpClient
-  ) { } 
+  ) { }
 
   GetMasterDropdownLists(): Observable<{
     documentTypeList: ApiListResponse<DocumentType_SelectList>;
-    }> {
+  }> {
     return forkJoin({
-      documentTypeList: this.documentTypeMasterService.PopulateList({PopulateType: 'SelectList'} as DocumentTypeRequest),
+      documentTypeList: this.documentTypeMasterService.PopulateList({ PopulateType: 'SelectList' } as DocumentTypeRequest),
     });
   }
-    
+
   GetExportOrderList(model: ExportOrderRequest): Observable<ApiListResponse<ExportOrder_SelectList>> {
     return this.exportOrderService.PopulateList(model);
   }
@@ -41,13 +41,13 @@ export class ExportOrderDocumentService {
   PopulateGrid(model: DataTableParams<ExportOrderDocument_IndexTableFilter>): Observable<ApiPagedListResponse<ExportOrderDocument_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<ExportOrderDocument_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
-  
+
   GetDetails(ExportOrderID: number): Observable<ApiDataResponse<ExportOrderDocument>> {
     return this.apiService.post<ApiDataResponse<ExportOrderDocument>>(`${this.endpoint}/GetDetails?ExportOrderID=${ExportOrderID}`, {});
   }
 
   CreateRecord(model: FormData): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`http://localhost:44316/api/${this.endpoint}/Create`, model);
+    return this.http.post<ApiResponse>(`https://ehc.eternaltechverse.com/api/${this.endpoint}/Create`, model);
   }
 
   UpdateRecord(model: ExportOrderDocument): Observable<ApiResponse> {
@@ -72,7 +72,7 @@ export class ExportOrderDocumentService {
         label: 'Export Order Document  ID',
         defaultValue: null
       },
-        ExportOrderID: {
+      ExportOrderID: {
         label: 'Export Order',
         defaultValue: null,
         validators: [Validators.required],
@@ -80,9 +80,9 @@ export class ExportOrderDocumentService {
           required: 'Export Order is required'
         }
       },
-        ExportOrderNo: {
+      ExportOrderNo: {
         label: 'Export Order No',
-        defaultValue: null,        
+        defaultValue: null,
       },
       DocumentTypeID: {
         label: 'Document Type  ID',
@@ -99,22 +99,22 @@ export class ExportOrderDocumentService {
         validationMessages: {
           required: 'Document File is required'
         }
-      },      
+      },
     }
   }
-  
+
   getExportOrderAutoCompleteDef(formConfig: FormConfigType<ExportOrderDocument>, form: FormGroup): AutoCompleteDef<ExportOrder_SelectList> {
     return {
       type: 'formControl',
       group: form,
-      control: 'ExportOrderNo',  
-      label: formConfig.ExportOrderID.label,  
-      validationMessage: formConfig.ExportOrderID.error,  
+      control: 'ExportOrderNo',
+      label: formConfig.ExportOrderID.label,
+      validationMessage: formConfig.ExportOrderID.error,
       placeholder: 'Search Export Order',
       options: [],
-      optionLabel: 'ExportOrderNo',  
+      optionLabel: 'ExportOrderNo',
       columns: [
-        { data: 'ExportOrderNo', label: 'Export Order No', width: '300px' }  
+        { data: 'ExportOrderNo', label: 'Export Order No', width: '300px' }
       ],
     }
   }

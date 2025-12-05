@@ -229,9 +229,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.salesQuotationAutoCompleteDef.options = response.Data.Items;
             } else {
               this.salesQuotationAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -290,9 +287,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
             } else {
               this.companyMasterAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -323,9 +317,6 @@ export class CreateComponent implements OnInit, OnDestroy {
                 this.loadingPortAutoCompleteDef.options = response.Data.Items;
               } else {
                 this.loadingPortAutoCompleteDef.options = [];
-                if (response.Message != "Record not found.") {
-                  this.alertService.showServerResponseAlert(response);
-                }
               }
             },
           });
@@ -358,9 +349,6 @@ export class CreateComponent implements OnInit, OnDestroy {
                 this.dischargePortAutoCompleteDef.options = response.Data.Items;
               } else {
                 this.dischargePortAutoCompleteDef.options = [];
-                if (response.Message != "Record not found.") {
-                  this.alertService.showServerResponseAlert(response);
-                }
               }
             },
           });

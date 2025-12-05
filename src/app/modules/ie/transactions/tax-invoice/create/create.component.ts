@@ -42,7 +42,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
   componentRef?: ComponentRef<any>;
-  
+
   selectedCustomerAddress: string = '';
   statusText!: string | null;
   statusHex!: string | null;
@@ -61,7 +61,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
   basedOnList: StaticList[] = [];
-  
+
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: TaxInvoiceService,
@@ -70,7 +70,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute
   ) { }
-  
+
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.formConfig = this.pageService.getFormConfig();
@@ -97,7 +97,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.loadDropdownList();
     this.getDetails();
   }
-  
+
   get isBasedOnDocument(): boolean {
     return this.form.get('BasedOn')?.value === 1 || this.form.get('BasedOn')?.value === 2;
   }
@@ -110,7 +110,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
+
   loadDropdownList(): void {
     this.loadStaticLists([
       { fieldName: 'BasedOn', targetList: 'basedOnList' }
@@ -124,7 +124,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         },
       });
   }
-  
+
   loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
     const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
 
@@ -147,10 +147,10 @@ export class CreateComponent implements OnInit, OnDestroy {
               (this[targetList] as StaticList[]) = [];
             }
           });
-          },
-        });
+        },
+      });
   }
-  
+
   onClickPageHeaderBackButton(): void {
     try {
       this.router.navigate(['/ie/tax-invoice/index']);
@@ -172,7 +172,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   onBasedOnChange(): void {
     const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<TaxInvoice>(this.formConfig, this.form);
@@ -185,10 +185,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   loadDocument(event: string): void {
     try {
       const basedOn = this.form.get('BasedOn')?.value;
-      if(basedOn == 1){
+      if (basedOn == 1) {
         const dto: ProformaInvoiceRequest = {
           SearchBy: 1,
-          SearchValue : event,
+          SearchValue: event,
           PopulateType: 'AutoSuggest'
         }
         this.pageService.GetProformaInvoiceList(dto)
@@ -210,8 +210,8 @@ export class CreateComponent implements OnInit, OnDestroy {
               }
             },
           });
-        }
-      else if(basedOn == 2){
+      }
+      else if (basedOn == 2) {
         const dto: ExportOrderRequest = {
           ExportOrderNo: event,
           PopulateType: 'AutoSuggest'
@@ -245,15 +245,15 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.tableDef.data = [];
     const basedOn = this.form.get('BasedOn')?.value;
     if (event.DocumentID) {
-      if(basedOn == 1) {
+      if (basedOn == 1) {
         this.GetProformaInvoice(event.DocumentID);
       }
-      else if(basedOn == 2) {
+      else if (basedOn == 2) {
         this.GetExportOrder(event.DocumentID);
       }
     }
 
-    this.form.patchValue({BasedOn: basedOn});
+    this.form.patchValue({ BasedOn: basedOn });
   }
 
   onClear_Document(): void {
@@ -286,7 +286,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
-  
+
   onSelect_Customer(event: Company_SelectList): void {
     if (event.CompanyID) {
       this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
@@ -378,7 +378,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.form.patchValue({ NetAmountFC: netAmount, SubtotalAmountFC: subtotalAmount, TaxAmountFC: taxAmount }, { emitEvent: true });
   }
-  
+
   convertAmountsToBC(): void {
     const exchangeRate = this.form.get('ExchangeRateToBC')?.value || 1;
 
@@ -435,6 +435,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    console.log(this.form.value);
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
@@ -639,7 +640,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             if (response.IsSuccess) {
               console.log(response);
               const keysToPatch = Object.keys(this.formConfig).filter(
-                k => !['TaxInvoiceNo', 'BasedOn','IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
+                k => !['TaxInvoiceNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
               );
 
               const filteredModel = keysToPatch.reduce((acc, key) => {
@@ -649,14 +650,15 @@ export class CreateComponent implements OnInit, OnDestroy {
                 return acc;
               }, {} as Partial<ProformaInvoice_Detail>);
 
-              this.selectedCustomerAddress= response.Data.CustomerAddress ?? '';
-              this.form.patchValue({ ...filteredModel,
+              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
+              this.form.patchValue({
+                ...filteredModel,
                 CustomerID: response.Data.CustomerID,
                 CustomerName: response.Data.CustomerName,
                 DocumentID: response.Data.ProformaInvoiceID,
                 DocumentNo: response.Data.ProformaInvoiceNo
               });
-              
+
               this.productListArray.clear();
 
               response.Data.ProductList.Items.forEach(item => {
@@ -695,7 +697,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   //     .subscribe({
   //       next: (response) => {
   //         if (response.IsSuccess) {
-            
+
   //           this.selectedCustomerAddress = model.Customer?.BillingAddress ?? '';
   //           response.Data.Items.forEach(item => {
   //             const patchedModel = {
@@ -707,7 +709,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   //             this.productListArray.push(productForm);
   //           });
   //           this.tableDef.data = this.productListArray.value;
-          
+
   //           const { BasedOn, ...filteredModel } = model;
 
   //           const patchedModel = {
@@ -757,18 +759,18 @@ export class CreateComponent implements OnInit, OnDestroy {
                 DocumentID: response.Data.ExportOrderID  // Add other required fields
               };
 
-            // Set the autocomplete options
-            this.documentAutoCompleteDef.options = [documentOption];
-          
+              // Set the autocomplete options
+              this.documentAutoCompleteDef.options = [documentOption];
+
               // Destructure to ignore BasedOn and capture rest of properties
-              const { ProductList, BasedOn, IsRoundOff, ExchangeRateDate, ExchangeRateToBC,  Narration, ...filteredModel } = response.Data;
+              const { ProductList, BasedOn, IsRoundOff, ExchangeRateDate, ExchangeRateToBC, Narration, ...filteredModel } = response.Data;
 
               const patchedModel = {
                 ...filteredModel,
                 DocumentID: response.Data.ExportOrderID,
                 DocumentNo: documentOption  // Set the entire object, not just the string
               };
-              
+
               this.form.patchValue({ CustomerID: response.Data.CustomerID, CustomerName: response.Data.CustomerName });
 
               console.log('Final model before patching:', patchedModel); // Debug log
@@ -803,7 +805,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   //             this.productListArray.push(productForm);
   //           });
   //           this.tableDef.data = this.productListArray.value;
-          
+
   //           // Destructure to ignore BasedOn and capture rest of properties
   //           const { BasedOn, Narration, ...filteredModel } = model;
 
@@ -855,21 +857,21 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.componentRef = undefined;
     }
   }
-  
+
   async createVendorComponent() {
     const { CreateComponent } = await import('../../../settings/company-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CompanyMaster = this.formService.createNullObject<CompanyMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   async createCurrencyComponent() {
     const { CreateComponent } = await import('../../../../admin/settings/currency-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CurrencyMaster = this.formService.createNullObject<CurrencyMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   async createProductComponent() {
     const { CreateComponent } = await import('../../../../ims/settings/product-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);

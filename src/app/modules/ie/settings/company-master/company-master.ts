@@ -7,6 +7,7 @@ export interface CompanyMaster {
     CompanyTypeID: number | null;
     CountryID: number | null;
     StateID: number | null;
+    CompanyContactName: string | null;
     CompanyPhoneNo: string | null;
     CompanyEmailID: string | null;
     ImportLicenseNo: string | null;
@@ -21,7 +22,7 @@ export interface Company_SelectList {
     CompanyID: number;
     CompanyCode: number | null;
     CompanyName: string;
-    ContactName: string | null;
+    CompanyContactName: string | null;
     CompanyEmailID: string | null;
     CompanyPhoneNo: string | null;
     BillingAddress: string | null;

@@ -190,7 +190,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
     });
   }
-    
+
   loadSalesEnquiry(event: string): void {
     try {
       const dto: SalesEnquiryRequest = {
@@ -205,9 +205,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.salesEnquiryAutoCompleteDef.options = response.Data.Items;
             } else {
               this.salesEnquiryAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                // this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -222,7 +219,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (event.SalesEnquiryID) {
         this.GetSalesEnquiryDetails(event.SalesEnquiryID);
       }
-    } 
+    }
     else {
       this.alertService.showToast({
         text: "Cannot select this Sales Enquiry. Only enquiries with 'Received', 'Under Review', or 'Quotation Generated' status can be processed."
@@ -260,9 +257,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
             } else {
               this.companyMasterAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -295,9 +289,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.productAutoCompleteDef.options = response.Data.Items;
             } else {
               this.productAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -537,26 +528,26 @@ export class CreateComponent implements OnInit, OnDestroy {
                   this.statusHex = response.Data.StatusHex;
                   this.selectedCustomerAddress = model.CustomerAddress,
 
-                  this.form.patchValue({
-                    SalesQuotationID: model.SalesQuotationID,
-                    SalesQuotationNo: model.SalesQuotationNo,
-                    BasedOn: model.BasedOn,
-                    SalesEnquiryID: model.SalesEnquiryID,
-                    SalesEnquiryNo: model.SalesEnquiryNo,
-                    CustomerID: model.CustomerID,
-                    CustomerName: model.CustomerName,
-                    SalesQuotationDate: DateUtils.toDate(response.Data.SalesQuotationDate!),
-                    FCCurrencyID: model.FCCurrencyID,
-                    IncotermID: model.IncotermID,
-                    PaymentTermID: model.PaymentTermID,
-                    ExchangeRateToBC: model.ExchangeRateToBC,
-                    Narration: model.Narration,
-                    IsRoundOff: model.IsRoundOff,
-                    SubtotalAmountFC: model.SubtotalAmountFC,
-                    TaxAmountFC: model.TaxAmountFC,
-                    NetAmountFC: model.NetAmountFC,
-                    ValidityDate: response.Data.ValidityDate ? DateUtils.toDate(response.Data.ValidityDate) : null
-                  });
+                    this.form.patchValue({
+                      SalesQuotationID: model.SalesQuotationID,
+                      SalesQuotationNo: model.SalesQuotationNo,
+                      BasedOn: model.BasedOn,
+                      SalesEnquiryID: model.SalesEnquiryID,
+                      SalesEnquiryNo: model.SalesEnquiryNo,
+                      CustomerID: model.CustomerID,
+                      CustomerName: model.CustomerName,
+                      SalesQuotationDate: DateUtils.toDate(response.Data.SalesQuotationDate!),
+                      FCCurrencyID: model.FCCurrencyID,
+                      IncotermID: model.IncotermID,
+                      PaymentTermID: model.PaymentTermID,
+                      ExchangeRateToBC: model.ExchangeRateToBC,
+                      Narration: model.Narration,
+                      IsRoundOff: model.IsRoundOff,
+                      SubtotalAmountFC: model.SubtotalAmountFC,
+                      TaxAmountFC: model.TaxAmountFC,
+                      NetAmountFC: model.NetAmountFC,
+                      ValidityDate: response.Data.ValidityDate ? DateUtils.toDate(response.Data.ValidityDate) : null
+                    });
 
                   this.productListArray.clear();
                   response.Data.ProductList.Items.forEach(item => {
@@ -593,41 +584,41 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.pageService.GetSalesEnquiryDetails(salesEnquiryID)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-      next: (response) => {
-        if (response.IsSuccess) {
-          console.log(response.Data);
-          const model: SalesEnquiry_Detail = response.Data;
+        next: (response) => {
+          if (response.IsSuccess) {
+            console.log(response.Data);
+            const model: SalesEnquiry_Detail = response.Data;
 
-          this.selectedCustomerAddress = model.CustomerAddress,
-          this.form.patchValue({
-            SalesEnquiryID: model.SalesEnquiryID,
-            CustomerID: model.CustomerID,
-            CustomerName: model.CustomerName,
-          });
+            this.selectedCustomerAddress = model.CustomerAddress,
+              this.form.patchValue({
+                SalesEnquiryID: model.SalesEnquiryID,
+                CustomerID: model.CustomerID,
+                CustomerName: model.CustomerName,
+              });
 
-          this.productListArray.clear();
-          model.ProductList.Items.forEach(item => {
-            const productForm = this.formService.createFormArrayItem(
-              this.formConfig.ProductList.items
-            );
-            productForm.patchValue({
-              ProductID: item.ProductID,
-              ProductName: item.ProductName,
-              QuotedQty: item.RequestedQty,
-              UOM: item.UOM
+            this.productListArray.clear();
+            model.ProductList.Items.forEach(item => {
+              const productForm = this.formService.createFormArrayItem(
+                this.formConfig.ProductList.items
+              );
+              productForm.patchValue({
+                ProductID: item.ProductID,
+                ProductName: item.ProductName,
+                QuotedQty: item.RequestedQty,
+                UOM: item.UOM
+              });
+              this.productListArray.push(productForm);
             });
-            this.productListArray.push(productForm);
-          });
 
-          this.tableDef.data = this.productListArray.value;
-        } else {
-          this.alertService.showServerResponseAlert(response);
+            this.tableDef.data = this.productListArray.value;
+          } else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+        error: (err) => {
+          // this.alertService.showServerResponseAlert();
         }
-      },
-      error: (err) => {
-        // this.alertService.showServerResponseAlert();
-      }
-    });
+      });
   }
 
   handleComponentLoad(componentName: string) {
@@ -662,21 +653,21 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.componentRef = undefined;
     }
   }
-    
+
   async createVendorComponent() {
     const { CreateComponent } = await import('../../../settings/company-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CompanyMaster = this.formService.createNullObject<CompanyMaster>();
     this.loadDynamicComponent(model);
   }
-    
+
   async createCurrencyComponent() {
     const { CreateComponent } = await import('../../../../admin/settings/currency-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CurrencyMaster = this.formService.createNullObject<CurrencyMaster>();
     this.loadDynamicComponent(model);
   }
-    
+
   async createProductComponent() {
     const { CreateComponent } = await import('../../../../ims/settings/product-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);

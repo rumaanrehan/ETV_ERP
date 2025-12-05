@@ -23,17 +23,17 @@ export class CompanyMasterService {
   constructor(
     private apiService: ApiService,
     private selectListService: SelectListService,
-    private countryService: CountryMasterService    
-  ) {}
+    private countryService: CountryMasterService
+  ) { }
 
-  GetMasterDropdownLists(): Observable<{  
+  GetMasterDropdownLists(): Observable<{
     CountryList: ApiListResponse<Country_SelectList>;
-    }> {
-  return forkJoin({
-    CountryList: this.countryService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
-  });
+  }> {
+    return forkJoin({
+      CountryList: this.countryService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),
+    });
   }
-  
+
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
     return this.selectListService.GetStaticList(model);
   }
@@ -109,10 +109,14 @@ export class CompanyMasterService {
       StateID: {
         label: 'State',
         defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'State is required'
-        }
+        // validators: [Validators.required],
+        // validationMessages: {
+        //   required: 'State is required'
+        // }
+      },
+      CompanyContactName: {
+        label: 'Contact Name',
+        defaultValue: null
       },
       CompanyPhoneNo: {
         label: 'Phone',
@@ -129,7 +133,7 @@ export class CompanyMasterService {
       ImportLicenseNo: {
         label: 'Import License No',
         defaultValue: null,
-        validators: [Validators.pattern(/^[0-9]{10}$/),Validators.pattern(/^[0-9]{10}$/),],
+        validators: [Validators.pattern(/^[0-9]{10}$/), Validators.pattern(/^[0-9]{10}$/),],
         validationMessages: {
           pattern: "Enter a valid Import License No",
           RequiredIf: "Import License No is required"

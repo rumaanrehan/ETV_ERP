@@ -34,7 +34,7 @@ export class CreateComponent {
   formConfig!: FormConfigType<CompanyMaster>;
 
   vendorTypeList: StaticList[] = []
-  countryList: Country_SelectList[] = []  
+  countryList: Country_SelectList[] = []
   stateList: StaticList[] = []
 
   constructor(
@@ -78,25 +78,25 @@ export class CreateComponent {
 
   LoadDropdownList(): void {
     this.loadStaticLists([
-      { fieldName: 'CompanyTypeID', targetList: 'vendorTypeList' }, 
+      { fieldName: 'CompanyType', targetList: 'vendorTypeList' },
       { fieldName: 'StateID', targetList: 'stateList' }
     ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-            this.countryList = data.CountryList.Data?.Items ?? [];
-          },
+          this.countryList = data.CountryList.Data?.Items ?? [];
+        },
       });
   }
-  
+
   loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
     const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
 
     listConfigs.forEach(({ fieldName, targetList }) => {
       sources[targetList] = this.pageService.GetStaticList({
         AreaName: 'IE',
-        ControllerName: 'VendorMaster',
+        ControllerName: 'CompanyMaster',
         FieldName: fieldName,
       });
     });

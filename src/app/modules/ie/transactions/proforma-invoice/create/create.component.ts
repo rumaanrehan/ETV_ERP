@@ -195,9 +195,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.exportOrderAutoCompleteDef.options = response.Data.Items;
             } else {
               this.exportOrderAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -233,9 +230,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
             } else {
               this.companyMasterAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -269,9 +263,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.productAutoCompleteDef.options = response.Data.Items;
             } else {
               this.productAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -551,7 +542,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           next: (response) => {
             if (response.IsSuccess) {
               const keysToPatch = Object.keys(this.formConfig).filter(
-                k => !['ProformaInvoiceNo','BasedOn','IsRoundOff', 'ExchangeRateToBC', 'ProductList'].includes(k)
+                k => !['ProformaInvoiceNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'ProductList'].includes(k)
               );
 
               const filteredModel = keysToPatch.reduce((acc, key) => {
@@ -561,13 +552,14 @@ export class CreateComponent implements OnInit, OnDestroy {
                 return acc;
               }, {} as Partial<ExportOrder_Detail>);
 
-              this.selectedCustomerAddress= response.Data.CustomerAddress ?? '';
-              this.form.patchValue({ ...filteredModel,
+              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
+              this.form.patchValue({
+                ...filteredModel,
                 CustomerID: response.Data.CustomerID,
                 CustomerName: response.Data.CustomerName,
                 SalesQuotationNo: response.Data.SalesQuotationNo
               });
-              
+
               this.productListArray.clear();
 
               response.Data.ProductList.Items.forEach(item => {
@@ -603,7 +595,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
-  
+
   handleComponentLoad(componentName: string) {
     if (this.componentRef) {
       this.destroyComponent();
@@ -636,21 +628,21 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.componentRef = undefined;
     }
   }
-  
+
   async createVendorComponent() {
     const { CreateComponent } = await import('../../../settings/company-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CompanyMaster = this.formService.createNullObject<CompanyMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   async createCurrencyComponent() {
     const { CreateComponent } = await import('../../../../admin/settings/currency-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CurrencyMaster = this.formService.createNullObject<CurrencyMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   async createProductComponent() {
     const { CreateComponent } = await import('../../../../ims/settings/product-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
