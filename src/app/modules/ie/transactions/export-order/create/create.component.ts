@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
@@ -35,6 +35,7 @@ import { ExportOrderService } from '../export-order.service';
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('salesQtyColTemplate', { static: true }) salesQtyColTemplate!: TemplateRef<any>;
@@ -526,7 +527,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    console.log(this.form.value);
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
@@ -575,6 +575,36 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
+
+  // addShippingRecord(model: ExportOrderShippingDetail): void {
+  //   try {
+  //     this.pageService
+  //       .AddShippingRecord(model)
+  //       .pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (response) => {
+  //           if (response.IsSuccess) {
+  //             this.alertService.showAlert({
+  //               type: 'success',
+  //               text: response.Message,
+  //               timer: 5000,
+  //             });
+  //             setTimeout(() => {
+  //               this.ngOnInit();
+  //             }, 2000);
+  //           } else {
+  //             this.alertService.showServerResponseAlert(response);
+  //           }
+  //         },
+  //         complete: () => {
+  //           this.isSubmitted = false;
+  //         },
+  //       });
+  //   }
+  //   catch (error) {
+
+  //   }
+  // }
 
   createRecord(model: ExportOrder): void {
     try {
@@ -687,7 +717,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data);
               const keysToPatch = Object.keys(this.formConfig).filter(
                 k => !['ExportOrderNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
               );

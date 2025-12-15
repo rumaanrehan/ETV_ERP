@@ -10,7 +10,7 @@ import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z
 import { ExportOrderService } from '../export-order/export-order.service';
 import { HttpClient } from '@angular/common/http';
 import { ExportOrderDocument_IndexTableFilter, ExportOrderDocument_IndexTableList, ExportOrderDocument } from './export-order-document';
-import { DocumentType_SelectList, DocumentTypeRequest } from '../../settings/document-type-master/document-type-master';
+import { DocumentType_SelectList, DocumentTypeMaster, DocumentTypeRequest } from '../../settings/document-type-master/document-type-master';
 import { DocumentTypeMasterService } from '../../settings/document-type-master/document-type-master.service';
 
 @Injectable({
@@ -47,7 +47,9 @@ export class ExportOrderDocumentService {
   }
 
   CreateRecord(model: FormData): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`https://ehc.eternaltechverse.com/api/${this.endpoint}/Create`, model);
+    console.log('API Call - CreateRecord - ExportOrderDocumentService', model);
+    // return this.http.post<ApiResponse>(`https://ehc.eternaltechverse.com/api/${this.endpoint}/Create`, model);
+    return this.http.post<ApiResponse>(`http://localhost:44316/api/${this.endpoint}/Create`, model);
   }
 
   UpdateRecord(model: ExportOrderDocument): Observable<ApiResponse> {
@@ -91,6 +93,10 @@ export class ExportOrderDocumentService {
         validationMessages: {
           required: 'Document Type ID is required'
         }
+      },
+      DocumentTypeName: {
+        label: 'Document Type Name',
+        defaultValue: null,
       },
       DocumentFile: {
         label: 'Document File',

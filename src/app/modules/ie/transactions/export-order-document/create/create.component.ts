@@ -1,23 +1,24 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
+import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { ZFileUploadComponent } from '../../../../../shared/components/z-form-controls/z-file-upload/z-file-upload.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { ZFileUploadComponent } from '../../../../../shared/components/z-form-controls/z-file-upload/z-file-upload.component';
 import { DocumentType_SelectList } from '../../../settings/document-type-master/document-type-master';
 import { ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
-import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ExportOrderDocument } from '../export-order-document';
 import { ExportOrderDocumentService } from '../export-order-document.service';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule, ZFileUploadComponent, AutoCompleteModule],
+  imports: [CommonModule, FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule, ZFileUploadComponent, AutoCompleteModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
@@ -119,8 +120,8 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.isSubmitted) return;
-    this.isSubmitted = true;
 
+    this.isSubmitted = true;
     try {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
@@ -129,8 +130,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.isSubmitted = false;
         return;
       }
-
-
 
       const formData = new FormData();
       const transformedData = this.formService.transformFormData(this.form.value);

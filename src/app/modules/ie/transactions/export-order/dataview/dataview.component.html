@@ -123,6 +123,16 @@
                     <div class="col-12 d-flex gap-3 justify-content-end">
                         <div class="col-2">
                             <button class="btn btn-primary"
+                            (click)="handleComponentLoad('ShippingCreateComponent', item)">Add Shipping Detail</button>
+                                <!-- (click)="openSidebar('shipping', item.ExportOrderID, item.ExportOrderNo)"> Add Shipping Detail </button> -->
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary"
+                            (click)="handleComponentLoad('BillCreateComponent', item)">Bill Regulation</button>
+                                <!-- (click)="openSidebar('billRegulation', item.ExportOrderID, item.ExportOrderNo)">Bill Regulation</button> -->
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary"
                                 (click)="handleComponentLoad('DocumentCreateComponent', item)">Add Document</button>
                         </div>
                         <div class="col-2" *ngIf="!item.IsKnockOff">
@@ -133,7 +143,7 @@
                             <button class="btn btn-primary"
                                 (click)="handleComponentLoad('TrackingCreateComponent', item)">Add Tracking</button>
                         </div>
-                        <div class="col-2">
+                        <div class="col-1">
                             <button class="btn btn-primary"
                                 (click)="handleComponentLoad('LetterOfCreditCreateComponent', item)">Add LC</button>
                         </div>

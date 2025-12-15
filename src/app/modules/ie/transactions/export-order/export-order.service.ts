@@ -26,7 +26,8 @@ import { ExportOrderDocumentTemplate } from '../export-order-document/export-ord
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
 import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
-import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
+import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
+import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
 
 @Injectable({
   providedIn: 'root'
@@ -106,6 +107,30 @@ export class ExportOrderService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
+  AddShippingRecord(model: ExportOrderShipping): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/AddShippingDetail`, model);
+  }
+
+  GetShippingRecord(exportOrderID: number | null): Observable<ApiDataResponse<ExportOrderShipping>> {
+    return this.apiService.post<ApiDataResponse<ExportOrderShipping>>(`${this.endpoint}/GetShippingDetails?exportOrderID=${exportOrderID}`, {});
+  }
+
+  UpdateShippingRecord(model: ExportOrderShipping): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateShippingDetails`, model);
+  }
+
+  AddBillRegulationRecord(model: ExportOrderBillRegulationRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/AddBillRegulation`, model);
+  }
+
+  GetBillRegulationRecord(exportOrderID: number | null): Observable<ApiDataResponse<ExportOrderBillRegulationRequest>> {
+    return this.apiService.post<ApiDataResponse<ExportOrderBillRegulationRequest>>(`${this.endpoint}/GetBillRegulation?exportOrderID=${exportOrderID}`, {});
+  }
+
+  UpdateBillRegulationRecord(model: ExportOrderBillRegulationRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateBillRegulation`, model);
+  }
+
   UpdateRecord(model: ExportOrder): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
@@ -178,6 +203,43 @@ export class ExportOrderService {
       }
     }
   }
+
+  // getBillRegulationFormConfig(): FormConfigType<ExportOrderBillRegulation> {
+  //   return {
+  //     ExportOrderID: {
+  //       label: '',  
+  //       defaultValue: null
+  //     },
+  //     ExportOrderNo: {
+  //       label: 'Export Order No',
+  //       defaultValue: null
+  //     },
+  //     ShippingBill:{
+  //       label: 'Shipping Bill',
+  //       defaultValue: false
+  //     },
+  //     AirwayBill:{
+  //       label: 'Airway Bill',
+  //       defaultValue: false
+  //     },
+  //     IECCertificate:{
+  //       label: 'IEC Certificate',
+  //       defaultValue: false
+  //     },
+  //     Invoice:{
+  //       label: 'Invoice',
+  //       defaultValue: false
+  //     },
+  //     PackingSlip:{
+  //       label: 'Packing Slip',
+  //       defaultValue: false
+  //     },
+  //     CustomerPO:{
+  //       label: 'Customer PO',
+  //       defaultValue: false
+  //     }
+  //   };
+  // }
 
   getFormConfig(): FormConfigType<ExportOrder> {
     return {
