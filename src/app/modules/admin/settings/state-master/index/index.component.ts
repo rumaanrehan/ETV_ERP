@@ -54,7 +54,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'StateName', label: 'State Name', filterable: true },
       { data: 'StateGSTCode', label: 'State GST Code', orderable: false, width: "10%" },
       { data: 'StateISOCode', label: 'State ISO Code', orderable: false, width: "10%" },
-      { data: 'CountryName', label: 'Country Name', filterable: true, width: "10%" },
+      { data: 'CountryID', label: 'CountryID', filterable: true, width: "10%" },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.stateActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
