@@ -59,8 +59,8 @@ export class CompanyMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: CompanyMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(CompanyID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?CompanyID=${CompanyID}&${reasonToUpdate}`, {});
   }
 
   //#region Form Configuration

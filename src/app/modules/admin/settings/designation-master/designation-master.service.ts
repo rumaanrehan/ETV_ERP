@@ -6,7 +6,7 @@ import { DataTableParams } from '../../../../shared/components/z-datatable/z-dat
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { Designation_IndexTableFilter, Designation_IndexTableList, Designation_SelectList, DesignationMaster, DesignationRequest } from './designation-master';
+import { Designation_Detail, Designation_IndexTableFilter, Designation_IndexTableList, Designation_SelectList, DesignationMaster, DesignationRequest } from './designation-master';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +26,8 @@ export class DesignationMasterService {
     return this.apiService.post<ApiPagedListResponse<Designation_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(DesignationID: number): Observable<ApiDataResponse<DesignationMaster>> {
-    return this.apiService.post<ApiDataResponse<DesignationMaster>>(`${this.endpoint}/GetDetails?DesignationID=${DesignationID}`, {});
+  GetDetails(designationID: number): Observable<ApiDataResponse<Designation_Detail>> {
+    return this.apiService.post<ApiDataResponse<Designation_Detail>>(`${this.endpoint}/GetDetails?DesignationID=${designationID}`, {});
   }
 
   CreateRecord(model: DesignationMaster): Observable<ApiResponse> {
@@ -38,8 +38,8 @@ export class DesignationMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: DesignationMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(DesignationID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?DesignationID=${DesignationID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   //#region Form Configuration

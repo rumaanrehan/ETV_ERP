@@ -8,7 +8,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeType_SelectList, EmployeeTypeDetails, EmployeeTypeMaster, EmployeeTypeRequest } from './employee-type-master';
+import { EmployeeType_Details, EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeType_SelectList, EmployeeTypeMaster, EmployeeTypeRequest } from './employee-type-master';
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +28,8 @@ export class EmployeeTypeMasterService {
     return this.apiService.post<ApiPagedListResponse<EmployeeType_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(employeeTypeID: number): Observable<ApiDataResponse<EmployeeTypeDetails>> {
-    return this.apiService.post<ApiDataResponse<EmployeeTypeDetails>>(`${this.endpoint}/GetDetails?employeeTypeID=${employeeTypeID}`, {});
+  GetDetails(employeeTypeID: number): Observable<ApiDataResponse<EmployeeType_Details>> {
+    return this.apiService.post<ApiDataResponse<EmployeeType_Details>>(`${this.endpoint}/GetDetails?employeeTypeID=${employeeTypeID}`, {});
   }
 
   CreateRecord(model: EmployeeTypeMaster): Observable<ApiResponse> {
@@ -37,11 +37,12 @@ export class EmployeeTypeMasterService {
   }
 
   UpdateRecord(model: EmployeeTypeMaster): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: EmployeeTypeMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(EmployeeTypeID: number,  reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?EmployeeTypeID=${EmployeeTypeID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   //#region Form Configuration
@@ -49,7 +50,6 @@ export class EmployeeTypeMasterService {
     return {
       EmployeeTypeCode: '',
       EmployeeTypeName: '',
-      IsAllowedOverTime: '',
       ActiveStatusID: 0
     }
   }
@@ -74,7 +74,7 @@ export class EmployeeTypeMasterService {
       },
        IsAllowedOverTime: {
         label: 'Is Allowed Over Time',
-        defaultValue: 'NEW'
+        defaultValue: false
       },
     }
   }

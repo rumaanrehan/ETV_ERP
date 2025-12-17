@@ -20,6 +20,7 @@ export class SelectListService {
   }
 
   GetDataTableList(model: DataTableFilterListRequest): Observable<ApiListResponse<DataTableFilterList>> {
+    console.log(model);
     return this.http.post<ApiListResponse<DataTableFilterList>>(`${this.apiUrl}SelectList/GetDataTableList`, model);
   }
 }

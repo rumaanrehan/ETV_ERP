@@ -38,8 +38,8 @@ export class RoleMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: RoleMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(RoleID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?roleID=${RoleID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
   
  //#region Form Configuration
@@ -47,7 +47,7 @@ export class RoleMasterService {
     return {
       RoleCode: '',
       RoleName: '',
-      ActiveStatusID: 0
+      ActiveStatusID: 0,
     }
   }
 

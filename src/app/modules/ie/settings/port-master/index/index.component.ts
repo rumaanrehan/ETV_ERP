@@ -42,7 +42,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.tableDef = {
       tableKey: 'IE_PortMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: 'Portcode', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'CountryCode', sortOrder: 1 },
       filterForm: this.formService.createFormGroup_DataTableFilter<Port_IndexFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
@@ -51,11 +51,9 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', width: "5%", hideVisToggle: true, orderable: false },
-      { data: 'PortID', visible: false, hideVisToggle: true, orderable: false },
-      { data: 'PortCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.portCodeTemplate },
-      { data: 'PortName', label: 'Port Name', filterable: true },
-      { data: 'PortTypeName', label: ' Port Type', orderable: false, filterable: true, filterType: 'select', filterKey: 'PortTypeID' },
-      { data: 'CountryName', label: ' Country', orderable: false, filterable: true },
+      { data: 'CountryID', visible: false, hideVisToggle: true, orderable: false },
+      { data: 'CountryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.portCodeTemplate },
+      { data: 'CountryName', label: 'Port Name', filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.portActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
     ];
@@ -143,13 +141,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         text: `Do you really want to ${ActionType} the "<b>${row.PortName}</b>"?`,
       }).then((result) => {
         if (result.isConfirmed) {
-          const model: PortMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value,
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.PortID, result.value)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {

@@ -1,15 +1,15 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { ItemCategoryMaster } from '../item-category-master';
-import { ItemCategoryMasterService } from '../item-category-master.service';
-import { ItemType_SelectList } from '../../item-type-master/item-type-master';
-import { ItemGroup_SelectList, ItemGroupRequest } from '../../item-group-master/item-group-master';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
+import { ItemGroup_SelectList, ItemGroupRequest } from '../../item-group-master/item-group-master';
+import { ItemType_SelectList } from '../../item-type-master/item-type-master';
+import { ItemCategoryMaster } from '../item-category-master';
+import { ItemCategoryMasterService } from '../item-category-master.service';
 
 @Component({
   selector: 'app-create',
@@ -70,6 +70,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
     this.activeStatus = activeStatus;
     this.form.patchValue(model);
+    this.loadItemGroup();
     this.isFormSidebarVisible = true;
   }
 
@@ -92,7 +93,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if(itemTypeID){
       const dto: ItemGroupRequest = {
         ItemTypeID: itemTypeID,
-        PopulateType: "SelectList"
+        PopulateType: ""
       }
       this.pageService.LoadItemGroup(dto)
       .pipe(takeUntil(this.destroy$))

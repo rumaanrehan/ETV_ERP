@@ -101,8 +101,8 @@ export class ProductMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Update`, model);
   }
 
-  DeleteReactivate(model: ProductMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(ProductID: number ,  reasonToUpdate: string ): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?ProductID=${ProductID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ProductMaster_IndexTableFilter> {

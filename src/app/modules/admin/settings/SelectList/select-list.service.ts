@@ -4,12 +4,15 @@ import { Observable } from 'rxjs';
 import { Environment } from '../../../../../environments/environment';
 import { ApiPagedListResponse } from '../../../../shared/models/api-response';
 import { SelectList, SelectListRequest } from './select-list';
-import { StaticList } from '../../../../shared/models/select-list';
+import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SelectListService {
+  GetStaticList(model: StaticListRequest): Observable<import("../../../../shared/models/api-response").ApiListResponse<StaticList>> {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl: string;
 
   constructor(private http: HttpClient) {

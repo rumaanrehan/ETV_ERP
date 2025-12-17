@@ -152,13 +152,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          const model: DocumentTypeMaster = {
-            ...row,
-            ActionType,
-            ReasonToUpdate: result.value,
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.DocumentTypeID, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

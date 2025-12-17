@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { CreateComponent } from '../create/create.component';
-import { ItemCategory_IndexFilter, ItemCategory_IndexList, ItemCategoryMaster } from '../item-category-master';
-import { ItemCategoryMasterService } from '../item-category-master.service';
 import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../../shared/services/form-validation.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { CreateComponent } from '../create/create.component';
+import { ItemCategory_IndexFilter, ItemCategory_IndexList, ItemCategoryMaster } from '../item-category-master';
+import { ItemCategoryMasterService } from '../item-category-master.service';
+
 @Component({
   selector: 'app-index',
   standalone: true,
@@ -47,7 +48,6 @@ export class IndexComponent implements OnInit, OnDestroy {
       totalRecords: 0,
       loading: false,
     };
-
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN',  width: "5%", hideVisToggle: true, orderable: false },
       { data: 'ItemCategoryID', visible: false, hideVisToggle: true, orderable: false },
@@ -79,10 +79,11 @@ export class IndexComponent implements OnInit, OnDestroy {
           .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              const model: ItemCategoryMaster = {
-                ...response.Data,
-              };
-              this.createSidebar.openSidebar(activeStatus, true, model);
+                console.log(response.Data)
+                const model: ItemCategoryMaster = {
+                  ...response.Data,
+                };
+                this.createSidebar.openSidebar(activeStatus, true, model);
               } else {
                 this.alertService.showServerResponseAlert(response);
               }
@@ -141,13 +142,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          const model: ItemCategoryMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value,
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.ItemCategoryID!, result.value)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {

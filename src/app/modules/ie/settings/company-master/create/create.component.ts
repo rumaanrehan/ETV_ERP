@@ -118,6 +118,7 @@ export class CreateComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
+          console.log(response);
           listConfigs.forEach(({ targetList }) => {
             if (response[targetList]?.IsSuccess) {
               (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];

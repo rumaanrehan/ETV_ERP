@@ -7,8 +7,8 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
-import { EmployeeTypeMasterService } from '../employee-type-master.service';
 import { EmployeeType_IndexTableFilter, EmployeeType_IndexTableList, EmployeeTypeMaster } from '../employee-type-master';
+import { EmployeeTypeMasterService } from '../employee-type-master.service';
 
 
 @Component({
@@ -77,11 +77,9 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data);
               const model: EmployeeTypeMaster = {
-                EmployeeTypeID: response?.Data?.EmployeeTypeID ?? null,
-                EmployeeTypeCode: response?.Data?.EmployeeTypeCode ?? null,
-                EmployeeTypeName: response?.Data?.EmployeeTypeName ?? null,
-                IsAllowedOverTime: response?.Data?.IsAllowedOverTime ?? null,
+                ...response.Data
               };
               this.createSidebar.openSidebar(activeStatus, true, model);
             }
@@ -146,17 +144,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
       this.alertService.showConfirmationWithInput({
         inputPlaceholder: inputPlaceholder,
-        text: `Do you really want to ${ActionType} the "<b>${row.EmployeeName}</b>"?`,
+        text: `Do you really want to ${ActionType} the "<b>${row.EmployeeTypeName}</b>"?`,
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: EmployeeTypeMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.EmployeeTypeID, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

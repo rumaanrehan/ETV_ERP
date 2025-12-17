@@ -14,8 +14,8 @@ export interface Currency_SelectList {
 
 export interface Currency_IndexTableFilter {
     CurrencyCode: string | null;
-    CurrencyName: string | null;
     CountryName: string | null;
+    CurrencyName: string | null;
     CurrencySymbol: string | null;
     ActiveStatusID: number | null;
 }
@@ -30,16 +30,16 @@ export interface Currency_IndexTableList {
 }
 
 export interface CurrencyRequest {
-    CountryID?: number | null;
-    CurrencyName?: number | null;
-    PopulateType?: string | null;
+    CountryID?: number;
+    CurrencyName?: number;
+    PopulateType?: string;
 }
 
 export interface Currency_Detail {
-    CurrencyID: number | null;
-    CurrencyCode: string | null;
-    CountryID: number | null;
-    CurrencyName: string | null;
-    CurrencySymbol: string | null;
+    CurrencyID: number;
+    CurrencyCode: string;
+    CountryID: number;
+    CurrencyName: string;
+    CurrencySymbol: string;
     CurrencyISOCode: string | null;
 }

@@ -37,8 +37,8 @@ export class CurrencyMasterService {
     return this.apiService.post<ApiPagedListResponse<Currency_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
   
-  GetDetails(CurrencyID: number): Observable<ApiDataResponse<Currency_Detail>> {
-    return this.apiService.post<ApiDataResponse<Currency_Detail>>(`${this.endpoint}/GetDetails?CurrencyID=${CurrencyID}`, {});
+  GetDetails(currencyID: number): Observable<ApiDataResponse<Currency_Detail>> {
+    return this.apiService.post<ApiDataResponse<Currency_Detail>>(`${this.endpoint}/GetDetails?CurrencyID=${currencyID}`, {});
   }
 
   CreateRecord(model: CurrencyMaster): Observable<ApiResponse> {
@@ -49,8 +49,8 @@ export class CurrencyMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: CurrencyMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(currencyID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?currencyID=${currencyID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   //#region Form Configuration
@@ -90,7 +90,6 @@ export class CurrencyMasterService {
           required: 'Currency Name is required'
         }
       },
-
       CountryID:{
         label: 'Country',
         defaultValue: null,
@@ -99,7 +98,6 @@ export class CurrencyMasterService {
           required: 'Country is required'
         }
       },
-     
       CurrencyISOCode:{
         label: 'Currency ISO Code',
         defaultValue: null,

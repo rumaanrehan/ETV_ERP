@@ -18,6 +18,7 @@ export interface HsnSacMaster_IndexTableFilter {
   HSNCode: string | null;
   HSNCodeDescription: string | null;
   IsServiceAccountCodeID: number | null;
+  TaxSlabID: number | null;
   ActiveStatusID: number | null;
 }
 

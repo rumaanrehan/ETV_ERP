@@ -54,7 +54,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'HolidayCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "7%", customTemplate: this.holidayCodeTemplate },
       { data: 'HolidayName', label: 'Holiday Name', filterable: true, width: "17%"},
       { data: 'HolidayYear', label: 'Holiday Year', filterable: true, width: "15%"},
-      { data: 'HolidayTypeName', label: 'Holiday Type', width: "13%", cssClass: 'text-center'},
+      { data: 'HolidayTypeName', label: 'Holiday Type', filterable: true,filterType: 'select', filterKey: 'HolidayTypeID', width: "13%", cssClass: 'text-center'},
       { data: 'HolidayDate', label: 'Date', orderable: false, customTemplate: this.holidayDateTemplate },
       { data: 'HolidayDescription', label: 'Description', orderable: false },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.holidayActiveStatusTemplate },
@@ -75,6 +75,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickEditDetails(holidayID: number, activeStatus: boolean): void {
     try {
+      console.log(holidayID);
       if (this.createSidebar && holidayID) {
         this.pageService.GetDetails(holidayID)
         .pipe(takeUntil(this.destroy$))
@@ -152,13 +153,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: HolidayMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.HolidayID, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

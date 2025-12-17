@@ -54,7 +54,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'HSNCode', label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.hsnCodeTemplate },
       { data: 'HSNCodeDescription', label: 'Description', filterable: true, orderable: false },
       { data: 'IsServiceAccountCode', label: 'SAC', filterable: true, filterType: 'select', filterKey: 'IsServiceAccountCodeID', cssClass: 'text-center', width: "5%", customTemplate: this.isSACTemplate },
-      { data: 'TaxRate', label: 'Tax Rate', filterable: true, orderable: false, filterType: 'select', filterKey: 'TaxRate', cssClass: 'text-center', width: "8%", customTemplate: this.taxRateTemplate },
+      { data: 'TaxRate', label: 'Tax Rate', filterable: true, filterType: 'select', filterKey: 'TaxSlabID', cssClass: 'text-center', width: "8%", customTemplate: this.taxRateTemplate },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.hsnActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
@@ -137,22 +137,17 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickDeleteReactivate(row: any): void {
     try {
+      console.log(row);
       const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
 
       this.alertService.showConfirmationWithInput({
         inputPlaceholder: inputPlaceholder,
-        text: `Do you really want to ${ActionType} the "<b>${row.HsnCode}</b>"?`,
+        text: `Do you really want to ${ActionType} the "<b>${row.HSNCode}</b>"?`,
       })
         .then(result => {
           if (result.isConfirmed) {
-            const model: HsnSacMaster = {
-              ...row,
-              ActionType: ActionType,
-              ReasonToUpdate: result.value
-            };
-
-            this.pageService.DeleteReactivate(model)
+            this.pageService.DeleteReactivate(row.HSNCodeID!, result.value)
               .pipe(takeUntil(this.destroy$))
               .subscribe({
                 next: (response) => {

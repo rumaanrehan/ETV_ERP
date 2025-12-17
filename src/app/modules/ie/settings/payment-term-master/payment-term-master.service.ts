@@ -39,8 +39,8 @@ export class PaymentTermMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: PaymentTermMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(paymentTermID: number, reasonToUpdate:  string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?paymentTermID=${paymentTermID}&${reasonToUpdate}`, {});
   }
 
   //#region Form Configuration

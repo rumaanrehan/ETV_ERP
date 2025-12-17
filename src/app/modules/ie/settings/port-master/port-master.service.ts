@@ -57,8 +57,8 @@ export class PortMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: PortMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(portID: number , reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?portID=${portID}&${reasonToUpdate}`, {});
   }
 
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Port_IndexFilter>{

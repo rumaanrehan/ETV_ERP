@@ -74,7 +74,10 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              const model: DesignationMaster = {
+                ...response.Data
+              };
+              this.createSidebar.openSidebar(activeStatus, true, model);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -141,13 +144,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: DesignationMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.DesignationID!, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
