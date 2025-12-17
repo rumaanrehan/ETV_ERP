@@ -19,6 +19,10 @@ export class SelectListService {
     return this.http.post<ApiListResponse<StaticList>>(`${this.apiUrl}SelectList/GetStaticList`, model);
   }
 
+  GetStatusList(forTable: string): Observable<ApiListResponse<StaticList>> {
+    return this.http.post<ApiListResponse<StaticList>>(`${this.apiUrl}SelectList/GetStatusList?forTable=${forTable}`, {});
+  }
+
   GetDataTableList(model: DataTableFilterListRequest): Observable<ApiListResponse<DataTableFilterList>> {
     console.log(model);
     return this.http.post<ApiListResponse<DataTableFilterList>>(`${this.apiUrl}SelectList/GetDataTableList`, model);

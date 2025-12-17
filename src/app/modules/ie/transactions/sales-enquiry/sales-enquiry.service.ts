@@ -173,6 +173,10 @@ export class SalesEnquiryService {
               required: "Requested Qty is required"
             }
           },
+          UOM: {
+            label: 'Measurement Unit',
+            defaultValue: null
+          },
           Remarks: {
             label: '',
             defaultValue: '',

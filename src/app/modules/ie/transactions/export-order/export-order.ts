@@ -41,6 +41,8 @@ export interface ExportOrder {
     ShipmentModeID: number | null;
     LoadingPortID: number | null;
     DischargePortID: number | null;
+    LoadingPortName: string | null;
+    DischargePortName: string | null;
     FinalDestination: string | null;
     Narration: string | null;
     StatusID: number | null;
@@ -53,7 +55,7 @@ export interface ExportOrder {
     Customer?: CompanyMaster
 }
 
-export interface ExportOrder_Detail {
+export interface ExportOrdersDetail {
     ExportOrderID: number;
     ExportOrderNo: string;
     ExportOrderDate: Date;
@@ -125,6 +127,7 @@ export interface ExportOrderDetail {
     ProductID: number | null;
     ProductName: string | null;
     SalesQty: number | null;
+    UOM: string | null;
     SalesTaxRate: number | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
@@ -143,12 +146,12 @@ export interface ExportOrder_IndexTableFilter {
     ExportOrderNo: string | null;
     ReferenceNo: string | null;
     CustomerName: string | null;
+    BasedOn: number | null;
     IncotermID: number | null;
     DutyDrawableID: number | null;
     RoDTEPID: number | null;
     ShipmentModeID: number | null;
-    LoadingPortID: number | null;
-    DischargePortID: number | null;
+    FinalDestination: string | null;
     StatusID: number | null;
 }
 
@@ -165,6 +168,54 @@ export interface ExportOrder_IndexTableList {
     NetAmountBC: number;
     IsKnockOff: boolean;
     StatusID: number;
+}
+
+export interface ExportOrder_Detail {
+  ExportOrderID: number;
+  ExportOrderNo: string;
+  BasedOn: number;
+  ExportOrderDate?: Date;
+  ReferenceDate: Date;
+  ReferenceNo?: string;
+  SalesQuotationID?: number;
+  SalesQuotationNo?: string;
+  CustomerID: number;
+  CustomerName: string;
+  CustomerAddress?: string;
+  FCCurrencyID: number;
+  ExchangeRateDate: Date;
+  ExchangeRateToBC: number;
+  IncotermID?: number;
+  FreightChargeFC?: number;
+  BankChargesFC?: number;
+  InsuranceAmountFC?: number;
+  IsDutyDrawable: boolean;
+  IsRoDTEP: boolean;
+  PaymentTermID?: number;
+  IsRoundOff: boolean;
+  ShipmentModeID?: number;
+  LoadingPortID?: number;
+  DischargePortID?: number;
+  FinalDestination?: string;
+  Narration?: string;
+  SubtotalAmountFC: number;
+  TaxAmountFC: number | null;
+  NetAmountFC: number;
+  StatusText: string;
+  StatusHex: string;
+  ProductList: TList<ExportOrderProductDetail>;
+}
+
+export interface ExportOrderProductDetail {
+  ProductID: number;
+  ProductName: string;
+  UOM: string;
+  SalesQty: number;
+  RatePerUnitFC: number;
+  SalesTaxRate: number;
+  TaxableAmountFC: number;
+  TaxAmountFC: number;
+  SalesAmountFC: number;
 }
 
 export interface ExportOrderDocumentList {
@@ -186,4 +237,29 @@ export interface ExportOrderPaymentList {
     PaymentAmountBC: number;
     PaymentDate: Date;
     CreatedBy: string;
+}
+
+export interface ExportOrderBillRegulation {
+    ExportOrderID: number | null;
+    ExportOrderNo: string | null;
+    ShippingBill: boolean | null;
+    AirwayBill: boolean | null;
+    IECCertificate: boolean | null;
+    Invoice: boolean | null;
+    PackingSlip: boolean | null;
+    CustomerPO: boolean | null;
+}
+
+export interface ExportOrderBillRegulationRequest {
+    ExportOrderID: number | null;
+    SelectedDocuments: ExportOrderDocumentType[];
+}
+
+export enum ExportOrderDocumentType {
+  ShippingBill = 1,
+  AirwayBill = 2,
+  IECCertificate = 3,
+  Invoice = 4,
+  PackingSlip = 5,
+  CustomerPO = 6
 }

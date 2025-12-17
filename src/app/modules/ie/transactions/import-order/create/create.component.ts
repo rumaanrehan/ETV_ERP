@@ -110,7 +110,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onTaxSlabChange(): void {
-    console.log(this.form.value);
+
   }
 
   loadDropdownList(): void {
@@ -122,7 +122,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.taxSlabList = data.taxSlabList.Data.Items;
+          this.taxSlabList = data.taxSlabList.Data?.Items ?? [];
         },
       });
   }
@@ -175,9 +175,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.productListArray.removeAt(index);
         this.tableDef.data = this.productListArray.value;
         this.productCalculation();
-
-        console.log(this.tableDef.data);
-        console.log(this.productListArray.value);
       }
     });
   }
@@ -202,13 +199,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
             } else {
               this.companyMasterAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -343,7 +336,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
               this.portList = response.Data.Items;
             } else if (response.Status == "Info") {
               this.portList = [];
@@ -358,7 +350,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    console.log(this.form.errors, this.form);
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;

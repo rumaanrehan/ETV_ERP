@@ -13,9 +13,9 @@ import { Product_SelectList, ProductRequest } from '../../../ims/settings/produc
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { ExportOrder, ExportOrder_SelectList, ExportOrderDetail, ExportOrderRequest } from '../export-order/export-order';
+import { ExportOrder, ExportOrder_Detail, ExportOrder_SelectList, ExportOrderDetail, ExportOrderRequest } from '../export-order/export-order';
 import { ExportOrderService } from '../export-order/export-order.service';
-import { ProformaInvoice, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from './proforma-invoice';
+import { ProformaInvoice, ProformaInvoice_Detail, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from './proforma-invoice';
 import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
 import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
@@ -71,21 +71,21 @@ export class ProformaInvoiceService {
     return this.apiService.post<ApiPagedListResponse<ProformaInvoice_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(proformaInvoiceID: number): Observable<ApiDataResponse<ProformaInvoice>> {
-    return this.apiService.post<ApiDataResponse<ProformaInvoice>>(`${this.endpoint}/GetDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
+  GetDetails(proformaInvoiceID: number): Observable<ApiDataResponse<ProformaInvoice_Detail>> {
+    return this.apiService.post<ApiDataResponse<ProformaInvoice_Detail>>(`${this.endpoint}/GetDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
   }
 
-  GetInvoiceItemDetails(proformaInvoiceID: number): Observable<ApiListResponse<ProformaInvoiceDetail>> {
-    return this.apiService.post<ApiListResponse<ProformaInvoiceDetail>>(`${this.endpoint}/GetInvoiceItemDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
-  }
+  // GetInvoiceItemDetails(proformaInvoiceID: number): Observable<ApiListResponse<ProformaInvoiceDetail>> {
+  //   return this.apiService.post<ApiListResponse<ProformaInvoiceDetail>>(`${this.endpoint}/GetInvoiceItemDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
+  // }
 
-  GetExportOrderDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder>> {
+  GetExportOrderDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder_Detail>> {
     return this.exportOrderService.GetDetails(exportOrderID);
   }
 
-  GetExportOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
-    return this.exportOrderService.GetOrderItemDetails(exportOrderID);
-  }
+  // GetExportOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
+  //   return this.exportOrderService.GetOrderItemDetails(exportOrderID);
+  // }
 
   CreateRecord(model: ProformaInvoice): Observable<ApiResponse> {
     console.log('CreateRecord model', model);
@@ -105,11 +105,10 @@ export class ProformaInvoiceService {
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ProformaInvoice_IndexTableFilter> {
     return {
       ProformaInvoiceNo: '',
-      ProformaInvoiceDate: '',
-      BasedOnID: 0,
+      BasedOn: 0,
       ExportOrderNo: '',
       CustomerName: '',
-      ActiveStatusID: 0
+      Status: 0
     }
   }
 
@@ -245,6 +244,10 @@ export class ProformaInvoiceService {
             validationMessages: {
               required: "Sales Qty is required"
             }
+          },
+          UOM: {
+            label: 'Measurement Unit',
+            defaultValue: null
           },
           SalesTaxRate: {
             label: '',

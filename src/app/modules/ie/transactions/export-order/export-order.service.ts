@@ -1,32 +1,33 @@
-import { Injectable, TemplateRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { TableDef } from '../../../../shared/components/z-table/z-table';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../shared/models/form.model';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
-import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
-import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { ProductRequest, Product_SelectList, ProductMaster } from '../../../ims/settings/product-master/product-master';
-import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
-import { PortMasterService } from '../../settings/port-master/port-master.service';
-import { Port_SelectList, PortRequest } from '../../settings/port-master/port-master';
-import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { DataTableFilterList, DataTableFilterListRequest, StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
-import { TableDef } from '../../../../shared/components/z-table/z-table';
-import { ExportOrderDocumentTemplate } from '../export-order-document/export-order-document';
-import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
-import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
-import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
+import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
+import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
+import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
 import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
-import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationDetail, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
+import { Product_SelectList, ProductRequest } from '../../../ims/settings/product-master/product-master';
+import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
+import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
+import { CompanyMasterService } from '../../settings/company-master/company-master.service';
+import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
+import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
+import { Port_SelectList, PortRequest } from '../../settings/port-master/port-master';
+import { PortMasterService } from '../../settings/port-master/port-master.service';
+import { ExportOrderDocumentTemplate } from '../export-order-document/export-order-document';
+import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
+import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
-import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
-import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
+import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
+import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +63,10 @@ export class ExportOrderService {
     return this.selectListService.GetStaticList(model);
   }
 
+  GetDataTableList(model: DataTableFilterListRequest): Observable<ApiListResponse<DataTableFilterList>> {
+    return this.selectListService.GetDataTableList(model);
+  }
+
   GetCompanyList(model: CompanyRequest): Observable<ApiListResponse<Company_SelectList>> {
     return this.companyMasterService.PopulateList(model);
   }
@@ -86,8 +91,8 @@ export class ExportOrderService {
     return this.apiService.post<ApiPagedListResponse<ExportOrder_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder>> {
-    return this.apiService.post<ApiDataResponse<ExportOrder>>(`${this.endpoint}/GetDetails?exportOrderID=${exportOrderID}`, {});
+  GetDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder_Detail>> {
+    return this.apiService.post<ApiDataResponse<ExportOrder_Detail>>(`${this.endpoint}/GetDetails?exportOrderID=${exportOrderID}`, {});
   }
 
   GetOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
@@ -99,12 +104,34 @@ export class ExportOrderService {
   }
 
   CreateRecord(model: ExportOrder): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
+  AddShippingRecord(model: ExportOrderShipping): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/AddShippingDetail`, model);
+  }
+
+  GetShippingRecord(exportOrderID: number | null): Observable<ApiDataResponse<ExportOrderShipping>> {
+    return this.apiService.post<ApiDataResponse<ExportOrderShipping>>(`${this.endpoint}/GetShippingDetails?exportOrderID=${exportOrderID}`, {});
+  }
+
+  UpdateShippingRecord(model: ExportOrderShipping): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateShippingDetails`, model);
+  }
+
+  AddBillRegulationRecord(model: ExportOrderBillRegulationRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/AddBillRegulation`, model);
+  }
+
+  GetBillRegulationRecord(exportOrderID: number | null): Observable<ApiDataResponse<ExportOrderBillRegulationRequest>> {
+    return this.apiService.post<ApiDataResponse<ExportOrderBillRegulationRequest>>(`${this.endpoint}/GetBillRegulation?exportOrderID=${exportOrderID}`, {});
+  }
+
+  UpdateBillRegulationRecord(model: ExportOrderBillRegulationRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateBillRegulation`, model);
+  }
+
   UpdateRecord(model: ExportOrder): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
@@ -146,6 +173,10 @@ export class ExportOrderService {
         label: 'Customer Name',
         defaultValue: ''
       },
+      BasedOn: {
+        label: 'Based On',
+        defaultValue: 0
+      },
       IncotermID: {
         label: 'Incoterm',
         defaultValue: 0
@@ -162,13 +193,9 @@ export class ExportOrderService {
         label: 'Shipment Mode',
         defaultValue: 0
       },
-      LoadingPortID: {
-        label: 'Loading Port',
-        defaultValue: 0
-      },
-      DischargePortID: {
-        label: 'Discharge Port',
-        defaultValue: 0
+      FinalDestination: {
+        label: 'Destination',
+        defaultValue: ''
       },
       StatusID: {
         label: 'Status',
@@ -176,6 +203,43 @@ export class ExportOrderService {
       }
     }
   }
+
+  // getBillRegulationFormConfig(): FormConfigType<ExportOrderBillRegulation> {
+  //   return {
+  //     ExportOrderID: {
+  //       label: '',  
+  //       defaultValue: null
+  //     },
+  //     ExportOrderNo: {
+  //       label: 'Export Order No',
+  //       defaultValue: null
+  //     },
+  //     ShippingBill:{
+  //       label: 'Shipping Bill',
+  //       defaultValue: false
+  //     },
+  //     AirwayBill:{
+  //       label: 'Airway Bill',
+  //       defaultValue: false
+  //     },
+  //     IECCertificate:{
+  //       label: 'IEC Certificate',
+  //       defaultValue: false
+  //     },
+  //     Invoice:{
+  //       label: 'Invoice',
+  //       defaultValue: false
+  //     },
+  //     PackingSlip:{
+  //       label: 'Packing Slip',
+  //       defaultValue: false
+  //     },
+  //     CustomerPO:{
+  //       label: 'Customer PO',
+  //       defaultValue: false
+  //     }
+  //   };
+  // }
 
   getFormConfig(): FormConfigType<ExportOrder> {
     return {
@@ -342,6 +406,10 @@ export class ExportOrderService {
               required: "Sales Qty is required"
             }
           },
+          UOM: {
+            label: 'Measurement Unit',
+            defaultValue: null
+          },
           SalesTaxRate: {
             label: '',
             defaultValue: null,
@@ -428,6 +496,14 @@ export class ExportOrderService {
         label: 'Shipment Mode',
         defaultValue: null
       },
+      LoadingPortName: {
+        label: 'Port Name',
+        defaultValue: null
+      },
+      DischargePortName: {
+        label: 'Port Name',
+        defaultValue: null
+      },
       LoadingPortID: {
         label: 'Loading Port',
         defaultValue: null
@@ -492,7 +568,7 @@ export class ExportOrderService {
       }
     };
   }
-  
+
   getSalesQuotationAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<SalesQuotation_SelectList> {
     return {
       type: 'formControl',
@@ -500,7 +576,7 @@ export class ExportOrderService {
       control: 'SalesQuotationNo',
       label: formConfig.SalesQuotationNo.label,
       validationMessage: formConfig.SalesQuotationNo.error,
-      placeholder: 'Search ExportOrder',
+      placeholder: 'Search Sales Quotation',
       options: [],
       optionLabel: 'SalesQuotationNo',
       columns: [
@@ -555,6 +631,40 @@ export class ExportOrderService {
       columns: [
         { data: 'CompanyCode', label: 'Code', width: '150px' },
         { data: 'CompanyName', label: 'Name', width: '150px' }
+      ],
+    }
+  }
+
+  getLoadingPortAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<Port_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'LoadingPortName',
+      label: formConfig.LoadingPortID.label,
+      validationMessage: formConfig.LoadingPortID.error,
+      placeholder: 'Search Port',
+      options: [],
+      optionLabel: 'PortName',
+      columns: [
+        { data: 'PortCode', label: 'Code', width: '150px' },
+        { data: 'PortName', label: 'Name', width: '150px' }
+      ],
+    }
+  }
+
+  getDischargePortAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<Port_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'DischargePortName',
+      label: formConfig.DischargePortID.label,
+      validationMessage: formConfig.DischargePortID.error,
+      placeholder: 'Search Port',
+      options: [],
+      optionLabel: 'PortName',
+      columns: [
+        { data: 'PortCode', label: 'Code', width: '150px' },
+        { data: 'PortName', label: 'Name', width: '150px' }
       ],
     }
   }

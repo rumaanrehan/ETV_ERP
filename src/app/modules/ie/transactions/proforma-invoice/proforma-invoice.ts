@@ -1,3 +1,4 @@
+import { TList } from "../../../../shared/models/api-response";
 import { ProductMaster } from "../../../ims/settings/product-master/product-master";
 import { CompanyMaster } from "../../settings/company-master/company-master";
 
@@ -42,6 +43,7 @@ export interface ProformaInvoiceDetail {
     ProductID: number | null;
     ProductName: string | null;
     SalesQty: number | null;
+    UOM: string | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
     TaxableAmountFC: number | null;
@@ -63,11 +65,10 @@ export interface ProformaInvoice_SelectList {
 
 export interface ProformaInvoice_IndexTableFilter {
     ProformaInvoiceNo: string | null;
-    ProformaInvoiceDate: string | null;
-    BasedOnID: number | null;
+    BasedOn: number | null;
     ExportOrderNo: string | null;
     CustomerName: string | null;
-    ActiveStatusID: number | null;
+    Status: number | null;
 }
 
 export interface ProformaInvoice_IndexTableList {
@@ -80,7 +81,8 @@ export interface ProformaInvoice_IndexTableList {
     SubtotalAmountFC: number;
     TaxAmountFC: number;
     NetAmountFC: number;
-    StatusID: number;
+    StatusText: string;
+    StatusHex: string;
 }
 
 export interface ProformaInvoiceRequest {
@@ -88,4 +90,41 @@ export interface ProformaInvoiceRequest {
     SearchBy: number | null;
     SearchValue: string | null;
     PopulateType: string | null;
+}
+
+export interface ProformaInvoice_Detail {
+  ProformaInvoiceID: number;
+  ProformaInvoiceNo: string;
+  BasedOn: number;
+  ProformaInvoiceDate: Date;
+  ExportOrderID?: number;
+  ExportOrderNo?: string;
+  CustomerID: number;
+  CustomerName: string;
+  CustomerAddress?: string;
+  FCCurrencyID: number;
+  ExchangeRateDate: Date;
+  ExchangeRateToBC: number;
+  InsuranceAmountFC?: number;
+  FreightChargeFC?: number;
+  BankChargesFC?: number;
+  IsRoundOff: boolean;
+  SubtotalAmountFC: number;
+  TaxAmountFC: number | null;
+  NetAmountFC: number;
+  StatusText: string;
+  StatusHex: string;
+  ProductList: TList<ProformaInvoiceProductDetail>;
+}
+
+export interface ProformaInvoiceProductDetail {
+  ProductID: number;
+  ProductName: string;
+  UOM: string;
+  SalesQty: number;
+  RatePerUnitFC: number;
+  SalesTaxRate: number;
+  TaxableAmountFC: number;
+  TaxAmountFC: number;
+  SalesAmountFC: number;
 }

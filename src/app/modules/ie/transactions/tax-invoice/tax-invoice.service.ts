@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { RequiredIf, Operator } from '../../../../shared/validators/required-if.validator';
-import { TaxInvoice_IndexTableFilter, TaxInvoice, TaxInvoiceRequest, TaxInvoice_SelectList, TaxInvoiceDetail, TaxInvoice_IndexTableList, Document_SelectList } from './tax-invoice';
+import { TaxInvoice_IndexTableFilter, TaxInvoice, TaxInvoiceRequest, TaxInvoice_SelectList, TaxInvoiceDetail, TaxInvoice_IndexTableList, Document_SelectList, TaxInvoice_Detail } from './tax-invoice';
 import { ApiService } from '../../../../core/services/api.service';
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
@@ -13,8 +13,8 @@ import { StaticListRequest, StaticList } from '../../../../shared/models/select-
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { ProductRequest, Product_SelectList } from '../../../ims/settings/product-master/product-master';
 import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
-import { ExportOrder, ExportOrderDetail, ExportOrderRequest, ExportOrder_SelectList } from '../export-order/export-order';
-import { ProformaInvoice, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from '../proforma-invoice/proforma-invoice';
+import { ExportOrder, ExportOrderDetail, ExportOrderRequest, ExportOrder_Detail, ExportOrder_SelectList } from '../export-order/export-order';
+import { ProformaInvoice, ProformaInvoice_Detail, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from '../proforma-invoice/proforma-invoice';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ProformaInvoiceService } from '../proforma-invoice/proforma-invoice.service';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
@@ -70,21 +70,21 @@ export class TaxInvoiceService {
     return this.productMasterService.PopulateList(model);
   }
 
-  GetExportOrderDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder>> {
+  GetExportOrderDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder_Detail>> {
     return this.exportOrderService.GetDetails(exportOrderID);
   }
 
-  GetProformaInvoiceDetails(proformaInvoice: number): Observable<ApiDataResponse<ProformaInvoice>> {
+  GetProformaInvoiceDetails(proformaInvoice: number): Observable<ApiDataResponse<ProformaInvoice_Detail>> {
     return this.proformaInvoiceService.GetDetails(proformaInvoice);
   }
 
-  GetExportOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
-    return this.exportOrderService.GetOrderItemDetails(exportOrderID);
-  }
+  // GetExportOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
+  //   return this.exportOrderService.GetOrderItemDetails(exportOrderID);
+  // }
 
-  GetProformaInvoiceItemDetails(proformaInvoice: number): Observable<ApiListResponse<ProformaInvoiceDetail>> {
-    return this.proformaInvoiceService.GetInvoiceItemDetails(proformaInvoice);
-  }
+  // GetProformaInvoiceItemDetails(proformaInvoice: number): Observable<ApiListResponse<ProformaInvoiceDetail>> {
+  //   return this.proformaInvoiceService.GetInvoiceItemDetails(proformaInvoice);
+  // }
 
   PopulateList(model: TaxInvoiceRequest): Observable<ApiListResponse<TaxInvoice_SelectList>> {
     return this.apiService.post<ApiListResponse<TaxInvoice_SelectList>>(`${this.endpoint}/PopulateList?`, model);
@@ -94,13 +94,13 @@ export class TaxInvoiceService {
     return this.apiService.post<ApiPagedListResponse<TaxInvoice_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(taxInvoiceID: number): Observable<ApiDataResponse<TaxInvoice>> {
-    return this.apiService.post<ApiDataResponse<TaxInvoice>>(`${this.endpoint}/GetDetails?taxInvoiceID=${taxInvoiceID}`, {});
+  GetDetails(taxInvoiceID: number): Observable<ApiDataResponse<TaxInvoice_Detail>> {
+    return this.apiService.post<ApiDataResponse<TaxInvoice_Detail>>(`${this.endpoint}/GetDetails?taxInvoiceID=${taxInvoiceID}`, {});
   }
 
-  GetInvoiceItemDetails(taxInvoiceID: number): Observable<ApiListResponse<TaxInvoiceDetail>> {
-    return this.apiService.post<ApiListResponse<TaxInvoiceDetail>>(`${this.endpoint}/GetInvoiceItemDetails?taxInvoiceID=${taxInvoiceID}`, {});
-  }
+  // GetInvoiceItemDetails(taxInvoiceID: number): Observable<ApiListResponse<TaxInvoiceDetail>> {
+  //   return this.apiService.post<ApiListResponse<TaxInvoiceDetail>>(`${this.endpoint}/GetInvoiceItemDetails?taxInvoiceID=${taxInvoiceID}`, {});
+  // }
 
   CreateRecord(model: TaxInvoice): Observable<ApiResponse> {
     console.log(model);
@@ -121,8 +121,9 @@ export class TaxInvoiceService {
     return {
       TaxInvoiceNo: '',
       BasedOn: 0,
+      DocumentNo: '',
       CustomerName: '',
-      ActiveStatusID: 0
+      Status: 0
     }
   }
 
@@ -276,6 +277,10 @@ export class TaxInvoiceService {
               required: "Product is required"
             }
           },
+          UOM: {
+            label: 'Measurement Unit',
+            defaultValue: null,
+          },
           SalesQty: {
             label: '',
             defaultValue: null,
@@ -388,10 +393,10 @@ export class TaxInvoiceService {
         label: '',
         defaultValue: null
       },
-      StatusID: {
-        label: '',
-        defaultValue: 1
-      },
+      // StatusID: {
+      //   label: '',
+      //   defaultValue: 1
+      // },
       IsRoundOff: {
         label: 'Is Round Off',
         defaultValue: true

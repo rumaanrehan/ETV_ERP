@@ -1,25 +1,22 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
-import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { PortMaster } from '../port-master';
-import { PortMasterService } from '../port-master.service';
-import { Country_SelectList, CountryMaster } from '../../../../admin/settings/country-master/country-master';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
+import { ExportOrderShipping } from '../export-order-shipping';
+import { ExportOrderShippingService } from '../export-order-shipping.service';
+import { DateUtils } from '../../../../../shared/utility/date-utils';
 
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule],
-  providers: [FormService],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule, CommonModule],
   templateUrl: './create.component.html',
-  styleUrl: './create.component.scss',
+  styleUrl: './create.component.scss'
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -28,84 +25,80 @@ export class CreateComponent implements OnInit, OnDestroy {
   isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  activeStatus: boolean = false;
 
   form!: FormGroup;
-  formConfig!: FormConfigType<PortMaster>;
-
-  countryList: Country_SelectList[] = [];
-  portTypeList: StaticList[] = [];
+  formConfig!: FormConfigType<ExportOrderShipping>;
 
   constructor(
-    private pageService: PortMasterService,
+    private pageService: ExportOrderShippingService,
     private formService: FormService,
-    private alertService: AlertNotificationService,
+    private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
-    this.form = this.formService.createFormGroup<PortMaster>(this.formConfig);
+    this.form = this.formService.createFormGroup<ExportOrderShipping>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  loadDropdownList(): void {
-    this.loadStaticLists([
-      { fieldName: 'PortTypeID', targetList: 'portTypeList' },
-    ]);
-    this.pageService.GetMasterDropdownLists()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.countryList = data.countryList.Data?.Items ?? [];
-        },
-      });
-  }
-
-  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
-    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
-
-    listConfigs.forEach(({ fieldName, targetList }) => {
-      sources[targetList] = this.pageService.GetStaticList({
-        AreaName: 'IE',
-        ControllerName: 'PortMaster',
-        FieldName: fieldName,
-      });
-    });
-
-    forkJoin(sources)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          listConfigs.forEach(({ targetList }) => {
-            if (response[targetList]?.IsSuccess) {
-              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
-            } else {
-              (this[targetList] as StaticList[]) = [];
+  
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: ExportOrderShipping): void {
+    try {
+      this.pageService.GetShippingRecord(model.ExportOrderID)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              console.log(response);
+              if (response.Data) {
+                this.isEditMode = true;
+                const formData: ExportOrderShipping = {
+                  ...response.Data,
+                  ExportOrderID: model.ExportOrderID,
+                  ExportOrderNo: model.ExportOrderNo,
+                  ShippingBillDate: DateUtils.toDate(response.Data.ShippingBillDate!),
+                  AirwayBillDate: DateUtils.toDate(response.Data.AirwayBillDate!),
+                };
+                this.form.patchValue(formData);
+                this.isFormSidebarVisible = true;
+              }
             }
-          });
-        },
-      });
+            else {
+              if(response.Status == 'Info' && response.Message == 'Record not found.'){
+                this.form.patchValue(model);
+                this.isFormSidebarVisible = true;
+              }
+              else{
+                this.alertService.showServerResponseAlert(response);
+              }
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
+          }
+        });
+    }
+    catch (error) {
+    }
   }
 
-  openSidebar(activeStatus: boolean, isEditMode: boolean, model: PortMaster): void {
-    if (isEditMode && model) {
-      this.isEditMode = isEditMode;
-    }
-    this.activeStatus = activeStatus;
-    this.form.patchValue(model);
-    this.isFormSidebarVisible = true;
-  }
+  // openSidebar(activeStatus: boolean, isEditMode: boolean, model: ExportOrderShipping): void {
+  //   console.log(model);
+  //   if (isEditMode && model) {
+  //     this.isEditMode = isEditMode;
+  //   }
+  //   this.form.patchValue(model);
+  //   this.isFormSidebarVisible = true;
+  // }
 
   closeSidebar(): void {
     this.isFormSidebarVisible = false;
     this.isEditMode = false;
-    this.formService.resetFormValue<PortMaster>(this.formConfig, this.form);
+    this.formService.resetFormValue<ExportOrderShipping>(this.formConfig, this.form);
 
     setTimeout(() => {
       this.closeSidebarEvent.emit();
@@ -116,9 +109,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-
     try {
-
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -126,18 +117,12 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.isSubmitted = false;
         return;
       }
-
-
       if (this.isEditMode) {
-        this.alertService.showConfirmationWithInput({
-          text: 'Do you really want to Update?',
+        this.alertService.showConfirmation({
+          text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: PortMaster = {
-              ...this.formService.transformFormData(this.form.value),
-              ReasonToUpdate: result.value
-            };
-            this.updateRecord(this.formService.transformFormData(model));
+            this.updateRecord(this.formService.transformFormData(this.form.value));
           }
           else {
             this.isSubmitted = false;
@@ -153,9 +138,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  createRecord(model: PortMaster): void {
+  createRecord(model: ExportOrderShipping): void {
     try {
-      this.pageService.CreateRecord(model)
+      this.pageService.AddShippingRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -166,9 +151,6 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000
               });
-              setTimeout(() => {
-                this.ngOnInit();
-              }, 2000);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -184,9 +166,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateRecord(model: PortMaster): void {
+  updateRecord(model: ExportOrderShipping): void {
     try {
-      this.pageService.UpdateRecord(model)
+      this.pageService.UpdateShippingRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {

@@ -18,7 +18,12 @@
           [validationMessage]="formConfig.DocumentTypeID.error" [options]="documentTypeList"
           [optionLabel]="'DocumentTypeName'" [optionValue]="'DocumentTypeID'">
         </z-select>
-      </div>    
+      </div>  
+      <div class="col-xl-12 form-group" *ngIf="form.get('DocumentTypeID')?.value === 0">
+        <z-inputtext [group]="form" [control]="'DocumentTypeName'" [label]="formConfig.DocumentTypeName.label"
+          [validationMessage]="formConfig.DocumentTypeName.error">
+        </z-inputtext>
+      </div>  
       <div class="col-xl-12 form-group">
         <z-file-upload [group]="form" [control]="'DocumentFile'" [label]="formConfig.DocumentFile.label"
           [multiple]="true" [accept]="'.pdf'" [maxFileSize]="1048576" fieldLabel="image">

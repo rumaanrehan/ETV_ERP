@@ -11,7 +11,7 @@ import { Operator, RequiredIf } from '../../../../shared/validators/required-if.
 import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
 import { Country_SelectList, CountryMaster, CountryRequest } from '../../../admin/settings/country-master/country-master';
 import { StateRequest } from '../../../admin/settings/state-master/state-master';
-import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { StaticListRequest, StaticList } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 
 @Injectable({
@@ -22,16 +22,15 @@ export class CompanyMasterService {
 
   constructor(
     private apiService: ApiService,
-    private countryService: CountryMasterService,
     private selectListService: SelectListService,
-
+    private countryService: CountryMasterService
   ) { }
 
   GetMasterDropdownLists(): Observable<{
     CountryList: ApiListResponse<Country_SelectList>;
   }> {
     return forkJoin({
-      CountryList: this.countryService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest)
+      CountryList: this.countryService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),
     });
   }
 
@@ -110,10 +109,14 @@ export class CompanyMasterService {
       StateID: {
         label: 'State',
         defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'State is required'
-        }
+        // validators: [Validators.required],
+        // validationMessages: {
+        //   required: 'State is required'
+        // }
+      },
+      CompanyContactName: {
+        label: 'Contact Name',
+        defaultValue: null
       },
       CompanyPhoneNo: {
         label: 'Phone',
@@ -130,7 +133,7 @@ export class CompanyMasterService {
       ImportLicenseNo: {
         label: 'Import License No',
         defaultValue: null,
-        validators: [Validators.pattern(/^[0-9]{10}$/),Validators.pattern(/^[0-9]{10}$/),],
+        validators: [Validators.pattern(/^[0-9]{10}$/), Validators.pattern(/^[0-9]{10}$/),],
         validationMessages: {
           pattern: "Enter a valid Import License No",
           RequiredIf: "Import License No is required"

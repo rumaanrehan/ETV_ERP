@@ -115,7 +115,6 @@ export class IndexComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
               this.tableDef.data = response.Data.Items;
               this.tableDef.totalRecords = response.Data.TotalRecords;
             } else {

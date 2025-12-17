@@ -220,6 +220,10 @@ export class SalesQuotationService {
               required: "Quoted quantity is required"
             }
           },
+          UOM: {
+            label: 'Measurement Unit',
+            defaultValue: null
+          },
           TaxRate: {
             label: '',
             defaultValue: null,

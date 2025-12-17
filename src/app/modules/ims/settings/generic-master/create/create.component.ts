@@ -59,7 +59,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           if (data.itemTypeMasterList.IsSuccess) {
-            this.itemTypeList = data.itemTypeMasterList.Data.Items;
+            this.itemTypeList = data.itemTypeMasterList.Data?.Items ?? [];
           }
         }
       });

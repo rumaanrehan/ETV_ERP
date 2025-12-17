@@ -51,15 +51,15 @@ export class IndexComponent {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'TaxInvoiceNo', label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.taxInvoiceCodeTemplate },
+      { data: 'TaxInvoiceNo', label: 'Invoice No', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.taxInvoiceCodeTemplate },
       { data: 'TaxInvoiceDate', label: 'Date', width: "8%", customTemplate: this.taxInvoiceDateTemplate },
       { data: 'BasedOn', label: 'Based On', width: "10%", filterable: true, filterType: 'select', filterKey: 'BasedOn' },
-      { data: 'DocumentNo', label: 'EO/PI No', orderable: false, width: "10%" },
-      { data: 'CustomerName', label: 'Customer', orderable: false, width: "25%", filterable: true },
+      { data: 'DocumentNo', label: 'Document No', orderable: false, width: "12%", filterable: true },
+      { data: 'CustomerName', label: 'Customer', width: "20%", filterable: true },
       { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "12%" },
       { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "12%" },
       { data: 'NetAmountFC', label: 'Net Amount', width: "12%" },
-      { data: 'StatusID', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.taxInvoiceStatusTemplate },
+      { data: 'StatusID', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'Status', cssClass: 'text-center', customTemplate: this.taxInvoiceStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "6%", customTemplate: this.actionColTemplate },
     ];
   }
@@ -92,6 +92,7 @@ export class IndexComponent {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data.Items);
               this.tableDef.data = response.Data.Items;
               this.tableDef.totalRecords = response.Data.TotalRecords;
             }

@@ -25,7 +25,7 @@
                   <z-datepicker [group]="form" [control]="'SalesQuotationDate'" [label]="formConfig.SalesQuotationDate.label"
                     [validationMessage]="formConfig.SalesQuotationDate.error"></z-datepicker>
                 </div>
-                <div class="col-xl-3 form-group px-2" *ngIf="isBasedOnSalesEnquiry">
+                <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnSalesEnquiry">
                     <z-autocomplete [controlDef]="salesEnquiryAutoCompleteDef"
                       (onSearch)="loadSalesEnquiry($event)" (onSelect)="onSelect_SalesEnquiry($event)"
                       (onClear)="onClear_SalesEnquiry()"></z-autocomplete>
@@ -33,19 +33,28 @@
 
                 <!-- Customer Details -->
                 <div class="col-xl-3 form-group px-2">
-                  <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCustomer($event)"
-                    (onSelect)="OnCustomerSelect($event)" (onClear)="onClear_Customer()"></z-autocomplete>
+                  <div class="action-input-group">
+                    <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCustomer($event)" 
+                    (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+                    </z-autocomplete>
+                    <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Company" 
+                      (click)="handleComponentLoad('VendorCreateComponent')"></i>
+                  </div>
                 </div>
-                <div class="col-xl-6"></div>
-                <div class="col-xl-6 form-group px-2">
+                <div class="col-xl-7"></div>
+                <div class="col-xl-5 form-group px-2">
                   <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
                 </div>
 
                 <!-- Currency & Exchange -->
                 <h6 class="form-group px-2">Exchange Rate Details</h6>
                 <div class="col-xl-3 form-group px-2">
-                  <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
-                    [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [options]="currencyList"></z-select>
+                  <div class="action-input-group">
+                    <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
+                      [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [options]="currencyList"></z-select>
+                    <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Currency" 
+                      (click)="handleComponentLoad('CurrencyCreateComponent')"></i>
+                  </div>
                 </div>
                 <div class="col-xl-5"></div>
                 <div class="col-xl-2 form-group px-2">
@@ -66,9 +75,15 @@
                 <!-- Product List -->
                 <div class="col-12 px-2">
                   <h6 class="form-group">Product List</h6>
-                  <div class="col-xl-3 form-group" *ngIf="!isBasedOnSalesEnquiry">
-                    <z-autocomplete [controlDef]="productAutoCompleteDef" (onSearch)="onSearch_Product($event)"
-                      (onSelect)="onSelect_Product($event)"></z-autocomplete>
+                  <div class="col-xl-3 form-group px-2" *ngIf="!isBasedOnSalesEnquiry">
+                    <div class="action-input-group">
+                      <z-autocomplete class="flex-grow-1" [controlDef]="productAutoCompleteDef" 
+                      (onSearch)="onSearch_Product($event)" (onSelect)="onSelect_Product($event)">
+                      </z-autocomplete>
+                      <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" 
+                        title="Add New Product" (click)="handleComponentLoad('ProductCreateComponent')">
+                      </i>
+                    </div>
                   </div>
                   <z-table [tableDef]="this.tableDef">
                   </z-table>
@@ -83,10 +98,11 @@
                 <div class="col-md-6 form-group px-3">
                   <z-textarea [group]="form" [control]="'Narration'" [label]="formConfig.Narration.label"></z-textarea>
                 </div>
-                <div class="col-xl-1"></div>
-                <div class="col-xl-1 form-group">
-                  <z-checkbox [group]="form" [control]="'IsRoundOff'"
-                    [label]="formConfig.IsRoundOff.label"></z-checkbox>
+                <div class="col-xl-2"></div>
+                <div class="col-xl-1 pe-2 form-group ms-auto">
+                    <z-checkbox [group]="form" [control]="'IsRoundOff'"
+                        [label]="formConfig.IsRoundOff.label">
+                    </z-checkbox>
                 </div>
               </div>
             </div>
@@ -208,3 +224,5 @@
       <i class="pi pi-minus-circle"></i></span>
   </div>
 </ng-template>
+
+<ng-template #container></ng-template>

@@ -56,7 +56,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data) => {
-        this.itemTypeList = data.itemTypeList.Data.Items;
+        this.itemTypeList = data.itemTypeList.Data?.Items ?? [];
       },
     });
   }

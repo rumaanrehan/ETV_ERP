@@ -5,6 +5,7 @@ export interface ExportOrderDocument {
     ExportOrderID: number | null;
     ExportOrderNo: string | null;
     DocumentTypeID: number | null;
+    DocumentTypeName: string | null;
     DocumentFile: File | null;
 }
 

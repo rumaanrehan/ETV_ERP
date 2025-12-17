@@ -1,23 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataViewModule } from 'primeng/dataview';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-data-view/z-data-view';
 import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
-import { StaticList } from '../../../../../shared/models/select-list';
+import { DataTableFilterList, StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { ExportOrderDocument } from '../../export-order-document/export-order-document';
 import { ExportOrderPayment } from '../../export-order-payment/export-payment';
+import { ExportOrderShipping } from '../../export-order-shipping/export-order-shipping';
 import { ExportOrderTracking } from '../../export-order-tracking/export-order-tracking';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList } from '../export-order';
+import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrderBillRegulation } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
 
 @Component({
@@ -32,22 +34,27 @@ export class DataviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+  @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
 
   componentRef?: ComponentRef<any>;
-
   dataViewDef!: DataViewDef<ExportOrder_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
 
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<ExportOrder_IndexTableFilter>
 
-  statusList: StaticList[] = [
-    { iValue: 0, Text: "All", cValue: "" },
-    { iValue: 1, Text: "processing", cValue: "" },
-    { iValue: 2, Text: "Ready To Ship", cValue: "" },
-  ]
+  basedOnList: DataTableFilterList[] = []
+  incotermList: DataTableFilterList[] = []
+  isDutyDrawableList: DataTableFilterList[] = []
+  isRoDTEPList: DataTableFilterList[] = []
+  shipmentModeList: DataTableFilterList[] = []
+  statusList: StaticList[] = []
 
   sortFieldList: any[] = [
+    { value: "ExportOrderNo", text: "Export Order No" },
+    { value: "CustomerName", text: "Customer Name" },
+    { value: "ExportOrderDate", text: "Export Order Date" },
+    { value: "NetAmountBC", text: "Order Total" },
     { value: "StatusID", text: "Status" }
   ]
 
@@ -64,18 +71,61 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
     this.filterForm = this.formService.createFormGroup<ExportOrder_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
     this.dataViewDef = {
-      tableKey: 'Admin_ExportOrder_IndexDataView',
+      tableKey: 'IE_ExportOrder_IndexDataView',
       defaultSortColumn: { sortField: 'ExportOrderNo', sortOrder: 1 },
       filterForm: this.filterForm,
       data: [],
       totalRecords: 0,
       loading: false
     };
+
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  loadDropdownList(): void {
+    this.loadDataTableLists([
+      { columnName: 'BasedOn', targetList: 'basedOnList' },
+      { columnName: 'Incoterm', targetList: 'incotermList' },
+      { columnName: 'IsDutyDrawable', targetList: 'isDutyDrawableList' },
+      { columnName: 'IsRoDTEP', targetList: 'isRoDTEPList' },
+      { columnName: 'ShipmentMode', targetList: 'shipmentModeList' }
+    ]);
+  }
+    
+  loadDataTableLists(listConfigs: { columnName: string; targetList: keyof DataviewComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<DataTableFilterList>>> = {};
+
+    listConfigs.forEach(({ columnName, targetList }) => {
+      sources[targetList] = this.pageService.GetDataTableList({
+        AreaName: 'IE',
+        ControllerName: 'ExportOrder',
+        TableName: 'IndexTable',
+        ColumnName: columnName
+      });
+    });
+
+    forkJoin(sources)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as DataTableFilterList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as DataTableFilterList[]) = [];
+            }
+          });
+        },
+      });
+  }
+  
+  onCloseSidebar(): void {
+    this.loadData();
   }
 
   onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
@@ -159,25 +209,16 @@ export class DataviewComponent implements OnInit, OnDestroy {
       });
   }
 
-  populateStatus(statusID: number): string {
-    switch (statusID) {
-      case 1:
-        return 'Processing';
-      case 2:
-        return 'Ready to ship';
-      case 3:
-        return 'Canceled';
-      default:
-        return 'Undefined';
-    }
-  }
-
   handleComponentLoad(componentName: string, model: any) {
     if (this.componentRef) {
       this.destroyComponent();
     }
 
     switch (componentName) {
+      case 'ShippingCreateComponent':
+        return this.createShippingComponent(model);
+      case 'BillCreateComponent':
+        return this.createBillComponent(model);
       case 'PaymentCreateComponent':
         return this.createPaymentComponent(model);
       case 'LetterOfCreditCreateComponent':
@@ -206,6 +247,24 @@ export class DataviewComponent implements OnInit, OnDestroy {
       this.componentRef.destroy();
       this.componentRef = undefined;
     }
+  }
+
+  async createShippingComponent(row: ExportOrder_IndexTableList) {
+    const { CreateComponent } = await import('./../../export-order-shipping/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderShipping = this.formService.createNullObject<ExportOrderShipping>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
+
+  async createBillComponent(row: ExportOrder_IndexTableList) {
+    const { CreateComponent } = await import('./../../export-order-bill-regulation/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderBillRegulation = this.formService.createNullObject<ExportOrderBillRegulation>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
   }
 
   async createPaymentComponent(row: ExportOrder_IndexTableList) {
