@@ -58,8 +58,11 @@
                 <a (click)="onClickEditDetails(item.ExportOrderID)">
                     <h5 class="primary-color mb-2">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
                 </a>
-                <div class="text-end">
+                <div class="text-end d-flex align-items-center justify-content-end gap-2">
                     <span class="badge bg-outline-primary">{{item.StatusText}}</span>
+                    <app-z-multi-button-menu icon="pi pi-bars" appendTo="body"
+                        [context]="item" [items]="menuItems">
+                    </app-z-multi-button-menu>
                 </div>
             </div>
             <div class="col-12">
@@ -74,7 +77,23 @@
                             </div>
                         </div>
                         <div class="col-xl-4 d-flex align-items-center">
-                            <div class="col-xl-5">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Reference No:</span>
+                            </div>
+                            <div class="col-xl-8">
+                                <span class="fs-6 text-secondary"> {{item.ReferenceNo}} </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-5 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Reference Date:</span>
+                            </div>
+                            <div class="col-xl-7">
+                                <span class="fs-6 text-secondary"> {{formatDate(item.ReferenceDate)}} </span>
+                            </div>
+                        </div>
+                        <!-- <div class="col-xl-5 d-flex align-items-center">
+                            <div class="col-xl-4">
                                 <span class="fs-6 text-secondary">Destination:</span>
                             </div>
                             <div class="col-xl-4">
@@ -109,6 +128,7 @@
                             </div>
                         </div>
                         <div class="col-xl-4 d-flex align-items-center">
+                        <div class="col-xl-4 d-flex align-items-center">
                             <div class="col-xl-4">
                                 <span class="fs-6 text-secondary">Loading Port:</span>
                             </div>
@@ -116,10 +136,47 @@
                                 <span class="fs-6 text-secondary"> {{item.LoadingPortName}} </span>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
+                        <div class="col-xl-4 d-flex align-items-center">
+                            <div class="col-xl-4">
+                                <span class="fs-6 text-secondary">Destination:</span>
+                            </div>
+                            <div class="col-xl-7">
+                                <span class="fs-6 text-secondary"> {{item.FinalDestination}} </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <!-- <div class="col-12 col-lg-12 d-flex flex-column gap-3 justify-content-between">
+                    <div class="col-12 d-flex gap-3 justify-content-end">
+                        <div class="col-2">
+                            <button class="btn btn-primary"
+                            (click)="handleComponentLoad('ShippingCreateComponent', item)">Add Shipping Detail</button>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary"
+                            (click)="handleComponentLoad('BillCreateComponent', item)">Bill Regulation</button>
+                       </div>
+                        <div class="col-1">
+                            <button class="btn btn-primary"
+                                (click)="handleComponentLoad('DocumentCreateComponent', item)">Add Document</button>
+                        </div>
+                        <div class="col-2" *ngIf="!item.IsKnockOff">
+                            <button class="btn btn-primary"
+                                (click)="handleComponentLoad('PaymentCreateComponent', item)">Add Payment</button>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary"
+                                (click)="handleComponentLoad('TrackingCreateComponent', item)">Add Tracking</button>
+                        </div>
+                        <div class="col-1">
+                            <button class="btn btn-primary"
+                                (click)="handleComponentLoad('LetterOfCreditCreateComponent', item)">Add LC</button>
+                        </div>
+                        <div class="col-2" *ngIf="item.StatusID == 1">
+                            <button class="btn btn-primary" (click)="onClickCancel(item)">Cancel</button>
+                        </div>
+                    </div>
+                </div> -->
             </div>
         </div>
     </div>

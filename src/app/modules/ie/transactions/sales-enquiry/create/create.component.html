@@ -79,7 +79,11 @@
     </div>
   </div>
   <div class="page-action-panel">
-    <div class="col-xl-4"></div>
+    <div class="col-xl-4">
+      <div class="col-xl-4 px-1" *ngIf="isEditMode && !isQuotationAlreadyExists">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickNavigateToSalesQuotation(this.form.get('SalesEnquiryID')?.value || null)"> Add Quotation </button>
+      </div>
+    </div>
     <div class="col-xl-4">
       <div class="status-pill" [ngStyle]="{'background-color': '#'+statusHex}" *ngIf="isEditMode">
         <span>Status: {{statusText}}</span>

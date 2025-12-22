@@ -83,6 +83,7 @@ export interface TaxInvoice_IndexTableList {
     NetAmountFC: number;
     StatusText: string;
     StatusHex: string;
+    CurrencySymbol: string;
 }
 
 export interface TaxInvoiceRequest {

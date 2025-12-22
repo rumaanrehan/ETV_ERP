@@ -165,9 +165,10 @@ export interface ExportOrder_IndexTableList {
     ShipmentMode: string;
     LoadingPortName: string;
     FinalDestination: string;
-    NetAmountBC: number;
+    NetAmountFC: number;
     IsKnockOff: boolean;
     StatusID: number;
+    CurrencySymbol: string;
 }
 
 export interface ExportOrder_Detail {
@@ -196,6 +197,8 @@ export interface ExportOrder_Detail {
   ShipmentModeID?: number;
   LoadingPortID?: number;
   DischargePortID?: number;
+  LoadingPortName: string;
+  DischargePortName: string;
   FinalDestination?: string;
   Narration?: string;
   SubtotalAmountFC: number;
@@ -203,6 +206,7 @@ export interface ExportOrder_Detail {
   NetAmountFC: number;
   StatusText: string;
   StatusHex: string;
+  IsDocumentAlreadyExists: boolean;
   ProductList: TList<ExportOrderProductDetail>;
 }
 

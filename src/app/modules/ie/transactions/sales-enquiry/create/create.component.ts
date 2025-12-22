@@ -41,6 +41,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   statusHex!: string | null;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+  isQuotationAlreadyExists: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<SalesEnquiry>;
@@ -91,6 +92,14 @@ export class CreateComponent implements OnInit, OnDestroy {
     try {
       this.router.navigate(['/ie/sales-enquiry/index']);
     } catch (error) { }
+  }
+
+  onClickNavigateToSalesQuotation(salesEnquiryID: number): void {
+    if (salesEnquiryID) {
+      this.router.navigate([`ie/sales-quotation/from-enquiry/${salesEnquiryID}`]);
+    }else { 
+      return;
+    }
   }
 
   resetForm(): void {
@@ -318,6 +327,8 @@ export class CreateComponent implements OnInit, OnDestroy {
                   this.selectedCustomerAddress = response.Data.CustomerAddress;
                   this.statusText = response.Data.StatusText;
                   this.statusHex = response.Data.StatusHex;
+                  this.isQuotationAlreadyExists = response.Data.IsQuotationAlreadyExists;
+                  console.log(this.isQuotationAlreadyExists);
                   response.Data.ProductList.Items.forEach(item => {
                     const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
                     productForm.patchValue(item);
