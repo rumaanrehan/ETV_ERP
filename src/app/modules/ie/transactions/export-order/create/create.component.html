@@ -231,7 +231,14 @@
     </div>
   </div>
   <div class="page-action-panel">
-    <div class="col-xl-4"></div>
+    <div class="col-xl-4">
+      <div class="col-xl-4 px-1" *ngIf="isEditMode && !IsDocumentAlreadyExists">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickAddProformaInvoice(this.form.get('ExportOrderID')?.value || null)"> Add Proforma </button>
+      </div>
+      <div class="col-xl-4 px-1" *ngIf="isEditMode && !IsDocumentAlreadyExists">
+          <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickNavigateToTaxInvoice(this.form.get('ExportOrderID')?.value || null)"> Add Tax Invoice </button>
+      </div>
+    </div>
     <div class="col-xl-4">
       <div class="status-pill" [ngStyle]="{'background-color': '#'+statusHex}" *ngIf="isEditMode">
         <span>Status: {{statusText}}</span>

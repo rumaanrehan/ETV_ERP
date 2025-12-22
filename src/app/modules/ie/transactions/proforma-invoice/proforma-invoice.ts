@@ -83,6 +83,7 @@ export interface ProformaInvoice_IndexTableList {
     NetAmountFC: number;
     StatusText: string;
     StatusHex: string;
+    CurrencySymbol: string;
 }
 
 export interface ProformaInvoiceRequest {
@@ -114,6 +115,7 @@ export interface ProformaInvoice_Detail {
   NetAmountFC: number;
   StatusText: string;
   StatusHex: string;
+  IsTaxAlreadyExists: boolean;
   ProductList: TList<ProformaInvoiceProductDetail>;
 }
 

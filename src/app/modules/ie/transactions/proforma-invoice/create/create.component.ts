@@ -46,8 +46,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   selectedCustomerAddress: string = '';
   statusText!: string | null;
   statusHex!: string | null;
-  isEditMode: boolean = false;
-  isSubmitted: boolean = false;
+  isEditMode = false;
+  isSubmitted = false;
+  isFromExportOrder = false;
+  isTaxAlreadyExists = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ProformaInvoice>;
@@ -95,7 +97,27 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     this.loadDropdownList();
-    this.getDetails();
+    // this.getDetails();
+
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(paramMap => {
+        const id = paramMap.get('id');
+        const exportOrderID = paramMap.get('exportOrderID');
+        console.log("Export Order ID or ProformaInvoiceID from route paramMap:", exportOrderID, id);
+
+        if (id) {
+          this.loadProformaInvoice(+id);
+          return;
+        }
+        else if (exportOrderID) {
+          this.isFromExportOrder = true;
+          this.GetExportOrder(+exportOrderID);
+          return;
+        }
+
+        this.isEditMode = false;
+      });
   }
 
   get isBasedOnExportOrder(): boolean {
@@ -155,6 +177,14 @@ export class CreateComponent implements OnInit, OnDestroy {
     try {
       this.router.navigate(['/ie/proforma-invoice/index']);
     } catch (error) { }
+  }
+
+  onClickNavigateToTaxInvoice(proformaInvoiceID: number): void {
+    if (proformaInvoiceID) {
+      this.router.navigate([`ie/tax-invoice/from-proforma/${proformaInvoiceID}`]);
+    }else { 
+      return;
+    }
   }
 
   resetForm(): void {
@@ -432,33 +462,39 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   createRecord(model: ProformaInvoice): void {
-    try {
-      this.pageService
-        .CreateRecord(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.alertService.showAlert({
-                type: 'success',
-                text: response.Message,
-                timer: 5000,
-              });
-              setTimeout(() => {
-                this.ngOnInit();
-              }, 2000);
-            } else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-          complete: () => {
-            this.isSubmitted = false;
-          },
-        });
-    }
-    catch (error) {
+    this.pageService
+      .CreateRecord(model)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response.IsSuccess) {
+            this.alertService.showServerResponseAlert(response);
+            return;
+          }
 
-    }
+          this.alertService.showAlert({
+            type: 'success',
+            text: response.Message,
+            timer: 5000,
+          });
+
+          if (this.isFromExportOrder) {
+              setTimeout(() => {
+                this.router.navigate(['/ie/proforma-invoice/index']);
+              }, 2000);
+          } else {
+          setTimeout(() => {
+            this.ngOnInit();
+          }, 2000);
+          }
+        },
+        error: () => {
+          this.isSubmitted = false;
+        },
+        complete: () => {
+          this.isSubmitted = false;
+        },
+      });
   }
 
   updateRecord(model: ProformaInvoice): void {
@@ -491,50 +527,110 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDetails(): void {
-    this.route.params.subscribe((params) => {
-      const proformaInvoiceID = +params['id'];
-      if (proformaInvoiceID) {
-        this.isEditMode = true;
-        try {
-          this.pageService.GetDetails(proformaInvoiceID)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  console.log(response);
-                  this.selectedCustomerAddress = response.Data.CustomerAddress!;
-                  this.statusText = response.Data.StatusText!;
-                  this.statusHex = response.Data.StatusHex!;
-                  response.Data.ProductList.Items.forEach(item => {
-                    const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                    productForm.patchValue(item);
-                    this.productListArray.push(productForm);
-                  });
+  private loadProformaInvoice(id: number): void {
+    this.isEditMode = true;
 
-                  this.tableDef.data = this.productListArray.value;
-                  const { ProductList, ...formValues } = response.Data;
-                  const data = {
-                    ...formValues,
-                    ProformaInvoiceDate: DateUtils.toDate(response.Data.ProformaInvoiceDate!),
-                    ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
-                  }
+    try {
+      this.pageService.GetDetails(id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (!response.IsSuccess) {
+              this.alertService.showServerResponseAlert(response);
+              return;
+            }
 
-                  this.form.patchValue(data);
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
+            this.selectedCustomerAddress = response.Data.CustomerAddress!;
+            this.statusText = response.Data.StatusText!;
+            this.statusHex = response.Data.StatusHex!;
+            this.isTaxAlreadyExists = response.Data.IsTaxAlreadyExists;
+
+            response.Data.ProductList.Items.forEach(item => {
+              const productForm = this.formService.createFormArrayItem(
+                this.formConfig.ProductList.items
+              );
+              productForm.patchValue(item);
+              this.productListArray.push(productForm);
             });
-        }
-        catch (error) {
 
-        }
-      }
-    });
+            this.tableDef.data = this.productListArray.value;
+
+            const { ProductList, ...formValues } = response.Data;
+
+            this.form.patchValue({
+              ...formValues,
+              ProformaInvoiceDate: DateUtils.toDate(response.Data.ProformaInvoiceDate!),
+              ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
+            });
+          }
+        });
+    }
+    catch (error) {
+
+    }
   }
 
+  // getDetails(): void {
+  //   this.route.params.subscribe((params) => {
+  //     const proformaInvoiceID = +params['id'];
+  //     if (proformaInvoiceID) {
+  //       this.isEditMode = true;
+  //       try {
+  //         this.pageService.GetDetails(proformaInvoiceID)
+  //           .pipe(takeUntil(this.destroy$))
+  //           .subscribe({
+  //             next: (response) => {
+  //               if (response.IsSuccess) {
+  //                 console.log(response);
+  //                 this.selectedCustomerAddress = response.Data.CustomerAddress!;
+  //                 this.statusText = response.Data.StatusText!;
+  //                 this.statusHex = response.Data.StatusHex!;
+  //                 response.Data.ProductList.Items.forEach(item => {
+  //                   const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //                   productForm.patchValue(item);
+  //                   this.productListArray.push(productForm);
+  //                 });
+
+  //                 this.tableDef.data = this.productListArray.value;
+  //                 const { ProductList, ...formValues } = response.Data;
+  //                 const data = {
+  //                   ...formValues,
+  //                   ProformaInvoiceDate: DateUtils.toDate(response.Data.ProformaInvoiceDate!),
+  //                   ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
+  //                 }
+
+  //                 this.form.patchValue(data);
+  //               } else {
+  //                 this.alertService.showServerResponseAlert(response);
+  //               }
+  //             },
+  //           });
+  //       }
+  //       catch (error) {
+
+  //       }
+  //     }
+  //   });
+  // }
+  
+  // private loadExportOrder(exportOrderID: number): void {
+  //   this.form.patchValue({ BasedOn: 1 });
+  //   this.GetExportOrder(exportOrderID);
+  // }
+
+
+  // getExportOrderDetails(): void {
+  //   this.route.params.subscribe((params) => {
+  //     const exportOrderID = +params['exportOrderID'];
+  //     console.log("Export Order ID from route:", exportOrderID);
+  //     if (exportOrderID) {
+  //       this.form.patchValue({ BasedOn: 1 });
+  //       this.GetExportOrder(exportOrderID);}
+  //   });
+  // }
+
   GetExportOrder(exportOrderID: number): void {
+    debugger;
     try {
       this.pageService.GetExportOrderDetails(exportOrderID)
         .pipe(takeUntil(this.destroy$))

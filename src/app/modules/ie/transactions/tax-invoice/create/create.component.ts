@@ -13,14 +13,14 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { Product_SelectList, ProductMaster, ProductRequest } from '../../../../ims/settings/product-master/product-master';
-import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../settings/company-master/company-master';
-import { ExportOrder, ExportOrder_Detail, ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
-import { ProformaInvoice, ProformaInvoice_Detail, ProformaInvoice_SelectList, ProformaInvoiceRequest } from '../../proforma-invoice/proforma-invoice';
-import { Document_SelectList, TaxInvoice, TaxInvoiceDetail } from '../tax-invoice';
-import { TaxInvoiceService } from '../tax-invoice.service';
 import { Currency_SelectList, CurrencyMaster } from '../../../../admin/settings/currency-master/currency-master';
 import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
+import { Product_SelectList, ProductMaster, ProductRequest } from '../../../../ims/settings/product-master/product-master';
+import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../settings/company-master/company-master';
+import { ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
+import { ProformaInvoice_Detail, ProformaInvoice_SelectList, ProformaInvoiceRequest } from '../../proforma-invoice/proforma-invoice';
+import { Document_SelectList, TaxInvoice, TaxInvoiceDetail } from '../tax-invoice';
+import { TaxInvoiceService } from '../tax-invoice.service';
 
 @Component({
   selector: 'app-create',
@@ -46,11 +46,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   selectedCustomerAddress: string = '';
   statusText!: string | null;
   statusHex!: string | null;
-  isEditMode: boolean = false;
-  isSubmitted: boolean = false;
+  isEditMode = false;
+  isSubmitted = false;
+  isFromProformaInvoice = false;
+  isFromExportOrder = false;
+
   form!: FormGroup;
   formConfig!: FormConfigType<TaxInvoice>;
-
   tableDef!: TableDef<TaxInvoiceDetail>;
 
   taxSlabList: TaxSlab_SelectList[] = [];
@@ -95,7 +97,44 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     this.loadDropdownList();
-    this.getDetails();
+    this.handleRouteParams();
+    // this.getDetails();
+
+    // this.route.paramMap
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(paramMap => {
+    //     const paramsObject = paramMap.keys.reduce((acc, key) => {
+    //       acc[key] = paramMap.get(key);
+    //       return acc;
+    //     }, {} as Record<string, string | null>);
+    //     console.log("Route Parameters: ", paramsObject);
+    //     const id = paramMap.get('id');
+    //     const proformaInvoiceID = paramMap.get('proformaInvoiceID');
+    //     const exportOrderID = paramMap.get('exportOrderID');
+    //     // console.log("Proforma Invoice ID, Export Order ID and Tax Invoice ID ", proformaInvoiceID, exportOrderID, id);
+
+    //     if (paramsObject['id']) {
+    //       this.form.patchValue({ BasedOn: 3 });
+    //       this.loadTaxInvoice(paramsObject['id'] as unknown as number);
+    //       return;
+    //     }
+        
+    //     if (paramsObject['proformaInvoiceID']) {
+    //       this.isFromProformaInvoice = true;
+    //       this.form.patchValue({ BasedOn: 1 });
+    //       this.GetProformaInvoice(paramsObject['proformaInvoiceID'] as unknown as number);
+    //       return;
+    //     }
+        
+    //     if (paramsObject['exportOrderID']) {
+    //       this.isFromExportOrder = true;
+    //       this.form.patchValue({ BasedOn: 2 });
+    //       this.GetExportOrder(+paramsObject['exportOrderID']);
+    //       return;
+    //     }
+
+    //     this.isEditMode = false;
+    //   });
   }
 
   get isBasedOnDocument(): boolean {
@@ -109,6 +148,43 @@ export class CreateComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  
+  private handleRouteParams(): void {
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(pm => {
+
+        const handlers = {
+          id: (v: string) => {
+            console.log("Tax Invoice ID ", v);
+            this.isEditMode = true;
+            this.form.patchValue({ BasedOn: 3 });
+            this.loadTaxInvoice(Number(v));
+          },
+          proformaInvoiceID: (v: string) => {
+            console.log("Proforma Invoice ID ", v);
+            this.isFromProformaInvoice = true;
+            this.form.patchValue({ BasedOn: 1 });
+            this.GetProformaInvoice(Number(v));
+          },
+          exportOrderID: (v: string) => {
+            console.log("Export Order ID ", v);
+            this.isFromExportOrder = true;
+            this.form.patchValue({ BasedOn: 2 });
+            this.GetExportOrder(Number(v));
+          }
+        };
+
+        for (const key of pm.keys) {
+          console.log(`Route Parameter: ${key} = ${pm.get(key)}`);
+          const value = pm.get(key);
+          if (value && key in handlers) {
+            handlers[key as keyof typeof handlers](value);
+            break;
+          }
+        }
+      });
   }
 
   loadDropdownList(): void {
@@ -588,6 +664,44 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
+  private loadTaxInvoice(id: number): void {
+    this.isEditMode = true;
+
+    try {
+      this.pageService.GetDetails(id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (!response.IsSuccess) {
+              this.alertService.showServerResponseAlert(response);
+              return;
+            }
+
+            this.selectedCustomerAddress = response.Data.CustomerAddress!;
+            this.statusText = response.Data.StatusText!;
+            this.statusHex = response.Data.StatusHex!;
+            response.Data.ProductList.Items.forEach(item => {
+              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productForm.patchValue(item);
+              this.productListArray.push(productForm);
+            });
+
+            this.tableDef.data = this.productListArray.value;
+            const { ProductList, ...formValues } = response.Data;
+            const data = {
+              ...formValues,
+              DocumentNo: response.Data.BasedOn === 1 ? response.Data.ProformaInvoiceNo : response.Data.ExportOrderNo,
+              TaxInvoiceDate: DateUtils.toDate(response.Data.TaxInvoiceDate!),
+              ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
+            }
+
+            this.form.patchValue(data);
+          }
+        });
+    }
+    catch (error) {}
+  }
+
   // GetInvoiceItemDetails(model: TaxInvoice): void {
   //   this.pageService.GetInvoiceItemDetails(model.TaxInvoiceID!)
   //     .pipe(takeUntil(this.destroy$))
@@ -638,7 +752,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response);
               const keysToPatch = Object.keys(this.formConfig).filter(
                 k => !['TaxInvoiceNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
               );
@@ -653,6 +766,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
               this.form.patchValue({
                 ...filteredModel,
+                BasedOn: 1,
                 CustomerID: response.Data.CustomerID,
                 CustomerName: response.Data.CustomerName,
                 DocumentID: response.Data.ProformaInvoiceID,
@@ -767,6 +881,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
               const patchedModel = {
                 ...filteredModel,
+                BasedOn: 2,
                 DocumentID: response.Data.ExportOrderID,
                 DocumentNo: documentOption  // Set the entire object, not just the string
               };

@@ -112,8 +112,8 @@ export class TaxInvoiceService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  CancelRecord(model: TaxInvoice): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  CancelRecord(taxInvoiceID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel?taxInvoiceID=${taxInvoiceID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   //#region Form Configuration

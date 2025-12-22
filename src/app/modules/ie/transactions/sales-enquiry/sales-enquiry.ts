@@ -76,6 +76,7 @@ export interface SalesEnquiry_Detail {
     Note: string | null;
     StatusText: string;
     StatusHex: string;
+    IsQuotationAlreadyExists: boolean;
     ProductList: TList<SalesEnquiryProduct_Detail>;
 }
 

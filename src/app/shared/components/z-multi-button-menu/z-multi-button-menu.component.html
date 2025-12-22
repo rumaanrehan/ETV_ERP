@@ -1,0 +1,16 @@
+<button
+  pButton
+  type="button"
+  [label]="label"
+  [icon]="icon"
+  class="btn btn-primary"
+  (click)="toggle($event)"
+  [disabled]="disabled">
+</button>
+
+<p-menu
+  #menu
+  [popup]="true"
+  [model]="computedItems"
+  appendTo="body">
+</p-menu>

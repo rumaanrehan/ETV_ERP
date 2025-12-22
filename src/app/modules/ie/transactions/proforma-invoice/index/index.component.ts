@@ -25,6 +25,9 @@ export class IndexComponent {
   @ViewChild('proformaInvoiceCodeTemplate', { static: true }) proformaInvoiceCodeTemplate!: TemplateRef<any>;
   @ViewChild('proformaInvoiceDateTemplate', { static: true }) proformaInvoiceDateTemplate!: TemplateRef<any>;
   @ViewChild('proformaInvoiceStatusTemplate', { static: true }) proformaInvoiceStatusTemplate!: TemplateRef<any>;
+  @ViewChild('subtotalAmountFCTemplate', { static: true }) subtotalAmountFCTemplate!: TemplateRef<any>;
+  @ViewChild('taxAmountFCTemplate', { static: true }) taxAmountFCTemplate!: TemplateRef<any>;
+  @ViewChild('netAmountFCTemplate', { static: true }) netAmountFCTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
   tableDef!: DataTableDef<ProformaInvoice_IndexTableList>;
@@ -56,9 +59,9 @@ export class IndexComponent {
       { data: 'BasedOn', label: 'Based On', width: "8%", filterable: true, filterType: 'select', filterKey: 'BasedOn' },
       { data: 'ExportOrderNo', label: 'Export Order No', orderable: false, filterable: true, width: "12%" },
       { data: 'CustomerName', label: 'Customer', filterable: true, width: "20%" },
-      { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "10%" },
-      { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "10%" },
-      { data: 'NetAmountFC', label: 'Net Amount', width: "10%" },
+      { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "10%", customTemplate: this.subtotalAmountFCTemplate },
+      { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "10%", customTemplate: this.taxAmountFCTemplate },
+      { data: 'NetAmountFC', label: 'Net Amount', width: "10%", customTemplate: this.netAmountFCTemplate },
       { data: 'StatusID', label: 'Status', width: "8%", filterable: true, filterType: 'select', filterKey: 'Status', cssClass: 'text-center', customTemplate: this.proformaInvoiceStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "4%", customTemplate: this.actionColTemplate },
     ];
@@ -125,12 +128,7 @@ export class IndexComponent {
       })
         .then(result => {
           if (result.isConfirmed) {
-            const model: ProformaInvoice = {
-              ...row,
-              ReasonToUpdate: result.value
-            };
-
-            this.pageService.CancelRecord(model)
+            this.pageService.CancelRecord(row.ProformaInvoiceID, result.value)
               .pipe(takeUntil(this.destroy$))
               .subscribe({
                 next: (response) => {
