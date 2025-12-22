@@ -48,3 +48,10 @@ export interface UserAccessLogRequest {
     ControllerName: string;
     Route: string;
 }
+
+export interface UserProfile{
+    UserFullName: string | null;
+    OldPassword: string | null;
+    NewPassword: string | null;
+    ConfirmPassword: string | null;
+}

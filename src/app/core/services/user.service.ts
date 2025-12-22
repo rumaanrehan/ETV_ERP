@@ -5,7 +5,7 @@ import { ApiDataResponse, ApiListResponse, ApiResponse } from '../../shared/mode
 import { FormConfigType } from '../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../shared/validators/not-only-whitespace.validator';
 import { Menu } from '../models/menu';
-import { User, UserAccessLogRequest, UserAuthenticateRequest, UserAuthenticateResponse, UserRefreshTokenRequest, UserRolePermissionsList, UserAuthToken } from '../models/user';
+import { User, UserAccessLogRequest, UserAuthenticateRequest, UserAuthenticateResponse, UserRefreshTokenRequest, UserRolePermissionsList, UserAuthToken, UserProfile } from '../models/user';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -29,6 +29,11 @@ export class UserService {
 
   Logout(): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Logout`, {});
+  }
+
+  UpdatePassword(model: UserProfile): Observable<ApiResponse> {
+    console.log(model);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdatePassword`, model);
   }
 
   GetProfile(): Observable<ApiDataResponse<User>> {
@@ -69,6 +74,52 @@ export class UserService {
           maxlength: 'Username cannot be longer than 50 characters.'
         },
         type: 'control'
+      }
+    };
+  }
+
+  GetUserProfileFormConfig(): FormConfigType<UserProfile> {
+    return {
+      UserFullName: {
+        label: 'User Name',
+        defaultValue: '',
+        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(50)],
+        validationMessages: {
+          required: 'Username is Required.',
+          maxlength: 'Username cannot be longer than 50 characters.'
+        },
+      },
+      OldPassword: {
+        label: 'Old Password',
+        defaultValue: '',
+        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.minLength(8),],
+        validationMessages: {
+          required: 'Please enter Old Password',
+          minlength: 'Old password must be at least 8 characters.'
+        },
+        type:'control'
+      },
+      
+      NewPassword: {
+        label: 'New Password',
+        defaultValue: '',
+        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.minLength(8)],
+        validationMessages: {
+          required: 'Please enter New Password',
+          minlength: 'New password must be at least 8 characters.'
+        },
+        type:'control'
+      },
+
+      ConfirmPassword: {
+        label: 'Confirm Password',
+        defaultValue: '',
+        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.minLength(8)],
+        validationMessages: {
+          required: 'Please re-enter the new password.',
+          minlength: 'New password must be at least 8 characters.'
+        },
+        type:'control'
       }
     };
   }
