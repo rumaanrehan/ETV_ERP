@@ -840,3 +840,197 @@ z-table .p-datatable-wrapper {
 .action-input-group z-autocomplete {
   flex: 1;
 }
+
+.main-sidebar {
+  background-color: #0f172a !important;
+}
+
+.app-sidebar .side-menu__item {
+  font-size: 0.85rem;
+}
+
+.index-filter-panel {
+  background-color: var(--custom-white);
+  position: absolute;
+  right: 1rem;
+  top: 2rem;
+}
+
+.index-filter-panel .field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  flex-grow: 1;
+}
+
+.index-filter-panel .field label {
+  width: 50%;
+}
+
+.index-sorting-panel {
+  background-color: var(--custom-white);
+  position: absolute;
+  right: 5rem;
+  top: 2rem;
+}
+
+.index-sorting-panel .field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 3rem;
+}
+
+.index-sorting-panel .field label {
+  width: 50%;
+}
+
+z-select-button .p-selectbutton {
+  display: flex;
+  gap: 1rem;
+}
+
+// CSS By Musab 
+
+.index-filter-panel {
+  background-color: var(--custom-white);
+  position: absolute;
+  right: 1rem;
+  top: 2rem;
+  width: 25rem;
+}
+
+.index-filter-panel .field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-grow: 1;
+}
+
+.index-filter-panel .field z-inputtext,
+.index-filter-panel .field z-inputnumber,
+.index-filter-panel .field z-select {
+  flex: 1;
+}
+
+.index-filter-panel .field label,
+.index-sorting-panel .field label {
+  width: 50%;
+}
+
+.index-sorting-panel {
+  background-color: var(--custom-white);
+  position: absolute;
+  right: 5rem;
+  top: 2rem;
+  z-index: 1;
+}
+
+.index-sorting-panel .field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 3rem;
+}
+
+z-select-button .p-selectbutton {
+  display: flex;
+}
+
+.p-autocomplete {
+  display: unset;
+}
+
+.dataview-item {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--default-border);
+
+}
+
+.dataview-item-status {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.p-dataview .p-dataview-header,
+.p-accordion .p-accordion-header .p-accordion-header-link {
+  font-weight: unset;
+}
+
+.p-accordion-header-link,
+.p-accordion-content {
+  border-radius: 0.5rem;
+}
+
+@media (min-width: 992px) {
+  .app-content {
+    min-height: calc(100vh - 5.05rem);
+    margin-block-end: 0;
+    margin-block-start: 3.75rem;
+    margin-inline-start: 15rem;
+    transition: all 0.05s ease;
+  }
+}
+
+.partner-payout {
+  font-size: 1rem;
+}
+
+.select-button-filter-container {
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+// .p-selectbutton .p-button {
+//   background: #ededed;
+// }
+
+.recruiter-action {
+  border-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  padding: 1rem;
+}
+
+.recruiter-action .sub-description {
+  font-size: 0.75rem;
+}
+
+.index-filter-bar {
+  display: flex;
+  gap: 1rem
+}
+
+z-menu .p-button {
+  background: var(--primary-color) !important;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 0.5rem;
+  border: var(--default-border);
+}
+
+z-menu .p-button-icon {
+  color: var(--custom-white) !important;
+}
+
+.dataview-action-menu.p-menu-overlay {
+  position: absolute;
+  top: unset !important;
+  left: unset !important;
+  margin-top: 1.5rem !important;
+  margin-left: -10rem;
+}
+
+.p-selectbutton .p-button.p-highlight {
+  background: var(--primary-color);
+}
+
+.p-selectbutton .p-button span {
+  color: var(--default-text-color) !important;
+}
+
+.p-selectbutton .p-button.p-highlight span {
+  color: var(--custom-white) !important;
+}

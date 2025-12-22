@@ -22,6 +22,14 @@ export interface DataViewParams<T> {
     filters?: T;
 }
 
+
+export interface DataViewParams1<T, U> {
+    first?: number;
+    last?: number;
+    filters?: T;
+    sortings?: U;
+}
+
 export interface DataViewLazyLoadEvent {
     first?: number;
     rows?: number;

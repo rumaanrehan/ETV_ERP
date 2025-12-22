@@ -12,6 +12,7 @@ import { ZPickListComponent } from './z-picklist/z-picklist.component';
 import { ZTableComponent } from '../z-table/z-table.component';
 import { ZSpanComponent } from './z-span/z-span.component';
 import { ZAutoCompleteComponent } from './z-autocomplete/z-autocomplete.component';
+import { ZSelectButtonComponent } from './z-select-button/z-select-button.component';
 
 @NgModule({
   imports: [
@@ -26,9 +27,10 @@ import { ZAutoCompleteComponent } from './z-autocomplete/z-autocomplete.componen
     ZSelectComponent,
     ZSpanComponent,
     ZTextareaComponent,
-    ZTableComponent
+    ZTableComponent,
+    ZSelectButtonComponent
   ],
-  exports:[
+  exports: [
     ZAutoCompleteComponent,
     ZCheckboxComponent,
     ZDatePickerComponent,
@@ -40,7 +42,8 @@ import { ZAutoCompleteComponent } from './z-autocomplete/z-autocomplete.componen
     ZSelectComponent,
     ZSpanComponent,
     ZTextareaComponent,
-    ZTableComponent
+    ZTableComponent,
+    ZSelectButtonComponent
   ]
 })
 export class ZFormControlsModule { }

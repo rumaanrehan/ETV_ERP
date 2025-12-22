@@ -1,16 +1,8 @@
 <div style="height: calc(100vh - 122px);">
 
-    <p-dataView 
-        #dv 
-        [value]="dataViewDef.data"
-        [rows]="5"
-        [totalRecords]="dataViewDef.totalRecords"
-        [paginator]="true"
-        [lazy]="true"
-        (onLazyLoad)="loadData($event)"
-        [sortField]="dataViewDef.defaultSortColumn.sortField" 
-        [sortOrder]="dataViewDef.defaultSortColumn.sortOrder"
-        [layout]="'list'">
+    <p-dataView #dv [value]="dataViewDef.data" [rows]="5" [totalRecords]="dataViewDef.totalRecords" [paginator]="true"
+        [lazy]="true" (onLazyLoad)="loadData($event)" [sortField]="dataViewDef.defaultSortColumn.sortField"
+        [sortOrder]="dataViewDef.defaultSortColumn.sortOrder" [layout]="'list'">
 
         <ng-template pTemplate="header">
             <div class="index-table-action-bar d-flex justify-content-between">
@@ -18,12 +10,14 @@
                     <form class="form-sidebar" [formGroup]="sortingForm">
                         <div class="d-flex gap-3">
                             <div class="col-xl-4">
-                                <z-select [group]="sortingForm" [control]="'sortField'" [label]="sortingFormConfig.sortField.label"
-                                [options]="sortFieldList" [optionLabel]="'text'" [optionValue]="'value'"></z-select>
+                                <z-select [group]="sortingForm" [control]="'sortField'"
+                                    [label]="sortingFormConfig.sortField.label" [options]="sortFieldList"
+                                    [optionLabel]="'text'" [optionValue]="'value'"></z-select>
                             </div>
                             <div class="col-xl-4">
-                                <z-select [group]="sortingForm" [control]="'sortOrder'" [label]="sortingFormConfig.sortOrder.label"
-                                [options]="sortOrderList" [optionLabel]="'text'" [optionValue]="'value'"></z-select>
+                                <z-select [group]="sortingForm" [control]="'sortOrder'"
+                                    [label]="sortingFormConfig.sortOrder.label" [options]="sortOrderList"
+                                    [optionLabel]="'text'" [optionValue]="'value'"></z-select>
                             </div>
                             <div class="col-xl-3">
                                 <button class="btn btn-primary" (click)="applySorting()">
@@ -35,7 +29,8 @@
                 </div>
                 <div class="d-flex justify-content-end">
                     <span><i class="pi pi-refresh refresh-filter" (click)="refreshData();" title="Filter"></i></span>
-                    <span><i class="pi pi-filter filter-toggle" (click)="toggleFilterPanel();" title="Filter"></i></span>
+                    <span><i class="pi pi-filter filter-toggle" (click)="toggleFilterPanel();"
+                            title="Filter"></i></span>
                 </div>
             </div>
         </ng-template>
@@ -58,7 +53,7 @@
         <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
             <div class="col-md-6 pe-1">
                 <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickApplyFilter()">
-                Apply Filter
+                    Apply Filter
                 </button>
             </div>
             <div class="col-md-6 ps-1">

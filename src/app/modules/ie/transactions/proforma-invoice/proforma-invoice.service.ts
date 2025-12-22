@@ -20,6 +20,7 @@ import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/cu
 import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
 import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,8 @@ export class ProformaInvoiceService {
     private productMasterService: ProductMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
     private currencyMasterService: CurrencyMasterService,
-    private selectListService: SelectListService
+    private selectListService: SelectListService,
+    private http: HttpClient
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -75,30 +77,28 @@ export class ProformaInvoiceService {
     return this.apiService.post<ApiDataResponse<ProformaInvoice_Detail>>(`${this.endpoint}/GetDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
   }
 
-  // GetInvoiceItemDetails(proformaInvoiceID: number): Observable<ApiListResponse<ProformaInvoiceDetail>> {
-  //   return this.apiService.post<ApiListResponse<ProformaInvoiceDetail>>(`${this.endpoint}/GetInvoiceItemDetails?proformaInvoiceID=${proformaInvoiceID}`, {});
-  // }
-
   GetExportOrderDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrder_Detail>> {
     return this.exportOrderService.GetDetails(exportOrderID);
   }
 
-  // GetExportOrderItemDetails(exportOrderID: number): Observable<ApiListResponse<ExportOrderDetail>> {
-  //   return this.exportOrderService.GetOrderItemDetails(exportOrderID);
-  // }
-
   CreateRecord(model: ProformaInvoice): Observable<ApiResponse> {
-    console.log('CreateRecord model', model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
   UpdateRecord(model: ProformaInvoice): Observable<ApiResponse> {
-    console.log('UpdateRecord model', model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
   CancelRecord(model: ProformaInvoice): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  GeneratePdf(request: any) {
+    return this.http.post(
+      'http://localhost:44316/api/IE/ProformaInvoice/PrintInvoice',
+      request,
+      { responseType: 'blob' }
+    );
   }
 
   //#region Form Configuration

@@ -4,9 +4,11 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataViewModule } from 'primeng/dataview';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
-import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-data-view/z-data-view';
-import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';
+import { DataViewLazyLoadEvent, DataViewParams1 } from '../../../../../shared/components/z-data-view/z-data-view';
+import { DataViewDef } from '../../../../../shared/components/z-dataview/z-dataview';
+import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { DataTableFilterList, StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
@@ -17,14 +19,13 @@ import { ExportOrderDocument } from '../../export-order-document/export-order-do
 import { ExportOrderPayment } from '../../export-order-payment/export-payment';
 import { ExportOrderTracking } from '../../export-order-tracking/export-order-tracking';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList } from '../export-order';
+import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -41,6 +42,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<ExportOrder_IndexTableFilter>
+  sortingForm!: FormGroup;
+  sortingFormConfig!: FormConfigType<ExportOrder_IndexTableSort>
 
   basedOnList: DataTableFilterList[] = []
   incotermList: DataTableFilterList[] = []
@@ -48,14 +51,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
   isRoDTEPList: DataTableFilterList[] = []
   shipmentModeList: DataTableFilterList[] = []
   statusList: StaticList[] = []
-
-  sortFieldList: any[] = [
-    { value: "ExportOrderNo", text: "Export Order No" },
-    { value: "CustomerName", text: "Customer Name" },
-    { value: "ExportOrderDate", text: "Export Order Date" },
-    { value: "NetAmountBC", text: "Order Total" },
-    { value: "StatusID", text: "Status" }
-  ]
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -69,16 +64,11 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
     this.filterForm = this.formService.createFormGroup<ExportOrder_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
-    this.dataViewDef = {
-      tableKey: 'IE_ExportOrder_IndexDataView',
-      defaultSortColumn: { sortField: 'ExportOrderNo', sortOrder: 1 },
-      filterForm: this.filterForm,
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
+    this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
+    this.sortingForm = this.formService.createFormGroup<ExportOrder_IndexTableSort>(this.pageService.getFormConfig_DataTableSort());
+    this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
 
-    this.loadDropdownList();
+    // this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -86,42 +76,42 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList(): void {
-    this.loadDataTableLists([
-      { columnName: 'BasedOn', targetList: 'basedOnList' },
-      { columnName: 'Incoterm', targetList: 'incotermList' },
-      { columnName: 'IsDutyDrawable', targetList: 'isDutyDrawableList' },
-      { columnName: 'IsRoDTEP', targetList: 'isRoDTEPList' },
-      { columnName: 'ShipmentMode', targetList: 'shipmentModeList' }
-    ]);
-  }
-    
-  loadDataTableLists(listConfigs: { columnName: string; targetList: keyof DataviewComponent }[]): void {
-    const sources: Record<string, Observable<ApiListResponse<DataTableFilterList>>> = {};
+  // loadDropdownList(): void {
+  //   this.loadDataTableLists([
+  //     { columnName: 'BasedOn', targetList: 'basedOnList' },
+  //     { columnName: 'Incoterm', targetList: 'incotermList' },
+  //     { columnName: 'IsDutyDrawable', targetList: 'isDutyDrawableList' },
+  //     { columnName: 'IsRoDTEP', targetList: 'isRoDTEPList' },
+  //     { columnName: 'ShipmentMode', targetList: 'shipmentModeList' }
+  //   ]);
+  // }
 
-    listConfigs.forEach(({ columnName, targetList }) => {
-      sources[targetList] = this.pageService.GetDataTableList({
-        AreaName: 'IE',
-        ControllerName: 'ExportOrder',
-        TableName: 'IndexTable',
-        ColumnName: columnName
-      });
-    });
+  // loadDataTableLists(listConfigs: { columnName: string; targetList: keyof DataviewComponent }[]): void {
+  //   const sources: Record<string, Observable<ApiListResponse<DataTableFilterList>>> = {};
 
-    forkJoin(sources)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          listConfigs.forEach(({ targetList }) => {
-            if (response[targetList]?.IsSuccess) {
-              (this[targetList] as DataTableFilterList[]) = response[targetList].Data.Items || [];
-            } else {
-              (this[targetList] as DataTableFilterList[]) = [];
-            }
-          });
-        },
-      });
-  }
+  //   listConfigs.forEach(({ columnName, targetList }) => {
+  //     sources[targetList] = this.pageService.GetDataTableList({
+  //       AreaName: 'IE',
+  //       ControllerName: 'ExportOrder',
+  //       TableName: 'IndexTable',
+  //       ColumnName: columnName
+  //     });
+  //   });
+
+  //   forkJoin(sources)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (response) => {
+  //         listConfigs.forEach(({ targetList }) => {
+  //           if (response[targetList]?.IsSuccess) {
+  //             (this[targetList] as DataTableFilterList[]) = response[targetList].Data.Items || [];
+  //           } else {
+  //             (this[targetList] as DataTableFilterList[]) = [];
+  //           }
+  //         });
+  //       },
+  //     });
+  // }
 
   onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
     this.dataViewEvent = event;
@@ -132,15 +122,24 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.router.navigate(['ie/export-order/create']);
   }
 
+  onResetForm(formGroup: FormGroup): void {
+    if (formGroup === this.filterForm) {
+      this.formService.resetFormValue<ExportOrder_IndexTableFilter>(this.filterFormConfig, formGroup);
+    } else if (formGroup === this.sortingForm) {
+      this.formService.resetFormValue<ExportOrder_IndexTableSort>(this.sortingFormConfig, formGroup);
+    }
+    this.loadData();
+  }
+
   loadData() {
     try {
-      const model: DataViewParams<ExportOrder_IndexTableFilter> = {
+      const model: DataViewParams1<ExportOrder_IndexTableFilter, ExportOrder_IndexTableSort> = {
         first: this.dataViewEvent.first,
         last: this.dataViewEvent.rows,
-        sortField: this.dataViewEvent.sortField,
-        sortOrder: this.dataViewEvent.sortOrder,
-        filters: this.filterForm.value
+        filters: this.filterForm.value,
+        sortings: this.sortingForm.value
       };
+      console.log(model);
       this.pageService.PopulateGrid(this.formService.transformFormData(model))
         .pipe(takeUntil(this.destroy$))
         .subscribe({

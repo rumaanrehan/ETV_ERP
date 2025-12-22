@@ -78,6 +78,7 @@ export class IndexComponent {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
+                console.log(response.Data);
                 this.createSidebar.openSidebar(activeStatus, true, response.Data);
               }
               else {

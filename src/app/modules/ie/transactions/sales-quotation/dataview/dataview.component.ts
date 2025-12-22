@@ -27,7 +27,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
-  
+
   componentRef?: ComponentRef<any>;
 
   dataViewDef!: DataViewDef<SalesQuotation_IndexTableList>;
@@ -43,7 +43,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     { value: "SalesQuotationDate", text: "Quotation Date" },
     { value: "StatusID", text: "Status" },
   ]
-  
+
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: SalesQuotationService,
@@ -51,7 +51,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     private alertService: AlertNotificationService,
     private router: Router
   ) { }
-  
+
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
@@ -88,7 +88,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     //     },
     //   });
   }
-  
+
   loadStaticLists(listConfigs: { fieldName: string; targetList: keyof DataviewComponent }[]): void {
     const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
 
@@ -114,7 +114,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
         },
       });
   }
-  
+
   onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
     this.dataViewEvent = event;
     this.loadData();
@@ -165,35 +165,35 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   onClickCancel(row: any) {
     this.alertService
-    .showConfirmationWithInput({
-      text: 'Do you want to cancel?',
-      inputPlaceholder: 'Reason to cancel'
-    })
-    .then((result) => {
-      if (result.isConfirmed) {
-        const model: SalesQuotation = {
-          ...row,
-          ReasonToUpdate: result.Message
-        }
+      .showConfirmationWithInput({
+        text: 'Do you want to cancel?',
+        inputPlaceholder: 'Reason to cancel'
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const model: SalesQuotation = {
+            ...row,
+            ReasonToUpdate: result.Message
+          }
 
-        this.pageService.CancelQuotation(model)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              this.loadData();
-              if (response.IsSuccess) {
-                this.alertService.showAlert({
-                  type: 'success',
-                  text: response.Message,
-                  timer: 5000,
-                });
-              } else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
-      }
-    });
+          this.pageService.CancelQuotation(model)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                this.loadData();
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: 'success',
+                    text: response.Message,
+                    timer: 5000,
+                  });
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+      });
   }
 
   formatDate(date: Date) {

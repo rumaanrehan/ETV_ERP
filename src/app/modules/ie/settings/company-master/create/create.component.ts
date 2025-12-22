@@ -4,15 +4,14 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { Country_SelectList } from '../../../../admin/settings/country-master/country-master';
-import { CompanyMaster, State_SelectList } from '../company-master';
+import { CompanyMaster } from '../company-master';
 import { CompanyMasterService } from '../company-master.service';
-import { response } from 'express';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
 
 @Component({
   selector: 'app-company-create',

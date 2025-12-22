@@ -9,7 +9,7 @@ import { TableHeaderColDef, TableDef } from './z-table';
 @Component({
   selector: 'z-table',
   standalone: true,
-  imports: [CommonModule,FormsModule,TableModule,OverlayPanelModule,CheckboxModule],
+  imports: [CommonModule, FormsModule, TableModule, OverlayPanelModule, CheckboxModule],
   templateUrl: './z-table.component.html',
   styleUrls: ['./z-table.component.scss'],
 })
@@ -19,8 +19,8 @@ export class ZTableComponent<T> {
 
   tableHeaderDef: TableHeaderColDef[] = [];
   tableSubHeaderDef?: TableHeaderColDef[];
-  
-  constructor( ) {}
+
+  constructor() { }
 
   ngOnInit() {
     this.generateHeaderStructure();
@@ -31,16 +31,16 @@ export class ZTableComponent<T> {
       if (col.visible === false) {
         return;
       }
-      
+
       if (col.groupLabel) {
         const existingGroup = this.tableHeaderDef.find(
           (header) => header.label === col.groupLabel
         );
-  
+
         if (existingGroup && existingGroup.colSpan) {
           existingGroup.colSpan++;
           existingGroup.data += "," + col.data;
-        } 
+        }
         else {
           this.tableHeaderDef.push({
             data: col.data,
@@ -51,7 +51,7 @@ export class ZTableComponent<T> {
             hideVisToggle: false
           });
         }
-        
+
         this.tableSubHeaderDef = this.tableSubHeaderDef ?? [];
         this.tableSubHeaderDef.push({
           data: col.data,
@@ -71,7 +71,7 @@ export class ZTableComponent<T> {
   }
 
   onChangeColVisSwitch(toggledData: any): void {
-    if(toggledData.hasSubHeader){
+    if (toggledData.hasSubHeader) {
       toggledData.data.split(',').forEach((colName: string) => {
         this.tableDef.columnDef.forEach(col => {
           if (col.data === colName) {
@@ -85,7 +85,7 @@ export class ZTableComponent<T> {
         });
       });
     }
-    else{
+    else {
       this.tableDef.columnDef.forEach(col => {
         if (col.data === toggledData.data) {
           col.visible = toggledData.visible;

@@ -1,0 +1,9 @@
+<div [formGroup]="group">
+    <p-selectButton [formControlName]="control" [options]="stateOptions" optionLabel="Text" optionValue="Value"
+        (onChange)="onValueChange($event.value)" [allowEmpty]="false" />
+</div>
+
+
+<!-- <form [formGroup]="formGroup">
+    <p-selectButton [options]="stateOptions" formControlName="value" optionLabel="label" optionValue="value" />
+</form> -->

@@ -26,7 +26,8 @@ import { ExportOrderDocumentTemplate } from '../export-order-document/export-ord
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
 import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
-import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_SelectList, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
+import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 
 @Injectable({
   providedIn: 'root'
@@ -171,6 +172,27 @@ export class ExportOrderService {
       FinalDestination: {
         label: 'Destination',
         defaultValue: ''
+      },
+      StatusID: {
+        label: 'Status',
+        defaultValue: 0
+      }
+    }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<ExportOrder_IndexTableSort> {
+    return {
+      ExportOrderNo: {
+        label: 'Order No',
+        defaultValue: -1
+      },
+      ExportOrderDate: {
+        label: 'Order Date',
+        defaultValue: 0
+      },
+      NetAmountBC: {
+        label: 'Net Amount (BC)',
+        defaultValue: 0
       },
       StatusID: {
         label: 'Status',
@@ -621,6 +643,45 @@ export class ExportOrderService {
         { data: 'ProductCode', label: 'Product Code', width: '100px' },
         { data: 'ProductName', label: 'Product Name', width: '200px' }
       ],
+    }
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<ExportOrder_IndexTableList> {
+    return {
+      tableKey: 'IE_ExportOrder_IndexDataView',
+      defaultSortColumn: { sortField: 'ExportOrderNo', sortOrder: 1 },
+      filterForm: filterForm,
+      sortingForm: sortingForm,
+      filterFields: [
+        { field: 'ExportOrderNo', label: 'Order No', type: 'text' },
+        { field: 'ReferenceNo', label: 'Ref No', type: 'text' },
+        { field: 'CustomerName', label: 'Customer', type: 'text' },
+        {
+          field: 'BasedOn',
+          label: 'Based On',
+          type: 'dropdown',
+        },
+        {
+          field: 'IncotermID',
+          label: 'Incoterm',
+          type: 'dropdown'
+        },
+        {
+          field: 'StatusID',
+          label: 'Status',
+          type: 'dropdown'
+        }
+      ],
+      sortFields: [
+        { field: 'ExportOrderNo', label: 'Order No', enabled: true, order: 1 },
+        { field: 'ExportOrderDate', label: 'Order Date', enabled: true, order: 0 },
+        { field: 'NetAmountBC', label: 'Order Amount', enabled: true, order: 0 },
+        { field: 'StatusID', label: 'Status', enabled: true, order: 0 }
+      ],
+
+      data: [],
+      totalRecords: 0,
+      loading: false
     }
   }
 }

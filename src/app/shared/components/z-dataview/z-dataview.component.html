@@ -1,0 +1,94 @@
+<div style="height: calc(100vh - 122px);">
+    <p-dataView #dv [value]="dataViewDef.data" [rows]="5" [totalRecords]="dataViewDef.totalRecords" [paginator]="true"
+        [lazy]="true" (onLazyLoad)="loadData($event)" [layout]="'list'">
+        <ng-template pTemplate="header">
+            <div class="index-table-action-bar d-flex justify-content-end">
+                <ng-container *ngIf="dataViewDef.sortingForm && isSortPanelVisible">
+                    <div #sortingPanel class="index-sorting-panel card" [formGroup]="dataViewDef.sortingForm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Sorting</h6>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" [type]="'button'"
+                                    (click)="resetForm(dataViewDef.sortingForm)">Clear
+                                </button>
+                                <button class="btn btn-primary" [type]="'button'" (click)="onClickApplySorting()">Apply
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div *ngFor="let field of dataViewDef.sortFields" class="field">
+                                <label>
+                                    {{ field.label }}
+                                </label>
+                                <div>
+                                    <z-select-button [group]="dataViewDef.sortingForm" [control]="field.field">
+                                        {{ getAscLabel(field.field)}}
+                                    </z-select-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="dataViewDef.filterForm && isFilterPanelVisible">
+                    <div #filterPanel class="index-filter-panel card" [formGroup]="dataViewDef.filterForm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Filter</h6>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" [type]="'button'"
+                                    (click)="resetForm(dataViewDef.filterForm)">Clear
+                                </button>
+                                <button class="btn btn-primary" [type]="'button'" (click)="onClickApplyFilter()">Apply
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div *ngFor="let field of dataViewDef.filterFields" class="field">
+                                <label>{{field.label}}</label>
+                                <z-inputtext *ngIf="field.type === 'text'" [group]="dataViewDef.filterForm"
+                                    [control]="field.field" [label]="field.label">
+                                </z-inputtext>
+
+                                <z-inputnumber *ngIf="field.type === 'number'" [group]="dataViewDef.filterForm"
+                                    [control]="field.field" [label]="field.label">
+                                </z-inputnumber>
+
+                                <z-datepicker *ngIf="field.type === 'date'" [group]="dataViewDef.filterForm"
+                                    [control]="field.field" [label]="field.label">
+                                </z-datepicker>
+
+                                <z-select *ngIf="field.type === 'dropdown'" [group]="dataViewDef.filterForm"
+                                    [control]="field.field" [label]="field.label" [options]="field.options ?? []"
+                                    [optionLabel]="'Text'" [optionValue]="'Value'">
+                                </z-select>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <div class="d-flex justify-content-end">
+                    <span><i class="pi pi-sort-alt refresh-filter" (click)="toggleSortPanel();"
+                            title="Sorting"></i></span>
+                    <span><i class="pi pi-refresh refresh-filter" (click)="refreshData();" title="Refresh"></i></span>
+                    <span><i class="pi pi-filter filter-toggle" (click)="toggleFilterPanel();"
+                            title="Filter"></i></span>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template let-products pTemplate="list">
+            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: products }"></ng-container>
+        </ng-template>
+
+
+        <ng-template pTemplate="empty">
+            <div class="col-8 d-flex justify-content-center align-items-center m-auto flex-column">
+                <img src="assets/images/media/no-record-found.png" alt="No Record Found" width="500px" />
+                <h5 class="text-secondary">No matching records found</h5>
+            </div>
+        </ng-template>
+
+    </p-dataView>
+</div>

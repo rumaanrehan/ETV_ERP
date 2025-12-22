@@ -155,6 +155,13 @@ export interface ExportOrder_IndexTableFilter {
     StatusID: number | null;
 }
 
+export interface ExportOrder_IndexTableSort {
+    ExportOrderNo: 1 | 0 | -1;
+    ExportOrderDate: 1 | 0 | -1;
+    NetAmountBC: 1 | 0 | -1;
+    StatusID: 1 | 0 | -1;
+}
+
 export interface ExportOrder_IndexTableList {
     ExportOrderID: number;
     ExportOrderNo: string;
@@ -171,51 +178,51 @@ export interface ExportOrder_IndexTableList {
 }
 
 export interface ExportOrder_Detail {
-  ExportOrderID: number;
-  ExportOrderNo: string;
-  BasedOn: number;
-  ExportOrderDate?: Date;
-  ReferenceDate: Date;
-  ReferenceNo?: string;
-  SalesQuotationID?: number;
-  SalesQuotationNo?: string;
-  CustomerID: number;
-  CustomerName: string;
-  CustomerAddress?: string;
-  FCCurrencyID: number;
-  ExchangeRateDate: Date;
-  ExchangeRateToBC: number;
-  IncotermID?: number;
-  FreightChargeFC?: number;
-  BankChargesFC?: number;
-  InsuranceAmountFC?: number;
-  IsDutyDrawable: boolean;
-  IsRoDTEP: boolean;
-  PaymentTermID?: number;
-  IsRoundOff: boolean;
-  ShipmentModeID?: number;
-  LoadingPortID?: number;
-  DischargePortID?: number;
-  FinalDestination?: string;
-  Narration?: string;
-  SubtotalAmountFC: number;
-  TaxAmountFC: number | null;
-  NetAmountFC: number;
-  StatusText: string;
-  StatusHex: string;
-  ProductList: TList<ExportOrderProductDetail>;
+    ExportOrderID: number;
+    ExportOrderNo: string;
+    BasedOn: number;
+    ExportOrderDate?: Date;
+    ReferenceDate: Date;
+    ReferenceNo?: string;
+    SalesQuotationID?: number;
+    SalesQuotationNo?: string;
+    CustomerID: number;
+    CustomerName: string;
+    CustomerAddress?: string;
+    FCCurrencyID: number;
+    ExchangeRateDate: Date;
+    ExchangeRateToBC: number;
+    IncotermID?: number;
+    FreightChargeFC?: number;
+    BankChargesFC?: number;
+    InsuranceAmountFC?: number;
+    IsDutyDrawable: boolean;
+    IsRoDTEP: boolean;
+    PaymentTermID?: number;
+    IsRoundOff: boolean;
+    ShipmentModeID?: number;
+    LoadingPortID?: number;
+    DischargePortID?: number;
+    FinalDestination?: string;
+    Narration?: string;
+    SubtotalAmountFC: number;
+    TaxAmountFC: number | null;
+    NetAmountFC: number;
+    StatusText: string;
+    StatusHex: string;
+    ProductList: TList<ExportOrderProductDetail>;
 }
 
 export interface ExportOrderProductDetail {
-  ProductID: number;
-  ProductName: string;
-  UOM: string;
-  SalesQty: number;
-  RatePerUnitFC: number;
-  SalesTaxRate: number;
-  TaxableAmountFC: number;
-  TaxAmountFC: number;
-  SalesAmountFC: number;
+    ProductID: number;
+    ProductName: string;
+    UOM: string;
+    SalesQty: number;
+    RatePerUnitFC: number;
+    SalesTaxRate: number;
+    TaxableAmountFC: number;
+    TaxAmountFC: number;
+    SalesAmountFC: number;
 }
 
 export interface ExportOrderDocumentList {

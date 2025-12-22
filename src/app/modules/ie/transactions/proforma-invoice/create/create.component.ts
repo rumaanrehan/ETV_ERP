@@ -650,6 +650,31 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.loadDynamicComponent(model);
   }
 
+  printInvoice(): void {
+    this.route.params.subscribe(params => {
+      const proformaInvoiceID = +params['id'];
+
+      if (!proformaInvoiceID) return;
+
+      this.isEditMode = true;
+      const model = {
+        ProformaInvoiceID: proformaInvoiceID,
+        PrintTemplateID: 1
+      };
+      this.pageService.GeneratePdf(model).subscribe({
+        next: (blob) => {
+          console.log('PDF generated successfully', blob);
+          const url = window.URL.createObjectURL(blob);
+          window.open(url);
+        },
+        error: (err) => {
+          console.error('PDF generation failed', err);
+        }
+      });
+    });
+  }
+
+
   // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
   //   Object.keys(form.controls).forEach(key => {
   //     const control = form.get(key);

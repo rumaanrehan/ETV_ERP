@@ -4,7 +4,7 @@
 }
 
 .p-sidebar {
-    background-color: var(--background-sidebar);
+    // background-color: var(--background-sidebar);
     box-shadow: unset;
     border: none;
 }
@@ -38,7 +38,8 @@
 }
 
 .p-float-label input,
-.p-float-label .p-inputwrapper, .p-float-label>span {
+.p-float-label .p-inputwrapper,
+.p-float-label>span {
     height: 2rem;
 }
 
@@ -119,7 +120,7 @@
     height: 0.75rem;
 }
 
-.p-paginator{
+.p-paginator {
     background: var(--custom-white);
     padding: 0.375rem;
 }
@@ -142,13 +143,13 @@
     line-height: unset;
 }
 
-.p-paginator .p-paginator-pages .p-paginator-page.p-highlight{
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
     background: transparent;
     border: 1px solid var(--default-text-color);
     border-radius: 50rem;
 }
 
-.p-paginator .p-dropdown{
+.p-paginator .p-dropdown {
     height: 2rem;
 }
 
@@ -161,25 +162,26 @@
     height: 2rem;
 }
 
-.p-datatable .p-datatable-tbody > tr{
+.p-datatable .p-datatable-tbody>tr {
     transition: unset;
 }
 
-.p-overlaypanel{
+.p-overlaypanel {
     background-color: var(--background-tertiary);
     border: none;
     margin-top: unset;
 }
 
-.p-overlaypanel-content{
+.p-overlaypanel-content {
     padding: 0.5rem;
 }
 
-.p-overlaypanel:after, .p-overlaypanel:before{
+.p-overlaypanel:after,
+.p-overlaypanel:before {
     content: unset;
 }
 
-.p-datatable-header{
+.p-datatable-header {
     padding: 0;
     background-color: transparent;
     border-color: var(--default-border);
@@ -190,6 +192,6 @@
     transition: unset;
 }
 
-.p-picklist .p-picklist-header{
+.p-picklist .p-picklist-header {
     color: var(--default-text-color);
 }
