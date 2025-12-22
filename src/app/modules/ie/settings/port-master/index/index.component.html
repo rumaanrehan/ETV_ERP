@@ -13,7 +13,7 @@
 
 <!-- Table Column Custom Template -->
 <ng-template #portCodeTemplate let-row>
-  <span class="table-action-link" (click)="onClickEditDetails(row.PortID, row.ActiveStatus)" 
+  <span class="table-action-link"  
   style="cursor: pointer;">{{ row.PortCode }}</span>
 </ng-template>
 
@@ -33,3 +33,5 @@
 </ng-template>
 
 <app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>
+
+<!-- (click)="onClickEditDetails(row.PortID, row.ActiveStatus)" -->

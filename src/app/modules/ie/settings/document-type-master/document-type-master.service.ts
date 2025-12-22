@@ -38,8 +38,8 @@ export class DocumentTypeMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: DocumentTypeMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(documentTypeID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?documentTypeID=${documentTypeID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<DocumentType_IndexFilter> {

@@ -1,14 +1,14 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { ItemType_SelectList } from '../../item-type-master/item-type-master';
-import { ItemGroupMaster } from '../item-group-master';
-import { ItemGroupMasterService } from '../item-group-master.service';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
+import { ItemType_SelectList } from '../../item-type-master/item-type-master';
+import { ItemGroupMaster } from '../item-group-master';
+import { ItemGroupMasterService } from '../item-group-master.service';
 
 @Component({
   selector: 'app-create',
@@ -30,6 +30,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   formConfig!: FormConfigType<ItemGroupMaster>;
 
   itemTypeList: ItemType_SelectList[] = [];
+
+
 
   constructor(
     private pageService: ItemGroupMasterService,
@@ -143,7 +145,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
   
   updateRecord(model: ItemGroupMaster): void {
-    try {
+    try {console.log(model);
       this.pageService.UpdateRecord(model)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

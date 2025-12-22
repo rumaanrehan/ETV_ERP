@@ -89,8 +89,8 @@ export class ProformaInvoiceService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  CancelRecord(model: ProformaInvoice): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  CancelRecord(proformaInvoiceID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel?proformaInvoiceID=${proformaInvoiceID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   GeneratePdf(request: any) {

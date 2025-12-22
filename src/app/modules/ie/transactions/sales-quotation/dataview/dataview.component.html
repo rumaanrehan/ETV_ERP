@@ -75,7 +75,7 @@
                                 <span class="fs-6 text-secondary">Subtotal Amount (FC):</span>
                             </div>
                             <div class="col-xl-5">
-                                <span class="fs-6 text-secondary"> {{item.SubtotalAmountFC}} </span>
+                                <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.SubtotalAmountFC | number:'1.2-2'}} </span>
                             </div>
                         </div>
                         <div class="col-xl-3 d-flex align-items-center">
@@ -83,7 +83,7 @@
                                 <span class="fs-6 text-secondary">Tax Amount (FC):</span>
                             </div>
                             <div class="col-xl-6">
-                                <span class="fs-6 text-secondary"> {{item.TaxAmountFC}} </span>
+                                <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.TaxAmountFC | number:'1.2-2' }} </span>
                             </div>
                         </div>
                         <div class="col-xl-3 d-flex align-items-center">
@@ -91,7 +91,7 @@
                                 <span class="fs-6 text-secondary">Net Amount (FC):</span>
                             </div>
                             <div class="col-xl-6">
-                                <span class="fs-6 text-secondary"> {{item.NetAmountFC}} </span>
+                                <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.NetAmountFC | number:'1.2-2'}} </span>
                             </div>
                         </div>
                         <!-- <div class="ms-auto" *ngIf="item.StatusID == 1 || item.StatusID == 2">

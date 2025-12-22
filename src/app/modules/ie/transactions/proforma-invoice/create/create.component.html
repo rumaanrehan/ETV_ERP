@@ -149,9 +149,10 @@
     </div>
     <div class="page-action-panel">
         <div class="col-xl-4">
-            <div class="col-xl-3 px-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" (click)="printInvoice()"> Print Invoice
-                </button>
+            <div class="col-xl-4 px-1" *ngIf="isEditMode && !isTaxAlreadyExists">
+                <button type="submit" class="btn btn-md btn-primary w-100"
+                    (click)="onClickNavigateToTaxInvoice(this.form.get('ProformaInvoiceID')?.value || null)"> Add Tax
+                    Invoice </button>
             </div>
         </div>
         <div class="col-xl-4">

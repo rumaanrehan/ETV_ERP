@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { CreateComponent } from '../create/create.component';
-import { ItemGroup_IndexTableFilter, ItemGroup_IndexTableList, ItemGroupMaster } from '../item-group-master';
-import { ItemGroupMasterService } from '../item-group-master.service';
 import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { DataTableFilterList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { CreateComponent } from '../create/create.component';
+import { ItemGroup_IndexTableFilter, ItemGroup_IndexTableList, ItemGroupMaster } from '../item-group-master';
+import { ItemGroupMasterService } from '../item-group-master.service';
 
 @Component({
   selector: 'app-index',
@@ -72,6 +72,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickEditDetails(itemGroupID: number, activeStatus: boolean): void {
     try {
+      console.log(itemGroupID);
       if (this.createSidebar && itemGroupID) {
         this.pageService.GetDetails(itemGroupID)
         .pipe(takeUntil(this.destroy$))
@@ -148,13 +149,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: ItemGroupMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.ItemGroupID!, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

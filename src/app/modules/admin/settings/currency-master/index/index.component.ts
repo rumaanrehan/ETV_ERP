@@ -1,14 +1,13 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
-import { CreateComponent } from '../create/create.component';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { DataTableFilterList } from '../../../../../shared/models/select-list';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { Currency_IndexTableList, Currency_IndexTableFilter, CurrencyMaster } from '../currency-master';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { CreateComponent } from '../create/create.component';
+import { Currency_IndexTableFilter, Currency_IndexTableList, CurrencyMaster } from '../currency-master';
 import { CurrencyMasterService } from '../currency-master.service';
 
 
@@ -53,7 +52,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'CurrencyCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.currencyCodeTemplate },
       { data: 'CountryName', label: 'Country Name', filterable: true, width: "10%" },
       { data: 'CurrencyName', label: 'Currency Name', filterable: true },
-      { data: 'CurrencyISOCode', label: 'Currency ISO Code', orderable: false, width: "10%" },
+      { data: 'CurrencyISOCode', label: 'Currency ISO Code', width: "10%" },
       { data: 'CurrencySymbol', label: 'Currency Symbol', filterable: true, orderable: false, width: "8%" },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.currencyActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
@@ -146,13 +145,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: CurrencyMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.CurrencyID!, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

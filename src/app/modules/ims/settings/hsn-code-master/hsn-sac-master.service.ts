@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { HsnSacMaster, HsnSacMaster_IndexTableFilter, HsnSacMaster_IndexTableList, HsnSacMaster_SelectList } from './hsn-sac-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { HsnSacMaster, HsnSacMaster_IndexTableFilter, HsnSacMaster_IndexTableList, HsnSacMaster_SelectList } from './hsn-sac-master';
 
 @Injectable({
   providedIn: 'root'
@@ -39,8 +39,8 @@ export class HsnSacMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Update`, model);
   }
 
-  DeleteReactivate(model: HsnSacMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(hsnCodeID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?hsnCodeID=${hsnCodeID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
   
   //#region Form Configuration
@@ -49,6 +49,7 @@ export class HsnSacMasterService {
       HSNCode: '',
       HSNCodeDescription: '',
       IsServiceAccountCodeID: 0,
+      TaxSlabID: 0,
       ActiveStatusID: 0
     }
   }

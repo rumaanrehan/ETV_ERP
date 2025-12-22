@@ -2,7 +2,7 @@ export interface EmployeeTypeMaster {
     EmployeeTypeID: number | null;
     EmployeeTypeCode: string | null;
     EmployeeTypeName: string | null;
-    IsAllowedOverTime: string | null;    
+    IsAllowedOverTime: boolean | null;    
 }
 
 export interface EmployeeType_SelectList {
@@ -11,17 +11,16 @@ export interface EmployeeType_SelectList {
 }
 
 export interface EmployeeType_IndexTableFilter {
-    EmployeeTypeCode: string | null;
-    EmployeeTypeName: string | null;
-    IsAllowedOverTime: string | null;
-    ActiveStatusID: number | null;
+    EmployeeTypeCode: string;
+    EmployeeTypeName: string;
+    ActiveStatusID: number;
 }
 
 export interface EmployeeType_IndexTableList {
     EmployeeTypeID: number;
     EmployeeTypeCode: string;
     EmployeeTypeName: string;
-    IsAllowedOverTime: string | null;
+    IsAllowedOverTime: boolean | null;
     ActiveStatus: boolean;
 }
 
@@ -30,10 +29,9 @@ export interface EmployeeTypeRequest {
     PopulateType?: string | null;
 }
 
-export interface EmployeeTypeDetails {
-    EmployeeTypeID?: number | null;
+export interface EmployeeType_Details {
+    EmployeeTypeID: number | null;
     EmployeeTypeCode: string | null;
     EmployeeTypeName: string;
-    IsAllowedOverTime: string | null;
-
+    IsAllowedOverTime: boolean | null;
 }

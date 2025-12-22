@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
@@ -35,6 +35,7 @@ import { ExportOrderService } from '../export-order.service';
 })
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('salesQtyColTemplate', { static: true }) salesQtyColTemplate!: TemplateRef<any>;
@@ -63,6 +64,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
   isLoadDocumentVisible: boolean = true;
   isLoadPaymentVisible: boolean = true;
+  isFromSalesQuotation = false;
+  IsDocumentAlreadyExists = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrder>;
@@ -124,7 +127,26 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     this.loadDropdownList();
-    this.getDetails();
+    // this.getDetails();
+
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(paramMap => {
+        const id = paramMap.get('id');
+        const salesQuotationID = paramMap.get('salesQuotationID');
+
+        if (id) {
+          this.loadExportOrder(+id);
+          return;
+        }
+        else if (salesQuotationID) {
+          this.isFromSalesQuotation = true;
+          this.GetSalesQuotation(+salesQuotationID);
+          return;
+        }
+
+        this.isEditMode = false;
+      });
   }
 
   get isBasedOnSalesQuotation(): boolean {
@@ -185,6 +207,22 @@ export class CreateComponent implements OnInit, OnDestroy {
     try {
       this.router.navigate(['/ie/export-order/index']);
     } catch (error) { }
+  }
+
+  onClickAddProformaInvoice(exportOrderID: number): void {
+    if (exportOrderID) {
+      this.router.navigate([`ie/proforma-invoice/from-export/${exportOrderID}`]);
+    }else { 
+      return;
+    }
+  }
+
+  onClickNavigateToTaxInvoice(exportOrderID: number): void {
+    if (exportOrderID) {
+      this.router.navigate([`ie/tax-invoice/from-export/${exportOrderID}`]);
+    }else { 
+      return;
+    }
   }
 
   resetForm(): void {
@@ -526,7 +564,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    console.log(this.form.value);
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
@@ -575,6 +612,36 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     }
   }
+
+  // addShippingRecord(model: ExportOrderShippingDetail): void {
+  //   try {
+  //     this.pageService
+  //       .AddShippingRecord(model)
+  //       .pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (response) => {
+  //           if (response.IsSuccess) {
+  //             this.alertService.showAlert({
+  //               type: 'success',
+  //               text: response.Message,
+  //               timer: 5000,
+  //             });
+  //             setTimeout(() => {
+  //               this.ngOnInit();
+  //             }, 2000);
+  //           } else {
+  //             this.alertService.showServerResponseAlert(response);
+  //           }
+  //         },
+  //         complete: () => {
+  //           this.isSubmitted = false;
+  //         },
+  //       });
+  //   }
+  //   catch (error) {
+
+  //   }
+  // }
 
   createRecord(model: ExportOrder): void {
     try {
@@ -636,48 +703,88 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDetails(): void {
-    this.route.params.subscribe((params) => {
-      const exportOrderID = +params['id'];
-      if (exportOrderID) {
-        this.isEditMode = true;
-        try {
-          this.pageService.GetDetails(exportOrderID)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  this.selectedCustomerAddress = response.Data.CustomerAddress!;
-                  this.statusText = response.Data.StatusText!;
-                  this.statusHex = response.Data.StatusHex!;
-                  response.Data.ProductList.Items.forEach(item => {
-                    const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                    productForm.patchValue(item);
-                    this.productListArray.push(productForm);
-                  });
+  // getDetails(): void {
+  //   this.route.params.subscribe((params) => {
+  //     const exportOrderID = +params['id'];
+  //     if (exportOrderID) {
+  //       this.isEditMode = true;
+  //       try {
+  //         this.pageService.GetDetails(exportOrderID)
+  //           .pipe(takeUntil(this.destroy$))
+  //           .subscribe({
+  //             next: (response) => {
+  //               if (response.IsSuccess) {
+  //                 this.selectedCustomerAddress = response.Data.CustomerAddress!;
+  //                 this.statusText = response.Data.StatusText!;
+  //                 this.statusHex = response.Data.StatusHex!;
+  //                 response.Data.ProductList.Items.forEach(item => {
+  //                   const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //                   productForm.patchValue(item);
+  //                   this.productListArray.push(productForm);
+  //                 });
 
-                  this.tableDef.data = this.productListArray.value;
-                  const { ProductList, ...formValues } = response.Data;
-                  const data = {
-                    ...formValues,
-                    ExportOrderDate: DateUtils.toDate(response.Data.ExportOrderDate!),
-                    ReferenceDate: DateUtils.toDate(response.Data.ReferenceDate!),
-                    ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
-                  }
+  //                 this.tableDef.data = this.productListArray.value;
+  //                 const { ProductList, ...formValues } = response.Data;
+  //                 const data = {
+  //                   ...formValues,
+  //                   ExportOrderDate: DateUtils.toDate(response.Data.ExportOrderDate!),
+  //                   ReferenceDate: DateUtils.toDate(response.Data.ReferenceDate!),
+  //                   ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
+  //                 }
 
-                  // this.loadPortList();
-                  this.form.patchValue(data);
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
+  //                 // this.loadPortList();
+  //                 this.form.patchValue(data);
+  //               } else {
+  //                 this.alertService.showServerResponseAlert(response);
+  //               }
+  //             },
+  //           });
+  //       }
+  //       catch (error) {
+
+  //       }
+  //     }
+  //   });
+  // }
+
+  private loadExportOrder(id: number): void {
+    this.isEditMode = true;
+
+    try {
+      this.pageService.GetDetails(id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (!response.IsSuccess) {
+              this.alertService.showServerResponseAlert(response);
+              return;
+            }
+
+            this.selectedCustomerAddress = response.Data.CustomerAddress!;
+            this.statusText = response.Data.StatusText!;
+            this.statusHex = response.Data.StatusHex!;
+            this.IsDocumentAlreadyExists = response.Data.IsDocumentAlreadyExists!;
+            response.Data.ProductList.Items.forEach(item => {
+              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productForm.patchValue(item);
+              this.productListArray.push(productForm);
             });
-        }
-        catch (error) {
 
-        }
-      }
-    });
+            this.tableDef.data = this.productListArray.value;
+            const { ProductList, ...formValues } = response.Data;
+            const data = {
+              ...formValues,
+              ExportOrderDate: DateUtils.toDate(response.Data.ExportOrderDate!),
+              ReferenceDate: DateUtils.toDate(response.Data.ReferenceDate!),
+              ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
+            }
+
+            // this.loadPortList();
+            this.form.patchValue(data);
+          }
+        });
+    }
+    catch (error) {}
   }
 
   GetSalesQuotation(salesQuotationID: number): void {
@@ -687,7 +794,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data);
               const keysToPatch = Object.keys(this.formConfig).filter(
                 k => !['ExportOrderNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
               );

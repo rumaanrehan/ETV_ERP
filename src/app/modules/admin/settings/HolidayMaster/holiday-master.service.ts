@@ -7,6 +7,8 @@ import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } f
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Holiday_IndexTableFilter, Holiday_IndexTableList, Holiday_SelectList, HolidayMaster, HolidayRequest } from './holiday-master';
+import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { SelectListService } from '../../../../shared/services/select-list.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +18,16 @@ export class HolidayMasterService {
 
   constructor(
     private apiService: ApiService,
+    private selectListService: SelectListService
   ) {}
   
+  GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
+      return this.selectListService.GetStaticList(model);
+
+  }
+  
   PopulateList(model: HolidayRequest): Observable<ApiListResponse<Holiday_SelectList>> {
+    
     return this.apiService.post<ApiListResponse<Holiday_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
@@ -35,11 +44,13 @@ export class HolidayMasterService {
   }
 
   UpdateRecord(model: HolidayMaster): Observable<ApiResponse> {
+    
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: HolidayMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(holidayID: number ,  reasonToUpdate: string): Observable<ApiResponse> {
+    console.log(holidayID);
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?holidayID=${holidayID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   //#region Form Configuration
@@ -48,6 +59,7 @@ export class HolidayMasterService {
       HolidayCode: '',
       HolidayName: '',
       HolidayYear: 0,
+      HolidayTypeID: 0,
       ActiveStatusID: 0
     }
   }

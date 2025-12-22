@@ -1,0 +1,22 @@
+.reset-password-wrapper {
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+.reset-password-link {
+  display: inline-block;
+  font-size: 0.95rem;
+  color: #141b25;          
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.reset-password-link:hover {
+  color: #1a1e23;
+  text-decoration: underline;
+}
+
+.reset-password-link:active {
+  transform: scale(0.97);
+}

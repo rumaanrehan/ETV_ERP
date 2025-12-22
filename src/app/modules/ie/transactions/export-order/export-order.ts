@@ -172,9 +172,10 @@ export interface ExportOrder_IndexTableList {
     ShipmentMode: string;
     LoadingPortName: string;
     FinalDestination: string;
-    NetAmountBC: number;
+    NetAmountFC: number;
     IsKnockOff: boolean;
     StatusID: number;
+    CurrencySymbol: string;
 }
 
 export interface ExportOrder_Detail {
@@ -203,6 +204,8 @@ export interface ExportOrder_Detail {
     ShipmentModeID?: number;
     LoadingPortID?: number;
     DischargePortID?: number;
+    LoadingPortName: string;
+    DischargePortName: string;
     FinalDestination?: string;
     Narration?: string;
     SubtotalAmountFC: number;
@@ -210,6 +213,7 @@ export interface ExportOrder_Detail {
     NetAmountFC: number;
     StatusText: string;
     StatusHex: string;
+    IsDocumentAlreadyExists: boolean;
     ProductList: TList<ExportOrderProductDetail>;
 }
 
@@ -244,4 +248,29 @@ export interface ExportOrderPaymentList {
     PaymentAmountBC: number;
     PaymentDate: Date;
     CreatedBy: string;
+}
+
+export interface ExportOrderBillRegulation {
+    ExportOrderID: number | null;
+    ExportOrderNo: string | null;
+    ShippingBill: boolean | null;
+    AirwayBill: boolean | null;
+    IECCertificate: boolean | null;
+    Invoice: boolean | null;
+    PackingSlip: boolean | null;
+    CustomerPO: boolean | null;
+}
+
+export interface ExportOrderBillRegulationRequest {
+    ExportOrderID: number | null;
+    SelectedDocuments: ExportOrderDocumentType[];
+}
+
+export enum ExportOrderDocumentType {
+    ShippingBill = 1,
+    AirwayBill = 2,
+    IECCertificate = 3,
+    Invoice = 4,
+    PackingSlip = 5,
+    CustomerPO = 6
 }

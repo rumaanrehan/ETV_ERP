@@ -142,13 +142,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: UOMMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.UOMID!, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

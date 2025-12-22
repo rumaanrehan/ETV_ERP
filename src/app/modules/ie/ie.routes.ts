@@ -29,111 +29,6 @@ export const ieRoute: Routes = [
         },
         children: [
           {
-            path: 'export-order',
-            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
-            data: {
-              breadcrumb: 'Export Order'
-            },
-            children: [
-              {
-                path: 'index',
-                loadComponent: () => import('./transactions/export-order/dataview/dataview.component').then((m) => m.DataviewComponent),
-                data: {
-                  permission: 'CanRead',
-                  menu: 'IE/ExportOrder'
-                }
-              },
-              {
-                path: 'create',
-                loadComponent: () => import('./transactions/export-order/create/create.component').then((m) => m.CreateComponent),
-                data: {
-                  permission: 'CanCreate',
-                  menu: 'IE/ExportOrder',
-                  breadcrumb: 'Create'
-                }
-              },
-              {
-                path: 'edit/:id',
-                loadComponent: () => import('./transactions/export-order/create/create.component').then((m) => m.CreateComponent),
-                data: {
-                  permission: 'CanUpdate',
-                  menu: 'IE/ExportOrder',
-                  breadcrumb: 'Edit'
-                }
-              }
-            ]
-          },
-          {
-            path: 'import-order',
-            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
-            data: {
-              breadcrumb: 'Import Order'
-            },
-            children: [
-              {
-                path: 'index',
-                loadComponent: () => import('./transactions/import-order/dataview/dataview.component').then((m) => m.DataviewComponent),
-                data: {
-                  permission: 'CanRead',
-                  menu: 'IE/ImportOrder'
-                }
-              },
-              {
-                path: 'create',
-                loadComponent: () => import('./transactions/import-order/create/create.component').then((m) => m.CreateComponent),
-                data: {
-                  permission: 'CanCreate',
-                  menu: 'IE/ImportOrder',
-                  breadcrumb: 'Create'
-                }
-              },
-              {
-                path: 'edit/:id',
-                loadComponent: () => import('./transactions/import-order/create/create.component').then((m) => m.CreateComponent),
-                data: {
-                  permission: 'CanUpdate',
-                  menu: 'IE/ImportOrder',
-                  breadcrumb: 'Edit'
-                }
-              }
-            ]
-          },
-          {
-            path: 'proforma-invoice',
-            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
-            data: {
-              breadcrumb: 'Proforma Invoice'
-            },
-            children: [
-              {
-                path: 'index',
-                loadComponent: () => import('./transactions/proforma-invoice/index/index.component').then((m) => m.IndexComponent),
-                data: {
-                  permission: 'CanRead',
-                  menu: 'IE/ProformaInvoice',
-                }
-              },
-              {
-                path: 'create',
-                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
-                data: {
-                  permission: 'CanCreate',
-                  menu: 'IE/ProformaInvoice',
-                  breadcrumb: 'Create'
-                }
-              },
-              {
-                path: 'edit/:id',
-                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
-                data: {
-                  permission: 'CanUpdate',
-                  menu: 'IE/ProformaInvoice',
-                  breadcrumb: 'Edit'
-                }
-              }
-            ]
-          },
-          {
             path: 'sales-enquiry',
             canActivateChild: [AuthenticationGuard, AuthorizationGuard],
             data: {
@@ -200,6 +95,103 @@ export const ieRoute: Routes = [
                   menu: 'IE/SalesQuotation',
                   breadcrumb: 'Edit'
                 }
+              },
+              {
+                path: 'from-enquiry/:salesEnquiryID',
+                loadComponent: () => import('./transactions/sales-quotation/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/SalesQuotation',
+                  breadcrumb: 'Create'
+                }
+              }
+            ]
+          },
+          {
+            path: 'export-order',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Export Order'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/export-order/dataview/dataview.component').then((m) => m.DataviewComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/ExportOrder'
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/export-order/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/ExportOrder',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/export-order/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/ExportOrder',
+                  breadcrumb: 'Edit'
+                }
+              },
+              {
+                path: 'from-quotation/:salesQuotationID',
+                loadComponent: () => import('./transactions/export-order/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/ExportOrder',
+                  breadcrumb: 'Create'
+                }
+              }
+            ]
+          },
+          {
+            path: 'proforma-invoice',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Proforma Invoice'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/proforma-invoice/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/ProformaInvoice',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/ProformaInvoice',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/ProformaInvoice',
+                  breadcrumb: 'Edit'
+                }
+              },
+              {
+                path: 'from-export/:exportOrderID',
+                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/ProformaInvoice',
+                  breadcrumb: 'Create'
+                }
               }
             ]
           },
@@ -233,6 +225,59 @@ export const ieRoute: Routes = [
                 data: {
                   permission: 'CanUpdate',
                   menu: 'IE/TaxInvoice',
+                  breadcrumb: 'Edit'
+                }
+              },
+              {
+                path: 'from-proforma/:proformaInvoiceID',
+                loadComponent: () => import('./transactions/tax-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/TaxInvoice',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'from-export/:exportOrderID',
+                loadComponent: () => import('./transactions/tax-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/TaxInvoice',
+                  breadcrumb: 'Create'
+                }
+              }
+            ]
+          },
+          {
+            path: 'import-order',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Import Order'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/import-order/dataview/dataview.component').then((m) => m.DataviewComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/ImportOrder'
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/import-order/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/ImportOrder',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/import-order/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/ImportOrder',
                   breadcrumb: 'Edit'
                 }
               }

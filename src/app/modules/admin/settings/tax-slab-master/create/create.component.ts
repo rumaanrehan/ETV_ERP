@@ -26,6 +26,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   ActiveStatus: boolean = false;
+  
   form!: FormGroup;
   formConfig!: FormConfigType<TaxSlabMaster>;
 

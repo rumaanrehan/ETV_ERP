@@ -1,0 +1,34 @@
+<div class="min-vh-80 d-flex align-items-center justify-content-center reset-bg">
+  <div class="card reset-card shadow-lg border-0" style="width: 420px;">
+    <div class="card-body p-4">
+      <form>
+        <div class="d-flex justify-content-center mb-4">
+          <img src="./assets/images/faces/profile-avatar.png" alt="Profile Avatar" width="90" height="90"
+            class="rounded-circle border shadow-sm"/>
+        </div>
+        <div class="col-xl-12 form-group">
+          <z-inputtext [group]="form" [control]="'UserFullName'" [label]="formConfig.UserFullName.label" [validationMessage]="formConfig.UserFullName.error"></z-inputtext>
+        </div>
+        <div class="col-xl-12 form-group">
+          <z-inputtext [group]="form" [control]="'OldPassword'" [label]="formConfig.OldPassword.label" [validationMessage]="formConfig.OldPassword.error"></z-inputtext>
+        </div>
+        <div class="col-xl-12 form-group">
+          <z-inputtext [group]="form" [control]="'NewPassword'" [label]="formConfig.NewPassword.label" [validationMessage]="formConfig.NewPassword.error"></z-inputtext>
+        </div>
+        <div class="col-xl-12 form-group">
+          <z-inputtext [group]="form" [control]="'ConfirmPassword'" [label]="formConfig.ConfirmPassword.label" [validationMessage]="formConfig.ConfirmPassword.error"></z-inputtext>
+        </div>
+
+        <div class="text-danger mt-1 mb-2" *ngIf="isPasswordMismatch && form.get('ConfirmPassword')?.touched">
+          New Password and Confirm Password do not match.
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-primary flex-fill fw-semibold" (click)="updatePassword()" [disabled]="isResetting">
+            Reset Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

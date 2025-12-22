@@ -154,14 +154,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${ row.ProductName }</b>"?`,})
         .then((result) => {
         if (result.isConfirmed) {
-          const model: ProductMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value,
-          };
-
-          this.pageService
-          .DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.ProductID!, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

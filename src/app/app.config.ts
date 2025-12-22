@@ -3,6 +3,7 @@ import {
   ApplicationConfig,
   ErrorHandler,
   importProvidersFrom,
+  LOCALE_ID,
 } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterOutlet, UrlSerializer, provideRouter } from '@angular/router';
@@ -18,7 +19,11 @@ import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor
 import { CustomService } from './shared/services/custom.service';
 import { LowerCaseUrlSerializer } from './core/utility/lower-case-url-serializer';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { register } from 'module';
+import { registerLocaleData } from '@angular/common';
+import localeEn from '@angular/common/locales/en';
 
+registerLocaleData(localeEn)
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
@@ -40,6 +45,8 @@ export const appConfig: ApplicationConfig = {
       BrowserAnimationsModule
     ),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
-    { provide: UrlSerializer, useClass: LowerCaseUrlSerializer }, provideAnimationsAsync(),
+    { provide: UrlSerializer, useClass: LowerCaseUrlSerializer },
+    { provide: LOCALE_ID, useValue: 'en-US'},
+    provideAnimationsAsync(),
   ],
 };

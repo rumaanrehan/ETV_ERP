@@ -49,6 +49,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   statusHex!: string | null;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+  isFromSalesEnquiry = false;
+  isExportAlreadyExists = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<SalesQuotation>;
@@ -102,7 +104,27 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     this.loadDropdownList();
-    this.getDetails();
+    // this.getDetails();
+
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(paramMap => {
+        const id = paramMap.get('id');
+        const salesEnquiryID = paramMap.get('salesEnquiryID');
+        console.log("Sales Enquiry or sales quotaion id from route paramMap:", salesEnquiryID, id);
+
+        if (id) {
+          this.loadSalesQuotaion(+id);
+          return;
+        }
+        else if (salesEnquiryID) {
+          this.isFromSalesEnquiry = true;
+          this.GetSalesEnquiryDetails(+salesEnquiryID);
+          return;
+        }
+
+        this.isEditMode = false;
+      });
   }
 
   get isBasedOnSalesEnquiry(): boolean {
@@ -160,6 +182,14 @@ export class CreateComponent implements OnInit, OnDestroy {
     try {
       this.router.navigate(['/ie/sales-quotation/index']);
     } catch (error) { }
+  }
+
+  onClickNavigateToExportOrder(salesQuotationID: number): void {
+    if (salesQuotationID) {
+      this.router.navigate([`ie/export-order/from-quotation/${salesQuotationID}`]);
+    }else { 
+      return;
+    }
   }
 
   resetForm(): void {
@@ -526,7 +556,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
                   this.statusText = response.Data.StatusText;
                   this.statusHex = response.Data.StatusHex;
-                  this.selectedCustomerAddress = model.CustomerAddress,
+                  this.selectedCustomerAddress = model.CustomerAddress;
 
                     this.form.patchValue({
                       SalesQuotationID: model.SalesQuotationID,
@@ -586,12 +616,12 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            console.log(response.Data);
             const model: SalesEnquiry_Detail = response.Data;
 
             this.selectedCustomerAddress = model.CustomerAddress,
               this.form.patchValue({
                 SalesEnquiryID: model.SalesEnquiryID,
+                SalesEnquiryNo: model.SalesEnquiryNo,
                 CustomerID: model.CustomerID,
                 CustomerName: model.CustomerName,
               });
@@ -619,6 +649,72 @@ export class CreateComponent implements OnInit, OnDestroy {
           // this.alertService.showServerResponseAlert();
         }
       });
+  }
+
+  private loadSalesQuotaion(id: number): void {
+    this.isEditMode = true;
+
+    try {
+      this.pageService.GetDetails(id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (!response.IsSuccess) {
+              this.alertService.showServerResponseAlert(response);
+              return;
+            }
+            const model: SalesQuotation_Detail = response.Data;
+            console.log("Sales Quotation Details:", response.Data);
+
+            this.statusText = response.Data.StatusText;
+            this.statusHex = response.Data.StatusHex;
+            this.selectedCustomerAddress = model.CustomerAddress,
+            this.isExportAlreadyExists = response.Data.IsExportAlreadyExists;
+            console.log(this.isExportAlreadyExists);
+
+            this.form.patchValue({
+              SalesQuotationID: model.SalesQuotationID,
+              SalesQuotationNo: model.SalesQuotationNo,
+              BasedOn: model.BasedOn,
+              SalesEnquiryID: model.SalesEnquiryID,
+              SalesEnquiryNo: model.SalesEnquiryNo,
+              CustomerID: model.CustomerID,
+              CustomerName: model.CustomerName,
+              SalesQuotationDate: DateUtils.toDate(response.Data.SalesQuotationDate!),
+              FCCurrencyID: model.FCCurrencyID,
+              IncotermID: model.IncotermID,
+              PaymentTermID: model.PaymentTermID,
+              ExchangeRateToBC: model.ExchangeRateToBC,
+              Narration: model.Narration,
+              IsRoundOff: model.IsRoundOff,
+              SubtotalAmountFC: model.SubtotalAmountFC,
+              TaxAmountFC: model.TaxAmountFC,
+              NetAmountFC: model.NetAmountFC,
+              ValidityDate: response.Data.ValidityDate ? DateUtils.toDate(response.Data.ValidityDate) : null
+            });
+
+            this.productListArray.clear();
+            response.Data.ProductList.Items.forEach(item => {
+              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productForm.patchValue({
+                ProductID: item.ProductID,
+                ProductName: item.ProductName,
+                QuotedQty: item.QuotedQty,
+                UOM: item.UOM,
+                RatePerUnitFC: item.RatePerUnitFC,
+                TaxRate: item.TaxRate,
+                TaxableAmountFC: item.TaxableAmountFC,
+                TaxAmountFC: item.TaxAmountFC
+              });
+              this.productListArray.push(productForm);
+            });
+
+            this.tableDef.data = this.productListArray.value;
+            this.productCalculation();
+          }
+        });
+    }
+    catch (error) {}
   }
 
   handleComponentLoad(componentName: string) {

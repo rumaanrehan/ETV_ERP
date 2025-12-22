@@ -45,8 +45,8 @@ export class TaxSlabMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: TaxSlabMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(TaxSlabID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?TaxSlabID=${TaxSlabID}&${reasonToUpdate}`, {});
   }
   
  //#region Form Configuration
@@ -54,7 +54,7 @@ export class TaxSlabMasterService {
     return {
       TaxSlabCode: '',
       TaxSlabName: '',
-      TaxRate: 0,
+      TaxRateID: 0,
       ActiveStatusID: 0
     }
   }

@@ -38,8 +38,8 @@ export class ManufacturerMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: ManufacturerMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(ManufacturerID: number ,  reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?manufacturerID=${ManufacturerID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   //#region Form Configuration

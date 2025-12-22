@@ -124,7 +124,6 @@ export class IndexComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            console.log(response.Data);
             this.tableDef.data = response.Data.Items;
             this.tableDef.totalRecords = response.Data.TotalRecords;
           } else {
@@ -152,13 +151,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          const model: DocumentTypeMaster = {
-            ...row,
-            ActionType,
-            ReasonToUpdate: result.value,
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.DocumentTypeID, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

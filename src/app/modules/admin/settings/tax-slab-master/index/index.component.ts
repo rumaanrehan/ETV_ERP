@@ -51,7 +51,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
       { data: 'TaxSlabCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.taxSlabCodeTemplate },
       { data: 'TaxSlabName', label: 'Tax Slab Name', filterable: true },
-      { data: 'TaxRate', label: 'Tax Rate', filterable: true },
+      { data: 'TaxRate', label: 'Tax Rate', filterType: 'select', filterKey: 'TaxRateID', filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.taxSlabActiveStatusTemplate, },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
     ];
@@ -146,13 +146,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       })
       .then(result => {
         if (result.isConfirmed) {
-          const model: TaxSlabMaster = {
-            ...row,
-            ActionType: ActionType,
-            ReasonToUpdate: result.value
-          };
-
-          this.pageService.DeleteReactivate(model)
+          this.pageService.DeleteReactivate(row.TaxSlabID, result.value)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
@@ -9,6 +9,7 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { HolidayMaster } from '../holiday-master';
 import { HolidayMasterService } from '../holiday-master.service';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 
 @Component({
   selector: 'app-create',
@@ -29,13 +30,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   formConfig!: FormConfigType<HolidayMaster>;
 
-  holidayTypeList: StaticList[] = [
-    {Text: 'Public Holiday', iValue: 1, cValue: 'Public Holiday'},
-    {Text: 'Religious Holiday', iValue: 2, cValue: 'Religious Holiday'},
-    {Text: 'National Holiday', iValue: 3, cValue: 'National Holiday'},
-    {Text: 'Personal Holiday', iValue: 4, cValue: 'Personal Holiday'},
-    {Text: 'Sports Holiday', iValue: 5, cValue: 'Sports Holiday'}
-  ]
+  holidayTypeList: StaticList[] = [];
 
   constructor(
     private pageService: HolidayMasterService,
@@ -47,11 +42,45 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<HolidayMaster>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  loadDropdownList(): void {
+    this.loadStaticLists([
+      { fieldName: 'HolidayTypeID', targetList: 'holidayTypeList' },
+    ]);
+  }
+    
+  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
+
+    listConfigs.forEach(({ fieldName, targetList }) => {
+      sources[targetList] = this.pageService.GetStaticList({
+        AreaName: 'Admin',
+        ControllerName: 'HolidayMaster',
+        FieldName: fieldName,
+      });
+    });
+
+    forkJoin(sources)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as StaticList[]) = [];
+            }
+          });
+        },
+      });
   }
   
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: HolidayMaster): void {

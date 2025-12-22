@@ -66,6 +66,7 @@ export interface SalesQuotation_IndexTableList {
     TaxAmountFC: number;
     NetAmountFC: number;
     StatusText: string;
+    CurrencySymbol: string;
 }
 
 export interface SalesQuotationRequest {
@@ -96,6 +97,7 @@ export interface SalesQuotation_Detail {
   NetAmountFC: number;
   StatusText: string;
   StatusHex: string;
+  IsExportAlreadyExists: boolean;
   ProductList: TList<SalesQuotationProduct_Detail>;
 }
 

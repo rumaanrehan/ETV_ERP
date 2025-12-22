@@ -21,6 +21,18 @@
     {{formatDate(row.TaxInvoiceDate)}}
 </ng-template>
 
+<ng-template #subtotalAmountFCTemplate let-row>
+    <span>{{row.CurrencySymbol}} {{row.SubtotalAmountFC  | number:'1.2-2' }}</span>
+</ng-template>
+
+<ng-template #taxAmountFCTemplate let-row>
+    <span>{{row.CurrencySymbol}} {{row.TaxAmountFC  | number:'1.2-2' }}</span>
+</ng-template>
+
+<ng-template #netAmountFCTemplate let-row>
+    <span>{{row.CurrencySymbol}} {{row.NetAmountFC | number:'1.2-2' }}</span>
+</ng-template>
+
 <ng-template #taxInvoiceStatusTemplate let-row>
     <span class="table-row-status">
         <i class="pi pi-circle-fill" [ngStyle]="{'color': '#'+row.StatusHex}"></i>
@@ -29,7 +41,7 @@
 </ng-template>
 
 <ng-template #actionColTemplate let-row>
-    <div class="d-flex justify-content-end" *ngIf="row.StatusID == 1">
+    <div class="d-flex justify-content-end" *ngIf="row.StatusText == 'Draft'">
         <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
             (click)="onClickDeleteReactivate(row)"><i class="pi pi-times-circle"></i>
         </span>

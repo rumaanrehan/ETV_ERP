@@ -25,6 +25,9 @@ export class IndexComponent {
   @ViewChild('taxInvoiceCodeTemplate', { static: true }) taxInvoiceCodeTemplate!: TemplateRef<any>;
   @ViewChild('taxInvoiceDateTemplate', { static: true }) taxInvoiceDateTemplate!: TemplateRef<any>;
   @ViewChild('taxInvoiceStatusTemplate', { static: true }) taxInvoiceStatusTemplate!: TemplateRef<any>;
+  @ViewChild('subtotalAmountFCTemplate', { static: true }) subtotalAmountFCTemplate!: TemplateRef<any>;
+  @ViewChild('taxAmountFCTemplate', { static: true }) taxAmountFCTemplate!: TemplateRef<any>;
+  @ViewChild('netAmountFCTemplate', { static: true }) netAmountFCTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   
   tableDef!: DataTableDef<TaxInvoice_IndexTableList>;
@@ -56,9 +59,9 @@ export class IndexComponent {
       { data: 'BasedOn', label: 'Based On', width: "10%", filterable: true, filterType: 'select', filterKey: 'BasedOn' },
       { data: 'DocumentNo', label: 'Document No', orderable: false, width: "12%", filterable: true },
       { data: 'CustomerName', label: 'Customer', width: "20%", filterable: true },
-      { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "12%" },
-      { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "12%" },
-      { data: 'NetAmountFC', label: 'Net Amount', width: "12%" },
+      { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "12%", customTemplate: this.subtotalAmountFCTemplate },
+      { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "12%", customTemplate: this.taxAmountFCTemplate },
+      { data: 'NetAmountFC', label: 'Net Amount', width: "12%" , customTemplate: this.netAmountFCTemplate },
       { data: 'StatusID', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'Status', cssClass: 'text-center', customTemplate: this.taxInvoiceStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "6%", customTemplate: this.actionColTemplate },
     ];
@@ -126,12 +129,7 @@ export class IndexComponent {
       })
         .then(result => {
           if (result.isConfirmed) {
-            const model: TaxInvoice = {
-              ...row,
-              ReasonToUpdate: result.value
-            };
-
-            this.pageService.CancelRecord(model)
+            this.pageService.CancelRecord(row.TaxInvoiceID, result.value)
               .pipe(takeUntil(this.destroy$))
               .subscribe({
                 next: (response) => {

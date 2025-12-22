@@ -31,6 +31,7 @@ export class UOMMasterService {
   }
 
   CreateRecord(model: UOMMaster): Observable<ApiResponse> {
+    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
@@ -38,8 +39,8 @@ export class UOMMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(model: UOMMaster): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete`, model);
+  DeleteReactivate(UOMID: number , reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?UOMID=${UOMID}&reasonToUpdate={reasonToUpdate} `, {});
   }
 
   //#region Form Configuration

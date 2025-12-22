@@ -143,7 +143,11 @@
     </div>
   </div>
   <div class="page-action-panel">
-    <div class="col-xl-4"></div>
+    <div class="col-xl-4">
+      <div class="col-xl-4 px-1" *ngIf="isEditMode && !isExportAlreadyExists">
+        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickNavigateToExportOrder(this.form.get('SalesQuotationID')?.value || null)"> Add Export </button>
+      </div>
+    </div>
     <div class="col-xl-4">
       <div class="status-pill" [ngStyle]="{'background-color': '#'+statusHex}" *ngIf="isEditMode">
         <span>Status: {{statusText}}</span>
