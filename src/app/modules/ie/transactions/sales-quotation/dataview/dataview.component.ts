@@ -3,8 +3,6 @@ import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, Vie
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
-import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-data-view/z-data-view';
-import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
@@ -12,14 +10,16 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { SalesQuotation, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList } from '../sales-quotation';
+import { SalesQuotation, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_IndexTableSort } from '../sales-quotation';
 import { SalesQuotationService } from '../sales-quotation.service';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
+import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
+import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -35,6 +35,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<SalesQuotation_IndexTableFilter>
+  sortingForm!: FormGroup;
+  sortingFormConfig!: FormConfigType<SalesQuotation_IndexTableSort>
 
   statusList: StaticList[] = []
   basedOnList: StaticList[] = []
@@ -55,15 +57,10 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
-    this.filterForm = this.formService.createFormGroup<SalesQuotation_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
-    this.dataViewDef = {
-      tableKey: 'IE_SalesQuotation_IndexDataView',
-      defaultSortColumn: { sortField: 'QuotationNo', sortOrder: 1 },
-      filterForm: this.filterForm,
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
+    this.filterForm = this.formService.createFormGroup<SalesQuotation_IndexTableFilter>(this.filterFormConfig);
+    this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
+    this.sortingForm = this.formService.createFormGroup<SalesQuotation_IndexTableSort>(this.sortingFormConfig);
+    this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
 
     this.loadDropdownList();
   }
@@ -124,14 +121,22 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.router.navigate(['ie/sales-quotation/create']);
   }
 
+  onResetForm(formGroup: FormGroup): void {
+    if (formGroup === this.filterForm) {
+      this.formService.resetFormValue<SalesQuotation_IndexTableFilter>(this.filterFormConfig, formGroup);
+    } else if (formGroup === this.sortingForm) {
+      this.formService.resetFormValue<SalesQuotation_IndexTableSort>(this.sortingFormConfig, formGroup);
+    }
+    this.loadData();
+  }
+
   loadData() {
     try {
-      const model: DataViewParams<SalesQuotation_IndexTableFilter> = {
+      const model: DataViewParams<SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableSort> = {
         first: this.dataViewEvent.first,
         last: this.dataViewEvent.rows,
-        sortField: this.dataViewEvent.sortField,
-        sortOrder: this.dataViewEvent.sortOrder,
-        filters: this.filterForm.value
+        filters: this.filterForm.value,
+        sortings: this.sortingForm.value
       };
       this.pageService.PopulateGrid(this.formService.transformFormData(model))
         .pipe(takeUntil(this.destroy$))

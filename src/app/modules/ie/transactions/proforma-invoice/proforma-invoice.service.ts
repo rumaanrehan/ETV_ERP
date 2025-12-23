@@ -108,7 +108,7 @@ export class ProformaInvoiceService {
       BasedOn: 0,
       ExportOrderNo: '',
       CustomerName: '',
-      Status: 0
+      StatusID: 0
     }
   }
 

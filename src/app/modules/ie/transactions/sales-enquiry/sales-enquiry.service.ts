@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { SalesEnquiry, SalesEnquiry_Detail, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_SelectList, SalesEnquiryRequest } from './sales-enquiry';
+import { SalesEnquiry, SalesEnquiry_Detail, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort, SalesEnquiry_SelectList, SalesEnquiryRequest } from './sales-enquiry';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ProductRequest, Product_SelectList } from '../../../ims/settings/product-master/product-master';
 import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
@@ -12,6 +12,7 @@ import { FormConfigType } from '../../../../shared/models/form.model';
 import { FormGroup, Validators } from '@angular/forms';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { GreaterThan } from '../../../../shared/validators/greater-than.validator';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +67,19 @@ export class SalesEnquiryService {
       CustomerName: {
         label: 'Customer Name',
         defaultValue: ''
+      },
+      StatusID: {
+        label: 'Status',
+        defaultValue: 0
+      }
+    }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<SalesEnquiry_IndexTableSort> {
+    return {
+      SalesEnquiryNo: {
+        label: 'Sales Enquiry No',
+        defaultValue: -1
       },
       StatusID: {
         label: 'Status',
@@ -227,6 +241,32 @@ export class SalesEnquiryService {
         { data: 'ProductCode', label: 'Product Code', width: '100px' },
         { data: 'ProductName', label: 'Product Name', width: '200px' }
       ],
+    }
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<SalesEnquiry_IndexTableList> {
+    return {
+      tableKey: 'IE_SalesEnquiry_IndexDataView',
+      defaultSortColumn: { sortField: 'ExportOrderNo', sortOrder: 1 },
+      filterForm: filterForm,
+      sortingForm: sortingForm,
+      filterFields: [
+        { field: 'SalesEnquiryNo', label: 'Enquiry No', type: 'text' },
+        { field: 'CustomerName', label: 'Customer', type: 'text' },
+        {
+          field: 'StatusID',
+          label: 'Status',
+          type: 'dropdown'
+        }
+      ],
+      sortFields: [
+        { field: 'SalesEnquiryNo', label: 'Enquiry No', enabled: true, order: 1 },
+        { field: 'StatusID', label: 'Status', enabled: true, order: 0 }
+      ],
+
+      data: [],
+      totalRecords: 0,
+      loading: false
     }
   }
 }

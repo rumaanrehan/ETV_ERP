@@ -7,11 +7,8 @@ import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { Menu, MenuModule } from 'primeng/menu';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
-import { DataViewLazyLoadEvent, DataViewParams1 } from '../../../../../shared/components/z-data-view/z-data-view';
-import { DataViewDef } from '../../../../../shared/components/z-dataview/z-dataview';
-import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
+import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { DataTableFilterList, StaticList } from '../../../../../shared/models/select-list';
@@ -27,12 +24,13 @@ import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
 import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
 import { ZMultiButtonMenuComponent } from '../../../../../shared/components/z-multi-button-menu/z-multi-button-menu.component';
+import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
+import { ZMenuComponent } from '../../../../../shared/components/z-menu/z-menu.component';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule, ZMultiButtonMenuComponent, MenuModule, ButtonModule],
-  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, ZMultiButtonMenuComponent, MenuModule, ButtonModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -49,6 +47,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<ExportOrder_IndexTableFilter>
+  sortingForm!: FormGroup;
+  sortingFormConfig!: FormConfigType<ExportOrder_IndexTableSort>
 
   menuItems: MenuItem[] = [
     {
@@ -93,233 +93,231 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // loadDropdownList(): void {
-  //   this.loadDataTableLists([
-  //     { columnName: 'BasedOn', targetList: 'basedOnList' },
-  //     { columnName: 'Incoterm', targetList: 'incotermList' },
-  //     { columnName: 'IsDutyDrawable', targetList: 'isDutyDrawableList' },
-  //     { columnName: 'IsRoDTEP', targetList: 'isRoDTEPList' },
-  //     { columnName: 'ShipmentMode', targetList: 'shipmentModeList' }
-  //   ]);
-  // }
+  loadDropdownList(): void {
+    this.loadDataTableLists([
+      { columnName: 'BasedOn', targetList: 'basedOnList' },
+      { columnName: 'Incoterm', targetList: 'incotermList' },
+      { columnName: 'IsDutyDrawable', targetList: 'isDutyDrawableList' },
+      { columnName: 'IsRoDTEP', targetList: 'isRoDTEPList' },
+      { columnName: 'ShipmentMode', targetList: 'shipmentModeList' }
+    ]);
+  }
 
-  // loadDataTableLists(listConfigs: { columnName: string; targetList: keyof DataviewComponent }[]): void {
-  //   const sources: Record<string, Observable<ApiListResponse<DataTableFilterList>>> = {};
+  loadDataTableLists(listConfigs: { columnName: string; targetList: keyof DataviewComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<DataTableFilterList>>> = {};
 
-  //   listConfigs.forEach(({ columnName, targetList }) => {
-  //     sources[targetList] = this.pageService.GetDataTableList({
-  //       AreaName: 'IE',
-  //       ControllerName: 'ExportOrder',
-  //       TableName: 'IndexTable',
-  //       ColumnName: columnName
-  //     });
-  //   });
-
-  forkJoin(sources)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-    next: (response) => {
-      listConfigs.forEach(({ targetList }) => {
-        if (response[targetList]?.IsSuccess) {
-          (this[targetList] as DataTableFilterList[]) = response[targetList].Data.Items || [];
-        } else {
-          (this[targetList] as DataTableFilterList[]) = [];
-        }
+    listConfigs.forEach(({ columnName, targetList }) => {
+      sources[targetList] = this.pageService.GetDataTableList({
+        AreaName: 'IE',
+        ControllerName: 'ExportOrder',
+        TableName: 'IndexTable',
+        ColumnName: columnName
       });
-    },
-  });
-  }
+    });
 
-onCloseSidebar(): void {
-  this.loadData();
-}
-
-onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
-  this.dataViewEvent = event;
-  this.loadData();
-}
-
-onClickPageHeaderAddButton() {
-  this.router.navigate(['ie/export-order/create']);
-}
-
-onResetForm(formGroup: FormGroup): void {
-  if(formGroup === this.filterForm) {
-  this.formService.resetFormValue<ExportOrder_IndexTableFilter>(this.filterFormConfig, formGroup);
-} else if (formGroup === this.sortingForm) {
-  this.formService.resetFormValue<ExportOrder_IndexTableSort>(this.sortingFormConfig, formGroup);
-}
-this.loadData();
-  }
-
-loadData() {
-  try {
-    const model: DataViewParams1<ExportOrder_IndexTableFilter, ExportOrder_IndexTableSort> = {
-      first: this.dataViewEvent.first,
-      last: this.dataViewEvent.rows,
-      filters: this.filterForm.value,
-      sortings: this.sortingForm.value
-    };
-    console.log(model);
-    this.pageService.PopulateGrid(this.formService.transformFormData(model))
+    forkJoin(sources)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          if (response.IsSuccess) {
-            this.dataViewDef.data = response.Data.Items;
-            this.dataViewDef.totalRecords = response.Data.TotalRecords;
-          }
-          else {
-            this.dataViewDef.data = [];
-            this.dataViewDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as DataTableFilterList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as DataTableFilterList[]) = [];
+            }
+          });
         },
-        complete: () => {
-          this.dataViewDef.loading = false;
+      });
+  }
+
+  onCloseSidebar(): void {
+    this.loadData();
+  }
+
+  onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
+    this.dataViewEvent = event;
+    this.loadData();
+  }
+
+  onClickPageHeaderAddButton() {
+    this.router.navigate(['ie/export-order/create']);
+  }
+
+  onResetForm(formGroup: FormGroup): void {
+    if (formGroup === this.filterForm) {
+      this.formService.resetFormValue<ExportOrder_IndexTableFilter>(this.filterFormConfig, formGroup);
+    } else if (formGroup === this.sortingForm) {
+      this.formService.resetFormValue<ExportOrder_IndexTableSort>(this.sortingFormConfig, formGroup);
+    }
+    this.loadData();
+  }
+
+  loadData() {
+    try {
+      const model: DataViewParams<ExportOrder_IndexTableFilter, ExportOrder_IndexTableSort> = {
+        first: this.dataViewEvent.first,
+        last: this.dataViewEvent.rows,
+        filters: this.filterForm.value,
+        sortings: this.sortingForm.value
+      };
+      this.pageService.PopulateGrid(this.formService.transformFormData(model))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.dataViewDef.data = response.Data.Items;
+              this.dataViewDef.totalRecords = response.Data.TotalRecords;
+            }
+            else {
+              this.dataViewDef.data = [];
+              this.dataViewDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.dataViewDef.loading = false;
+          }
+        });
+    }
+    catch (error) {
+
+    }
+  }
+
+  onClickEditDetails(exportOrderID: number): void {
+    if (exportOrderID) {
+      this.router.navigate([`ie/export-order/edit/${exportOrderID}`]);
+    }
+  }
+
+  onClickCancel(row: any) {
+    this.alertService
+      .showConfirmationWithInput({
+        text: 'Do you want to cancel?',
+        inputPlaceholder: 'Reason to cancel'
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const model: ExportOrder = {
+            ...row,
+            ReasonToUpdate: result.Message
+          }
+
+          this.pageService.CancelOrder(model)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                this.loadData();
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: 'success',
+                    text: response.Message,
+                    timer: 5000,
+                  });
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
         }
       });
   }
-  catch (error) {
 
-  }
-}
-
-onClickEditDetails(exportOrderID: number): void {
-  if(exportOrderID) {
-    this.router.navigate([`ie/export-order/edit/${exportOrderID}`]);
-  }
-}
-
-onClickCancel(row: any) {
-  this.alertService
-    .showConfirmationWithInput({
-      text: 'Do you want to cancel?',
-      inputPlaceholder: 'Reason to cancel'
-    })
-    .then((result) => {
-      if (result.isConfirmed) {
-        const model: ExportOrder = {
-          ...row,
-          ReasonToUpdate: result.Message
-        }
-
-        this.pageService.CancelOrder(model)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              this.loadData();
-              if (response.IsSuccess) {
-                this.alertService.showAlert({
-                  type: 'success',
-                  text: response.Message,
-                  timer: 5000,
-                });
-              } else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
-      }
-    });
-}
-
-handleComponentLoad(componentName: string, model: any) {
-  console.log(model);
-  if (this.componentRef) {
-    this.destroyComponent();
-  }
-
-  switch (componentName) {
-    case 'ShippingCreateComponent':
-      return this.createShippingComponent(model);
-    case 'BillCreateComponent':
-      return this.createBillComponent(model);
-    case 'PaymentCreateComponent':
-      return this.createPaymentComponent(model);
-    case 'LetterOfCreditCreateComponent':
-      return this.createLCComponent(model);
-    case 'TrackingCreateComponent':
-      return this.createTrackingComponent(model);
-    case 'DocumentCreateComponent':
-      return this.createDocumentComponent(model);
-    default:
-      throw new Error(`Component ${componentName} not found`);
-  }
-}
-
-loadDynamicComponent(model: any) {
-  setTimeout(() => {
-    this.componentRef?.instance.openSidebar(true, false, model);
-    this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
-      this.loadData();
+  handleComponentLoad(componentName: string, model: any) {
+    if (this.componentRef) {
       this.destroyComponent();
-    });
-  })
-}
+    }
 
-destroyComponent() {
-  if (this.componentRef) {
-    this.componentRef.destroy();
-    this.componentRef = undefined;
+    switch (componentName) {
+      case 'ShippingCreateComponent':
+        return this.createShippingComponent(model);
+      case 'BillCreateComponent':
+        return this.createBillComponent(model);
+      case 'PaymentCreateComponent':
+        return this.createPaymentComponent(model);
+      case 'LetterOfCreditCreateComponent':
+        return this.createLCComponent(model);
+      case 'TrackingCreateComponent':
+        return this.createTrackingComponent(model);
+      case 'DocumentCreateComponent':
+        return this.createDocumentComponent(model);
+      default:
+        throw new Error(`Component ${componentName} not found`);
+    }
   }
-}
+
+  loadDynamicComponent(model: any) {
+    setTimeout(() => {
+      this.componentRef?.instance.openSidebar(true, false, model);
+      this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
+        this.loadData();
+        this.destroyComponent();
+      });
+    })
+  }
+
+  destroyComponent() {
+    if (this.componentRef) {
+      this.componentRef.destroy();
+      this.componentRef = undefined;
+    }
+  }
 
   async createShippingComponent(row: ExportOrder_IndexTableList) {
-  const { CreateComponent } = await import('./../../export-order-shipping/create/create.component');
-  this.componentRef = this.container.createComponent(CreateComponent);
-  const model: ExportOrderShipping = this.formService.createNullObject<ExportOrderShipping>();
-  model.ExportOrderID = row.ExportOrderID;
-  model.ExportOrderNo = row.ExportOrderNo;
-  this.loadDynamicComponent(model);
-}
+    const { CreateComponent } = await import('./../../export-order-shipping/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderShipping = this.formService.createNullObject<ExportOrderShipping>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
 
   async createBillComponent(row: ExportOrder_IndexTableList) {
-  const { CreateComponent } = await import('./../../export-order-bill-regulation/create/create.component');
-  this.componentRef = this.container.createComponent(CreateComponent);
-  const model: ExportOrderBillRegulation = this.formService.createNullObject<ExportOrderBillRegulation>();
-  model.ExportOrderID = row.ExportOrderID;
-  model.ExportOrderNo = row.ExportOrderNo;
-  this.loadDynamicComponent(model);
-}
+    const { CreateComponent } = await import('./../../export-order-bill-regulation/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderBillRegulation = this.formService.createNullObject<ExportOrderBillRegulation>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
 
   async createPaymentComponent(row: ExportOrder_IndexTableList) {
-  const { CreateComponent } = await import('./../../export-order-payment/create/create.component');
-  this.componentRef = this.container.createComponent(CreateComponent);
-  const model: ExportOrderPayment = this.formService.createNullObject<ExportOrderPayment>();
-  model.ExportOrderID = row.ExportOrderID;
-  model.ExportOrderNo = row.ExportOrderNo;
-  this.loadDynamicComponent(model);
-}
+    const { CreateComponent } = await import('./../../export-order-payment/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderPayment = this.formService.createNullObject<ExportOrderPayment>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
 
   async createLCComponent(row: ExportOrder_IndexTableList) {
-  const { CreateComponent } = await import('./../../letter-of-credit/create/create.component');
-  this.componentRef = this.container.createComponent(CreateComponent);
-  const model: LetterOfCredit = this.formService.createNullObject<LetterOfCredit>();
-  model.ExportOrderID = row.ExportOrderID;
-  model.ExportOrderNo = row.ExportOrderNo;
-  this.loadDynamicComponent(model);
-}
+    const { CreateComponent } = await import('./../../letter-of-credit/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: LetterOfCredit = this.formService.createNullObject<LetterOfCredit>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
 
   async createTrackingComponent(row: ExportOrder_IndexTableList) {
-  const { CreateComponent } = await import('./../../export-order-tracking/create/create.component');
-  this.componentRef = this.container.createComponent(CreateComponent);
-  const model: ExportOrderTracking = this.formService.createNullObject<ExportOrderTracking>();
-  model.ExportOrderID = row.ExportOrderID;
-  model.ExportOrderNo = row.ExportOrderNo;
-  this.loadDynamicComponent(model);
-}
+    const { CreateComponent } = await import('./../../export-order-tracking/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderTracking = this.formService.createNullObject<ExportOrderTracking>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
 
   async createDocumentComponent(row: ExportOrder_IndexTableList) {
-  const { CreateComponent } = await import('./../../export-order-document/create/create.component');
-  this.componentRef = this.container.createComponent(CreateComponent);
-  const model: ExportOrderDocument = this.formService.createNullObject<ExportOrderDocument>();
-  model.ExportOrderID = row.ExportOrderID;
-  model.ExportOrderNo = row.ExportOrderNo;
-  this.loadDynamicComponent(model);
-}
+    const { CreateComponent } = await import('./../../export-order-document/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: ExportOrderDocument = this.formService.createNullObject<ExportOrderDocument>();
+    model.ExportOrderID = row.ExportOrderID;
+    model.ExportOrderNo = row.ExportOrderNo;
+    this.loadDynamicComponent(model);
+  }
 
-formatDate(date: Date) {
-  return DateUtils.formatDate(date);
-}
+  formatDate(date: Date) {
+    return DateUtils.formatDate(date);
+  }
 }

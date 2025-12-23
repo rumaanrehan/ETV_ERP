@@ -68,7 +68,7 @@ export interface ProformaInvoice_IndexTableFilter {
     BasedOn: number | null;
     ExportOrderNo: string | null;
     CustomerName: string | null;
-    Status: number | null;
+    StatusID: number | null;
 }
 
 export interface ProformaInvoice_IndexTableList {
@@ -94,39 +94,39 @@ export interface ProformaInvoiceRequest {
 }
 
 export interface ProformaInvoice_Detail {
-  ProformaInvoiceID: number;
-  ProformaInvoiceNo: string;
-  BasedOn: number;
-  ProformaInvoiceDate: Date;
-  ExportOrderID?: number;
-  ExportOrderNo?: string;
-  CustomerID: number;
-  CustomerName: string;
-  CustomerAddress?: string;
-  FCCurrencyID: number;
-  ExchangeRateDate: Date;
-  ExchangeRateToBC: number;
-  InsuranceAmountFC?: number;
-  FreightChargeFC?: number;
-  BankChargesFC?: number;
-  IsRoundOff: boolean;
-  SubtotalAmountFC: number;
-  TaxAmountFC: number | null;
-  NetAmountFC: number;
-  StatusText: string;
-  StatusHex: string;
-  IsTaxAlreadyExists: boolean;
-  ProductList: TList<ProformaInvoiceProductDetail>;
+    ProformaInvoiceID: number;
+    ProformaInvoiceNo: string;
+    BasedOn: number;
+    ProformaInvoiceDate: Date;
+    ExportOrderID?: number;
+    ExportOrderNo?: string;
+    CustomerID: number;
+    CustomerName: string;
+    CustomerAddress?: string;
+    FCCurrencyID: number;
+    ExchangeRateDate: Date;
+    ExchangeRateToBC: number;
+    InsuranceAmountFC?: number;
+    FreightChargeFC?: number;
+    BankChargesFC?: number;
+    IsRoundOff: boolean;
+    SubtotalAmountFC: number;
+    TaxAmountFC: number | null;
+    NetAmountFC: number;
+    StatusText: string;
+    StatusHex: string;
+    IsTaxAlreadyExists: boolean;
+    ProductList: TList<ProformaInvoiceProductDetail>;
 }
 
 export interface ProformaInvoiceProductDetail {
-  ProductID: number;
-  ProductName: string;
-  UOM: string;
-  SalesQty: number;
-  RatePerUnitFC: number;
-  SalesTaxRate: number;
-  TaxableAmountFC: number;
-  TaxAmountFC: number;
-  SalesAmountFC: number;
+    ProductID: number;
+    ProductName: string;
+    UOM: string;
+    SalesQty: number;
+    RatePerUnitFC: number;
+    SalesTaxRate: number;
+    TaxableAmountFC: number;
+    TaxAmountFC: number;
+    SalesAmountFC: number;
 }

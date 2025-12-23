@@ -62,7 +62,7 @@ export class IndexComponent {
       { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "10%", customTemplate: this.subtotalAmountFCTemplate },
       { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "10%", customTemplate: this.taxAmountFCTemplate },
       { data: 'NetAmountFC', label: 'Net Amount', width: "10%", customTemplate: this.netAmountFCTemplate },
-      { data: 'StatusID', label: 'Status', width: "8%", filterable: true, filterType: 'select', filterKey: 'Status', cssClass: 'text-center', customTemplate: this.proformaInvoiceStatusTemplate },
+      { data: 'StatusID', label: 'Status', width: "8%", filterable: true, filterType: 'select', filterKey: 'StatusID', cssClass: 'text-center', customTemplate: this.proformaInvoiceStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "4%", customTemplate: this.actionColTemplate },
     ];
   }

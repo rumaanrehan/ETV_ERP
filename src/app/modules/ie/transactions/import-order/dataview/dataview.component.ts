@@ -4,8 +4,6 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataViewModule } from 'primeng/dataview';
 import { Subject, takeUntil } from 'rxjs';
-import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-data-view/z-data-view';
-import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
@@ -14,16 +12,18 @@ import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
-import { ImportOrder, ImportOrder_IndexTableFilter, ImportOrder_IndexTableList } from '../import-order';
+import { ImportOrder, ImportOrder_IndexTableFilter, ImportOrder_IndexTableList, ImportOrder_IndexTableSort } from '../import-order';
 import { ImportOrderDocument } from '../import-order-document/import-order-document';
 import { ImportOrderPayment } from '../import-order-payment/import-order-payment';
 import { ImportOrderTracking } from '../import-order-tracking/import-order-tracking';
 import { ImportOrderService } from '../import-order.service';
+import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
+import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -36,18 +36,20 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   dataViewDef!: DataViewDef<ImportOrder_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
-  
+
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<ImportOrder_IndexTableFilter>
+  sortingForm!: FormGroup;
+  sortingFormConfig!: FormConfigType<ImportOrder_IndexTableSort>
 
   statusList: StaticList[] = [
-    {iValue: 0, Text: "All", cValue: ""},
-    {iValue: 1, Text: "processing", cValue: ""},
-    {iValue: 2, Text: "ready_to_ship", cValue: ""}
+    { iValue: 0, Text: "All", cValue: "" },
+    { iValue: 1, Text: "processing", cValue: "" },
+    { iValue: 2, Text: "ready_to_ship", cValue: "" }
   ]
 
   sortFieldList: any[] = [
-    {value: "StatusID", text: "Status"}
+    { value: "StatusID", text: "Status" }
   ]
 
   constructor(
@@ -62,14 +64,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
     this.filterForm = this.formService.createFormGroup<ImportOrder_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
-    this.dataViewDef = {
-      tableKey: 'Admin_ImportOrder_IndexDataView',
-      defaultSortColumn: { sortField: 'ImportOrderNo', sortOrder: 1 },
-      filterForm: this.filterForm,
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
+    this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
   }
 
   ngOnDestroy(): void {
@@ -86,14 +81,22 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.router.navigate(['ie/import-order/create']);
   }
 
+  onResetForm(formGroup: FormGroup): void {
+    if (formGroup === this.filterForm) {
+      this.formService.resetFormValue<ImportOrder_IndexTableFilter>(this.filterFormConfig, formGroup);
+    } else if (formGroup === this.sortingForm) {
+      this.formService.resetFormValue<ImportOrder_IndexTableSort>(this.sortingFormConfig, formGroup);
+    }
+    this.loadData();
+  }
+
   loadData() {
     try {
-      const model: DataViewParams<ImportOrder_IndexTableFilter> = {
+      const model: DataViewParams<ImportOrder_IndexTableFilter, ImportOrder_IndexTableSort> = {
         first: this.dataViewEvent.first,
         last: this.dataViewEvent.rows,
-        sortField: this.dataViewEvent.sortField,
-        sortOrder: this.dataViewEvent.sortOrder,
-        filters: this.filterForm.value
+        filters: this.filterForm.value,
+        sortings: this.sortingForm.value,
       };
       this.pageService.PopulateGrid(this.formService.transformFormData(model))
         .pipe(takeUntil(this.destroy$))
@@ -129,7 +132,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
     }
   }
-  
+
   onClickEditDetails(importOrderID: number) {
     if (importOrderID) {
       this.router.navigate([`ie/import-order/edit/${importOrderID}`]);
@@ -138,35 +141,35 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   onClickCancel(model: ImportOrder) {
     this.alertService
-    .showConfirmation({
-      text: 'Do you want to cancel?',
-    })
-    .then((result) => {
-      if (result.isConfirmed) {
-        this.pageService
-        .CancelOrder(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            this.loadData();
-            if (response.IsSuccess) {
-              this.alertService.showAlert({
-                type: 'success',
-                text: response.Message,
-                timer: 5000,
-              });
-            } else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
-      }
-    });
+      .showConfirmation({
+        text: 'Do you want to cancel?',
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.pageService
+            .CancelOrder(model)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                this.loadData();
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: 'success',
+                    text: response.Message,
+                    timer: 5000,
+                  });
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+      });
   }
 
   populateStatus(statusID: number): string {
     switch (statusID) {
-      case 1: 
+      case 1:
         return 'Processing';
       case 2:
         return 'Ready to ship';
@@ -196,7 +199,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadDynamicComponent(model: any){
+  loadDynamicComponent(model: any) {
     setTimeout(() => {
       this.componentRef?.instance.openSidebar(true, false, model);
       this.componentRef?.instance.closeSidebarEvent.subscribe(() => {

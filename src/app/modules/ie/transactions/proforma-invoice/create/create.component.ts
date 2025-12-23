@@ -182,7 +182,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   onClickNavigateToTaxInvoice(proformaInvoiceID: number): void {
     if (proformaInvoiceID) {
       this.router.navigate([`ie/tax-invoice/from-proforma/${proformaInvoiceID}`]);
-    }else { 
+    } else {
       return;
     }
   }
@@ -479,13 +479,13 @@ export class CreateComponent implements OnInit, OnDestroy {
           });
 
           if (this.isFromExportOrder) {
-              setTimeout(() => {
-                this.router.navigate(['/ie/proforma-invoice/index']);
-              }, 2000);
+            setTimeout(() => {
+              this.router.navigate(['/ie/proforma-invoice/index']);
+            }, 2000);
           } else {
-          setTimeout(() => {
-            this.ngOnInit();
-          }, 2000);
+            setTimeout(() => {
+              this.ngOnInit();
+            }, 2000);
           }
         },
         error: () => {
@@ -612,7 +612,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   //     }
   //   });
   // }
-  
+
   // private loadExportOrder(exportOrderID: number): void {
   //   this.form.patchValue({ BasedOn: 1 });
   //   this.GetExportOrder(exportOrderID);

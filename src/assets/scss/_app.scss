@@ -854,6 +854,7 @@ z-table .p-datatable-wrapper {
   position: absolute;
   right: 1rem;
   top: 2rem;
+  z-index: 5;
 }
 
 .index-filter-panel .field {
@@ -944,7 +945,7 @@ z-select-button .p-selectbutton {
 
 .dataview-item {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  border-radius: 1.25rem;
+  border-radius: 0.75rem;
   margin-bottom: 1rem;
   border: 1px solid var(--default-border);
 
@@ -1033,4 +1034,14 @@ z-menu .p-button-icon {
 
 .p-selectbutton .p-button.p-highlight span {
   color: var(--custom-white) !important;
+}
+
+.dataview-info-item span:first-child {
+  min-width: 115px;
+  /* adjust as needed */
+}
+
+.dataview-info-item {
+  display: flex;
+  gap: 1rem;
 }

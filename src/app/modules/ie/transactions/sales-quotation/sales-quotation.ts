@@ -25,7 +25,7 @@ export interface SalesQuotation {
     NetAmountBC: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
-    
+
     //AutoComplete releted fields
     ProductID: number | null;
     ProductName: string | null;
@@ -54,6 +54,13 @@ export interface SalesQuotation_IndexTableFilter {
     StatusID: number | null;
 }
 
+export interface SalesQuotation_IndexTableSort {
+    SalesQuotationNo: 1 | 0 | -1;
+    SalesQuotationDate: 1 | 0 | -1;
+    NetAmountFC: 1 | 0 | -1;
+    StatusID: 1 | 0 | -1;
+}
+
 export interface SalesQuotation_IndexTableList {
     SalesQuotationID: number;
     SalesQuotationNo: string;
@@ -76,41 +83,41 @@ export interface SalesQuotationRequest {
 }
 
 export interface SalesQuotation_Detail {
-  SalesQuotationID: number;
-  SalesQuotationNo: string;
-  BasedOn: number;
-  SalesQuotationDate: string;
-  ValidityDate: string | null;
-  SalesEnquiryID: number | null;
-  SalesEnquiryNo: string | null;
-  CustomerID: number;
-  CustomerName: string;
-  CustomerAddress: string | null;
-  FCCurrencyID: number;
-  ExchangeRateToBC: number;
-  IncotermID: number | null;
-  PaymentTermID: number | null;
-  Narration: string | null;
-  IsRoundOff: boolean;
-  SubtotalAmountFC: number;
-  TaxAmountFC: number;
-  NetAmountFC: number;
-  StatusText: string;
-  StatusHex: string;
-  IsExportAlreadyExists: boolean;
-  ProductList: TList<SalesQuotationProduct_Detail>;
+    SalesQuotationID: number;
+    SalesQuotationNo: string;
+    BasedOn: number;
+    SalesQuotationDate: string;
+    ValidityDate: string | null;
+    SalesEnquiryID: number | null;
+    SalesEnquiryNo: string | null;
+    CustomerID: number;
+    CustomerName: string;
+    CustomerAddress: string | null;
+    FCCurrencyID: number;
+    ExchangeRateToBC: number;
+    IncotermID: number | null;
+    PaymentTermID: number | null;
+    Narration: string | null;
+    IsRoundOff: boolean;
+    SubtotalAmountFC: number;
+    TaxAmountFC: number;
+    NetAmountFC: number;
+    StatusText: string;
+    StatusHex: string;
+    IsExportAlreadyExists: boolean;
+    ProductList: TList<SalesQuotationProduct_Detail>;
 }
 
 export interface SalesQuotationProduct_Detail {
-  ProductID: number;
-  ProductName: string;
-  UOM: string;
-  QuotedQty: number;
-  RatePerUnitFC: number;
-  TaxRate: number;
-  TaxableAmountFC: number;
-  TaxAmountFC: number;
-  QuotationAmountFC: number;
+    ProductID: number;
+    ProductName: string;
+    UOM: string;
+    QuotedQty: number;
+    RatePerUnitFC: number;
+    TaxRate: number;
+    TaxableAmountFC: number;
+    TaxAmountFC: number;
+    QuotationAmountFC: number;
 }
 
 export interface SalesQuotation_SelectList {

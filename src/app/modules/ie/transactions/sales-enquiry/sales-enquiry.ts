@@ -43,6 +43,11 @@ export interface SalesEnquiry_IndexTableFilter {
     StatusID: number | null;
 }
 
+export interface SalesEnquiry_IndexTableSort {
+    SalesEnquiryNo: 1 | 0 | -1;
+    StatusID: 1 | 0 | -1;
+}
+
 export interface SalesEnquiry_IndexTableList {
     SalesEnquiryID: number;
     SalesEnquiryNo: string;

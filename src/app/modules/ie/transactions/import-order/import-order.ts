@@ -32,7 +32,7 @@ export interface ImportOrder {
     FinalDestination: string | null;
     Narration: string | null;
     StatusID: number | null;
-    
+
     ProductID: number | null;
     ProductName: string | null;
 
@@ -67,7 +67,13 @@ export interface ImportOrderDetail {
 
 export interface ImportOrder_IndexTableFilter {
     ImportOrderNo: string | null;
+    CustomerName: string | null;
     StatusID: number | null;
+}
+
+export interface ImportOrder_IndexTableSort {
+    ImportOrderNo: 1 | 0 | -1;
+    StatusID: 1 | 0 | -1;
 }
 
 export interface ImportOrder_IndexTableList {

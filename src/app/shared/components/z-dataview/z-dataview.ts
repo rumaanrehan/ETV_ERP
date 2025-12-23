@@ -1,5 +1,4 @@
 import { FormGroup } from "@angular/forms";
-import { DataViewDefaultSort } from "../z-data-view/z-data-view";
 import { DataTableFilterList } from "../../models/select-list";
 
 export type FieldType = 'text' | 'number' | 'date' | 'dropdown';
@@ -16,6 +15,12 @@ export interface DataViewFieldDef {
     options?: DataTableFilterList[]; // for dropdown
 }
 
+
+export interface DataViewDefaultSort {
+    sortField: string;
+    sortOrder: number
+}
+
 export interface DataViewSortRow {
     field: string;
     label: string;
@@ -23,6 +28,12 @@ export interface DataViewSortRow {
     order: 1 | 0 | -1;
 }
 
+export interface DataViewParams<T, U> {
+    first?: number;
+    last?: number;
+    filters?: T;
+    sortings?: U;
+}
 
 export interface DataViewDef<T> {
     tableKey: string;
@@ -37,4 +48,11 @@ export interface DataViewDef<T> {
     data: T[];
     totalRecords: number;
     loading: boolean;
+}
+
+export interface DataViewLazyLoadEvent {
+    first?: number;
+    rows?: number;
+    sortField?: string | string[] | null | undefined;
+    sortOrder?: number | undefined | null;
 }

@@ -21,7 +21,8 @@ import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payme
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
 import { SalesEnquiry_Detail, SalesEnquiry_SelectList, SalesEnquiryRequest } from '../sales-enquiry/sales-enquiry';
 import { SalesEnquiryService } from '../sales-enquiry/sales-enquiry.service';
-import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_SelectList, SalesQuotationRequest } from './sales-quotation';
+import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_IndexTableSort, SalesQuotation_SelectList, SalesQuotationRequest } from './sales-quotation';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 
 @Injectable({
   providedIn: 'root'
@@ -109,6 +110,27 @@ export class SalesQuotationService {
       },
       BasedOn: {
         label: 'Based On',
+        defaultValue: 0
+      },
+      StatusID: {
+        label: 'Status',
+        defaultValue: 0
+      }
+    }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<SalesQuotation_IndexTableSort> {
+    return {
+      SalesQuotationNo: {
+        label: 'Quotation No',
+        defaultValue: -1
+      },
+      SalesQuotationDate: {
+        label: 'Quotation Date',
+        defaultValue: 0
+      },
+      NetAmountFC: {
+        label: 'Quotation Amount',
         defaultValue: 0
       },
       StatusID: {
@@ -320,7 +342,7 @@ export class SalesQuotationService {
       }
     };
   }
-    
+
   getSalesEnquiryAutoCompleteDef(formConfig: FormConfigType<SalesQuotation>, form: FormGroup): AutoCompleteDef<SalesEnquiry_SelectList> {
     return {
       type: 'formControl',
@@ -369,6 +391,39 @@ export class SalesQuotationService {
         { data: 'ProductCode', label: 'Product Code', width: '100px' },
         { data: 'ProductName', label: 'Product Name', width: '200px' }
       ],
+    }
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<SalesQuotation_IndexTableList> {
+    return {
+      tableKey: 'IE_SalesQuotation_IndexDataView',
+      defaultSortColumn: { sortField: 'SalesQuotationNo', sortOrder: 1 },
+      filterForm: filterForm,
+      sortingForm: sortingForm,
+      filterFields: [
+        { field: 'SalesQuotationNo', label: 'Quotation No', type: 'text' },
+        { field: 'CustomerName', label: 'Customer', type: 'text' },
+        {
+          field: 'BasedOn',
+          label: 'Based On',
+          type: 'dropdown',
+        },
+        {
+          field: 'StatusID',
+          label: 'Status',
+          type: 'dropdown'
+        }
+      ],
+      sortFields: [
+        { field: 'SalesQuotationNo', label: 'Quotation No', enabled: true, order: 1 },
+        { field: 'SalesQuotationDate', label: 'Quotation Date', enabled: true, order: 0 },
+        { field: 'NetAmountFC', label: 'Quotation Amount', enabled: true, order: 0 },
+        { field: 'StatusID', label: 'Status', enabled: true, order: 0 }
+      ],
+
+      data: [],
+      totalRecords: 0,
+      loading: false
     }
   }
 }

@@ -2,23 +2,24 @@ import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, Vie
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-data-view/z-data-view';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { SalesEnquiry, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList } from '../sales-enquiry';
+import { SalesEnquiry, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort } from '../sales-enquiry';
 import { SalesEnquiryService } from '../sales-enquiry.service';
 import { CommonModule } from '@angular/common';
-import { ZDataViewComponent } from '../../../../../shared/components/z-data-view/z-data-view.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
+import { DataViewDef, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
+import { DataViewLazyLoadEvent } from 'primeng/dataview';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, ZDataViewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -35,6 +36,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   filterForm!: FormGroup;
   filterFormConfig!: FormConfigType<SalesEnquiry_IndexTableFilter>
+  sortingForm!: FormGroup;
+  sortingFormConfig!: FormConfigType<SalesEnquiry_IndexTableSort>
 
   statusList: StaticList[] = []
 
@@ -55,15 +58,10 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
-    this.filterForm = this.formService.createFormGroup<SalesEnquiry_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
-    this.dataViewDef = {
-      tableKey: 'IE_SalesEnquiry_IndexDataView',
-      defaultSortColumn: { sortField: 'EnquiryNo', sortOrder: 1 },
-      filterForm: this.filterForm,
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
+    this.filterForm = this.formService.createFormGroup<SalesEnquiry_IndexTableFilter>(this.filterFormConfig);
+    this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
+    this.sortingForm = this.formService.createFormGroup<SalesEnquiry_IndexTableSort>(this.sortingFormConfig);
+    this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
   }
 
   ngOnDestroy(): void {
@@ -80,14 +78,22 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.router.navigate(['ie/sales-enquiry/create']);
   }
 
+  onResetForm(formGroup: FormGroup): void {
+    if (formGroup === this.filterForm) {
+      this.formService.resetFormValue<SalesEnquiry_IndexTableFilter>(this.filterFormConfig, formGroup);
+    } else if (formGroup === this.sortingForm) {
+      this.formService.resetFormValue<SalesEnquiry_IndexTableSort>(this.sortingFormConfig, formGroup);
+    }
+    this.loadData();
+  }
+
   loadData() {
     try {
-      const model: DataViewParams<SalesEnquiry_IndexTableFilter> = {
+      const model: DataViewParams<SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableSort> = {
         first: this.dataViewEvent.first,
         last: this.dataViewEvent.rows,
-        sortField: this.dataViewEvent.sortField,
-        sortOrder: this.dataViewEvent.sortOrder,
-        filters: this.filterForm.value
+        filters: this.filterForm.value,
+        sortings: this.sortingForm.value,
       };
       this.pageService.PopulateGrid(this.formService.transformFormData(model))
         .pipe(takeUntil(this.destroy$))
