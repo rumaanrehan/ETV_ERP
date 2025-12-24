@@ -21,16 +21,15 @@
             <div class="col-xl-12 form-group">
                 <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label"
                     [validationMessage]="formConfig.CountryID.error" [options]="countryList"
-                    [optionLabel]="'CountryName'" [optionValue]="'CountryID'">
+                    [optionLabel]="'CountryName'" [optionValue]="'CountryID'" (click)="loadStates()">
                 </z-select>
             </div>
-
-            <!-- <div *ngIf="form.get('CountryID')?.value !== null" class="col-xl-12 form-group">
+            <div *ngIf="form.get('CountryID')?.value !== null" class="col-xl-12 form-group">
                 <z-select [group]="form" [control]="'StateID'" [label]="formConfig.StateID.label"
-                    [validationMessage]="formConfig.StateID.error" [options]="stateList" [optionLabel]="'Text'"
-                    [optionValue]="'iValue'">
+                    [validationMessage]="formConfig.StateID.error" [options]="stateList" [optionLabel]="'StateName'"
+                    [optionValue]="'StateID'">
                 </z-select>
-            </div> -->
+            </div>
             <div class="col-xl-12 form-group">
                 <z-inputtext [group]="form" [control]="'CompanyContactName'"
                     [label]="formConfig.CompanyContactName.label"

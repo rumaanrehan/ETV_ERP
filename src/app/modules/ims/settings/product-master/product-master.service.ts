@@ -4,13 +4,11 @@ import { ItemCategory_SelectList, ItemCategoryRequest } from '../item-category-m
 import { ItemCategoryMasterService } from '../item-category-master/item-category-master.service';
 import { ItemGroup_SelectList, ItemGroupRequest } from '../item-group-master/item-group-master';
 import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
-import { Manufacturer_SelectList, ManufacturerRequest } from '../manufacturer-master/manufacturer-master';
 import { ManufacturerMasterService } from '../manufacturer-master/manufacturer-master.service';
 import { UOM_SelectList, UOMRequest } from '../uom-master/uom-master';
 import { UOMMasterService } from '../uom-master/uom-master.service';
 import { Product_Details, Product_SelectList, ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList, ProductRequest } from './product-master';
 import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
-import { ItemType_SelectList, ItemTypeRequest } from '../item-type-master/item-type-master';
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable, forkJoin } from 'rxjs';
@@ -41,30 +39,22 @@ export class ProductMasterService {
     private ManufacturerMasterService: ManufacturerMasterService,
     private uomMasterService: UOMMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
-    
-  ) {}
+
+  ) { }
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
     return this.selectListService.GetStaticList(model);
   }
 
-  GetMasterDropdownLists(): Observable<{ 
-    itemTypeList: ApiListResponse<ItemType_SelectList>
-    // itemGroupList: ApiListResponse<ItemGroup_SelectList>;
-    // itemCategoryList: ApiListResponse<ItemCategory_SelectList>;
-    // itemList: ApiListResponse<Generic_SelectList>;
-    manufacturerList: ApiListResponse<Manufacturer_SelectList>;
+  GetMasterDropdownLists(): Observable<{
+    itemCategoryList: ApiListResponse<ItemCategory_SelectList>;
     uomList: ApiListResponse<UOM_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
-    }> {
+  }> {
     return forkJoin({
-      itemTypeList: this.itemTypeMasterService.PopulateList({PopulateType: "SelectList"} as ItemTypeRequest),
-      // itemGroupList: this.ItemGroupMasterService.PopulateList({PopulateType: "SelectList"} as ItemGroupRequest),
-      // itemCategoryList: this.ItemCategoryMasterService.PopulateList({PopulateType: "SelectList"} as ItemCategoryRequest),
-      // itemList: this.genericMasterService.PopulateList("SelectList"),
-      manufacturerList: this.ManufacturerMasterService.PopulateList({PopulateType: "SelectList"} as ManufacturerRequest),
-      uomList: this.uomMasterService.PopulateList({PopulateType: "SelectList"} as UOMRequest),
-      taxSlabList: this.taxSlabMasterService.PopulateList({PopulateType: "SelectList"} as TaxSlabRequest)
+      itemCategoryList: this.itemCategoryMasterService.PopulateList({ PopulateType: "SelectList" } as ItemCategoryRequest),
+      uomList: this.uomMasterService.PopulateList({ PopulateType: "SelectList" } as UOMRequest),
+      taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: "SelectList" } as TaxSlabRequest)
     });
   }
 
@@ -101,7 +91,7 @@ export class ProductMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Update`, model);
   }
 
-  DeleteReactivate(ProductID: number ,  reasonToUpdate: string ): Observable<ApiResponse> {
+  DeleteReactivate(ProductID: number, reasonToUpdate: string): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?ProductID=${ProductID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
@@ -121,33 +111,33 @@ export class ProductMasterService {
   getFormConfig(): FormConfigType<ProductMaster> {
     return {
       ProductID: {
-        label:'',
+        label: '',
         defaultValue: null,
         validators: [],
         validationMessages: {}
       },
       ProductCode: {
-        label:'Product Code',
+        label: 'Product Code',
         defaultValue: 'NEW',
         validators: [],
         validationMessages: {}
       },
-      ItemTypeID: {
-        label: 'Item Type',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          require: "Item Type is required"
-        }
-      },
-      ItemGroupID: {
-        label: 'Item Group ID',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          require: "Item Griup is required"
-        }
-      },
+      // ItemTypeID: {
+      //   label: 'Item Type',
+      //   defaultValue: null,
+      //   validators: [Validators.required],
+      //   validationMessages: {
+      //     require: "Item Type is required"
+      //   }
+      // },
+      // ItemGroupID: {
+      //   label: 'Item Group ID',
+      //   defaultValue: null,
+      //   validators: [Validators.required],
+      //   validationMessages: {
+      //     require: "Item Griup is required"
+      //   }
+      // },
       ItemCategoryID: {
         label: 'Item Category ID',
         defaultValue: null,
@@ -164,18 +154,18 @@ export class ProductMasterService {
           required: 'Product Name is required.',
         },
       },
-      GenericID: {
-        label: 'Generic/Item',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
-      },
-      ManufacturerID: {
-        label: 'Manufacturer',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
-      },
+      // GenericID: {
+      //   label: 'Generic/Item',
+      //   defaultValue: null,
+      //   validators: [],
+      //   validationMessages: {}
+      // },
+      // ManufacturerID: {
+      //   label: 'Manufacturer',
+      //   defaultValue: null,
+      //   validators: [],
+      //   validationMessages: {}
+      // },
       UOMID: {
         label: 'UOM',
         defaultValue: null,
@@ -198,30 +188,30 @@ export class ProductMasterService {
         label: 'Purchase Tax Rate',
         defaultValue: 0,
       },
-      ReorderLevel: {
-        label: 'Reorder Level',
-        defaultValue: 0,
-        validators: [Validators.min(0)],
-        validationMessages: {
-          min: 'Reorder Level cannot be negative.',
-        },
-      },
-      ReorderQty: {
-        label: 'Reorder Quantity',
-        defaultValue: 0,
-        validators: [Validators.min(0)],
-        validationMessages: {
-          min: 'Reorder Quantity cannot be negative.',
-        },
-      },
-      IsApprovalRequiredToPurchase: {
-        label: 'Is Approval Required To Purchase',
-        defaultValue: false,
-      },
-      IsApprovalRequiredToIssue: {
-        label: 'Is Approval Required To Issue',
-        defaultValue: false,
-      },
+      // ReorderLevel: {
+      //   label: 'Reorder Level',
+      //   defaultValue: 0,
+      //   validators: [Validators.min(0)],
+      //   validationMessages: {
+      //     min: 'Reorder Level cannot be negative.',
+      //   },
+      // },
+      // ReorderQty: {
+      //   label: 'Reorder Quantity',
+      //   defaultValue: 0,
+      //   validators: [Validators.min(0)],
+      //   validationMessages: {
+      //     min: 'Reorder Quantity cannot be negative.',
+      //   },
+      // },
+      // IsApprovalRequiredToPurchase: {
+      //   label: 'Is Approval Required To Purchase',
+      //   defaultValue: false,
+      // },
+      // IsApprovalRequiredToIssue: {
+      //   label: 'Is Approval Required To Issue',
+      //   defaultValue: false,
+      // },
       NetWeight: {
         label: 'Net Weight',
         defaultValue: null,
@@ -238,7 +228,7 @@ export class ProductMasterService {
           min: 'Gross Weight cannot be negative.',
         },
       },
-      ProductDescription:{
+      ProductDescription: {
         label: 'Product Description',
         defaultValue: null,
         validators: [],

@@ -7,7 +7,7 @@
       <div class="col-xl-12 form-group">
         <z-span [text]="form.get('ItemCategoryCode')?.value" [label]="formConfig.ItemCategoryCode.label"></z-span>
       </div>
-      <div class="col-xl-12 form-group">
+      <!-- <div class="col-xl-12 form-group">
         <z-select [group]="form" [control]="'ItemTypeID'" [label]="formConfig.ItemTypeID.label"
           [optionLabel]="'ItemTypeName'" [optionValue]="'ItemTypeID'" [options]="itemTypeList"  (onChange)="onChange_ItemType()">
         </z-select>
@@ -16,16 +16,18 @@
         <z-select [group]="form" [control]="'ItemGroupID'" [label]="formConfig.ItemGroupID.label"
           [optionLabel]="'ItemGroupName'" [optionValue]="'ItemGroupID'" [options]="itemGroupList">
         </z-select>
-      </div>
+      </div> -->
       <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ItemCategoryName'" [label]="formConfig.ItemCategoryName.label"></z-inputtext>
+        <z-inputtext [group]="form" [control]="'ItemCategoryName'"
+          [label]="formConfig.ItemCategoryName.label"></z-inputtext>
       </div>
     </form>
   </div>
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
       <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
+        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus"
+          (click)="onSubmit()">
           {{ isEditMode ? "Update" : "Save" }}
         </button>
       </div>

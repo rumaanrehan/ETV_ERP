@@ -31,6 +31,6 @@ export interface State_IndexTableList {
 
 export interface StateRequest {
     CountryID?: number | null;
-    StateName?: number | null;
+    StateName?: string | null;
     PopulateType?: string | null;
 }

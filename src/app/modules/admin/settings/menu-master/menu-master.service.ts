@@ -107,9 +107,8 @@ export class MenuMasterService {
       ActionName: {
         label: 'Default Action',
         defaultValue: null,
-        validators: [RequiredIf('MenuType', Operator.EqualTo, 2), Validators.maxLength(100), NotOnlyWhitespaceValidator()],
+        validators: [Validators.maxLength(100), NotOnlyWhitespaceValidator()],
         validationMessages: {
-          requiredIf: 'Default Action is required.',
           maxlength: 'Default Action cannot be longer than 100 characters.'
         }
       },

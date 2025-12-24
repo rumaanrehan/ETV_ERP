@@ -35,7 +35,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     private pageService: ItemCategoryMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
@@ -49,13 +49,12 @@ export class IndexComponent implements OnInit, OnDestroy {
       loading: false,
     };
     this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN',  width: "5%", hideVisToggle: true, orderable: false },
+      { data: 'RowID', label: 'SN', width: "5%", hideVisToggle: true, orderable: false },
       { data: 'ItemCategoryID', visible: false, hideVisToggle: true, orderable: false },
       { data: 'ItemCategoryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.itemCategoryCodeTemplate },
       { data: 'ItemCategoryName', label: 'Item Category Name', filterable: true },
-      { data: 'ItemGroupName', label: 'Item Group Name', filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.itemCategoryActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false,  cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
+      { data: '', hideVisToggle: true, orderable: false, cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
     ];
   }
 
@@ -77,9 +76,8 @@ export class IndexComponent implements OnInit, OnDestroy {
           .GetDetails(itemCategoryID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-                console.log(response.Data)
+            next: (response) => {
+              if (response.IsSuccess) {
                 const model: ItemCategoryMaster = {
                   ...response.Data,
                 };
@@ -90,7 +88,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             },
           });
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   onCloseSidebar(): void {
@@ -100,7 +98,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   onIndexTableLazyLoad(event: DataTableLazyLoadEvent) {
     this.tableEvent = event;
     this.loadData();
-  }  
+  }
 
   loadData() {
     try {
@@ -129,7 +127,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             this.tableDef.loading = false;
           },
         });
-    } catch (error) {}
+    } catch (error) { }
   }
 
   onClickDeleteReactivate(row: any) {
@@ -140,26 +138,26 @@ export class IndexComponent implements OnInit, OnDestroy {
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.ItemCategoryName}</b>"?`,
       })
-      .then((result) => {
-        if (result.isConfirmed) {
-          this.pageService.DeleteReactivate(row.ItemCategoryID!, result.value)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  this.loadData();
-                  this.alertService.showAlert({
-                    type: 'success',
-                    text: response.Message,
-                    timer: 5000,
-                  });
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
-            });
-        }
-      });
-    } catch (error) {}
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.pageService.DeleteReactivate(row.ItemCategoryID!, result.value)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response) => {
+                  if (response.IsSuccess) {
+                    this.loadData();
+                    this.alertService.showAlert({
+                      type: 'success',
+                      text: response.Message,
+                      timer: 5000,
+                    });
+                  } else {
+                    this.alertService.showServerResponseAlert(response);
+                  }
+                },
+              });
+          }
+        });
+    } catch (error) { }
   }
 }

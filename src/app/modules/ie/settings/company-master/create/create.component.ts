@@ -12,6 +12,7 @@ import { FormService } from '../../../../../shared/services/form.service';
 import { Country_SelectList } from '../../../../admin/settings/country-master/country-master';
 import { CompanyMaster } from '../company-master';
 import { CompanyMasterService } from '../company-master.service';
+import { State_SelectList, StateRequest } from '../../../../admin/settings/state-master/state-master';
 
 @Component({
   selector: 'app-company-create',
@@ -34,7 +35,7 @@ export class CreateComponent {
 
   vendorTypeList: StaticList[] = []
   countryList: Country_SelectList[] = []
-  stateList: StaticList[] = []
+  stateList: State_SelectList[] = []
 
   constructor(
     private pageService: CompanyMasterService,
@@ -74,6 +75,26 @@ export class CreateComponent {
     }, 1);
   }
 
+  loadStates(): void {
+    const countryID = this.form.get('CountryID')?.value;
+    if (countryID) {
+      const model: StateRequest = {
+        CountryID: countryID,
+        PopulateType: 'SelectList'
+      }
+      this.pageService.LoadStates(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.stateList = response.Data.Items;
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          }
+        });
+    }
+  }
 
   LoadDropdownList(): void {
     this.loadStaticLists([
@@ -104,7 +125,6 @@ export class CreateComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          console.log(response);
           listConfigs.forEach(({ targetList }) => {
             if (response[targetList]?.IsSuccess) {
               (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];

@@ -13,6 +13,7 @@ import { Country_SelectList, CountryMaster, CountryRequest } from '../../../admi
 import { StateRequest } from '../../../admin/settings/state-master/state-master';
 import { StaticListRequest, StaticList } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
+import { StateMasterService } from '../../../admin/settings/state-master/state-master.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,8 @@ export class CompanyMasterService {
   constructor(
     private apiService: ApiService,
     private selectListService: SelectListService,
-    private countryService: CountryMasterService
+    private countryService: CountryMasterService,
+    private stateService: StateMasterService,
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -32,6 +34,10 @@ export class CompanyMasterService {
     return forkJoin({
       CountryList: this.countryService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),
     });
+  }
+
+  LoadStates(model: StateRequest) {
+    return this.stateService.PopulateList(model);
   }
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {

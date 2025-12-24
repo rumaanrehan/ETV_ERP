@@ -14,14 +14,13 @@ export class RolePermissionService {
 
   constructor(
     private apiService: ApiService,
-  ) {}
+  ) { }
 
   GetDetailsRolePermission(roleID: number, moduleID: number): Observable<ApiDataResponse<RoleMaster_RolePermission>> {
     return this.apiService.post<ApiDataResponse<RoleMaster_RolePermission>>(`${this.endpoint}/GetDetailsRolePermission?RoleID=${roleID}&ModuleID=${moduleID}`, {});
   }
-  
+
   UpdateRecord(model: RoleMaster_RolePermission): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateRolePermission`, model);
   }
 

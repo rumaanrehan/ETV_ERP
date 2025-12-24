@@ -24,11 +24,11 @@ export class ItemCategoryMasterService {
     private itemGroupMasterService: ItemGroupMasterService
   ) { }
 
-  GetMasterDropdownLists(): Observable<{ 
+  GetMasterDropdownLists(): Observable<{
     itemTypeMasterList: ApiListResponse<ItemType_SelectList>;
-    }> {
+  }> {
     return forkJoin({
-      itemTypeMasterList: this.itemTypeService.PopulateList({PopulateType: 'SelectList'} as ItemTypeRequest),
+      itemTypeMasterList: this.itemTypeService.PopulateList({ PopulateType: 'SelectList' } as ItemTypeRequest),
     });
   }
 
@@ -57,14 +57,13 @@ export class ItemCategoryMasterService {
   }
 
   DeleteReactivate(itemCategoryID: number, reasonToUpdate: string): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?itemCategoryID=${itemCategoryID}&reasonToUpdate=${reasonToUpdate}`,{});
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?itemCategoryID=${itemCategoryID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ItemCategory_IndexFilter>{
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ItemCategory_IndexFilter> {
     return {
       ItemCategoryCode: '',
       ItemCategoryName: '',
-      ItemGroupName: '',
       ActiveStatusID: 0,
     }
   }
@@ -78,22 +77,6 @@ export class ItemCategoryMasterService {
       ItemCategoryCode: {
         label: 'Item Category Code',
         defaultValue: 'NEW'
-      },
-      ItemTypeID: {
-        label: 'Item Type',
-        defaultValue: 0,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'Item Type is required.'
-        }
-      },
-      ItemGroupID: {
-        label: 'Item Group',
-        defaultValue: 0,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'Item Group is required.'
-        }
       },
       ItemCategoryName: {
         label: 'Item Category Name',

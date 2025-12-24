@@ -19,17 +19,18 @@ export class StateMasterService {
   constructor(
     private apiService: ApiService,
     private countryMasterService: CountryMasterService,
-  ) {}
+  ) { }
 
-  GetMasterDropdownLists(): Observable<{ 
+  GetMasterDropdownLists(): Observable<{
     countryList: ApiListResponse<Country_SelectList>;
-    }> {
+  }> {
     return forkJoin({
-      countryList: this.countryMasterService.PopulateList({PopulateType: 'SelectList'} as CountryRequest),
+      countryList: this.countryMasterService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),
     });
   }
 
   PopulateList(model: StateRequest): Observable<ApiListResponse<State_SelectList>> {
+    console.log(model);
     return this.apiService.post<ApiListResponse<State_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
@@ -81,7 +82,7 @@ export class StateMasterService {
           required: 'State Name is required'
         }
       },
-      CountryID:{
+      CountryID: {
         label: 'Country',
         defaultValue: null,
         validators: [Validators.required],
@@ -89,11 +90,11 @@ export class StateMasterService {
           required: 'Country is required'
         }
       },
-      StateGSTCode:{
+      StateGSTCode: {
         label: 'State GST Code',
         defaultValue: null,
       },
-      StateISOCode:{
+      StateISOCode: {
         label: 'State ISO Code',
         defaultValue: null,
       }
