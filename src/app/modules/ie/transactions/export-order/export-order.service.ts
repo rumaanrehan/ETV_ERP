@@ -226,43 +226,6 @@ export class ExportOrderService {
     }
   }
 
-  // getBillRegulationFormConfig(): FormConfigType<ExportOrderBillRegulation> {
-  //   return {
-  //     ExportOrderID: {
-  //       label: '',  
-  //       defaultValue: null
-  //     },
-  //     ExportOrderNo: {
-  //       label: 'Export Order No',
-  //       defaultValue: null
-  //     },
-  //     ShippingBill:{
-  //       label: 'Shipping Bill',
-  //       defaultValue: false
-  //     },
-  //     AirwayBill:{
-  //       label: 'Airway Bill',
-  //       defaultValue: false
-  //     },
-  //     IECCertificate:{
-  //       label: 'IEC Certificate',
-  //       defaultValue: false
-  //     },
-  //     Invoice:{
-  //       label: 'Invoice',
-  //       defaultValue: false
-  //     },
-  //     PackingSlip:{
-  //       label: 'Packing Slip',
-  //       defaultValue: false
-  //     },
-  //     CustomerPO:{
-  //       label: 'Customer PO',
-  //       defaultValue: false
-  //     }
-  //   };
-  // }
-
   getFormConfig(): FormConfigType<ExportOrder> {
     return {
       ExportOrderID: {
@@ -550,7 +513,7 @@ export class ExportOrderService {
       },
       StatusID: {
         label: 'Status',
-        defaultValue: 1,
+        defaultValue: 3,
         validators: [Validators.required],
         validationMessages: {
           required: "Status is required"

@@ -17,14 +17,15 @@
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
-                                        [validationMessage]="formConfig.BasedOn.error"
-                                        [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="basedOnList"
-                                        [readonly]="isEditMode" (onChange)="onBasedOnChange()"></z-select>
+                                        [validationMessage]="formConfig.BasedOn.error" [optionLabel]="'Text'"
+                                        [optionValue]="'iValue'" [options]="basedOnList" [readonly]="isEditMode"
+                                        (onChange)="onBasedOnChange()"></z-select>
                                 </div>
                                 <div class="col-xl-6 form-group px-2"></div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-datepicker [group]="form" [control]="'TaxInvoiceDate'"
-                                        [label]="formConfig.TaxInvoiceDate.label" [validationMessage]="formConfig.TaxInvoiceDate.error"
+                                        [label]="formConfig.TaxInvoiceDate.label"
+                                        [validationMessage]="formConfig.TaxInvoiceDate.error"
                                         [validationMessage]="formConfig.TaxInvoiceDate.error"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnDocument">
@@ -34,14 +35,27 @@
                                 </div>
                                 <div class="col-xl-3 form-group px-2">
                                     <div class="action-input-group">
-                                        <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" [isClearable]="form.get('BasedOn')?.value == 3"
-                                        (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+                                        <z-autocomplete [controlDef]="companyMasterAutoCompleteDef"
+                                            [isClearable]="form.get('BasedOn')?.value == 3"
+                                            (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)"
+                                            (onClear)="onClear_Customer()">
                                         </z-autocomplete>
-                                        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Company" 
-                                        (click)="handleComponentLoad('VendorCreateComponent')"></i>
+                                        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
+                                            title="Add New Company"
+                                            (click)="handleComponentLoad('VendorCreateComponent')"></i>
                                     </div>
                                 </div>
-                                <div class="col-xl-7"></div>
+                                <div class="col-xl-{{isBasedOnDocument ? 3 : 5}}"></div>
+                                <div class="col-xl-2 form-group px-2">
+                                    <z-datepicker [group]="form" [control]="'ReferenceDate'"
+                                        [label]="formConfig.ReferenceDate.label"
+                                        [validationMessage]="formConfig.ReferenceDate.error"></z-datepicker>
+                                </div>
+                                <div class="col-xl-2 form-group px-2">
+                                    <z-inputtext [group]="form" [control]="'ReferenceNo'"
+                                        [label]="formConfig.ReferenceNo.label"
+                                        [validationMessage]="formConfig.ReferenceNo.error"></z-inputtext>
+                                </div>
                                 <div class="col-xl-5 form-group px-2">
                                     <z-span [text]="selectedCustomerAddress"></z-span>
                                 </div>
@@ -49,68 +63,126 @@
                                 <h6 class="form-group px-2">Exchange Rate Details</h6>
                                 <div class="col-xl-2 form-group px-2">
                                     <div class="action-input-group">
-                                        <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
-                                        [validationMessage]="formConfig.FCCurrencyID.error" [optionLabel]="'CurrencyName'"
-                                        [optionValue]="'CurrencyID'" [options]="currencyList" [readonly]="isBasedOnDocument"></z-select>
+                                        <z-select [group]="form" [control]="'FCCurrencyID'"
+                                            [label]="formConfig.FCCurrencyID.label"
+                                            [validationMessage]="formConfig.FCCurrencyID.error"
+                                            [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'"
+                                            [options]="currencyList" [readonly]="isBasedOnDocument"></z-select>
 
-                                        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Currency" 
-                                        (click)="handleComponentLoad('CurrencyCreateComponent')"></i>
+                                        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
+                                            title="Add New Currency"
+                                            (click)="handleComponentLoad('CurrencyCreateComponent')"></i>
                                     </div>
                                 </div>
                                 <div class=" col-xl-6"></div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
-                                        [label]="formConfig.ExchangeRateDate.label" [validationMessage]="formConfig.ExchangeRateDate.error"
+                                        [label]="formConfig.ExchangeRateDate.label"
+                                        [validationMessage]="formConfig.ExchangeRateDate.error"
                                         [readonly]="isBasedOnDocument"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
-                                        [label]="formConfig.ExchangeRateToBC.label" [validationMessage]="formConfig.ExchangeRateToBC.error" 
+                                        [label]="formConfig.ExchangeRateToBC.label"
+                                        [validationMessage]="formConfig.ExchangeRateToBC.error"
                                         (onChange)="productCalculation()"></z-inputnumber>
                                 </div>
 
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'InsuranceAmountFC'"
-                                        [label]="formConfig.InsuranceAmountFC.label" [validationMessage]="formConfig.InsuranceAmountFC.error"
+                                        [label]="formConfig.InsuranceAmountFC.label"
+                                        [validationMessage]="formConfig.InsuranceAmountFC.error"
                                         [readonly]="isBasedOnDocument"></z-inputnumber>
                                 </div>
                                 <div class="col-xl-6"></div>
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'FreightChargeFC'"
-                                        [label]="formConfig.FreightChargeFC.label" [validationMessage]="formConfig.FreightChargeFC.error"
-                                        [readonly]="isBasedOnDocument" (onChange)="productCalculation()"></z-inputnumber>
+                                        [label]="formConfig.FreightChargeFC.label"
+                                        [validationMessage]="formConfig.FreightChargeFC.error"
+                                        [readonly]="isBasedOnDocument"
+                                        (onChange)="productCalculation()"></z-inputnumber>
                                 </div>
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'BankChargesFC'"
-                                        [label]="formConfig.BankChargesFC.label" [validationMessage]="formConfig.BankChargesFC.error"
-                                        [readonly]="isBasedOnDocument" (onChange)="productCalculation()"></z-inputnumber>
+                                        [label]="formConfig.BankChargesFC.label"
+                                        [validationMessage]="formConfig.BankChargesFC.error"
+                                        [readonly]="isBasedOnDocument"
+                                        (onChange)="productCalculation()"></z-inputnumber>
                                 </div>
                                 <div class="col-xl-6"></div>
                                 <div class="col-12 px-2">
                                     <h6 class="form-group">Product List</h6>
-                                    <div class="col-xl-4 form-group px-2" *ngIf="!isBasedOnDocument">
+                                    <div class="col-xl-4 form-group" *ngIf="!isBasedOnDocument">
                                         <div class="action-input-group">
-                                            <z-autocomplete class="flex-grow-1" [controlDef]="productAutoCompleteDef" 
-                                            (onSearch)="onSearch_Product($event)" (onSelect)="onSelect_Product($event)">
+                                            <z-autocomplete class="flex-grow-1" [controlDef]="productAutoCompleteDef"
+                                                (onSearch)="onSearch_Product($event)"
+                                                (onSelect)="onSelect_Product($event)">
                                             </z-autocomplete>
-                                            <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" 
-                                            title="Add New Product" (click)="handleComponentLoad('ProductCreateComponent')">
+                                            <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
+                                                title="Add New Product"
+                                                (click)="handleComponentLoad('ProductCreateComponent')">
                                             </i>
                                         </div>
                                     </div>
                                     <z-table [tableDef]="this.tableDef">
                                     </z-table>
                                 </div>
-                                <div class="col-md-8 form-group px-2">
-                                    <z-textarea [group]="form" [control]="'Narration'"
-                                        [label]="formConfig.Narration.label" [validationMessage]="formConfig.Narration.error"></z-textarea>
+
+                                <!-- Payment & Shipment -->
+                                <div class="col-xl-2 form-group px-2">
+                                    <z-select [group]="form" [control]="'PaymentTermID'"
+                                        [label]="formConfig.PaymentTermID.label" [options]="paymentTermList"
+                                        [optionLabel]="'PaymentTermName'"
+                                        [readonly]="isBasedOnDocument && this.form.get('PaymentTermID')?.value != null"
+                                        [optionValue]="'PaymentTermID'"></z-select>
                                 </div>
-                                <div class="col-xl-1"></div>
                                 <div class="col-xl-1 pe-2 form-group ms-auto">
                                     <z-checkbox [group]="form" [control]="'IsRoundOff'"
                                         [label]="formConfig.IsRoundOff.label">
                                     </z-checkbox>
                                 </div>
+                                <!-- Shipment -->
+                                <h6 class="form-group px-2">Shipment</h6>
+                                <div class="col-xl-2 form-group px-2">
+                                    <z-select [group]="form" [control]="'ShipmentModeID'"
+                                        [label]="formConfig.ShipmentModeID.label" [options]="shipmentModeList"
+                                        [optionLabel]="'Text'" [optionValue]="'iValue'"
+                                        (onChange)="onChangeShipmentMode()"></z-select>
+                                </div>
+                                <div class="col-xl-1"></div>
+                                <div class="col-xl-3 form-group px-2">
+                                    <div class="action-input-group">
+                                        <z-autocomplete [controlDef]="loadingPortAutoCompleteDef"
+                                            (onSearch)="loadLoadingPort($event)"
+                                            (onSelect)="OnLoadingPortSelect($event)"
+                                            (onClear)="onClear_LoadingPort()"></z-autocomplete>
+                                        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
+                                            title="Add New Port"
+                                            (click)="handleComponentLoad('PortCreateComponent')"></i>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 form-group px-2">
+                                    <div class="action-input-group">
+                                        <z-autocomplete [controlDef]="dischargePortAutoCompleteDef"
+                                            (onSearch)="loadDischargePort($event)"
+                                            (onSelect)="OnDischargePortSelect($event)"
+                                            (onClear)="onClear_DischargePort()"></z-autocomplete>
+                                        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
+                                            title="Add New Port"
+                                            (click)="handleComponentLoad('PortCreateComponent')"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 form-group px-2">
+                                    <z-inputtext [group]="form" [control]="'FinalDestination'"
+                                        [label]="formConfig.FinalDestination.label"
+                                        [validationMessage]="formConfig.FinalDestination.error"></z-inputtext>
+                                </div>
+                                <div class="col-md-8 form-group px-2">
+                                    <z-textarea [group]="form" [control]="'Narration'"
+                                        [label]="formConfig.Narration.label"
+                                        [validationMessage]="formConfig.Narration.error"></z-textarea>
+                                </div>
+                                <div class="col-xl-1"></div>
                             </div>
                         </div>
                     </div>
@@ -150,7 +222,7 @@
                     </div>
                 </div>
             </div> -->
-            <div class="card-body">                        
+            <div class="card-body">
                 <div class="col-12 px-2 d-flex flex-column align-items-end gap-2">
                     <div class="col-12 col-xl-3">
                         <div class="d-flex justify-content-between align-items-center">
@@ -166,8 +238,7 @@
                             <p class="mb-0">Tax Amount: </p>
                             <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
                                 [label]="formConfig.TaxAmountFC.label"
-                                [validationMessage]="formConfig.TaxAmountFC.error"
-                                [readonly]="true"></z-inputnumber>
+                                [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
                         </div>
                     </div>
                     <div class="col-12 col-xl-3">
@@ -175,8 +246,7 @@
                             <p class="mb-0">Net Amount: </p>
                             <z-inputnumber [group]="form" [control]="'NetAmountFC'"
                                 [label]="formConfig.NetAmountFC.label"
-                                [validationMessage]="formConfig.NetAmountFC.error"
-                                [readonly]="true"></z-inputnumber>
+                                [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
                         </div>
                     </div>
                 </div>
@@ -184,7 +254,12 @@
         </div>
     </div>
     <div class="page-action-panel">
-        <div class="col-xl-4"></div>
+        <div class="col-xl-4">
+            <div class="col-xl-4 px-1" *ngIf="isEditMode">
+                <button type="submit" class="btn btn-md btn-primary w-100" (click)="printTaxInvoice()"> Print
+                    Tax Invoice </button>
+            </div>
+        </div>
         <div class="col-xl-4">
             <div class="status-pill" [ngStyle]="{'background-color': '#'+statusHex}" *ngIf="isEditMode">
                 <span>Status: {{statusText}}</span>
@@ -193,8 +268,8 @@
         <div class="col-xl-4">
             <div class="col-xl-3 px-1">
                 <button type="submit" class="btn btn-md btn-primary w-100"
-                    [disabled]="!(statusText === 'Draft') && isEditMode"
-                    (click)="onSubmit()"> {{ isEditMode ? "Update" : "Save" }} 
+                    [disabled]="!(statusText === 'Draft') && isEditMode" (click)="onSubmit()"> {{ isEditMode ? "Update"
+                    : "Save" }}
                 </button>
             </div>
             <div class="col-xl-3 px-1">

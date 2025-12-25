@@ -121,16 +121,21 @@ export class AppSidebarComponent {
   }
 
   handleNavigation(url: string) {
+
     const urlSegments = url.split('/');
     if (urlSegments.length > 1) {
       const currentModule = urlSegments[1];
-      if (
-        this.menuService.moduleList.includes(currentModule) &&
-        this.menuService.moduleCode() !== currentModule
-      ) { // Load menu only if moduleCode changes
-        this.menuService.moduleCode.set(currentModule);
-        this.menuService.loadMenu(currentModule);
-      }
+
+
+      this.menuService.moduleCode.set(currentModule);
+      this.menuService.loadMenu(currentModule);
+      // if (
+      //   this.menuService.moduleList.includes(currentModule) &&
+      //   this.menuService.moduleCode() !== currentModule
+      // ) { // Load menu only if moduleCode changes
+      //   this.menuService.moduleCode.set(currentModule);
+      //   this.menuService.loadMenu(currentModule);
+      // }
     }
 
     this.currentPath = url;

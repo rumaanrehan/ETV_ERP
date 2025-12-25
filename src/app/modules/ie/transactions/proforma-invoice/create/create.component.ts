@@ -21,6 +21,8 @@ import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../sett
 import { ExportOrder_Detail, ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
 import { ProformaInvoice, ProformaInvoiceDetail } from '../proforma-invoice';
 import { ProformaInvoiceService } from '../proforma-invoice.service';
+import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
+import { Port_SelectList, PortMaster, PortRequest } from '../../../settings/port-master/port-master';
 
 @Component({
   selector: 'app-create',
@@ -55,12 +57,16 @@ export class CreateComponent implements OnInit, OnDestroy {
   formConfig!: FormConfigType<ProformaInvoice>;
   tableDef!: TableDef<ProformaInvoiceDetail>;
 
+  shipmentModeList: StaticList[] = [];
+  paymentTermList: PaymentTerm_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
   currencyList: Currency_SelectList[] = [];
 
   basedOnList: StaticList[] = [];
 
   exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
+  loadingPortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
+  dischargePortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
@@ -80,6 +86,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.exportOrderAutoCompleteDef = this.pageService.getExportOrderAutoCompleteDef(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
+    this.loadingPortAutoCompleteDef = this.pageService.getLoadingPortAutoCompleteDef(this.formConfig, this.form);
+    this.dischargePortAutoCompleteDef = this.pageService.getDischargePortAutoCompleteDef(this.formConfig, this.form);
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
       columnDef: [
@@ -104,7 +112,6 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe(paramMap => {
         const id = paramMap.get('id');
         const exportOrderID = paramMap.get('exportOrderID');
-        console.log("Export Order ID or ProformaInvoiceID from route paramMap:", exportOrderID, id);
 
         if (id) {
           this.loadProformaInvoice(+id);
@@ -135,12 +142,14 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   loadDropdownList(): void {
     this.loadStaticLists([
-      { fieldName: 'BasedOn', targetList: 'basedOnList' }
+      { fieldName: 'BasedOn', targetList: 'basedOnList' },
+      { fieldName: 'ShipmentMode', targetList: 'shipmentModeList' },
     ]);
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
+          this.paymentTermList = data?.paymentTermList?.Data?.Items ?? [];
           this.taxSlabList = data?.taxSlabList?.Data?.Items ?? [];
           this.currencyList = data?.currencyList?.Data?.Items ?? [];
         },
@@ -275,9 +284,95 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
+  OnLoadingPortSelect(event: Port_SelectList): void {
+    this.form.patchValue({ LoadingPortID: event.PortID });
+  }
+
+  OnDischargePortSelect(event: Port_SelectList): void {
+    this.form.patchValue({ DischargePortID: event.PortID });
+  }
+
+  onChangeShipmentMode(): void {
+    // this.loadPortList();
+  }
+
   onClear_Customer(): void {
     this.form.get('CustomerID')?.patchValue(null);
     this.form.get('CustomerName')?.patchValue(null);
+  }
+
+  loadLoadingPort(event: string): void {
+    try {
+      const shipmentModeID = this.form.get('ShipmentModeID')?.value;
+      if (shipmentModeID) {
+        const dto: PortRequest = {
+          PortTypeID: this.form.get('ShipmentModeID')?.value,
+          PortName: event,
+          PopulateType: 'AutoSuggest'
+        }
+        this.pageService.GetPortList(dto)
+          .pipe(takeUntil(this.destroy$)).subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.loadingPortAutoCompleteDef.options = response.Data.Items;
+              } else {
+                this.loadingPortAutoCompleteDef.options = [];
+              }
+            },
+          });
+      }
+      else {
+        this.alertService.showAlert({
+          type: 'warning',
+          title: 'Shipment Mode Missing',
+          text: 'Please select a shipment mode before searching ports.'
+        });
+      }
+    } catch (error) {
+
+    }
+  }
+
+  loadDischargePort(event: string): void {
+    try {
+      const shipmentModeID = this.form.get('ShipmentModeID')?.value;
+      if (shipmentModeID) {
+        const dto: PortRequest = {
+          PortTypeID: shipmentModeID,
+          PortName: event,
+          PopulateType: 'AutoSuggest'
+        }
+        this.pageService.GetPortList(dto)
+          .pipe(takeUntil(this.destroy$)).subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.dischargePortAutoCompleteDef.options = response.Data.Items;
+              } else {
+                this.dischargePortAutoCompleteDef.options = [];
+              }
+            },
+          });
+      }
+      else {
+        this.alertService.showAlert({
+          type: 'warning',
+          title: 'Shipment Mode Missing',
+          text: 'Please select a shipment mode before searching ports.'
+        });
+      }
+    } catch (error) {
+
+    }
+  }
+
+  onClear_LoadingPort(): void {
+    this.form.get('LoadingPortID')?.patchValue(null);
+    this.form.get('LoadingPortName')?.patchValue(null);
+  }
+
+  onClear_DischargePort(): void {
+    this.form.get('DischargePortID')?.patchValue(null);
+    this.form.get('DischargePortName')?.patchValue(null);
   }
 
   onSearch_Product(event: string): void {
@@ -560,7 +655,8 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.form.patchValue({
               ...formValues,
               ProformaInvoiceDate: DateUtils.toDate(response.Data.ProformaInvoiceDate!),
-              ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
+              ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!),
+              ReferenceDate: DateUtils.toDate(response.Data.ReferenceDate!),
             });
           }
         });
@@ -570,92 +666,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  // getDetails(): void {
-  //   this.route.params.subscribe((params) => {
-  //     const proformaInvoiceID = +params['id'];
-  //     if (proformaInvoiceID) {
-  //       this.isEditMode = true;
-  //       try {
-  //         this.pageService.GetDetails(proformaInvoiceID)
-  //           .pipe(takeUntil(this.destroy$))
-  //           .subscribe({
-  //             next: (response) => {
-  //               if (response.IsSuccess) {
-  //                 console.log(response);
-  //                 this.selectedCustomerAddress = response.Data.CustomerAddress!;
-  //                 this.statusText = response.Data.StatusText!;
-  //                 this.statusHex = response.Data.StatusHex!;
-  //                 response.Data.ProductList.Items.forEach(item => {
-  //                   const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-  //                   productForm.patchValue(item);
-  //                   this.productListArray.push(productForm);
-  //                 });
-
-  //                 this.tableDef.data = this.productListArray.value;
-  //                 const { ProductList, ...formValues } = response.Data;
-  //                 const data = {
-  //                   ...formValues,
-  //                   ProformaInvoiceDate: DateUtils.toDate(response.Data.ProformaInvoiceDate!),
-  //                   ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
-  //                 }
-
-  //                 this.form.patchValue(data);
-  //               } else {
-  //                 this.alertService.showServerResponseAlert(response);
-  //               }
-  //             },
-  //           });
-  //       }
-  //       catch (error) {
-
-  //       }
-  //     }
-  //   });
-  // }
-
-  // private loadExportOrder(exportOrderID: number): void {
-  //   this.form.patchValue({ BasedOn: 1 });
-  //   this.GetExportOrder(exportOrderID);
-  // }
-
-
-  // getExportOrderDetails(): void {
-  //   this.route.params.subscribe((params) => {
-  //     const exportOrderID = +params['exportOrderID'];
-  //     console.log("Export Order ID from route:", exportOrderID);
-  //     if (exportOrderID) {
-  //       this.form.patchValue({ BasedOn: 1 });
-  //       this.GetExportOrder(exportOrderID);}
-  //   });
-  // }
-
   GetExportOrder(exportOrderID: number): void {
-    debugger;
     try {
       this.pageService.GetExportOrderDetails(exportOrderID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              const keysToPatch = Object.keys(this.formConfig).filter(
-                k => !['ProformaInvoiceNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'ProductList'].includes(k)
-              );
-
-              const filteredModel = keysToPatch.reduce((acc, key) => {
-                const typedKey = key as keyof ExportOrder_Detail;
-                const value = response.Data[typedKey] ?? undefined;
-                (acc as any)[typedKey] = value;
-                return acc;
-              }, {} as Partial<ExportOrder_Detail>);
-
-              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
-              this.form.patchValue({
-                ...filteredModel,
-                CustomerID: response.Data.CustomerID,
-                CustomerName: response.Data.CustomerName,
-                SalesQuotationNo: response.Data.SalesQuotationNo
-              });
-
               this.productListArray.clear();
 
               response.Data.ProductList.Items.forEach(item => {
@@ -674,6 +691,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.tableDef.data = this.productListArray.value;
               const { SalesQuotationNo, ProductList, BasedOn, IsRoundOff, ExchangeRateToBC, Narration, ...formValues } = response.Data;
               this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
+              formValues.ReferenceDate = DateUtils.toDate(formValues.ReferenceDate)!;
               this.form.patchValue(formValues);
 
               this.productCalculation();
@@ -704,6 +722,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         return this.createCurrencyComponent();
       case 'ProductCreateComponent':
         return this.createProductComponent();
+      case 'PortCreateComponent':
+        return this.createPortComponent();
       default:
         throw new Error(`Component ${componentName} not found`);
     }
@@ -743,6 +763,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     const { CreateComponent } = await import('../../../../ims/settings/product-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: ProductMaster = this.formService.createNullObject<ProductMaster>();
+    this.loadDynamicComponent(model);
+  }
+
+  async createPortComponent() {
+    const { CreateComponent } = await import('../../../settings/port-master/create/create.component');
+    this.componentRef = this.container.createComponent(CreateComponent);
+    const model: PortMaster = this.formService.createNullObject<PortMaster>();
     this.loadDynamicComponent(model);
   }
 

@@ -16,7 +16,6 @@ import { Product_SelectList, ProductMaster, ProductRequest } from "../../../../i
 import { Company_SelectList, CompanyMaster, CompanyRequest } from "../../../settings/company-master/company-master";
 import { SalesEnquiry, SalesEnquiryDetail } from "../sales-enquiry";
 import { SalesEnquiryService } from "../sales-enquiry.service";
-import { CreateComponent as CompanyCreateComponent } from "../../../settings/company-master/create/create.component";
 
 @Component({
   selector: 'app-create',
@@ -97,7 +96,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   onClickNavigateToSalesQuotation(salesEnquiryID: number): void {
     if (salesEnquiryID) {
       this.router.navigate([`ie/sales-quotation/from-enquiry/${salesEnquiryID}`]);
-    }else { 
+    } else {
       return;
     }
   }
@@ -132,7 +131,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
             } else {
               this.companyMasterAutoCompleteDef.options = [];
@@ -168,7 +166,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
               this.productAutoCompleteDef.options = response.Data.Items;
             } else {
               this.productAutoCompleteDef.options = [];
@@ -183,7 +180,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onSelect_Product(event: Product_SelectList): void {
-    console.log(event);
     this.form.get('ProductID')?.patchValue(null);
     this.form.get('ProductName')?.patchValue(null);
 
@@ -328,7 +324,6 @@ export class CreateComponent implements OnInit, OnDestroy {
                   this.statusText = response.Data.StatusText;
                   this.statusHex = response.Data.StatusHex;
                   this.isQuotationAlreadyExists = response.Data.IsQuotationAlreadyExists;
-                  console.log(this.isQuotationAlreadyExists);
                   response.Data.ProductList.Items.forEach(item => {
                     const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
                     productForm.patchValue(item);

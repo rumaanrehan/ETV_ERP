@@ -19,15 +19,15 @@ export class HolidayMasterService {
   constructor(
     private apiService: ApiService,
     private selectListService: SelectListService
-  ) {}
-  
+  ) { }
+
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
-      return this.selectListService.GetStaticList(model);
+    return this.selectListService.GetStaticList(model);
 
   }
-  
+
   PopulateList(model: HolidayRequest): Observable<ApiListResponse<Holiday_SelectList>> {
-    
+
     return this.apiService.post<ApiListResponse<Holiday_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
@@ -44,12 +44,11 @@ export class HolidayMasterService {
   }
 
   UpdateRecord(model: HolidayMaster): Observable<ApiResponse> {
-    
+
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(holidayID: number ,  reasonToUpdate: string): Observable<ApiResponse> {
-    console.log(holidayID);
+  DeleteReactivate(holidayID: number, reasonToUpdate: string): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?holidayID=${holidayID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 

@@ -51,10 +51,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'HolidayCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "7%", customTemplate: this.holidayCodeTemplate },
-      { data: 'HolidayName', label: 'Holiday Name', filterable: true, width: "17%"},
-      { data: 'HolidayYear', label: 'Holiday Year', filterable: true, width: "15%"},
-      { data: 'HolidayTypeName', label: 'Holiday Type', filterable: true,filterType: 'select', filterKey: 'HolidayTypeID', width: "13%", cssClass: 'text-center'},
+      { data: 'HolidayCode', label: 'Code', hideVisToggle: true, filterable: true, width: "7%", customTemplate: this.holidayCodeTemplate },
+      { data: 'HolidayName', label: 'Holiday Name', filterable: true, width: "17%" },
+      { data: 'HolidayYear', label: 'Holiday Year', filterable: true, width: "15%" },
+      { data: 'HolidayTypeName', label: 'Holiday Type', filterable: true, filterType: 'select', filterKey: 'HolidayTypeID', width: "13%", cssClass: 'text-center' },
       { data: 'HolidayDate', label: 'Date', orderable: false, customTemplate: this.holidayDateTemplate },
       { data: 'HolidayDescription', label: 'Description', orderable: false },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.holidayActiveStatusTemplate },
@@ -75,24 +75,23 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   onClickEditDetails(holidayID: number, activeStatus: boolean): void {
     try {
-      console.log(holidayID);
       if (this.createSidebar && holidayID) {
         this.pageService.GetDetails(holidayID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              const model: HolidayMaster = {
-                ...response.Data,
-                HolidayDate: DateUtils.toDate(response.Data.HolidayDate)
-              };
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                const model: HolidayMaster = {
+                  ...response.Data,
+                  HolidayDate: DateUtils.toDate(response.Data.HolidayDate)
+                };
+                this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
       }
     }
     catch (error) {
@@ -119,23 +118,23 @@ export class IndexComponent implements OnInit, OnDestroy {
         filters: this.tableDef.filterForm?.value
       };
       this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            }
+            else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
           }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
+        });
     }
     catch (error) {
 
@@ -151,27 +150,27 @@ export class IndexComponent implements OnInit, OnDestroy {
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.HolidayName}</b>"?`,
       })
-      .then(result => {
-        if (result.isConfirmed) {
-          this.pageService.DeleteReactivate(row.HolidayID, result.value)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.loadData();
-                this.alertService.showAlert({
-                  type: "success",
-                  text: response.Message,
-                  timer: 5000
-                });
-              }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            }
-          });
-        }
-      });
+        .then(result => {
+          if (result.isConfirmed) {
+            this.pageService.DeleteReactivate(row.HolidayID, result.value)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response) => {
+                  if (response.IsSuccess) {
+                    this.loadData();
+                    this.alertService.showAlert({
+                      type: "success",
+                      text: response.Message,
+                      timer: 5000
+                    });
+                  }
+                  else {
+                    this.alertService.showServerResponseAlert(response);
+                  }
+                }
+              });
+          }
+        });
     }
     catch (error) {
 

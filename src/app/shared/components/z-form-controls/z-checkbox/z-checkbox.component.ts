@@ -6,7 +6,7 @@ import { ShowValidationTooltipDirective } from '../../../layouts/directives/show
 @Component({
   selector: 'z-checkbox',
   standalone: true,
-  imports: [ReactiveFormsModule,CheckboxModule,ShowValidationTooltipDirective],
+  imports: [ReactiveFormsModule, CheckboxModule, ShowValidationTooltipDirective],
   templateUrl: './z-checkbox.component.html',
   styleUrl: './z-checkbox.component.scss'
 })
@@ -16,7 +16,8 @@ export class ZCheckboxComponent {
   @Input() control: string = '';
   @Input() label: string = '';
   @Input() validationMessage: string | undefined = '';
-  
+  @Input() readonly: boolean = false;
+
   @Output() onChange = new EventEmitter<any>(); // Event emitter for value changes
 
   onValueChange(value: any): void {

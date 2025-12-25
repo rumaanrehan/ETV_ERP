@@ -23,7 +23,8 @@
                                     {{ field.label }}
                                 </label>
                                 <div>
-                                    <z-select-button [group]="dataViewDef.sortingForm" [control]="field.field">
+                                    <z-select-button [group]="dataViewDef.sortingForm" [control]="field.field"
+                                        [allowEmpty]="true">
                                         {{ getAscLabel(field.field)}}
                                     </z-select-button>
                                 </div>

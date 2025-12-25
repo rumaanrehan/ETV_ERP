@@ -22,7 +22,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
 
-  isFormSidebarVisible: boolean = false; 
+  isFormSidebarVisible: boolean = false;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   activeStatus: boolean = false;
@@ -56,7 +56,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       { fieldName: 'HolidayTypeID', targetList: 'holidayTypeList' },
     ]);
   }
-    
+
   loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
     const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
 
@@ -82,14 +82,13 @@ export class CreateComponent implements OnInit, OnDestroy {
         },
       });
   }
-  
+
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: HolidayMaster): void {
     if (isEditMode && model) {
       this.isEditMode = isEditMode;
     }
     this.activeStatus = activeStatus;
     this.form.patchValue(model);
-    console.log(this.form.value);
     this.isFormSidebarVisible = true;
   }
 
@@ -102,12 +101,12 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-  
+
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    try{
+    try {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
@@ -130,65 +129,65 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.isSubmitted = false;
           }
         });
-      } 
+      }
       else {
         this.createRecord(this.formService.transformFormData(this.form.value));
       }
-   }
-   catch (error) {
-
-   }
-  }
-  
-  createRecord(model: HolidayMaster): void {
-    try{
-    this.pageService.CreateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000,
-            });
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        }
-      });
     }
     catch (error) {
 
     }
   }
-  
+
+  createRecord(model: HolidayMaster): void {
+    try {
+      this.pageService.CreateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000,
+              });
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
+          }
+        });
+    }
+    catch (error) {
+
+    }
+  }
+
   updateRecord(model: HolidayMaster): void {
     try {
       this.pageService.UpdateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: "success",
-              text: response.Message,
-              timer: 5000
-            });
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: "success",
+                text: response.Message,
+                timer: 5000
+              });
+            }
+            else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
           }
-          else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-        complete: () => {
-          this.isSubmitted = false;
-        }
-      });
+        });
     }
     catch (error) {
 

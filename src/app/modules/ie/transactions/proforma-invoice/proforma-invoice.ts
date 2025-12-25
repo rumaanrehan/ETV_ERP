@@ -9,6 +9,8 @@ export interface ProformaInvoice {
     BasedOn: number | null;
     ExportOrderID: number | null;
     ExportOrderNo: string | null;
+    ReferenceDate: Date | null;
+    ReferenceNo: string | null;
     CustomerID: number | null;
     CustomerName: string | null;
     FCCurrencyID: number | null;
@@ -26,6 +28,13 @@ export interface ProformaInvoice {
     BankChargesBC: number | null;
     NetAmountFC: number | null;
     NetAmountBC: number | null;
+    PaymentTermID: number | null;
+    ShipmentModeID: number | null;
+    LoadingPortID: number | null;
+    DischargePortID: number | null;
+    LoadingPortName: string | null;
+    DischargePortName: string | null;
+    FinalDestination: string | null;
     Narration: number | null;
     StatusID: number | null;
     IsRoundOff: boolean | null;
@@ -100,6 +109,8 @@ export interface ProformaInvoice_Detail {
     ProformaInvoiceDate: Date;
     ExportOrderID?: number;
     ExportOrderNo?: string;
+    ReferenceNo: string;
+    ReferenceDate: Date;
     CustomerID: number;
     CustomerName: string;
     CustomerAddress?: string;
@@ -110,6 +121,13 @@ export interface ProformaInvoice_Detail {
     FreightChargeFC?: number;
     BankChargesFC?: number;
     IsRoundOff: boolean;
+    ShipmentModeID?: number;
+    LoadingPortID?: number;
+    DischargePortID?: number;
+    LoadingPortName: string;
+    DischargePortName: string;
+    FinalDestination?: string;
+    Narration?: string;
     SubtotalAmountFC: number;
     TaxAmountFC: number | null;
     NetAmountFC: number;

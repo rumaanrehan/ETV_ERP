@@ -45,7 +45,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
+
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: ExportOrderShipping): void {
     try {
       this.pageService.GetShippingRecord(model.ExportOrderID)
@@ -53,7 +53,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response);
               if (response.Data) {
                 this.isEditMode = true;
                 const formData: ExportOrderShipping = {
@@ -68,11 +67,11 @@ export class CreateComponent implements OnInit, OnDestroy {
               }
             }
             else {
-              if(response.Status == 'Info' && response.Message == 'Record not found.'){
+              if (response.Status == 'Info' && response.Message == 'Record not found.') {
                 this.form.patchValue(model);
                 this.isFormSidebarVisible = true;
               }
-              else{
+              else {
                 this.alertService.showServerResponseAlert(response);
               }
             }

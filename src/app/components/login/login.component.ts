@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     if (this.requestContextService.AccessToken != null && this.returnUrl == '/') {
       this.userStateService.rehydrate();
-      this.router.navigateByUrl("home");
+      this.router.navigateByUrl("dashboard");
     }
   }
 
@@ -105,7 +105,7 @@ export class LoginComponent implements OnInit {
               }
               else {
                 this.errorMessage = response.Message || '';
-                this.router.navigate(['/home']);
+                this.router.navigate(['/dashboard']);
               }
             }
             else {

@@ -130,7 +130,7 @@ export class SalesEnquiryService {
         label: 'Contact Phone',
         defaultValue: null,
         validators: [
-          Validators.pattern(/^[6-9]\d{9}$/)
+          Validators.pattern(/^\+[1-9]\d{0,2}\s?\d{6,14}$/)
         ],
         validationMessages: {
           pattern: "Enter a valid 10-digit phone number"

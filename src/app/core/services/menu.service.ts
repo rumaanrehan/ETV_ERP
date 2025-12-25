@@ -29,8 +29,7 @@ export class MenuService {
   // Load menu based on module code
   loadMenu(module: string) {
     this.menu.set([]);
-
-    if (!module) return;
+    // if (!module) return;
 
     this.userService.GetMenu(module)
       .subscribe({
