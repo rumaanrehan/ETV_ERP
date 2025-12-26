@@ -27,6 +27,8 @@ import { Port_SelectList, PortRequest } from '../../settings/port-master/port-ma
 import { PortMasterService } from '../../settings/port-master/port-master.service';
 import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
+import { Environment } from '../../../../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
@@ -117,11 +119,7 @@ export class TaxInvoiceService {
   }
 
   GeneratePdf(request: any) {
-    return this.http.post(
-      'http://localhost:44316/api/IE/TaxInvoice/PrintInvoice',
-      request,
-      { responseType: 'blob' }
-    );
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintInvoice`, request, { responseType: 'blob' });
   }
 
   //#region Form Configuration

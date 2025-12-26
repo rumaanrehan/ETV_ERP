@@ -89,7 +89,7 @@
 app-footer {
   position: sticky;
   bottom: 0;
-  z-index: 1;
+  z-index: 11;
 }
 
 footer {
@@ -1093,4 +1093,10 @@ z-menu .p-button-icon {
   left: unset !important;
   margin-top: 1.5rem !important;
   margin-left: -10rem;
+}
+
+.p-button-primary.btn.btn-primary span {
+  color: #fff !important;
+  font-weight: 500;
+
 }

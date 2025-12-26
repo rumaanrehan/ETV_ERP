@@ -122,22 +122,6 @@ export class ProductMasterService {
         validators: [],
         validationMessages: {}
       },
-      // ItemTypeID: {
-      //   label: 'Item Type',
-      //   defaultValue: null,
-      //   validators: [Validators.required],
-      //   validationMessages: {
-      //     require: "Item Type is required"
-      //   }
-      // },
-      // ItemGroupID: {
-      //   label: 'Item Group ID',
-      //   defaultValue: null,
-      //   validators: [Validators.required],
-      //   validationMessages: {
-      //     require: "Item Griup is required"
-      //   }
-      // },
       ItemCategoryID: {
         label: 'Item Category ID',
         defaultValue: null,
@@ -154,18 +138,6 @@ export class ProductMasterService {
           required: 'Product Name is required.',
         },
       },
-      // GenericID: {
-      //   label: 'Generic/Item',
-      //   defaultValue: null,
-      //   validators: [],
-      //   validationMessages: {}
-      // },
-      // ManufacturerID: {
-      //   label: 'Manufacturer',
-      //   defaultValue: null,
-      //   validators: [],
-      //   validationMessages: {}
-      // },
       UOMID: {
         label: 'UOM',
         defaultValue: null,
@@ -182,36 +154,13 @@ export class ProductMasterService {
       },
       TaxSlabID: {
         label: 'Tax Slab ID',
-        defaultValue: 0,
+        defaultValue: null,
       },
       PurTaxRate: {
         label: 'Purchase Tax Rate',
         defaultValue: 0,
+
       },
-      // ReorderLevel: {
-      //   label: 'Reorder Level',
-      //   defaultValue: 0,
-      //   validators: [Validators.min(0)],
-      //   validationMessages: {
-      //     min: 'Reorder Level cannot be negative.',
-      //   },
-      // },
-      // ReorderQty: {
-      //   label: 'Reorder Quantity',
-      //   defaultValue: 0,
-      //   validators: [Validators.min(0)],
-      //   validationMessages: {
-      //     min: 'Reorder Quantity cannot be negative.',
-      //   },
-      // },
-      // IsApprovalRequiredToPurchase: {
-      //   label: 'Is Approval Required To Purchase',
-      //   defaultValue: false,
-      // },
-      // IsApprovalRequiredToIssue: {
-      //   label: 'Is Approval Required To Issue',
-      //   defaultValue: false,
-      // },
       NetWeight: {
         label: 'Net Weight',
         defaultValue: null,

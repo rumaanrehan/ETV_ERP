@@ -252,8 +252,10 @@
     <div class="page-action-panel">
         <div class="col-xl-4">
             <div class="col-xl-4 px-1" *ngIf="isEditMode">
-                <button type="submit" class="btn btn-md btn-primary w-100" (click)="printTaxInvoice()"> Print
-                    Tax Invoice </button>
+                <!-- <button type="submit" class="btn btn-md btn-primary w-100" (click)="printTaxInvoice()"> Print
+                    Tax Invoice </button> -->
+                <z-button [label]="'Print Tax Invoice'" (clicked)="printTaxInvoice()"
+                    [loading]="disablePrintButton"></z-button>
             </div>
         </div>
         <div class="col-xl-4">

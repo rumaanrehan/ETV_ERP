@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, inject, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
@@ -23,6 +23,7 @@ import { Document_SelectList, TaxInvoice, TaxInvoiceDetail } from '../tax-invoic
 import { TaxInvoiceService } from '../tax-invoice.service';
 import { Port_SelectList, PortMaster, PortRequest } from '../../../settings/port-master/port-master';
 import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
+import { LoaderService } from '../../../../../shared/services/loader.service';
 
 @Component({
   selector: 'app-create',
@@ -44,6 +45,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
   componentRef?: ComponentRef<any>;
+  loaderService = inject(LoaderService);
 
   selectedCustomerAddress: string = '';
   statusText!: string | null;
@@ -52,6 +54,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   isSubmitted = false;
   isFromProformaInvoice = false;
   isFromExportOrder = false;
+  disablePrintButton = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<TaxInvoice>;
@@ -76,7 +79,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private alertService: AlertNotificationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    // private loaderService: LoaderService,
   ) { }
 
   ngOnInit(): void {
@@ -250,9 +254,6 @@ export class CreateComponent implements OnInit, OnDestroy {
                 );
               } else {
                 this.documentAutoCompleteDef.options = [];
-                if (response.Message != "Record not found.") {
-                  this.alertService.showServerResponseAlert(response);
-                }
               }
             },
           });
@@ -324,9 +325,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
             } else {
               this.companyMasterAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -447,9 +445,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.productAutoCompleteDef.options = response.Data.Items;
             } else {
               this.productAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -931,25 +926,33 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   printTaxInvoice(): void {
-    this.route.params.subscribe(params => {
-      const taxInvoiceID = +params['id'];
+    try {
+      this.disablePrintButton = true;
+      this.route.params.subscribe(params => {
+        const taxInvoiceID = +params['id'];
 
-      if (!taxInvoiceID) return;
+        if (!taxInvoiceID) return;
 
-      this.isEditMode = true;
-      const model = {
-        TaxInvoiceID: taxInvoiceID
-      };
-      this.pageService.GeneratePdf(model).subscribe({
-        next: (blob) => {
-          console.log('PDF generated successfully', blob);
-          const url = window.URL.createObjectURL(blob);
-          window.open(url);
-        },
-        error: (err) => {
-          console.error('PDF generation failed', err);
-        }
+        this.isEditMode = true;
+        const model = {
+          TaxInvoiceID: taxInvoiceID
+        };
+        this.pageService.GeneratePdf(model).subscribe({
+          next: (blob) => {
+            const url = window.URL.createObjectURL(blob);
+            window.open(url);
+          },
+          error: (err) => {
+            console.error('PDF generation failed', err);
+          },
+          complete: () => {
+            this.disablePrintButton = false;
+          }
+        });
       });
-    });
+    }
+    catch (ex) {
+
+    }
   }
 }

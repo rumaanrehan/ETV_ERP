@@ -13,6 +13,7 @@ import { ZTableComponent } from '../z-table/z-table.component';
 import { ZSpanComponent } from './z-span/z-span.component';
 import { ZAutoCompleteComponent } from './z-autocomplete/z-autocomplete.component';
 import { ZSelectButtonComponent } from './z-select-button/z-select-button.component';
+import { ZButtonComponent } from './z-button/z-button.component';
 
 @NgModule({
   imports: [
@@ -28,7 +29,8 @@ import { ZSelectButtonComponent } from './z-select-button/z-select-button.compon
     ZSpanComponent,
     ZTextareaComponent,
     ZTableComponent,
-    ZSelectButtonComponent
+    ZSelectButtonComponent,
+    ZButtonComponent
   ],
   exports: [
     ZAutoCompleteComponent,
@@ -43,7 +45,8 @@ import { ZSelectButtonComponent } from './z-select-button/z-select-button.compon
     ZSpanComponent,
     ZTextareaComponent,
     ZTableComponent,
-    ZSelectButtonComponent
+    ZSelectButtonComponent,
+    ZButtonComponent
   ]
 })
 export class ZFormControlsModule { }

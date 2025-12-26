@@ -52,6 +52,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   isSubmitted = false;
   isFromExportOrder = false;
   isTaxAlreadyExists = false;
+  disablePrintButton = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ProformaInvoice>;
@@ -774,6 +775,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   printInvoice(): void {
+    this.disablePrintButton = true;
     this.route.params.subscribe(params => {
       const proformaInvoiceID = +params['id'];
 
@@ -786,31 +788,16 @@ export class CreateComponent implements OnInit, OnDestroy {
       };
       this.pageService.GeneratePdf(model).subscribe({
         next: (blob) => {
-          console.log('PDF generated successfully', blob);
           const url = window.URL.createObjectURL(blob);
           window.open(url);
         },
         error: (err) => {
           console.error('PDF generation failed', err);
+        },
+        complete: () => {
+          this.disablePrintButton = false;
         }
       });
     });
   }
-
-
-  // private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-  //   Object.keys(form.controls).forEach(key => {
-  //     const control = form.get(key);
-  //     const controlPath = parentKey ? `${parentKey}.${key}` : key;
-
-  //     if (control instanceof FormGroup || control instanceof FormArray) {
-  //       this.logInvalidControls(control, controlPath);
-  //     } else if (control && control.invalid) {
-  //       console.warn(
-  //         `❌ Invalid Control: ${controlPath}`,
-  //         control.errors
-  //       );
-  //     }
-  //   });
-  // }
 }

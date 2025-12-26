@@ -425,9 +425,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.productAutoCompleteDef.options = response.Data.Items;
             } else {
               this.productAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
