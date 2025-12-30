@@ -1,10 +1,5 @@
 <div [formGroup]="group">
-    <p-checkbox
-        [styleClass]="styleClass"
-        [formControlName]="control"
-        [label]="label"
-        [appShowValidationTooltip]="validationMessage"
-        [binary]="true"
-        (onChange)="onValueChange($event.checked)"
-    ></p-checkbox>
+    <p-checkbox [styleClass]="styleClass" [formControlName]="control" [label]="label"
+        [appShowValidationTooltip]="validationMessage" [binary]="true" [readonly]="readonly"
+        (onChange)="onValueChange($event.checked)"></p-checkbox>
 </div>

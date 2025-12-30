@@ -18,16 +18,15 @@ export class ExportOrderShippingService {
   AddShippingRecord(model: ExportOrderShipping): Observable<ApiResponse> {
     return this.exportOrderService.AddShippingRecord(model);
   }
-  
+
   GetShippingRecord(exportOrderID: number | null): Observable<ApiDataResponse<ExportOrderShipping>> {
     return this.exportOrderService.GetShippingRecord(exportOrderID);
   }
-    
+
   UpdateShippingRecord(model: ExportOrderShipping): Observable<ApiResponse> {
-    console.log(model);
     return this.exportOrderService.UpdateShippingRecord(model);
   }
-  
+
   getFormConfig(): FormConfigType<ExportOrderShipping> {
     return {
       ExportOrderID: {
@@ -40,34 +39,34 @@ export class ExportOrderShippingService {
       },
       ShippingBillNo: {
         label: 'Shipping Bill No',
-        defaultValue: null, 
+        defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Shipping Bill No is required"  
+          required: "Shipping Bill No is required"
         }
       },
-      ShippingBillDate: { 
+      ShippingBillDate: {
         label: 'Shipping Bill Date',
-        defaultValue: null, 
+        defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Shipping Bill Date is required"  
+          required: "Shipping Bill Date is required"
         }
       },
       AirwayBillNo: {
         label: 'Airway Bill No',
-        defaultValue: null, 
+        defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Airway Bill No is required"  
+          required: "Airway Bill No is required"
         }
       },
       AirwayBillDate: {
         label: 'Airway Bill Date',
-        defaultValue: null, 
+        defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Airway Bill Date is required"  
+          required: "Airway Bill Date is required"
         }
       }
     };

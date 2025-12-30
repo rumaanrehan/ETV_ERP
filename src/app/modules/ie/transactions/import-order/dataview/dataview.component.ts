@@ -103,7 +103,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              console.log(response.Data.Items);
               this.dataViewDef.data = response.Data.Items;
               this.dataViewDef.totalRecords = response.Data.TotalRecords;
             }

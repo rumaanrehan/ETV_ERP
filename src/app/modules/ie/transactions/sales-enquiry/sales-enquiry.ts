@@ -64,6 +64,7 @@ export interface SalesEnquiry_IndexTableList {
 export interface SalesEnquiryRequest {
     SearchBy?: number | null;
     SearchValue?: string | null;
+    SalesEnquiryNo?: string | null;
     PopulateType?: string | null;
 }
 

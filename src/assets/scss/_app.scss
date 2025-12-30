@@ -89,7 +89,7 @@
 app-footer {
   position: sticky;
   bottom: 0;
-  z-index: 1;
+  z-index: 11;
 }
 
 footer {
@@ -714,6 +714,7 @@ span {
   border: 1px solid #ccc;
   border-radius: var(--default-radius-sm);
   line-height: 1.5;
+  align-items: center;
 }
 
 .p-float-label>span:not(:empty)~label {
@@ -1044,4 +1045,58 @@ z-menu .p-button-icon {
 .dataview-info-item {
   display: flex;
   gap: 1rem;
+}
+
+body.swal2-toast-shown .swal2-container {
+  width: 50% !important;
+}
+
+.swal2-title {
+  color: var(--default-text-color) !important;
+  font-weight: 500;
+}
+
+.swal2-container.swal2-top.swal2-backdrop-show {
+  margin-top: 2rem !important;
+}
+
+.p-autocomplete-panel.p-component {
+  padding: 0.25rem;
+}
+
+.autocomplete-table thead {
+  border-bottom: 1px solid var(--default-border) !important;
+}
+
+.p-autocomplete-panel .p-autocomplete-items .p-autocomplete-empty-message {
+  padding: 0.25rem;
+}
+
+app-z-multi-button-menu button span {
+  color: var(--custom-white);
+}
+
+z-menu .p-button {
+  background: var(--primary-color) !important;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 0.5rem;
+  border: var(--default-border);
+}
+
+z-menu .p-button-icon {
+  color: var(--custom-white) !important;
+}
+
+.dataview-action-menu.p-menu-overlay {
+  position: absolute;
+  top: unset !important;
+  left: unset !important;
+  margin-top: 1.5rem !important;
+  margin-left: -10rem;
+}
+
+.p-button-primary.btn.btn-primary span {
+  color: #fff !important;
+  font-weight: 500;
+
 }

@@ -9,6 +9,8 @@ export interface TaxInvoice {
     BasedOn: number | null;
     DocumentID: number | null;
     DocumentNo: string | null;
+    ReferenceDate: Date | null;
+    ReferenceNo: string | null;
     CustomerID: number | null;
     CustomerName: string | null;
     FCCurrencyID: number | null;
@@ -26,6 +28,13 @@ export interface TaxInvoice {
     BankChargesBC: number | null;
     NetAmountFC: number | null;
     NetAmountBC: number | null;
+    PaymentTermID: number | null;
+    ShipmentModeID: number | null;
+    LoadingPortID: number | null;
+    DischargePortID: number | null;
+    LoadingPortName: string | null;
+    DischargePortName: string | null;
+    FinalDestination: string | null;
     Narration: number | null;
     // StatusID: number | null;
     IsRoundOff: boolean | null;
@@ -99,40 +108,49 @@ export interface Document_SelectList {
 }
 
 export interface TaxInvoice_Detail {
-  TaxInvoiceID: number;
-  TaxInvoiceNo: string;
-  BasedOn: number;
-  TaxInvoiceDate: Date;
-  ProformaInvoiceID?: number;
-  ProformaInvoiceNo?: string;
-  ExportOrderID?: number;
-  ExportOrderNo?: string;
-  CustomerID: number;
-  CustomerName: string;
-  CustomerAddress?: string;
-  FCCurrencyID: number;
-  ExchangeRateDate: Date;
-  ExchangeRateToBC: number;
-  InsuranceAmountFC?: number;
-  FreightChargeFC?: number;
-  BankChargesFC?: number;
-  IsRoundOff: boolean;
-  SubtotalAmountFC: number;
-  TaxAmountFC: number | null;
-  NetAmountFC: number;
-  StatusText: string;
-  StatusHex: string;
-  ProductList: TList<TaxInvoiceProductDetail>;
+    TaxInvoiceID: number;
+    TaxInvoiceNo: string;
+    BasedOn: number;
+    TaxInvoiceDate: Date;
+    ProformaInvoiceID?: number;
+    ProformaInvoiceNo?: string;
+    ExportOrderID?: number;
+    ExportOrderNo?: string;
+    ReferenceNo: string;
+    ReferenceDate: string;
+    CustomerID: number;
+    CustomerName: string;
+    CustomerAddress?: string;
+    FCCurrencyID: number;
+    ExchangeRateDate: Date;
+    ExchangeRateToBC: number;
+    InsuranceAmountFC?: number;
+    FreightChargeFC?: number;
+    BankChargesFC?: number;
+    IsRoundOff: boolean;
+    ShipmentModeID?: number;
+    LoadingPortID?: number;
+    DischargePortID?: number;
+    LoadingPortName: string;
+    DischargePortName: string;
+    FinalDestination?: string;
+    Narration?: string;
+    SubtotalAmountFC: number;
+    TaxAmountFC: number | null;
+    NetAmountFC: number;
+    StatusText: string;
+    StatusHex: string;
+    ProductList: TList<TaxInvoiceProductDetail>;
 }
 
 export interface TaxInvoiceProductDetail {
-  ProductID: number;
-  ProductName: string;
-  SalesQty: number;
-  UOM: string;
-  RatePerUnitFC: number;
-  TaxRate: number;
-  TaxableAmountFC: number;
-  TaxAmountFC: number;
-  SalesAmountFC: number;
+    ProductID: number;
+    ProductName: string;
+    SalesQty: number;
+    UOM: string;
+    RatePerUnitFC: number;
+    TaxRate: number;
+    TaxableAmountFC: number;
+    TaxAmountFC: number;
+    SalesAmountFC: number;
 }

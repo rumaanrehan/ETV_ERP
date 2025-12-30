@@ -43,7 +43,17 @@
                                             (click)="handleComponentLoad('VendorCreateComponent')"></i>
                                     </div>
                                 </div>
-                                <div class="col-xl-5"></div>
+                                <div class="col-xl-{{isBasedOnExportOrder ? 3 : 5}}"></div>
+                                <div class="col-xl-2 form-group px-2">
+                                    <z-datepicker [group]="form" [control]="'ReferenceDate'"
+                                        [label]="formConfig.ReferenceDate.label"
+                                        [validationMessage]="formConfig.ReferenceDate.error"></z-datepicker>
+                                </div>
+                                <div class="col-xl-2 form-group px-2">
+                                    <z-inputtext [group]="form" [control]="'ReferenceNo'"
+                                        [label]="formConfig.ReferenceNo.label"
+                                        [validationMessage]="formConfig.ReferenceNo.error"></z-inputtext>
+                                </div>
                                 <div class="col-xl-5 form-group px-2">
                                     <z-span [text]="selectedCustomerAddress"></z-span>
                                 </div>
@@ -91,7 +101,7 @@
                                 <div class="col-xl-6"></div>
                                 <div class="col-12 px-2">
                                     <h6 class="form-group">Product List</h6>
-                                    <div class="col-xl-3 form-group px-2" *ngIf="!isBasedOnExportOrder">
+                                    <div class="col-xl-3 form-group" *ngIf="!isBasedOnExportOrder">
                                         <div class="action-input-group">
                                             <z-autocomplete class="flex-grow-1" [controlDef]="productAutoCompleteDef"
                                                 (onSearch)="onSearch_Product($event)"
@@ -105,20 +115,71 @@
                                     </div>
                                     <z-table [tableDef]="this.tableDef">
                                     </z-table>
-                                    <div class="col-xl-1 pe-2 form-group ms-auto">
-                                        <z-checkbox [group]="form" [control]="'IsRoundOff'"
-                                            [label]="formConfig.IsRoundOff.label">
-                                        </z-checkbox>
+                                </div>
+                                <!-- Payment & Shipment -->
+                                <div class="col-xl-2 form-group px-2">
+                                    <z-select [group]="form" [control]="'PaymentTermID'"
+                                        [label]="formConfig.PaymentTermID.label" [options]="paymentTermList"
+                                        [optionLabel]="'PaymentTermName'"
+                                        [readonly]="isBasedOnExportOrder && this.form.get('PaymentTermID')?.value != null"
+                                        [optionValue]="'PaymentTermID'"></z-select>
+                                </div>
+                                <div class="col-xl-1 pe-2 form-group ms-auto">
+                                    <z-checkbox [group]="form" [control]="'IsRoundOff'"
+                                        [label]="formConfig.IsRoundOff.label">
+                                    </z-checkbox>
+                                </div>
+                                <!-- Shipment -->
+                                <h6 class="form-group px-2">Shipment</h6>
+                                <div class="col-xl-2 form-group px-2">
+                                    <z-select [group]="form" [control]="'ShipmentModeID'"
+                                        [label]="formConfig.ShipmentModeID.label" [readonly]="isBasedOnExportOrder"
+                                        [options]=" shipmentModeList" [optionLabel]="'Text'" [optionValue]="'iValue'"
+                                        (onChange)="onChangeShipmentMode()"></z-select>
+                                </div>
+                                <div class="col-xl-1"></div>
+                                <div class="col-xl-3 form-group px-2">
+                                    <div class="action-input-group">
+                                        <z-autocomplete [controlDef]="loadingPortAutoCompleteDef"
+                                            (onSearch)="loadLoadingPort($event)"
+                                            (onSelect)="OnLoadingPortSelect($event)" (onClear)="onClear_LoadingPort()"
+                                            [readonly]="isBasedOnExportOrder"></z-autocomplete>
+                                        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
+                                            title="Add New Port"
+                                            (click)="handleComponentLoad('PortCreateComponent')"></i>
                                     </div>
+                                </div>
+                                <div class="col-xl-3 form-group px-2">
+                                    <div class="action-input-group">
+                                        <z-autocomplete [controlDef]="dischargePortAutoCompleteDef"
+                                            (onSearch)="loadDischargePort($event)"
+                                            (onSelect)="OnDischargePortSelect($event)"
+                                            (onClear)="onClear_DischargePort()"
+                                            [readonly]="isBasedOnExportOrder"></z-autocomplete>
+                                        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
+                                            title="Add New Port"
+                                            (click)="handleComponentLoad('PortCreateComponent')"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 form-group px-2">
+                                    <z-inputtext [group]="form" [control]="'FinalDestination'"
+                                        [label]="formConfig.FinalDestination.label"
+                                        [validationMessage]="formConfig.FinalDestination.error"
+                                        [readonly]="isBasedOnExportOrder"></z-inputtext>
+                                </div>
+                                <!-- Narration -->
+                                <div class="col-md-6 form-group px-2">
+                                    <z-textarea [group]="form" [control]="'Narration'"
+                                        [label]="formConfig.Narration.label"></z-textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-            <div class="card-body">
-                <div class="col-12 px-2 d-flex flex-column align-items-end gap-2">
-                    <div class="col-12 col-xl-3">
+            <div class="col-12 d-flex justify-content-end">
+                <div class="card pt-2 pb-2 mb-2 col-auto">
+                    <div class="px-2 d-flex flex-column gap-2">
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="mb-0">Subtotal Amount: </p>
                             <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
@@ -126,16 +187,12 @@
                                 [validationMessage]="formConfig.SubtotalAmountFC.error"
                                 [readonly]="true"></z-inputnumber>
                         </div>
-                    </div>
-                    <div class="col-12 col-xl-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="mb-0">Tax Amount: </p>
                             <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
                                 [label]="formConfig.TaxAmountFC.label"
                                 [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
                         </div>
-                    </div>
-                    <div class="col-12 col-xl-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="mb-0">Net Amount: </p>
                             <z-inputnumber [group]="form" [control]="'NetAmountFC'"
@@ -155,8 +212,10 @@
                     Invoice </button>
             </div>
             <div class="col-xl-4 px-1" *ngIf="isEditMode">
-                <button type="submit" class="btn btn-md btn-primary w-100" (click)="printInvoice()"> Print
-                    Proforma </button>
+                <!-- <button type="submit" class="btn btn-md btn-primary w-100" (click)="printInvoice()"> Print
+                    Proforma </button> -->
+                <z-button [label]="'Print Proforma Invoice'" (clicked)="printInvoice()"
+                    [loading]="disablePrintButton"></z-button>
             </div>
         </div>
         <div class="col-xl-4">

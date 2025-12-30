@@ -212,7 +212,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   onClickAddProformaInvoice(exportOrderID: number): void {
     if (exportOrderID) {
       this.router.navigate([`ie/proforma-invoice/from-export/${exportOrderID}`]);
-    }else { 
+    } else {
       return;
     }
   }
@@ -220,7 +220,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   onClickNavigateToTaxInvoice(exportOrderID: number): void {
     if (exportOrderID) {
       this.router.navigate([`ie/tax-invoice/from-export/${exportOrderID}`]);
-    }else { 
+    } else {
       return;
     }
   }
@@ -258,7 +258,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     try {
       const dto: SalesQuotationRequest = {
         SalesQuotationNo: event,
-        PopulateType: 'AutoSuggest'
+        PopulateType: 'AutoSuggestForExportOrder'
       }
       this.pageService.GetSalesQuotationList(dto)
         .pipe(takeUntil(this.destroy$)).subscribe({
@@ -277,27 +277,26 @@ export class CreateComponent implements OnInit, OnDestroy {
   onSelect_SalesQuotation(event: SalesQuotation_SelectList): void {
     this.productListArray.clear();
     this.tableDef.data = [];
-    if (event.SalesQuotationID) {
+    if (event.StatusID <= 5) {
       this.form.patchValue({ SalesQuotationID: event.SalesQuotationID, SalesQuotationNo: event.SalesQuotationNo });
       this.GetSalesQuotation(event.SalesQuotationID);
     }
-    // if (event.StatusID === 3 || event.StatusID === 4 || event.StatusID === 5) {
-    //   if (event.SalesQuotationID) {
-    //     this.GetSalesQuotationDetails(event.SalesQuotationID);
-    //   }
-    // } 
-    // else {
-    //   this.alertService.showToast({
-    //     text: "Cannot create export "
-    //   });
-    //   this.onClear_SalesQuotation();
-    // }
-
-    return;
+    else {
+      this.alertService.showToast({
+        text: "This Sales Quotation has already been processed. An export order cannot be created.",
+        timer: 5000
+      });
+      this.form.patchValue({
+        SalesEnquiryID: null,
+        SalesEnquiryNo: null,
+      });
+      return;
+    }
   }
 
   onClear_SalesQuotation(): void {
     this.formService.resetFormValue<ExportOrder>(this.formConfig, this.form);
+    this.selectedCustomerAddress = null;
     this.productListArray.clear();
     this.tableDef.data = [];
   }
@@ -426,9 +425,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.productAutoCompleteDef.options = response.Data.Items;
             } else {
               this.productAutoCompleteDef.options = [];
-              if (response.Message != "Record not found.") {
-                this.alertService.showServerResponseAlert(response);
-              }
             }
           },
         });
@@ -613,36 +609,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  // addShippingRecord(model: ExportOrderShippingDetail): void {
-  //   try {
-  //     this.pageService
-  //       .AddShippingRecord(model)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe({
-  //         next: (response) => {
-  //           if (response.IsSuccess) {
-  //             this.alertService.showAlert({
-  //               type: 'success',
-  //               text: response.Message,
-  //               timer: 5000,
-  //             });
-  //             setTimeout(() => {
-  //               this.ngOnInit();
-  //             }, 2000);
-  //           } else {
-  //             this.alertService.showServerResponseAlert(response);
-  //           }
-  //         },
-  //         complete: () => {
-  //           this.isSubmitted = false;
-  //         },
-  //       });
-  //   }
-  //   catch (error) {
-
-  //   }
-  // }
-
   createRecord(model: ExportOrder): void {
     try {
       this.pageService
@@ -703,50 +669,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  // getDetails(): void {
-  //   this.route.params.subscribe((params) => {
-  //     const exportOrderID = +params['id'];
-  //     if (exportOrderID) {
-  //       this.isEditMode = true;
-  //       try {
-  //         this.pageService.GetDetails(exportOrderID)
-  //           .pipe(takeUntil(this.destroy$))
-  //           .subscribe({
-  //             next: (response) => {
-  //               if (response.IsSuccess) {
-  //                 this.selectedCustomerAddress = response.Data.CustomerAddress!;
-  //                 this.statusText = response.Data.StatusText!;
-  //                 this.statusHex = response.Data.StatusHex!;
-  //                 response.Data.ProductList.Items.forEach(item => {
-  //                   const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-  //                   productForm.patchValue(item);
-  //                   this.productListArray.push(productForm);
-  //                 });
-
-  //                 this.tableDef.data = this.productListArray.value;
-  //                 const { ProductList, ...formValues } = response.Data;
-  //                 const data = {
-  //                   ...formValues,
-  //                   ExportOrderDate: DateUtils.toDate(response.Data.ExportOrderDate!),
-  //                   ReferenceDate: DateUtils.toDate(response.Data.ReferenceDate!),
-  //                   ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
-  //                 }
-
-  //                 // this.loadPortList();
-  //                 this.form.patchValue(data);
-  //               } else {
-  //                 this.alertService.showServerResponseAlert(response);
-  //               }
-  //             },
-  //           });
-  //       }
-  //       catch (error) {
-
-  //       }
-  //     }
-  //   });
-  // }
-
   private loadExportOrder(id: number): void {
     this.isEditMode = true;
 
@@ -784,7 +706,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
         });
     }
-    catch (error) {}
+    catch (error) { }
   }
 
   GetSalesQuotation(salesQuotationID: number): void {

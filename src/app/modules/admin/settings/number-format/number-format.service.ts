@@ -21,7 +21,7 @@ export class NumberFormatService {
     private apiService: ApiService,
     private moduleService: ModuleMasterService,
     private selectListService: SelectListService
-  ) {}
+  ) { }
 
   GetMasterDropdownLists(): Observable<{
     moduleList: ApiListResponse<ModuleMaster_SelectList>;
@@ -30,7 +30,7 @@ export class NumberFormatService {
       moduleList: this.moduleService.PopulateList({ PopulateType: 'SelectList' } as ModuleRequest)
     });
   }
-  
+
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
     return this.selectListService.GetStaticList(model);
   }
@@ -40,7 +40,6 @@ export class NumberFormatService {
   }
 
   CreateRecord(model: NumberFormat): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
@@ -70,14 +69,16 @@ export class NumberFormatService {
         defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Start Number is Required.'}
+          required: 'Start Number is Required.'
+        }
       },
       WidthOfNumberPart: {
         label: 'Width Of Number Part',
         defaultValue: null,
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
-          required: 'Width of Number Part is Required.'}
+          required: 'Width of Number Part is Required.'
+        }
       },
       PrefillZero: {
         label: 'Prefill Zero',
@@ -120,7 +121,8 @@ export class NumberFormatService {
         defaultValue: 0,
         validators: [Validators.required],
         validationMessages: {
-          required: 'Please select an option from the Restart List.'}
+          required: 'Please select an option from the Restart List.'
+        }
       }
     }
   }

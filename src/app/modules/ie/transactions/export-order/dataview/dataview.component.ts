@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { Menu, MenuModule } from 'primeng/menu';
@@ -26,11 +25,12 @@ import { ExportOrderService } from '../export-order.service';
 import { ZMultiButtonMenuComponent } from '../../../../../shared/components/z-multi-button-menu/z-multi-button-menu.component';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { ZMenuComponent } from '../../../../../shared/components/z-menu/z-menu.component';
+import { MenuItem } from '../../../../../shared/components/z-menu/z-menu';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, ZMultiButtonMenuComponent, MenuModule, ButtonModule],
+  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, ZMenuComponent, ButtonModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -50,17 +50,19 @@ export class DataviewComponent implements OnInit, OnDestroy {
   sortingForm!: FormGroup;
   sortingFormConfig!: FormConfigType<ExportOrder_IndexTableSort>
 
-  menuItems: MenuItem[] = [
-    {
-      label: 'Options:',
-      items: [{ label: 'Shipping Detail', icon: 'pi pi-plus', command: (row: any) => this.handleComponentLoad('ShippingCreateComponent', row) },
-      { label: 'Bill Regulation', icon: 'pi pi-money-bill', command: (row: any) => this.handleComponentLoad('BillCreateComponent', row) },
-      { label: 'Document', icon: 'pi pi-file-pdf', command: (row: any) => this.handleComponentLoad('DocumentCreateComponent', row) },
-      { label: 'Payment', icon: 'pi pi-dollar', command: (row: any) => this.handleComponentLoad('PaymentCreateComponent', row) },
-      { label: 'Tracking', icon: 'pi pi-at', command: (row: any) => this.handleComponentLoad('TrackingCreateComponent', row) },
-      { label: 'Letter of Credit', icon: 'pi pi-envelope', command: (row: any) => this.handleComponentLoad('LetterOfCreditCreateComponent', row) }]
-    }
-  ];
+  menuCache = new Map<number, MenuItem[]>();
+
+  // menuItems: MenuItem[] = [
+  //   {
+  //     label: 'Options:',
+  //     items: [{ label: 'Shipping Detail', icon: 'pi pi-plus', command: (row: any) => this.handleComponentLoad('ShippingCreateComponent', row) },
+  //     { label: 'Bill Regulation', icon: 'pi pi-money-bill', command: (row: any) => this.handleComponentLoad('BillCreateComponent', row), disabled:  },
+  //     { label: 'Document', icon: 'pi pi-file-pdf', command: (row: any) => this.handleComponentLoad('DocumentCreateComponent', row) },
+  //     { label: 'Payment', icon: 'pi pi-dollar', command: (row: any) => this.handleComponentLoad('PaymentCreateComponent', row) },
+  //     { label: 'Tracking', icon: 'pi pi-at', command: (row: any) => this.handleComponentLoad('TrackingCreateComponent', row) },
+  //     { label: 'Letter of Credit', icon: 'pi pi-envelope', command: (row: any) => this.handleComponentLoad('LetterOfCreditCreateComponent', row) }]
+  //   }
+  // ];
 
   basedOnList: DataTableFilterList[] = []
   incotermList: DataTableFilterList[] = []
@@ -154,6 +156,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   loadData() {
     try {
+      this.menuCache.clear();
       const model: DataViewParams<ExportOrder_IndexTableFilter, ExportOrder_IndexTableSort> = {
         first: this.dataViewEvent.first,
         last: this.dataViewEvent.rows,
@@ -320,4 +323,63 @@ export class DataviewComponent implements OnInit, OnDestroy {
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
+
+  buildMenuOptions(item: ExportOrder_IndexTableList): MenuItem[] {
+    const menuItems: MenuItem[] = [];
+    if (item.StatusID < 5) {
+      menuItems.push(
+        {
+          label: 'Shipping Details',
+          icon: 'pi pi pi-plus',
+          command: () => this.handleComponentLoad('ShippingCreateComponent', item)
+        },
+      )
+    }
+    if (item.StatusID == 5) {
+      menuItems.push(
+        {
+          label: 'Bill Regulation',
+          icon: 'pi pi-file-pdf',
+          command: () => this.handleComponentLoad('BillCreateComponent', item)
+        },
+      )
+    }
+
+    menuItems.push(
+      {
+        label: 'Document',
+        icon: 'pi pi-file-arrow-up',
+        command: () => this.handleComponentLoad('DocumentCreateComponent', item)
+      },
+      {
+        label: 'Payment',
+        icon: 'pi pi-dollar',
+        command: () => this.handleComponentLoad('PaymentCreateComponent', item)
+      },
+      {
+        label: 'Tracking',
+        icon: 'pi pi-at',
+        command: () => this.handleComponentLoad('TrackingCreateComponent', item)
+      },
+      {
+        label: 'Letter of Credit',
+        icon: 'pi pi-envelope',
+        command: () => this.handleComponentLoad('LetterOfCreditCreateComponent', item)
+      }
+    )
+
+    return menuItems;
+  }
+
+  getMenuOptions(item: ExportOrder_IndexTableList): MenuItem[] {
+    return this.buildMenuOptions(item);
+  }
+
+  // getMenuOptions(item: ExportOrder_IndexTableList): MenuItem[] {
+  //   console.log(item);
+  //   if (!this.menuCache.has(item.ExportOrderID)) {
+  //     this.menuCache.set(item.ExportOrderID, this.buildMenuOptions(item));
+  //   }
+  //   return this.menuCache.get(item.ExportOrderID)!;
+  // }
 }
