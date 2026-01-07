@@ -16,12 +16,10 @@ export interface Port_IndexFilter {
   PortCode: string;
   PortName: string;
   PortTypeID: number;
-  CountryName: string;
   ActiveStatusID: number | null;
 }
 
 export interface Port_IndexList {
-  RowID: number;
   PortID: number;
   PortCode: string;
   PortName: string;
@@ -44,5 +42,4 @@ export interface Port_Details {
   PortName: string | null;
   PortTypeID: number | null;
   CountryID: number | null;
-  ActiveStatus: boolean;
 }

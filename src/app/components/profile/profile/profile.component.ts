@@ -1,25 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { UserProfile } from '../../../core/models/user';
+import { UserStateService } from '../../../core/services/user-state.service';
 import { UserService } from '../../../core/services/user.service';
-import { ZDataTable } from '../../../shared/components/z-datatable/z-datatable.component';
 import { ZInputTextComponent } from '../../../shared/components/z-form-controls/z-input-text/z-input-text.component';
-import { ZSpanComponent } from '../../../shared/components/z-form-controls/z-span/z-span.component';
 import { FormConfigType } from '../../../shared/models/form.model';
 import { AlertNotificationService } from '../../../shared/services/alert-notification.service';
 import { FormService } from '../../../shared/services/form.service';
-import { UserStateService } from '../../../core/services/user-state.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ZDataTable,CommonModule, ReactiveFormsModule,ZInputTextComponent,ZSpanComponent],
+  imports: [CommonModule, ReactiveFormsModule,ZInputTextComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent {  
+export class ProfileComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   isSubmitted = false;
@@ -50,6 +48,11 @@ export class ProfileComponent {
       });
     }
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   
   get isPasswordMismatch(): boolean {
     return !!this.form?.errors?.['passwordMismatch'];
@@ -58,7 +61,6 @@ export class ProfileComponent {
   get user() {
     return this.userStateService.user;
   }
-
 
   updatePassword(){
     if (this.isSubmitted) return;

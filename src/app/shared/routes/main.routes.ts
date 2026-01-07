@@ -8,6 +8,7 @@ export const mainRoute: Routes = [
   { path: 'not-found', component: NotFoundComponent },
   { path: 'server-error', component: ServerErrorComponent },
   { path: 'profile', loadComponent: () => import('../../../app/components/profile/profile/profile.component').then((m) => m.ProfileComponent) },
+    { path: 'organisation-setting', loadComponent: () => import('../../../app/components/organization-setting/organization-setting.component').then((m) => m.OrganizationSettingComponent) },
   { path: '', loadChildren: () => import('../../modules/admin/admin.routes').then((m) => m.adminRoute) },
   { path: '', loadChildren: () => import('../../modules/ims/ims.routes').then((m) => m.imsRoute) },
   { path: '', loadChildren: () => import('../../modules/ie/ie.routes').then((m) => m.ieRoute) }

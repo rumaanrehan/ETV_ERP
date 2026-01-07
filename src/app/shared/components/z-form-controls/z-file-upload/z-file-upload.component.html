@@ -6,13 +6,15 @@
       [maxFileSize]="maxFileSize"
       customUpload="true"
       [auto]="false"
+      (uploadHandler)="onUpload($event)"
       (onSelect)="onSelectedFiles($event)"
       (onRemove)="onRemoveFile(1)"
     >
-    <ng-template pTemplate="header" let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback">
+    <ng-template pTemplate="header" let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
       <div class="d-flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
           <div class="d-flex gap-2 align-items-center flex-1">
               <p-button (onClick)="chooseCallback()" icon="pi pi-images" [rounded]="true" [outlined]="true" />
+              <p-button (onClick)="uploadCallback()" icon="pi pi-upload" [rounded]="true" severity="success" [disabled]="!(files?.length > 0)" />
               <p-button (onClick)="clearCallback()" icon="pi pi-times" [rounded]="true" [outlined]="true" severity="danger" [disabled]="!group.get(control)?.value?.length" />   
             <div class="label text-center flex-1">
               <strong>Upload {{label}}</strong>
@@ -55,7 +57,7 @@
         </div>
       </div>
     </ng-template>
-    <ng-template pTemplate="empty">
+    <ng-template pTemplate="empty" *ngIf="showDragnDrop">
       <div class="flex align-items-center justify-content-center flex-column text-center">
         <i
           class="pi pi-cloud-upload border-2 border-circle p-5 text-8xl text-400 border-400"
@@ -63,5 +65,5 @@
         <p class="mt-4 mb-0">Drag and drop {{label}} here to upload.</p>
       </div>
     </ng-template>
-    </p-fileUpload>
+  </p-fileUpload>
 </div>
