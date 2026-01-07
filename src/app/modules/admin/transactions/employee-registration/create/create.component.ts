@@ -326,7 +326,6 @@ export class CreateComponent implements OnInit, OnDestroy {
           this.pageService.GetDetails(EmployeeID).subscribe(
             response => {
               if (response.IsSuccess) {
-                console.log(response.Data);
                 const model = {
                   ...response.Data,
                   DOB: DateUtils.toDate(response.Data.DOB),

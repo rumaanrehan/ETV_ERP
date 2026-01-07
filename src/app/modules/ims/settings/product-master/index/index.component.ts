@@ -35,7 +35,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private alertService: AlertNotificationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
@@ -55,8 +55,6 @@ export class IndexComponent implements OnInit, OnDestroy {
       { data: 'ProductCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.productCodeTemplate },
       { data: 'ProductName', label: 'Product Name', filterable: true },
       { data: 'ItemCategoryName', label: 'Item Category', width: "10%", filterable: true },
-      { data: 'GenericItemName', label: 'Generic Item', width: "10%", filterable: true },
-      { data: 'ManufacturerName', label: 'Manufacturer Name', width: "10%", filterable: true },
       { data: 'UOMName', label: 'UOM Name', width: "10%", filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.productActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate }
@@ -78,22 +76,22 @@ export class IndexComponent implements OnInit, OnDestroy {
     try {
       if (this.createSidebar && productID) {
         this.pageService.GetDetails(productID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              console.log(response.Data)
-              const model: ProductMaster = {
-                ...response.Data
-              };
-              
-              this.createSidebar.openSidebar(activeStatus, true, model);
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                console.log(response.Data)
+                const model: ProductMaster = {
+                  ...response.Data
+                };
+
+                this.createSidebar.openSidebar(activeStatus, true, model);
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
       }
     }
     catch (error) {
@@ -121,23 +119,23 @@ export class IndexComponent implements OnInit, OnDestroy {
       };
 
       this.pageService.PopulateGrid(this.formService.transformFormData(model))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            }
+            else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
           }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
+        });
     } catch (error) {
 
     }
@@ -149,29 +147,30 @@ export class IndexComponent implements OnInit, OnDestroy {
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
 
       this.alertService
-      .showConfirmationWithInput({
-        inputPlaceholder: inputPlaceholder,
-        text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${ row.ProductName }</b>"?`,})
+        .showConfirmationWithInput({
+          inputPlaceholder: inputPlaceholder,
+          text: `Do you really want to <b>${ActionType.toUpperCase()}</b> the "<b>${row.ProductName}</b>"?`,
+        })
         .then((result) => {
-        if (result.isConfirmed) {
-          this.pageService.DeleteReactivate(row.ProductID!, result.value)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              this.loadData();
-              if (response.IsSuccess) {
-                this.alertService.showAlert({
-                  type: 'success',
-                  text: response.Message,
-                  timer: 5000,
-                });
-              } else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            },
-          });
-        }
-      });
+          if (result.isConfirmed) {
+            this.pageService.DeleteReactivate(row.ProductID!, result.value)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response) => {
+                  this.loadData();
+                  if (response.IsSuccess) {
+                    this.alertService.showAlert({
+                      type: 'success',
+                      text: response.Message,
+                      timer: 5000,
+                    });
+                  } else {
+                    this.alertService.showServerResponseAlert(response);
+                  }
+                },
+              });
+          }
+        });
     } catch (error) {
 
     }

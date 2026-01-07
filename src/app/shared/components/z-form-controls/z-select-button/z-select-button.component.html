@@ -1,6 +1,6 @@
 <div [formGroup]="group">
     <p-selectButton [formControlName]="control" [options]="stateOptions" optionLabel="Text" optionValue="Value"
-        (onChange)="onValueChange($event.value)" [allowEmpty]="false" />
+        (onChange)="onValueChange($event.value)" [allowEmpty]="allowEmpty" />
 </div>
 
 

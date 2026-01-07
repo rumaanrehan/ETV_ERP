@@ -18,7 +18,7 @@ export class EmployeeTypeMasterService {
 
   constructor(
     private apiService: ApiService,
-  ) {}
+  ) { }
 
   PopulateList(model: EmployeeTypeRequest): Observable<ApiListResponse<EmployeeType_SelectList>> {
     return this.apiService.post<ApiListResponse<EmployeeType_SelectList>>(`${this.endpoint}/PopulateList`, model);
@@ -37,11 +37,10 @@ export class EmployeeTypeMasterService {
   }
 
   UpdateRecord(model: EmployeeTypeMaster): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(EmployeeTypeID: number,  reasonToUpdate: string): Observable<ApiResponse> {
+  DeleteReactivate(EmployeeTypeID: number, reasonToUpdate: string): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?EmployeeTypeID=${EmployeeTypeID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
@@ -72,7 +71,7 @@ export class EmployeeTypeMasterService {
           required: 'Employee Name is required'
         }
       },
-       IsAllowedOverTime: {
+      IsAllowedOverTime: {
         label: 'Is Allowed Over Time',
         defaultValue: false
       },

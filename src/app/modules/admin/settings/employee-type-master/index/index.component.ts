@@ -50,7 +50,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     };
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'EmployeeTypeCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.employeeTypeCodeTemplate },
+      { data: 'EmployeeTypeCode', label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.employeeTypeCodeTemplate },
       { data: 'EmployeeTypeName', label: 'Employee Type Name', filterable: true },
       { data: 'IsAllowedOverTime', label: 'IS Allowed Over Time', orderable: false, customTemplate: this.employeeTypeIsAllowedOverTimeTemplate },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.employeeTypeActiveStatusTemplate },
@@ -73,21 +73,20 @@ export class IndexComponent implements OnInit, OnDestroy {
     try {
       if (this.createSidebar && employeeTypeID) {
         this.pageService.GetDetails(employeeTypeID)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              console.log(response.Data);
-              const model: EmployeeTypeMaster = {
-                ...response.Data
-              };
-              this.createSidebar.openSidebar(activeStatus, true, model);
-            }
-            else {
-              this.alertService.showServerResponseAlert(response);
-            }
-          },
-        });
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                const model: EmployeeTypeMaster = {
+                  ...response.Data
+                };
+                this.createSidebar.openSidebar(activeStatus, true, model);
+              }
+              else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
       }
     }
     catch (error) {
@@ -114,23 +113,23 @@ export class IndexComponent implements OnInit, OnDestroy {
         filters: this.tableDef.filterForm?.value
       };
       this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.tableDef.data = response.Data.Items;
+              this.tableDef.totalRecords = response.Data.TotalRecords;
+            }
+            else {
+              this.tableDef.data = [];
+              this.tableDef.totalRecords = 0;
+              this.alertService.showServerResponseToast(response);
+            }
+          },
+          complete: () => {
+            this.tableDef.loading = false;
           }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
+        });
     }
     catch (error) {
 
@@ -146,27 +145,27 @@ export class IndexComponent implements OnInit, OnDestroy {
         inputPlaceholder: inputPlaceholder,
         text: `Do you really want to ${ActionType} the "<b>${row.EmployeeTypeName}</b>"?`,
       })
-      .then(result => {
-        if (result.isConfirmed) {
-          this.pageService.DeleteReactivate(row.EmployeeTypeID, result.value)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              if (response.IsSuccess) {
-                this.loadData();
-                this.alertService.showAlert({
-                  type: "success",
-                  text: response.Message,
-                  timer: 5000
-                });
-              }
-              else {
-                this.alertService.showServerResponseAlert(response);
-              }
-            }
-          });
-        }
-      });
+        .then(result => {
+          if (result.isConfirmed) {
+            this.pageService.DeleteReactivate(row.EmployeeTypeID, result.value)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (response) => {
+                  if (response.IsSuccess) {
+                    this.loadData();
+                    this.alertService.showAlert({
+                      type: "success",
+                      text: response.Message,
+                      timer: 5000
+                    });
+                  }
+                  else {
+                    this.alertService.showServerResponseAlert(response);
+                  }
+                }
+              });
+          }
+        });
     }
     catch (error) {
 

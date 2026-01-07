@@ -21,6 +21,11 @@ import { CurrencyMasterService } from '../../../admin/settings/currency-master/c
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
 import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
 import { HttpClient } from '@angular/common/http';
+import { Port_SelectList, PortRequest } from '../../settings/port-master/port-master';
+import { PortMasterService } from '../../settings/port-master/port-master.service';
+import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
+import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
+import { Environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -35,15 +40,19 @@ export class ProformaInvoiceService {
     private productMasterService: ProductMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
     private currencyMasterService: CurrencyMasterService,
+    private portService: PortMasterService,
     private selectListService: SelectListService,
+    private paymentTermMasterService: PaymentTermMasterService,
     private http: HttpClient
   ) { }
 
   GetMasterDropdownLists(): Observable<{
+    paymentTermList: ApiListResponse<PaymentTerm_SelectList>
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
     currencyList: ApiListResponse<Currency_SelectList>;
   }> {
     return forkJoin({
+      paymentTermList: this.paymentTermMasterService.PopulateList({ PopulateType: 'SelectList' } as PaymentTermRequest),
       taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest),
       currencyList: this.currencyMasterService.PopulateList({ PopulateType: 'SelectList' } as CurrencyRequest)
     });
@@ -81,6 +90,10 @@ export class ProformaInvoiceService {
     return this.exportOrderService.GetDetails(exportOrderID);
   }
 
+  GetPortList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
+    return this.portService.PopulateList(model);
+  }
+
   CreateRecord(model: ProformaInvoice): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
@@ -94,11 +107,7 @@ export class ProformaInvoiceService {
   }
 
   GeneratePdf(request: any) {
-    return this.http.post(
-      'http://localhost:44316/api/IE/ProformaInvoice/PrintInvoice',
-      request,
-      { responseType: 'blob' }
-    );
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintInvoice`, request, { responseType: 'blob' });
   }
 
   //#region Form Configuration
@@ -152,6 +161,22 @@ export class ProformaInvoiceService {
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
         validationMessages: {
           required: "Export Order is required"
+        }
+      },
+      ReferenceNo: {
+        label: 'Reference Number',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Reference Number is required"
+        }
+      },
+      ReferenceDate: {
+        label: 'Reference Date',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Reference Date is required"
         }
       },
       CustomerID: {
@@ -352,6 +377,41 @@ export class ProformaInvoiceService {
       NetAmountBC: {
         label: '',
         defaultValue: null
+      }, PaymentTermID: {
+        label: 'Payment Term',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Payment Terms are required"
+        }
+      },
+      ShipmentModeID: {
+        label: 'Shipment Mode',
+        defaultValue: null
+      },
+      LoadingPortName: {
+        label: 'Port Name',
+        defaultValue: null
+      },
+      DischargePortName: {
+        label: 'Port Name',
+        defaultValue: null
+      },
+      LoadingPortID: {
+        label: 'Loading Port',
+        defaultValue: null
+      },
+      DischargePortID: {
+        label: 'Discharge Port',
+        defaultValue: null
+      },
+      FinalDestination: {
+        label: 'Final Destination',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Final Destination is required"
+        }
       },
       StatusID: {
         label: '',
@@ -398,6 +458,40 @@ export class ProformaInvoiceService {
       columns: [
         { data: 'CompanyCode', label: 'Code', width: '150px' },
         { data: 'CompanyName', label: 'Name', width: '150px' }
+      ],
+    }
+  }
+
+  getLoadingPortAutoCompleteDef(formConfig: FormConfigType<ProformaInvoice>, form: FormGroup): AutoCompleteDef<Port_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'LoadingPortName',
+      label: formConfig.LoadingPortID.label,
+      validationMessage: formConfig.LoadingPortID.error,
+      placeholder: 'Search Port',
+      options: [],
+      optionLabel: 'PortName',
+      columns: [
+        { data: 'PortCode', label: 'Code', width: '150px' },
+        { data: 'PortName', label: 'Name', width: '150px' }
+      ],
+    }
+  }
+
+  getDischargePortAutoCompleteDef(formConfig: FormConfigType<ProformaInvoice>, form: FormGroup): AutoCompleteDef<Port_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'DischargePortName',
+      label: formConfig.DischargePortID.label,
+      validationMessage: formConfig.DischargePortID.error,
+      placeholder: 'Search Port',
+      options: [],
+      optionLabel: 'PortName',
+      columns: [
+        { data: 'PortCode', label: 'Code', width: '150px' },
+        { data: 'PortName', label: 'Name', width: '150px' }
       ],
     }
   }

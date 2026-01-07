@@ -19,8 +19,8 @@
                 </a>
                 <div class="text-end d-flex align-items-center justify-content-end gap-2">
                     <span class="badge bg-outline-primary">{{item.StatusText}}</span>
-                    <app-z-multi-button-menu icon="pi pi-bars" appendTo="body" [context]="item" [items]="menuItems">
-                    </app-z-multi-button-menu>
+                    <z-menu [menus]="getMenuOptions(item)" [styleClass]="'dataview-action-menu'">
+                    </z-menu>
                 </div>
             </div>
             <div class="col-7">

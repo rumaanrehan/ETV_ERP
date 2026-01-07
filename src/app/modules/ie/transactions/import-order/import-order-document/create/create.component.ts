@@ -17,7 +17,7 @@ import { ImportOrderDocumentService } from '../import-order-document.service';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule,ZFileUploadComponent, AutoCompleteModule],
+  imports: [FormSidebarComponent, ReactiveFormsModule, ZFormControlsModule, ZFileUploadComponent, AutoCompleteModule],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
@@ -32,10 +32,10 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   form!: FormGroup;
   formConfig!: FormConfigType<ImportOrderDocument>;
-  
+
   importOrderAutoCompleteDef!: AutoCompleteDef<ImportOrder_SelectList>;
 
-   documentTypeList: DocumentType_SelectList[] = [
+  documentTypeList: DocumentType_SelectList[] = [
     { DocumentTypeID: 1, DocumentTypeName: 'Identity Proof' },
     { DocumentTypeID: 2, DocumentTypeName: 'Address Proof' },
     { DocumentTypeID: 3, DocumentTypeName: 'Tax Document' },
@@ -47,7 +47,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private pageService: ImportOrderDocumentService,
     private formService: FormService,
     private alertService: AlertNotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
@@ -81,7 +81,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.closeSidebarEvent.emit();
     }, 1);
   }
-  
+
   loadImportOrder(event: string): void {
     try {
       const dto: ImportOrderRequest = {
@@ -89,18 +89,18 @@ export class CreateComponent implements OnInit, OnDestroy {
         PopulateType: 'AutoSuggest'
       }
       this.pageService.GetImportOrderList(dto)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.importOrderAutoCompleteDef.options = response.Data.Items;
-          } else {
-            this.importOrderAutoCompleteDef.options = [];
-            if (response.Message != "Record not found.") {
-              this.alertService.showServerResponseAlert(response);
+        .pipe(takeUntil(this.destroy$)).subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.importOrderAutoCompleteDef.options = response.Data.Items;
+            } else {
+              this.importOrderAutoCompleteDef.options = [];
+              if (response.Message != "Record not found.") {
+                this.alertService.showServerResponseAlert(response);
+              }
             }
-          }
-        },
-      });
+          },
+        });
     } catch (error) {
     }
   }
@@ -112,7 +112,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
- onSubmit(): void {
+  onSubmit(): void {
     if (this.isSubmitted) return;
     this.isSubmitted = true;
 
@@ -124,7 +124,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.isSubmitted = false;
         return;
       }
-      
+
       const formData = new FormData();
       const transformedData = this.formService.transformFormData(this.form.value);
 
@@ -140,7 +140,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
         }
         else {
-          if(transformedData[key] != null) {
+          if (transformedData[key] != null) {
             formData.append(key, transformedData[key]);
           }
         }
@@ -160,7 +160,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         });
       }
       else {
-        console.log(formData);
         this.createRecord(formData);
       }
     }
@@ -171,32 +170,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   createRecord(model: FormData): void {
     try {
       this.pageService
-      .CreateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((response) => {
-        if (response.IsSuccess) {
-          this.closeSidebar();
-          this.alertService.showAlert({
-            type: 'success',
-            text: response.Message,
-            timer: 5000
-          });
-        } else {
-          this.alertService.showServerResponseAlert(response);
-        }
-        this.isSubmitted = false;
-      });
-    }
-    catch (error) {
-    }
-  }
-
-  updateRecord(model: ImportOrderDocument): void {
-    try {
-      this.pageService.UpdateRecord(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
+        .CreateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((response) => {
           if (response.IsSuccess) {
             this.closeSidebar();
             this.alertService.showAlert({
@@ -207,11 +183,34 @@ export class CreateComponent implements OnInit, OnDestroy {
           } else {
             this.alertService.showServerResponseAlert(response);
           }
-        },
-        complete: () => {
           this.isSubmitted = false;
-        }
-      });
+        });
+    }
+    catch (error) {
+    }
+  }
+
+  updateRecord(model: ImportOrderDocument): void {
+    try {
+      this.pageService.UpdateRecord(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000
+              });
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
+          }
+        });
     }
     catch (error) {
     }

@@ -76,17 +76,14 @@ export class ImportOrderService {
   }
 
   CreateRecord(model: ImportOrder): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Create`, model);
   }
 
   UpdateRecord(model: ImportOrder): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
   CancelOrder(model: ImportOrder): Observable<ApiResponse> {
-    console.log(model);
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
   }
 

@@ -15,7 +15,6 @@ export class ExportOrderBillRegulationService {
   ) { }
 
   AddBillRegulationRecord(model: ExportOrderBillRegulationRequest): Observable<ApiResponse> {
-    debugger;
     return this.exportOrderService.AddBillRegulationRecord(model);
   }
 
@@ -25,39 +24,39 @@ export class ExportOrderBillRegulationService {
 
   UpdateBillRegulationRecord(model: ExportOrderBillRegulationRequest): Observable<ApiResponse> {
     return this.exportOrderService.UpdateBillRegulationRecord(model);
-  }  
-  
+  }
+
   getFormConfig(): FormConfigType<ExportOrderBillRegulation> {
     return {
       ExportOrderID: {
-        label: '',  
+        label: '',
         defaultValue: null
       },
       ExportOrderNo: {
         label: 'Export Order No',
         defaultValue: null
       },
-      ShippingBill:{
+      ShippingBill: {
         label: 'Shipping Bill',
         defaultValue: false
       },
-      AirwayBill:{
+      AirwayBill: {
         label: 'Airway Bill',
         defaultValue: false
       },
-      IECCertificate:{
+      IECCertificate: {
         label: 'IEC Certificate',
         defaultValue: false
       },
-      Invoice:{
+      Invoice: {
         label: 'Invoice',
         defaultValue: false
       },
-      PackingSlip:{
+      PackingSlip: {
         label: 'Packing Slip',
         defaultValue: false
       },
-      CustomerPO:{
+      CustomerPO: {
         label: 'Customer PO',
         defaultValue: false
       }

@@ -15,6 +15,7 @@ export class ZSelectButtonComponent {
   @Input() group!: FormGroup;
   @Input() control: string = '';
   @Input() label: string = '';
+  @Input() allowEmpty: boolean = false;
   @Input() validationMessage: string | undefined = '';
   @Input() stateOptions: SelectButtonOptions[] = [
     { Text: "ASC", Value: 1 },

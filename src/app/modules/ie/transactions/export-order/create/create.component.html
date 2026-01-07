@@ -37,7 +37,7 @@
                       (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
                     </z-autocomplete>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Company"
-                      (click)="handleComponentLoad('VendorCreateComponent')"></i>
+                      (click)="handleComponentLoad('VendorCreateComponent')" *ngIf="!isBasedOnSalesQuotation"></i>
                   </div>
                 </div>
                 <div class="col-xl-{{isBasedOnSalesQuotation ? 3 : 5}}"></div>
@@ -61,7 +61,7 @@
                       [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [readonly]="isBasedOnSalesQuotation"
                       [options]="currencyList"></z-select>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Currency"
-                      (click)="handleComponentLoad('CurrencyCreateComponent')"></i>
+                      (click)="handleComponentLoad('CurrencyCreateComponent')" *ngIf="!isBasedOnSalesQuotation"></i>
                   </div>
                 </div>
                 <div class="col-xl-5"></div>
@@ -104,7 +104,7 @@
                 <!-- Product List -->
                 <div class="col-12 px-2">
                   <h6 class="form-group">Product List</h6>
-                  <div class="col-xl-4 form-group px-2" *ngIf="!isBasedOnSalesQuotation">
+                  <div class="col-xl-3 form-group" *ngIf="!isBasedOnSalesQuotation">
                     <div class="action-input-group">
                       <z-autocomplete class="flex-grow-1" [controlDef]="productAutoCompleteDef"
                         (onSearch)="onSearch_Product($event)" (onSelect)="onSelect_Product($event)">
@@ -229,10 +229,13 @@
   <div class="page-action-panel">
     <div class="col-xl-4">
       <div class="col-xl-4 px-1" *ngIf="isEditMode && !IsDocumentAlreadyExists">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickAddProformaInvoice(this.form.get('ExportOrderID')?.value || null)"> Add Proforma </button>
+        <button type="submit" class="btn btn-md btn-primary w-100"
+          (click)="onClickAddProformaInvoice(this.form.get('ExportOrderID')?.value || null)"> Add Proforma </button>
       </div>
       <div class="col-xl-4 px-1" *ngIf="isEditMode && !IsDocumentAlreadyExists">
-          <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickNavigateToTaxInvoice(this.form.get('ExportOrderID')?.value || null)"> Add Tax Invoice </button>
+        <button type="submit" class="btn btn-md btn-primary w-100"
+          (click)="onClickNavigateToTaxInvoice(this.form.get('ExportOrderID')?.value || null)"> Add Tax Invoice
+        </button>
       </div>
     </div>
     <div class="col-xl-4">

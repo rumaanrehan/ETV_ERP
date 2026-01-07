@@ -35,7 +35,6 @@ export class UserService {
   }
 
   Authenticate(request: UserAuthenticateRequest): Observable<ApiDataResponse<UserAuthenticateResponse>> {
-    console.log(this.endpoint);
     return this.apiService.post<any>(`${this.endpoint}/Authenticate`, request);
   }
 
@@ -129,9 +128,9 @@ export class UserService {
           required: 'Please enter Old Password',
           minlength: 'Old password must be at least 8 characters.'
         },
-        type:'control'
+        type: 'control'
       },
-      
+
       NewPassword: {
         label: 'New Password',
         defaultValue: '',
@@ -140,7 +139,7 @@ export class UserService {
           required: 'Please enter New Password',
           minlength: 'New password must be at least 8 characters.'
         },
-        type:'control'
+        type: 'control'
       },
 
       ConfirmPassword: {
@@ -151,7 +150,7 @@ export class UserService {
           required: 'Please re-enter the new password.',
           minlength: 'New password must be at least 8 characters.'
         },
-        type:'control'
+        type: 'control'
       }
     };
   }

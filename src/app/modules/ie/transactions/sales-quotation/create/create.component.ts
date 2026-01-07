@@ -111,7 +111,6 @@ export class CreateComponent implements OnInit, OnDestroy {
       .subscribe(paramMap => {
         const id = paramMap.get('id');
         const salesEnquiryID = paramMap.get('salesEnquiryID');
-        console.log("Sales Enquiry or sales quotaion id from route paramMap:", salesEnquiryID, id);
 
         if (id) {
           this.loadSalesQuotaion(+id);
@@ -187,7 +186,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   onClickNavigateToExportOrder(salesQuotationID: number): void {
     if (salesQuotationID) {
       this.router.navigate([`ie/export-order/from-quotation/${salesQuotationID}`]);
-    }else { 
+    } else {
       return;
     }
   }
@@ -225,8 +224,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     try {
       const dto: SalesEnquiryRequest = {
         SearchBy: 1,
-        SearchValue: event,
-        PopulateType: 'AutoSuggest'
+        SalesEnquiryNo: event,
+        PopulateType: 'AutoSuggestForSalesQuotation'
       }
       this.pageService.GetSalesEnquiryList(dto)
         .pipe(takeUntil(this.destroy$)).subscribe({
@@ -252,7 +251,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
     else {
       this.alertService.showToast({
-        text: "Cannot select this Sales Enquiry. Only enquiries with 'Received', 'Under Review', or 'Quotation Generated' status can be processed."
+        text: "This Sales Enquiry has already been processed. A quotation cannot be created.",
+        timer: 5000
+      });
+      this.form.patchValue({
+        SalesEnquiryID: null,
+        SalesEnquiryNo: null,
       });
       return;
     }
@@ -497,7 +501,11 @@ export class CreateComponent implements OnInit, OnDestroy {
                 this.ngOnInit();
               }, 2000);
             } else {
-              this.alertService.showServerResponseAlert(response);
+              this.alertService.showAlert({
+                type: 'info',
+                text: response.Message,
+              })
+              // this.alertService.showServerResponseAlert(response);
             }
           },
           complete: () => {
@@ -527,7 +535,11 @@ export class CreateComponent implements OnInit, OnDestroy {
                 this.router.navigate(['/ie/sales-quotation/index']);
               }, 2000);
             } else {
-              this.alertService.showServerResponseAlert(response);
+              this.alertService.showAlert({
+                type: 'info',
+                text: response.Message,
+              })
+              // this.alertService.showServerResponseAlert(response);
             }
           },
           complete: () => {
@@ -551,33 +563,32 @@ export class CreateComponent implements OnInit, OnDestroy {
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
-                  console.log(response);
                   const model: SalesQuotation_Detail = response.Data;
 
                   this.statusText = response.Data.StatusText;
                   this.statusHex = response.Data.StatusHex;
                   this.selectedCustomerAddress = model.CustomerAddress;
 
-                    this.form.patchValue({
-                      SalesQuotationID: model.SalesQuotationID,
-                      SalesQuotationNo: model.SalesQuotationNo,
-                      BasedOn: model.BasedOn,
-                      SalesEnquiryID: model.SalesEnquiryID,
-                      SalesEnquiryNo: model.SalesEnquiryNo,
-                      CustomerID: model.CustomerID,
-                      CustomerName: model.CustomerName,
-                      SalesQuotationDate: DateUtils.toDate(response.Data.SalesQuotationDate!),
-                      FCCurrencyID: model.FCCurrencyID,
-                      IncotermID: model.IncotermID,
-                      PaymentTermID: model.PaymentTermID,
-                      ExchangeRateToBC: model.ExchangeRateToBC,
-                      Narration: model.Narration,
-                      IsRoundOff: model.IsRoundOff,
-                      SubtotalAmountFC: model.SubtotalAmountFC,
-                      TaxAmountFC: model.TaxAmountFC,
-                      NetAmountFC: model.NetAmountFC,
-                      ValidityDate: response.Data.ValidityDate ? DateUtils.toDate(response.Data.ValidityDate) : null
-                    });
+                  this.form.patchValue({
+                    SalesQuotationID: model.SalesQuotationID,
+                    SalesQuotationNo: model.SalesQuotationNo,
+                    BasedOn: model.BasedOn,
+                    SalesEnquiryID: model.SalesEnquiryID,
+                    SalesEnquiryNo: model.SalesEnquiryNo,
+                    CustomerID: model.CustomerID,
+                    CustomerName: model.CustomerName,
+                    SalesQuotationDate: DateUtils.toDate(response.Data.SalesQuotationDate!),
+                    FCCurrencyID: model.FCCurrencyID,
+                    IncotermID: model.IncotermID,
+                    PaymentTermID: model.PaymentTermID,
+                    ExchangeRateToBC: model.ExchangeRateToBC,
+                    Narration: model.Narration,
+                    IsRoundOff: model.IsRoundOff,
+                    SubtotalAmountFC: model.SubtotalAmountFC,
+                    TaxAmountFC: model.TaxAmountFC,
+                    NetAmountFC: model.NetAmountFC,
+                    ValidityDate: response.Data.ValidityDate ? DateUtils.toDate(response.Data.ValidityDate) : null
+                  });
 
                   this.productListArray.clear();
                   response.Data.ProductList.Items.forEach(item => {
@@ -664,13 +675,11 @@ export class CreateComponent implements OnInit, OnDestroy {
               return;
             }
             const model: SalesQuotation_Detail = response.Data;
-            console.log("Sales Quotation Details:", response.Data);
 
             this.statusText = response.Data.StatusText;
             this.statusHex = response.Data.StatusHex;
             this.selectedCustomerAddress = model.CustomerAddress,
-            this.isExportAlreadyExists = response.Data.IsExportAlreadyExists;
-            console.log(this.isExportAlreadyExists);
+              this.isExportAlreadyExists = response.Data.IsExportAlreadyExists;
 
             this.form.patchValue({
               SalesQuotationID: model.SalesQuotationID,
@@ -714,7 +723,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
         });
     }
-    catch (error) {}
+    catch (error) { }
   }
 
   handleComponentLoad(componentName: string) {

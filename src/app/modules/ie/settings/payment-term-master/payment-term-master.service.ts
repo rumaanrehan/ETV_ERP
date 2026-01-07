@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { PaymentTermMaster, PaymentTerm_IndexTableFilter, PaymentTerm_IndexTableList, PaymentTerm_SelectList, PaymentTermRequest, PaymentTerm_Details} from './payment-term-master';
+import { PaymentTermMaster, PaymentTerm_IndexTableFilter, PaymentTerm_IndexTableList, PaymentTerm_SelectList, PaymentTermRequest, PaymentTerm_Details } from './payment-term-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
@@ -16,14 +16,13 @@ export class PaymentTermMasterService {
 
   constructor(
     private apiService: ApiService
-  ) {}
+  ) { }
 
   PopulateList(model: PaymentTermRequest): Observable<ApiListResponse<PaymentTerm_SelectList>> {
     return this.apiService.post<ApiListResponse<PaymentTerm_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<PaymentTerm_IndexTableFilter>): Observable<ApiPagedListResponse<PaymentTerm_IndexTableList>> {
-    console.log(model);
     return this.apiService.post<ApiPagedListResponse<PaymentTerm_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
@@ -39,7 +38,7 @@ export class PaymentTermMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  DeleteReactivate(paymentTermID: number, reasonToUpdate:  string): Observable<ApiResponse> {
+  DeleteReactivate(paymentTermID: number, reasonToUpdate: string): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?paymentTermID=${paymentTermID}&${reasonToUpdate}`, {});
   }
 

@@ -1,5 +1,6 @@
 export const Environment = {
   production: true,
   apiUrl: '/api/',
-  clientSecretKey: 'iWnltKmdHeX27BnjZH3DxXfr03YFFFXa'
+  clientSecretKey: 'iWnltKmdHeX27BnjZH3DxXfr03YFFFXa',
+  apiBaseUrl: 'https://ehc.eternaltechverse.com/api'
 };

@@ -7,7 +7,7 @@ import { ShowValidationTooltipDirective } from '../../../layouts/directives/show
 @Component({
   selector: 'z-inputtext',
   standalone: true,
-  imports: [ReactiveFormsModule,FloatLabelModule,InputTextModule,ShowValidationTooltipDirective],
+  imports: [ReactiveFormsModule, FloatLabelModule, InputTextModule, ShowValidationTooltipDirective],
   templateUrl: './z-input-text.component.html',
   styleUrl: './z-input-text.component.scss'
 })
@@ -17,7 +17,8 @@ export class ZInputTextComponent {
   @Input() control: string = '';
   @Input() label: string = '';
   @Input() validationMessage: string | undefined = '';
-  
+  @Input() readonly: boolean = false;
+
   @Output() onChange = new EventEmitter<any>(); // Event emitter for value changes
 
   onValueChange(value: any): void {
