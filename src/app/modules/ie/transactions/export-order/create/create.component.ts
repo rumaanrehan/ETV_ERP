@@ -89,7 +89,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   dischargePortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
-
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: ExportOrderService,

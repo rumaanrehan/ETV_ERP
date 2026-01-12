@@ -3,10 +3,10 @@ import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, Vie
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataViewModule } from 'primeng/dataview';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { FormConfigType } from '../../../../../shared/models/form.model';
-import { StaticList } from '../../../../../shared/models/select-list';
+import { DataTableFilterList, StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
@@ -19,6 +19,8 @@ import { ImportOrderTracking } from '../import-order-tracking/import-order-track
 import { ImportOrderService } from '../import-order.service';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
+import { MenuItem } from '../../../../../shared/components/z-menu/z-menu';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 
 @Component({
   selector: 'app-dataview',
@@ -31,9 +33,9 @@ export class DataviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+  // @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
 
   componentRef?: ComponentRef<any>;
-
   dataViewDef!: DataViewDef<ImportOrder_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
 
@@ -42,15 +44,14 @@ export class DataviewComponent implements OnInit, OnDestroy {
   sortingForm!: FormGroup;
   sortingFormConfig!: FormConfigType<ImportOrder_IndexTableSort>
 
-  statusList: StaticList[] = [
-    { iValue: 0, Text: "All", cValue: "" },
-    { iValue: 1, Text: "processing", cValue: "" },
-    { iValue: 2, Text: "ready_to_ship", cValue: "" }
-  ]
-
-  sortFieldList: any[] = [
-    { value: "StatusID", text: "Status" }
-  ]
+  menuCache = new Map<number, MenuItem[]>();
+  
+  basedOnList: DataTableFilterList[] = []
+  incotermList: DataTableFilterList[] = []
+  isDutyDrawableList: DataTableFilterList[] = []
+  isRoDTEPList: DataTableFilterList[] = []
+  shipmentModeList: DataTableFilterList[] = []
+  statusList: StaticList[] = []
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -64,12 +65,55 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
     this.filterForm = this.formService.createFormGroup<ImportOrder_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
+    this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
+    this.sortingForm = this.formService.createFormGroup<ImportOrder_IndexTableSort>(this.pageService.getFormConfig_DataTableSort());
     this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  loadDropdownList(): void {
+    this.loadDataTableLists([
+      { columnName: 'BasedOn', targetList: 'basedOnList' },
+      { columnName: 'Incoterm', targetList: 'incotermList' },
+      { columnName: 'IsDutyDrawable', targetList: 'isDutyDrawableList' },
+      { columnName: 'IsRoDTEP', targetList: 'isRoDTEPList' },
+      { columnName: 'ShipmentMode', targetList: 'shipmentModeList' }
+    ]);
+  }
+  
+  loadDataTableLists(listConfigs: { columnName: string; targetList: keyof DataviewComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<DataTableFilterList>>> = {};
+
+    listConfigs.forEach(({ columnName, targetList }) => {
+      sources[targetList] = this.pageService.GetDataTableList({
+        AreaName: 'IE',
+        ControllerName: 'ExportOrder',
+        TableName: 'IndexTable',
+        ColumnName: columnName
+      });
+    });
+
+    forkJoin(sources)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as DataTableFilterList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as DataTableFilterList[]) = [];
+            }
+          });
+        },
+      });
+  }
+
+  onCloseSidebar(): void {
+    this.loadData();
   }
 
   onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {
@@ -106,16 +150,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
               this.dataViewDef.data = response.Data.Items;
               this.dataViewDef.totalRecords = response.Data.TotalRecords;
             }
-            // if (response.IsSuccess) {
-            //   console.log(response.Data.Items)
-            //   const data = response.Data.Items.map(item => ({
-            //     ...item,
-            //     ImportOrderDate: DateUtils.formatDate(item.ImportOrderDate),
-            //     ReferenceDate: DateUtils.formatDate(item.ReferenceDate),
-            //   }));
-            //   this.dataViewDef.data = data;
-            //   this.dataViewDef.totalRecords = response.Data.TotalRecords;
-            // }
             else {
               this.dataViewDef.data = [];
               this.dataViewDef.totalRecords = 0;
@@ -138,15 +172,16 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickCancel(model: ImportOrder) {
+  onClickCancel(importOrderID: number) {
     this.alertService
-      .showConfirmation({
+      .showConfirmationWithInput({
         text: 'Do you want to cancel?',
+        inputPlaceholder: 'Reason to cancel'
       })
       .then((result) => {
         if (result.isConfirmed) {
           this.pageService
-            .CancelOrder(model)
+            .CancelOrder(importOrderID, result.Message)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
@@ -166,90 +201,94 @@ export class DataviewComponent implements OnInit, OnDestroy {
       });
   }
 
-  populateStatus(statusID: number): string {
-    switch (statusID) {
-      case 1:
-        return 'Processing';
-      case 2:
-        return 'Ready to ship';
-      case 3:
-        return 'Cancelled';
-      default:
-        return 'Undefined';
-    }
+  formatDate(date: Date) {
+    return DateUtils.formatDate(date);
   }
 
-  handleComponentLoad(componentName: string, model: any) {
-    if (this.componentRef) {
-      this.destroyComponent();
-    }
+  // populateStatus(statusID: number): string {
+  //   switch (statusID) {
+  //     case 1:
+  //       return 'Processing';
+  //     case 2:
+  //       return 'Ready to ship';
+  //     case 3:
+  //       return 'Cancelled';
+  //     default:
+  //       return 'Undefined';
+  //   }
+  // }
 
-    switch (componentName) {
-      case 'PaymentCreateComponent':
-        return this.createPaymentComponent(model);
-      case 'LetterOfCreditCreateComponent':
-        return this.createLCComponent(model);
-      case 'TrackingCreateComponent':
-        return this.createTrackingComponent(model);
-      case 'DocumentCreateComponent':
-        return this.createDocumentComponent(model);
-      default:
-        throw new Error(`Component ${componentName} not found`);
-    }
-  }
+  // handleComponentLoad(componentName: string, model: any) {
+  //   if (this.componentRef) {
+  //     this.destroyComponent();
+  //   }
 
-  loadDynamicComponent(model: any) {
-    setTimeout(() => {
-      this.componentRef?.instance.openSidebar(true, false, model);
-      this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
-        this.loadData();
-        this.destroyComponent();
-      });
-    })
-  }
+  //   switch (componentName) {
+  //     case 'PaymentCreateComponent':
+  //       return this.createPaymentComponent(model);
+  //     case 'LetterOfCreditCreateComponent':
+  //       return this.createLCComponent(model);
+  //     case 'TrackingCreateComponent':
+  //       return this.createTrackingComponent(model);
+  //     case 'DocumentCreateComponent':
+  //       return this.createDocumentComponent(model);
+  //     default:
+  //       throw new Error(`Component ${componentName} not found`);
+  //   }
+  // }
 
-  destroyComponent() {
-    if (this.componentRef) {
-      this.componentRef.destroy();
-      this.componentRef = undefined;
-    }
-  }
+  // loadDynamicComponent(model: any) {
+  //   setTimeout(() => {
+  //     this.componentRef?.instance.openSidebar(true, false, model);
+  //     this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
+  //       this.loadData();
+  //       this.destroyComponent();
+  //     });
+  //   })
+  // }
 
-  async createPaymentComponent(row: ImportOrder_IndexTableList) {
-    const { CreateComponent } = await import('./../import-order-payment/create/create.component');
-    this.componentRef = this.container.createComponent(CreateComponent);
-    const model: ImportOrderPayment = this.formService.createNullObject<ImportOrderPayment>();
-    model.ImportOrderID = row.ImportOrderID;
-    model.ImportOrderNo = row.ImportOrderNo;
-    this.loadDynamicComponent(model);
-  }
+  // destroyComponent() {
+  //   if (this.componentRef) {
+  //     this.componentRef.destroy();
+  //     this.componentRef = undefined;
+  //   }
+  // }
 
-  async createLCComponent(row: ImportOrder_IndexTableList) {
-    const { CreateComponent } = await import('./../../letter-of-credit/create/create.component');
-    this.componentRef = this.container.createComponent(CreateComponent);
-    const model: LetterOfCredit = this.formService.createNullObject<LetterOfCredit>();
-    // model.ImportOrderID = row.ImportOrderID;
-    // model.ImportOrderNo = row.ImportOrderNo;
-    this.loadDynamicComponent(model);
-  }
+  // async createPaymentComponent(row: ImportOrder_IndexTableList) {
+  //   const { CreateComponent } = await import('./../import-order-payment/create/create.component');
+  //   this.componentRef = this.container.createComponent(CreateComponent);
+  //   const model: ImportOrderPayment = this.formService.createNullObject<ImportOrderPayment>();
+  //   model.ImportOrderID = row.ImportOrderID;
+  //   model.ImportOrderNo = row.ImportOrderNo;
+  //   this.loadDynamicComponent(model);
+  // }
 
-  async createTrackingComponent(row: ImportOrder_IndexTableList) {
-    const { CreateComponent } = await import('./../import-order-tracking/create/create.component');
-    this.componentRef = this.container.createComponent(CreateComponent);
-    const model: ImportOrderTracking = this.formService.createNullObject<ImportOrderTracking>();
-    model.ImportOrderID = row.ImportOrderID;
-    model.ImportOrderNo = row.ImportOrderNo;
-    this.loadDynamicComponent(model);
-  }
+  // async createLCComponent(row: ImportOrder_IndexTableList) {
+  //   const { CreateComponent } = await import('./../../letter-of-credit/create/create.component');
+  //   this.componentRef = this.container.createComponent(CreateComponent);
+  //   const model: LetterOfCredit = this.formService.createNullObject<LetterOfCredit>();
+  //   // model.ImportOrderID = row.ImportOrderID;
+  //   // model.ImportOrderNo = row.ImportOrderNo;
+  //   this.loadDynamicComponent(model);
+  // }
 
-  async createDocumentComponent(row: ImportOrder_IndexTableList) {
-    const { CreateComponent } = await import('./../import-order-document/create/create.component');
-    this.componentRef = this.container.createComponent(CreateComponent);
-    const model: ImportOrderDocument = this.formService.createNullObject<ImportOrderDocument>();
-    model.ImportOrderID = row.ImportOrderID;
-    model.ImportOrderNo = row.ImportOrderNo;
-    this.loadDynamicComponent(model);
-  }
+  // async createTrackingComponent(row: ImportOrder_IndexTableList) {
+  //   const { CreateComponent } = await import('./../import-order-tracking/create/create.component');
+  //   this.componentRef = this.container.createComponent(CreateComponent);
+  //   const model: ImportOrderTracking = this.formService.createNullObject<ImportOrderTracking>();
+  //   model.ImportOrderID = row.ImportOrderID;
+  //   model.ImportOrderNo = row.ImportOrderNo;
+  //   this.loadDynamicComponent(model);
+  // }
+
+  // async createDocumentComponent(row: ImportOrder_IndexTableList) {
+  //   const { CreateComponent } = await import('./../import-order-document/create/create.component');
+  //   this.componentRef = this.container.createComponent(CreateComponent);
+  //   const model: ImportOrderDocument = this.formService.createNullObject<ImportOrderDocument>();
+  //   model.ImportOrderID = row.ImportOrderID;
+  //   model.ImportOrderNo = row.ImportOrderNo;
+  //   this.loadDynamicComponent(model);
+  // }
 
   formatDateToIndian(dateStr: any) {
     const date = new Date(dateStr);
