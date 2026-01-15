@@ -12,9 +12,8 @@
 </div>
 
 <!-- Table Column Custom Template -->
-<ng-template #portCodeTemplate let-row>
-  <span class="table-action-link"  
-  style="cursor: pointer;">{{ row.PortCode }}</span>
+<ng-template #companyCodeTemplate let-row>
+  <span class="table-action-link" (click)="onClickEditDetails(row.PortID, row.ActiveStatus)" style="cursor: pointer;">{{ row.PortCode }}</span>
 </ng-template>
 
 <ng-template #portActiveStatusTemplate let-row>

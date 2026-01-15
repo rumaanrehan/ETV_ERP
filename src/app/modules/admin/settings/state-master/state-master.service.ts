@@ -30,7 +30,6 @@ export class StateMasterService {
   }
 
   PopulateList(model: StateRequest): Observable<ApiListResponse<State_SelectList>> {
-    console.log(model);
     return this.apiService.post<ApiListResponse<State_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
