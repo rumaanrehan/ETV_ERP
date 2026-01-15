@@ -160,11 +160,7 @@ export class SalesQuotationService {
       },
       SalesQuotationDate: {
         label: 'Quotation Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Quotation Date is required"
-        }
+        defaultValue: new Date()
       },
       ValidityDate: {
         label: 'Validity Date',
@@ -377,10 +373,10 @@ export class SalesQuotationService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<SalesQuotation>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<SalesQuotation>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
-      group: form,
+      group: form,       
       control: 'ProductName',
       label: formConfig.ProductName.label,
       validationMessage: formConfig.ProductName.error,

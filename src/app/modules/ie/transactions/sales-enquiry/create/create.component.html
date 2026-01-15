@@ -16,8 +16,7 @@
                   <z-span [text]="form.get('SalesEnquiryNo')?.value" [label]="formConfig.SalesEnquiryNo.label"></z-span>
                 </div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-datepicker [group]="form" [control]="'EnquiryDate'" [label]="formConfig.EnquiryDate.label"
-                    [validationMessage]="formConfig.EnquiryDate.error"></z-datepicker>
+                  <z-span [text]="formatDate(form.get('EnquiryDate')?.value)" [label]="formConfig.EnquiryDate.label"></z-span>
                 </div>
                 <div class="col-xl-6"></div>
                 <div class="col-xl-2 form-group px-2">
@@ -35,15 +34,15 @@
                   </div>
                 </div>
                 <div class="col-xl-3"></div>
-                <div class="col-xl-2 form-group px-2">
+                <div class="col-xl-2 form-group px-2" *ngIf="form.get('CustomerID')?.value">
                   <z-inputtext [group]="form" [control]="'ContactName'" [label]="formConfig.ContactName.label"
                     [validationMessage]="formConfig.ContactName.error"></z-inputtext>
                 </div>
-                <div class="col-xl-2 form-group px-2">
+                <div class="col-xl-2 form-group px-2" *ngIf="form.get('CustomerID')?.value">
                   <z-inputtext [group]="form" [control]="'ContactEmail'" [label]="formConfig.ContactEmail.label"
                     [validationMessage]="formConfig.ContactEmail.error"></z-inputtext>
                 </div>
-                <div class="col-xl-2 form-group px-2">
+                <div class="col-xl-2 form-group px-2" *ngIf="form.get('CustomerID')?.value">
                   <z-inputtext [group]="form" [control]="'ContactPhone'" [label]="formConfig.ContactPhone.label"
                     [validationMessage]="formConfig.ContactPhone.error"></z-inputtext>
                 </div>
@@ -53,17 +52,9 @@
                 <!-- Product List -->
                 <div class="col-12 px-2">
                   <h6 class="form-group">Product List</h6>
-                  <div class="col-xl-3 form-group">
-                    <div class="action-input-group">
-                      <z-autocomplete class="flex-grow-1" [controlDef]="productAutoCompleteDef"
-                        (onSearch)="onSearch_Product($event)" (onSelect)="onSelect_Product($event)">
-                      </z-autocomplete>
-
-                      <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Product"
-                        (click)="handleComponentLoad('ProductCreateComponent')">
-                      </i>
-                    </div>
-                  </div>
+                  <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add Product"
+                    (click)="addProductRow()">
+                  </i>
                   <z-table [tableDef]="this.tableDef">
                   </z-table>
                 </div>
@@ -110,8 +101,18 @@
   {{i + 1}}
 </ng-template>
 
+<ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
+  <z-autocomplete
+    [controlDef]="productAutoCompleteDef[rowIndex]"
+    (onSearch)="onSearch_Product($event, rowIndex)"
+    (onSelect)="onSelect_Product($event, rowIndex)">
+  </z-autocomplete>
+</ng-template>
+
 <ng-template #requestedQtyColTemplate let-row let-i="index">
-  <z-inputnumber [group]="productListArray.at(i)" [control]="'RequestedQty'"
+  <z-inputnumber
+    [group]="productListArray.at(i)"
+    [control]="'RequestedQty'"
     [label]="formConfig.ProductList.items.RequestedQty.label"
     [validationMessage]="formConfig.ProductList.items.RequestedQty.error?.[i]">
   </z-inputnumber>

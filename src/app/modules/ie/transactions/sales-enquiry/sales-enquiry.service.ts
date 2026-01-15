@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../../../../core/services/api.service';
-import { Observable } from 'rxjs';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
-import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { SalesEnquiry, SalesEnquiry_Detail, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort, SalesEnquiry_SelectList, SalesEnquiryRequest } from './sales-enquiry';
-import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ProductRequest, Product_SelectList } from '../../../ims/settings/product-master/product-master';
-import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
-import { FormConfigType } from '../../../../shared/models/form.model';
 import { FormGroup, Validators } from '@angular/forms';
-import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { GreaterThan } from '../../../../shared/validators/greater-than.validator';
+import { Observable } from 'rxjs';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
+import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { FormConfigType } from '../../../../shared/models/form.model';
+import { GreaterThan } from '../../../../shared/validators/greater-than.validator';
+import { ProductRequest, Product_SelectList } from '../../../ims/settings/product-master/product-master';
+import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
+import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
+import { CompanyMasterService } from '../../settings/company-master/company-master.service';
+import { SalesEnquiry, SalesEnquiryRequest, SalesEnquiry_Detail, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort, SalesEnquiry_SelectList } from './sales-enquiry';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -100,11 +101,7 @@ export class SalesEnquiryService {
       },
       EnquiryDate: {
         label: 'Enquiry Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Enquiry Date is required"
-        }
+        defaultValue: new Date()
       },
       CustomerID: {
         label: 'Customer ID',
@@ -121,31 +118,26 @@ export class SalesEnquiryService {
       ContactName: {
         label: 'Contact Name',
         defaultValue: null,
-        validators: [Validators.required],
+        validators: [Validators.required, NotOnlyWhitespaceValidator],
         validationMessages: {
-          required: "Contact Name is required"
+          required: "Name person name is required",
         }
       },
       ContactPhone: {
         label: 'Contact Phone',
         defaultValue: null,
-        validators: [
-          Validators.pattern(/^\+[1-9]\d{0,2}\s?\d{6,14}$/)
-        ],
+        validators: [Validators.required, Validators.pattern(/^\+?[0-9\s\-]{7,15}$/)],
         validationMessages: {
-          pattern: "Enter a valid 10-digit phone number"
+          required: 'Phone No is required',
+          pattern: 'Enter a valid phone number'
         }
       },
       ContactEmail: {
         label: 'Contact Email',
         defaultValue: '',
-        validators: [
-          Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$/)
-        ],
+        validators: [Validators.email],
         validationMessages: {
-          required: 'Email is required',
-          pattern: 'Please enter a valid email address'
+          email: 'Enter a valid email address'
         }
       },
       Note: {
@@ -227,10 +219,10 @@ export class SalesEnquiryService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<SalesEnquiry>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<SalesEnquiry>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
-      group: form,
+      group:form,
       control: 'ProductName',
       label: formConfig.ProductName.label,
       validationMessage: formConfig.ProductName.error,

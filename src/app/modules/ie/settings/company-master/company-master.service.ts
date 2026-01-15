@@ -5,7 +5,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { Validators } from '@angular/forms';
+import { EmailValidator, Validators } from '@angular/forms';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
@@ -126,24 +126,29 @@ export class CompanyMasterService {
       },
       CompanyPhoneNo: {
         label: 'Phone',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required, Validators.pattern(/^\+?[0-9\s\-]{7,15}$/)],
+        validationMessages: {
+          required: 'Phone No is required',
+          pattern: 'Enter a valid phone number'
+        }
       },
       CompanyEmailID: {
         label: 'Email',
         defaultValue: null,
-        validators: [Validators.required],
+        validators: [Validators.email],
         validationMessages: {
-          required: 'Email is required'
+          email: 'Enter a valid email address'
         }
       },
       ImportLicenseNo: {
         label: 'Import License No',
         defaultValue: null,
-        validators: [Validators.pattern(/^[0-9]{10}$/), Validators.pattern(/^[0-9]{10}$/),],
-        validationMessages: {
-          pattern: "Enter a valid Import License No",
-          RequiredIf: "Import License No is required"
-        }
+        // validators: [Validators.pattern(/^[0-9]{10}$/), Validators.pattern(/^[0-9]{10}$/),],
+        // validationMessages: {
+        //   pattern: "Enter a valid Import License No",
+        //   RequiredIf: "Import License No is required"
+        // }
       },
       GSTNo: {
         label: 'GST No',

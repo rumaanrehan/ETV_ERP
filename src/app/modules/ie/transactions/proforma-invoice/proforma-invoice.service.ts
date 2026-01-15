@@ -133,11 +133,7 @@ export class ProformaInvoiceService {
       },
       ProformaInvoiceDate: {
         label: 'Proforma Invoice Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Proforma Invoice is required"
-        }
+        defaultValue: new Date()
       },
       BasedOn: {
         label: 'Based On',
@@ -496,7 +492,7 @@ export class ProformaInvoiceService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<ProformaInvoice>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<ProformaInvoice>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,

@@ -558,8 +558,8 @@ label {
 
 .index-table tr td,
 .index-table tr th,
-.page-table tr td,
-.page-table tr th {
+.page-table>tr>td,
+.page-table>tr>th {
   font-size: 14px !important;
 }
 
@@ -567,15 +567,15 @@ label {
   margin-bottom: 0.75rem;
 }
 
-.page-table thead {
+.page-table>thead {
   border: 1px solid var(--primary-color);
 }
 
-.page-table tbody {
+.page-table>tbody {
   border: 1px solid var(--default-border);
 }
 
-.page-table thead tr th {
+.page-table>thead>tr>th {
   background: var(--primary-color) !important;
   color: #fff;
 }
@@ -1062,6 +1062,10 @@ body.swal2-toast-shown .swal2-container {
 
 .p-autocomplete-panel.p-component {
   padding: 0.25rem;
+}
+
+.autocomplete-table {
+  width: 100%;
 }
 
 .autocomplete-table thead {

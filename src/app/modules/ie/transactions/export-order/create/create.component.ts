@@ -37,6 +37,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('salesQtyColTemplate', { static: true }) salesQtyColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitFCColTemplate', { static: true }) ratePerUnitFCColTemplate!: TemplateRef<any>;
@@ -87,7 +88,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   loadingPortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
   dischargePortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
-  productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
+  productAutoCompleteDef: AutoCompleteDef<Product_SelectList>[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -107,13 +108,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.loadingPortAutoCompleteDef = this.pageService.getLoadingPortAutoCompleteDef(this.formConfig, this.form);
     this.dischargePortAutoCompleteDef = this.pageService.getDischargePortAutoCompleteDef(this.formConfig, this.form);
-    this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.exportOrderDocumentTableDef = this.pageService.getExportOrderDocumentTableDef({ SerialNoTemplate: this.serialNoColTemplate, IsVerfiedTemplate: this.isDocumentVerifiedTemplate, UpdateDateTemplate: this.documentUploadDateTemplate, ActionTemplate: this.documentActionColTemplate } as ExportOrderDocumentTemplate);
     this.exportOrderPaymentTableDef = this.pageService.getExportOrderPaymentTableDef({ SerialNoTemplate: this.serialNoColTemplate, PaymentDateTemplate: this.paymentDateTemplate, ActionTemplate: this.paymentActionColTemplate } as ExportOrderPaymentTemplate);
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%" },
+        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "SalesQty", label: "Sales Qty", width: "10%", customTemplate: this.salesQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
         { data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
@@ -411,7 +411,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.get('DischargePortName')?.patchValue(null);
   }
 
-  onSearch_Product(event: string): void {
+  onSearch_Product(event: string, rowIndex: number): void {
     try {
       const dto: ProductRequest = {
         ProductName: event,
@@ -421,9 +421,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.productAutoCompleteDef.options = response.Data.Items;
+              this.productAutoCompleteDef[rowIndex].options = response.Data.Items;
             } else {
-              this.productAutoCompleteDef.options = [];
+              this.productAutoCompleteDef[rowIndex].options = [];
             }
           },
         });
@@ -431,27 +431,63 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Product(event: Product_SelectList): void {
-    this.form.get('ProductID')?.patchValue(null);
-    this.form.get('ProductName')?.patchValue(null);
+  // onSelect_Product(event: Product_SelectList, index: number): void {
+  //   this.form.get('ProductID')?.patchValue(null);
+  //   this.form.get('ProductName')?.patchValue(null);
 
-    if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //   if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //     this.alertService.showToast({
+  //       text: "Product already exists in the table"
+  //     });
+
+  //     return;
+  //   }
+
+  //   const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //   productItemForm.patchValue({
+  //     ProductID: event.ProductID,
+  //     ProductName: event.ProductName,
+  //     UOM: event.UOM,
+  //     SalesTaxRate: event.PurTaxRate
+  //   });
+
+  //   this.productListArray.push(productItemForm);
+  //   this.tableDef.data = this.productListArray.value;
+  // }
+
+  onSelect_Product(event: Product_SelectList, index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+
+    // Duplicate check
+    if (this.productListArray.controls.some(
+        (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
+    )) {
       this.alertService.showToast({
-        text: "Product already exists in the table"
+        text: 'Product already exists in the table'
       });
 
+      row.patchValue({ ProductName: null, ProductID: null });
       return;
     }
 
-    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-    productItemForm.patchValue({
+    row.patchValue({
       ProductID: event.ProductID,
       ProductName: event.ProductName,
       UOM: event.UOM,
       SalesTaxRate: event.PurTaxRate
     });
 
+    this.tableDef.data = this.productListArray.value
+  }
+
+  addProductRow(): void {
+    const productItemForm =
+      this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+
     this.productListArray.push(productItemForm);
+    const index = this.productListArray.length - 1;
+
+    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
     this.tableDef.data = this.productListArray.value;
   }
 
@@ -621,6 +657,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000,
               });
+              this.selectedCustomerAddress = null;
               setTimeout(() => {
                 this.ngOnInit();
               }, 2000);
@@ -651,6 +688,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000,
               });
+              this.selectedCustomerAddress = null;
               setTimeout(() => {
                 this.router.navigate(['/ie/export-order/index']);
               }, 2000);
@@ -670,7 +708,6 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   private loadExportOrder(id: number): void {
     this.isEditMode = true;
-
     try {
       this.pageService.GetDetails(id)
         .pipe(takeUntil(this.destroy$))
@@ -686,9 +723,12 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.statusHex = response.Data.StatusHex!;
             this.IsDocumentAlreadyExists = response.Data.IsDocumentAlreadyExists!;
             response.Data.ProductList.Items.forEach(item => {
-              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue(item);
-              this.productListArray.push(productForm);
+              const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productItemForm.patchValue(item);
+              this.productListArray.push(productItemForm);
+              const index = this.productListArray.length - 1;
+
+              this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm)
             });
 
             this.tableDef.data = this.productListArray.value;
@@ -734,19 +774,21 @@ export class CreateComponent implements OnInit, OnDestroy {
                 // SalesQuotationNo: response.Data.SalesQuotationNo
               });
 
-              this.productListArray.clear();
+              // this.productListArray.clear();
 
               response.Data.ProductList.Items.forEach(item => {
-                const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                productForm.patchValue({
+                const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                productItemForm.patchValue({
                   ProductID: item.ProductID,
                   ProductName: item.ProductName,
                   SalesQty: item.QuotedQty,
                   UOM: item.UOM,
-                  RatePerUnitFC: item.RatePerUnitFC,
-                  SalesTaxRate: item.TaxRate
+                  RatePerUnitFC: item.RatePerUnitFC
                 });
-                this.productListArray.push(productForm);
+                this.productListArray.push(productItemForm);
+                const index = this.productAutoCompleteDef.length - 1;
+
+                this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
               });
 
               this.tableDef.data = this.productListArray.value;

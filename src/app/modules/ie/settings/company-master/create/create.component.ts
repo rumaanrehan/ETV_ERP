@@ -62,6 +62,7 @@ export class CreateComponent {
     }
     this.activeStatus = activeStatus;
     this.form.patchValue(model);
+    this.loadStates();
     this.isFormSidebarVisible = true;
   }
 

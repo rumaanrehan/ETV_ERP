@@ -238,11 +238,7 @@ export class ExportOrderService {
       },
       ExportOrderDate: {
         label: 'Order Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Order Date is required"
-        }
+        defaultValue: new Date()
       },
       SalesQuotationID: {
         label: 'Sales Quotation',
@@ -654,7 +650,7 @@ export class ExportOrderService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,

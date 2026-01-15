@@ -27,6 +27,7 @@ import { SalesEnquiryService } from "../sales-enquiry.service";
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('requestedQtyColTemplate', { static: true }) requestedQtyColTemplate!: TemplateRef<any>;
   @ViewChild('remarkColTemplate', { static: true }) remarkColTemplate!: TemplateRef<any>;
@@ -44,12 +45,12 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   form!: FormGroup;
   formConfig!: FormConfigType<SalesEnquiry>;
-  tableDef!: TableDef<SalesEnquiryDetail>;
+  tableDef!: TableDef<FormGroup>;
 
   customerList: Company_SelectList[] = [];
 
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
-  productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
+  productAutoCompleteDef: AutoCompleteDef<Product_SelectList>[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -66,16 +67,15 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form = this.formService.createFormGroup<SalesEnquiry>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
-    this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%" },
+        { data: "ProductName", label: "Product", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "RequestedQty", label: "Requested Qty", width: "10%", customTemplate: this.requestedQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
-        { data: "Remark", label: "Remark", width: "25%", customTemplate: this.remarkColTemplate },
+        { data: "Remarks", label: "Remark", width: "25%", customTemplate: this.remarkColTemplate },
         { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
-      ],
+      ], 
       data: this.productListArray.value
     }
 
@@ -134,9 +134,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
             } else {
               this.companyMasterAutoCompleteDef.options = [];
-              // if (response.Message != "Record not found.") {
-              //   this.alertService.showServerResponseAlert(response);
-              // }
             }
           },
         });
@@ -153,10 +150,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   onClear_Customer(): void {
     this.form.get('CustomerID')?.patchValue(null);
     this.form.get('CustomerName')?.patchValue(null);
+    this.form.get('ContactName')?.patchValue(null);
+    this.form.get('ContactEmail')?.patchValue(null);
+    this.form.get('ContactPhone')?.patchValue(null);
     this.selectedCustomerAddress = null;
   }
 
-  onSearch_Product(event: string): void {
+  onSearch_Product(event: string, rowIndex: number): void {
     try {
       const dto: ProductRequest = {
         ProductName: event,
@@ -166,9 +166,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.productAutoCompleteDef.options = response.Data.Items;
+              this.productAutoCompleteDef[rowIndex].options = response.Data.Items;
             } else {
-              this.productAutoCompleteDef.options = [];
+              this.productAutoCompleteDef[rowIndex].options = [];
             }
           },
         });
@@ -176,26 +176,61 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Product(event: Product_SelectList): void {
-    this.form.get('ProductID')?.patchValue(null);
-    this.form.get('ProductName')?.patchValue(null);
+  // onSelect_Product(event: Product_SelectList): void {
+  //   this.form.get('ProductID')?.patchValue(null);
+  //   this.form.get('ProductName')?.patchValue(null);
 
-    if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //   if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //     this.alertService.showToast({
+  //       text: "Product already exists in the table"
+  //     });
+
+  //     return;
+  //   }
+
+  //   const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //   productItemForm.patchValue({
+  //     ProductID: event.ProductID,
+  //     ProductName: event.ProductName,
+  //     UOM: event.UOM
+  //   });
+
+  //   this.productListArray.push(productItemForm);
+  //   this.tableDef.data = this.productListArray.value;
+  // }
+
+  onSelect_Product(event: Product_SelectList, index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+
+    // Duplicate check
+    if (this.productListArray.controls.some(
+        (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
+    )) {
       this.alertService.showToast({
-        text: "Product already exists in the table"
+        text: 'Product already exists in the table'
       });
 
+      row.patchValue({ ProductName: null, ProductID: null });
       return;
     }
 
-    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-    productItemForm.patchValue({
+    row.patchValue({
       ProductID: event.ProductID,
       ProductName: event.ProductName,
       UOM: event.UOM
     });
 
+    this.tableDef.data = this.productListArray.value
+  }
+
+  addProductRow(): void {
+    const productItemForm =
+      this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+
     this.productListArray.push(productItemForm);
+    const index = this.productListArray.length - 1;
+
+    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
     this.tableDef.data = this.productListArray.value;
   }
 
@@ -259,6 +294,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000,
               });
+              this.selectedCustomerAddress = null;
               setTimeout(() => {
                 this.ngOnInit();
               }, 2000);
@@ -322,9 +358,12 @@ export class CreateComponent implements OnInit, OnDestroy {
                   this.statusHex = response.Data.StatusHex;
                   this.isQuotationAlreadyExists = response.Data.IsQuotationAlreadyExists;
                   response.Data.ProductList.Items.forEach(item => {
-                    const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                    productForm.patchValue(item);
-                    this.productListArray.push(productForm);
+                    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                    productItemForm.patchValue(item);
+                    this.productListArray.push(productItemForm);
+                    const index = this.productListArray.length - 1;
+
+                    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
                   });
 
                   this.tableDef.data = this.productListArray.value;
@@ -342,11 +381,13 @@ export class CreateComponent implements OnInit, OnDestroy {
               },
             });
         }
-        catch (error) {
-
-        }
+        catch (error) { }
       }
     });
+  }
+
+  formatDate(date: Date) {
+    return DateUtils.formatDate(date);
   }
 
   handleComponentLoad(componentName: string) {

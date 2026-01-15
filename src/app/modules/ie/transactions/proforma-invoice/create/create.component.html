@@ -22,9 +22,7 @@
                                 </div>
                                 <div class="col-xl-6 form-group px-2"></div>
                                 <div class="col-xl-2 form-group px-2">
-                                    <z-datepicker [group]="form" [control]="'ProformaInvoiceDate'"
-                                        [label]="formConfig.ProformaInvoiceDate.label"
-                                        [validationMessage]="formConfig.ProformaInvoiceDate.error"></z-datepicker>
+                                    <z-span [text]="formatDate(form.get('ProformaInvoiceDate')?.value)" [label]="formConfig.ProformaInvoiceDate.label"></z-span>
                                 </div>
                                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnExportOrder">
                                     <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"
@@ -99,7 +97,7 @@
                                         [readonly]="isBasedOnExportOrder"></z-inputnumber>
                                 </div>
                                 <div class="col-xl-6"></div>
-                                <div class="col-12 px-2">
+                                <!-- <div class="col-12 px-2">
                                     <h6 class="form-group">Product List</h6>
                                     <div class="col-xl-3 form-group" *ngIf="!isBasedOnExportOrder">
                                         <div class="action-input-group">
@@ -115,7 +113,7 @@
                                     </div>
                                     <z-table [tableDef]="this.tableDef">
                                     </z-table>
-                                </div>
+                                </div> -->
                                 <!-- Payment & Shipment -->
                                 <div class="col-xl-2 form-group px-2">
                                     <z-select [group]="form" [control]="'PaymentTermID'"
@@ -174,34 +172,35 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Amount Summary -->
+                        <div class="col-12 d-flex justify-content-end">
+                            <div class="card pt-2 pb-2 mb-2 col-auto">
+                                <div class="px-2 d-flex flex-column gap-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0">Subtotal Amount: </p>
+                                        <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
+                                            [label]="formConfig.SubtotalAmountFC.label"
+                                            [validationMessage]="formConfig.SubtotalAmountFC.error"
+                                            [readonly]="true"></z-inputnumber>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0">Tax Amount: </p>
+                                        <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
+                                            [label]="formConfig.TaxAmountFC.label"
+                                            [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0">Net Amount: </p>
+                                        <z-inputnumber [group]="form" [control]="'NetAmountFC'"
+                                            [label]="formConfig.NetAmountFC.label"
+                                            [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
-            <div class="col-12 d-flex justify-content-end">
-                <div class="card pt-2 pb-2 mb-2 col-auto">
-                    <div class="px-2 d-flex flex-column gap-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="mb-0">Subtotal Amount: </p>
-                            <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
-                                [label]="formConfig.SubtotalAmountFC.label"
-                                [validationMessage]="formConfig.SubtotalAmountFC.error"
-                                [readonly]="true"></z-inputnumber>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="mb-0">Tax Amount: </p>
-                            <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
-                                [label]="formConfig.TaxAmountFC.label"
-                                [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="mb-0">Net Amount: </p>
-                            <z-inputnumber [group]="form" [control]="'NetAmountFC'"
-                                [label]="formConfig.NetAmountFC.label"
-                                [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <div class="page-action-panel">
@@ -241,6 +240,14 @@
 <!-- Export Order Item Table Related Templates Start-->
 <ng-template #serialNoColTemplate let-row let-i="index">
     {{i + 1}}
+</ng-template>
+
+<ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
+  <z-autocomplete
+    [controlDef]="productAutoCompleteDef[rowIndex]"
+    (onSearch)="onSearch_Product($event, rowIndex)"
+    (onSelect)="onSelect_Product($event, rowIndex)">
+  </z-autocomplete>
 </ng-template>
 
 <ng-template #salesQtyColTemplate let-row let-i="index">
