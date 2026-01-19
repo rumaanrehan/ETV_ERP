@@ -25,10 +25,6 @@ export interface SalesQuotation {
     NetAmountBC: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
-
-    //AutoComplete releted fields
-    ProductID: number | null;
-    ProductName: string | null;
 }
 
 export interface SalesQuotationDetail {
@@ -74,6 +70,9 @@ export interface SalesQuotation_IndexTableList {
     NetAmountFC: number;
     StatusText: string;
     CurrencySymbol: string;
+
+    /** UI only */
+    _selected?: boolean;
 }
 
 export interface SalesQuotationRequest {
@@ -124,5 +123,10 @@ export interface SalesQuotation_SelectList {
     SalesQuotationID: number;
     SalesQuotationNo: string;
     CustomerName: string;
+    StatusID: number;
+}
+
+export interface SalesQuotationBulkUpdateRequest {
+    SalesQuotationIDs: number[];
     StatusID: number;
 }

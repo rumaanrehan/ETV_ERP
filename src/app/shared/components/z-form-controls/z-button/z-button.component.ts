@@ -32,7 +32,7 @@ export class ZButtonComponent {
 
   onClick(): void {
     if (!this.disabled && !this.loading) {
-      this.loading = true;
+      // this.loading = true;
       this.clicked.emit();
     }
   }

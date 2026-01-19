@@ -62,6 +62,7 @@ export class CreateComponent {
     }
     this.activeStatus = activeStatus;
     this.form.patchValue(model);
+    this.loadStates();
     this.isFormSidebarVisible = true;
   }
 
@@ -138,6 +139,10 @@ export class CreateComponent {
 
   onSubmit(): void {
     if (this.isSubmitted) return;
+
+    if (this.form.get('IsShippingAddressSameAsBillingAddress')?.value) {
+      this.form.get('ShippingAddress')?.setValue(this.form.get('BillingAddress')?.value);
+    }
 
     this.isSubmitted = true;
     try {

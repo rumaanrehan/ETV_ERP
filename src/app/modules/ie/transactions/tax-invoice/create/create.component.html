@@ -23,10 +23,7 @@
                                 </div>
                                 <div class="col-xl-6 form-group px-2"></div>
                                 <div class="col-xl-2 form-group px-2">
-                                    <z-datepicker [group]="form" [control]="'TaxInvoiceDate'"
-                                        [label]="formConfig.TaxInvoiceDate.label"
-                                        [validationMessage]="formConfig.TaxInvoiceDate.error"
-                                        [validationMessage]="formConfig.TaxInvoiceDate.error"></z-datepicker>
+                                    <z-span [text]="formatDate(form.get('TaxInvoiceDate')?.value)" [label]="formConfig.TaxInvoiceDate.label"></z-span>
                                 </div>
                                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnDocument">
                                     <z-autocomplete [controlDef]="documentAutoCompleteDef"
@@ -111,6 +108,14 @@
                                 </div>
                                 <div class="col-xl-6"></div>
                                 <div class="col-12 px-2">
+                                <h6 class="form-group">Product List</h6>
+                                <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add Product"
+                                    (click)="addProductRow()">
+                                </i>
+                                <z-table [tableDef]="this.tableDef">
+                                </z-table>
+                                </div>
+                                <!-- <div class="col-12 px-2">
                                     <h6 class="form-group">Product List</h6>
                                     <div class="col-xl-4 form-group" *ngIf="!isBasedOnDocument">
                                         <div class="action-input-group">
@@ -126,7 +131,7 @@
                                     </div>
                                     <z-table [tableDef]="this.tableDef">
                                     </z-table>
-                                </div>
+                                </div> -->
 
                                 <!-- Payment & Shipment -->
                                 <div class="col-xl-2 form-group px-2">
@@ -177,12 +182,38 @@
                                         [label]="formConfig.FinalDestination.label"
                                         [validationMessage]="formConfig.FinalDestination.error"></z-inputtext>
                                 </div>
-                                <div class="col-md-8 form-group px-2">
+                                <div class="col-md-6 form-group px-2">
                                     <z-textarea [group]="form" [control]="'Narration'"
                                         [label]="formConfig.Narration.label"
                                         [validationMessage]="formConfig.Narration.error"></z-textarea>
                                 </div>
                                 <div class="col-xl-1"></div>
+                            </div>
+                        </div>
+                        <!-- Amount Summary -->
+                        <div class="col-12 d-flex justify-content-end">
+                            <div class="card pt-2 pb-2 mb-2 col-auto">
+                                <div class="px-2 d-flex flex-column gap-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0">Subtotal Amount: </p>
+                                        <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
+                                            [label]="formConfig.SubtotalAmountFC.label"
+                                            [validationMessage]="formConfig.SubtotalAmountFC.error"
+                                            [readonly]="true"></z-inputnumber>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0">Tax Amount: </p>
+                                        <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
+                                            [label]="formConfig.TaxAmountFC.label"
+                                            [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0">Net Amount: </p>
+                                        <z-inputnumber [group]="form" [control]="'NetAmountFC'"
+                                            [label]="formConfig.NetAmountFC.label"
+                                            [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -222,31 +253,6 @@
                     </div>
                 </div>
             </div> -->
-            <div class="col-12 d-flex justify-content-end">
-                <div class="card pt-2 pb-2 mb-2 col-auto">
-                    <div class="px-2 d-flex flex-column gap-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="mb-0">Subtotal Amount: </p>
-                            <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
-                                [label]="formConfig.SubtotalAmountFC.label"
-                                [validationMessage]="formConfig.SubtotalAmountFC.error"
-                                [readonly]="true"></z-inputnumber>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="mb-0">Tax Amount: </p>
-                            <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
-                                [label]="formConfig.TaxAmountFC.label"
-                                [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="mb-0">Net Amount: </p>
-                            <z-inputnumber [group]="form" [control]="'NetAmountFC'"
-                                [label]="formConfig.NetAmountFC.label"
-                                [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <div class="page-action-panel">
@@ -281,6 +287,14 @@
 <!-- Export Order Item Table Related Templates Start-->
 <ng-template #serialNoColTemplate let-row let-i="index">
     {{i + 1}}
+</ng-template>
+
+<ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
+  <z-autocomplete
+    [controlDef]="productAutoCompleteDef[rowIndex]"
+    (onSearch)="onSearch_Product($event, rowIndex)"
+    (onSelect)="onSelect_Product($event, rowIndex)">
+  </z-autocomplete>
 </ng-template>
 
 <ng-template #salesQtyColTemplate let-row let-i="index">

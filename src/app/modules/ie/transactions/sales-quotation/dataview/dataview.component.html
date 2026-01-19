@@ -5,15 +5,45 @@
 </ng-template>
 
 <div class="col-xl-12 index-page-content">
+    <div class="index-action-bar">
+        <div class="d-flex align-items-center gap-3">
+            <!-- SELECT ALL -->
+            <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
+            </p-checkbox>
+
+            <span class="text-muted">
+                <b>{{ selectedSalesQuotations.length }} selected</b>
+            </span>
+        </div>
+        <div class="col-6 index-action-bar-actions">
+            <!-- BULK ACTIONS -->
+            <button class="btn btn-primary" [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(1)">
+                Revert to Draft
+            </button>
+
+            <button class="btn btn-primary" [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(2)">
+                Mark as Sent
+            </button>
+
+            <button class="btn btn-primary" [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(4)">
+                Cancel
+            </button>
+        </div>
+    </div>
     <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
         (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
     </z-dataview>
 </div>
 
 <ng-template #customTemplate let-exportOrders>
-    <div class="dataview-item" *ngFor="let item of exportOrders; let first = first">
-        <div class="col-12 p-3">
-            <div class="d-flex justify-content-between">
+    <div class="d-flex align-items-center gap-3" *ngFor="let item of exportOrders; let first = first">
+        <div class="d-flex align-items-center gap-2">
+            <!-- BULK SELECT -->
+            <p-checkbox binary="true" [(ngModel)]="item._selected" (onChange)="onSelectionChange(item)">
+            </p-checkbox>
+        </div>
+        <div class="w-100 p-3 dataview-item mb-3">
+            <div class="d-flex justify-content-between dataview-record-title">
                 <a (click)="onClickEditDetails(item.SalesQuotationID)">
                     <h5 class="primary-color mb-2">{{item.SalesQuotationNo}} | {{item.CustomerName}}</h5>
                 </a>

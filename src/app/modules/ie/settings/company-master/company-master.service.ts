@@ -5,7 +5,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { Validators } from '@angular/forms';
+import { EmailValidator, Validators } from '@angular/forms';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
@@ -94,7 +94,8 @@ export class CompanyMasterService {
         validators: [Validators.required, NotOnlyWhitespaceValidator()],
         validationMessages: {
           required: 'Company Name is required'
-        }
+        },
+        type: 'control'
       },
       CompanyTypeID: {
         label: 'Company Type',
@@ -102,7 +103,8 @@ export class CompanyMasterService {
         validators: [Validators.required],
         validationMessages: {
           required: 'Company Type is required'
-        }
+        },
+        type: 'control'
       },
       CountryID: {
         label: 'Country',
@@ -110,15 +112,17 @@ export class CompanyMasterService {
         validators: [Validators.required],
         validationMessages: {
           required: 'Country is required'
-        }
+        },
+        type: 'control'
       },
       StateID: {
         label: 'State',
         defaultValue: null,
-        // validators: [Validators.required],
-        // validationMessages: {
-        //   required: 'State is required'
-        // }
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'State is required'
+        },
+        type: 'control'
       },
       CompanyContactName: {
         label: 'Contact Name',
@@ -126,24 +130,25 @@ export class CompanyMasterService {
       },
       CompanyPhoneNo: {
         label: 'Phone',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.pattern(/^\+?[0-9\s\-]{7,15}$/)],
+        validationMessages: {
+          pattern: 'Enter a valid phone number'
+        },
+        type: 'control'
       },
       CompanyEmailID: {
         label: 'Email',
         defaultValue: null,
-        validators: [Validators.required],
+        validators: [Validators.email],
         validationMessages: {
-          required: 'Email is required'
-        }
+          email: 'Enter a valid email address'
+        },
+        type: 'control'
       },
       ImportLicenseNo: {
         label: 'Import License No',
-        defaultValue: null,
-        validators: [Validators.pattern(/^[0-9]{10}$/), Validators.pattern(/^[0-9]{10}$/),],
-        validationMessages: {
-          pattern: "Enter a valid Import License No",
-          RequiredIf: "Import License No is required"
-        }
+        defaultValue: null
       },
       GSTNo: {
         label: 'GST No',
@@ -151,7 +156,8 @@ export class CompanyMasterService {
         validators: [Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/)],
         validationMessages: {
           pattern: "Enter a valid GST No"
-        }
+        },
+        type: 'control'
       },
       TANNo: {
         label: 'TAN No',
@@ -159,7 +165,8 @@ export class CompanyMasterService {
         validators: [Validators.pattern(/^[A-Z]{4}[0-9]{5}[A-Z]{1}$/)],
         validationMessages: {
           pattern: "Enter a valid TAN No"
-        }
+        },
+        type: 'control'
       },
       PANNo: {
         label: 'PAN No',
@@ -167,15 +174,32 @@ export class CompanyMasterService {
         validators: [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)],
         validationMessages: {
           pattern: "Enter a valid PAN No"
-        }
+        },
+        type: 'control'
       },
       BillingAddress: {
         label: 'Billing Address',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required, Validators.maxLength(500), NotOnlyWhitespaceValidator()],
+        validationMessages: {
+          required: "Billing Address is required",
+          maxlength: "Billing Address cannot exceed 500 characters"
+        },
+        type: 'control'
+      },
+      IsShippingAddressSameAsBillingAddress: {
+        label: 'Is Shipping Address Same As Billing Address',
+        defaultValue: true
       },
       ShippingAddress: {
         label: 'Shipping Address',
-        defaultValue: null
+        defaultValue: null,
+        validators: [RequiredIf('IsShippingAddressSameAsBillingAddress', Operator.EqualTo, false), Validators.maxLength(500), NotOnlyWhitespaceValidator()],
+        validationMessages: {
+          requiredIf: "Shipping Address is required when it is not same as Billing Address",
+          maxlength: "Shipping Address cannot exceed 500 characters"
+        },
+        type: 'control'
       }
     };
   }

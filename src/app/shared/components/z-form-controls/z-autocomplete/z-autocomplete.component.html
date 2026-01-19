@@ -5,8 +5,8 @@
         <p-autoComplete [formControlName]="controlDef.control" [appShowValidationTooltip]="controlDef.validationMessage"
           [placeholder]="controlDef.placeholder" [suggestions]="controlDef.options"
           [optionLabel]="controlDef.optionLabel" [readonly]="isValueSelected || readonly" [forceSelection]="true"
-          [minLength]="2" [delay]="500" [autoHighlight]="true" [autoOptionFocus]="true"
-          (completeMethod)="searchHandler($event)" (onSelect)="selectHandler($event)">
+          [minLength]="2" [completeOnFocus]="allowEmptySearch" [delay]="500" [autoHighlight]="true"
+          [autoOptionFocus]="true" (completeMethod)="searchHandler($event)" (onSelect)="selectHandler($event)">
 
           <!-- Header template -->
           <ng-template pTemplate="header" *ngIf="!controlDef.hideHeader">

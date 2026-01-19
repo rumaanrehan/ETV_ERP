@@ -37,6 +37,7 @@ export class ShowValidationTooltipDirective {
 
   private showTooltip() {
     if (this.validationMessage) {
+      console.log(this.validationMessage);
       const tooltipContainer = this.renderer.createElement('div');
       this.renderer.setAttribute(tooltipContainer, 'id', 'validation-tooltip');
       this.renderer.setAttribute(tooltipContainer, 'class', 'col-xl-12 d-flex justify-content-center tooltip-container');

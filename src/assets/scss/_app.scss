@@ -46,7 +46,7 @@
 
 /*Page Content Start*/
 .page-content {
-  padding: .75rem;
+  padding: 0.75rem 0 0.75rem 0.75rem;
 }
 
 .index-page-content {
@@ -56,8 +56,7 @@
 
 .page-content-scrollable {
   height: calc(100vh - 172px);
-  // max-height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 /*Page Content End*/
@@ -558,8 +557,8 @@ label {
 
 .index-table tr td,
 .index-table tr th,
-.page-table tr td,
-.page-table tr th {
+.page-table>tr>td,
+.page-table>tr>th {
   font-size: 14px !important;
 }
 
@@ -567,15 +566,15 @@ label {
   margin-bottom: 0.75rem;
 }
 
-.page-table thead {
+.page-table>thead {
   border: 1px solid var(--primary-color);
 }
 
-.page-table tbody {
+.page-table>tbody {
   border: 1px solid var(--default-border);
 }
 
-.page-table thead tr th {
+.page-table>thead>tr>th {
   background: var(--primary-color) !important;
   color: #fff;
 }
@@ -752,7 +751,7 @@ span {
 // Dataview
 
 .p-dataview-content {
-  height: calc(100vh - 203px);
+  height: calc(100vh - 257px);
   overflow-y: scroll;
 }
 
@@ -947,7 +946,6 @@ z-select-button .p-selectbutton {
 .dataview-item {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   border-radius: 0.75rem;
-  margin-bottom: 1rem;
   border: 1px solid var(--default-border);
 
 }
@@ -1064,6 +1062,10 @@ body.swal2-toast-shown .swal2-container {
   padding: 0.25rem;
 }
 
+.autocomplete-table {
+  width: 100%;
+}
+
 .autocomplete-table thead {
   border-bottom: 1px solid var(--default-border) !important;
 }
@@ -1099,4 +1101,29 @@ z-menu .p-button-icon {
   color: #fff !important;
   font-weight: 500;
 
+}
+
+div:where(.swal2-container) .swal2-html-container {
+  color: var(--default-text-color) !important;
+  text-align: start;
+}
+
+.dataview-record-title {
+  cursor: pointer;
+}
+
+.index-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.25rem 0;
+  padding: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.index-action-bar-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
 }

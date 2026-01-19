@@ -35,6 +35,7 @@ import { LoaderService } from '../../../../../shared/services/loader.service';
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('salesQtyColTemplate', { static: true }) salesQtyColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitFCColTemplate', { static: true }) ratePerUnitFCColTemplate!: TemplateRef<any>;
@@ -68,7 +69,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   loadingPortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
   dischargePortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
-  productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
+  productAutoCompleteDef: AutoCompleteDef<Product_SelectList>[] = [];
 
   basedOnList: StaticList[] = [];
   shipmentModeList: StaticList[] = [];
@@ -92,7 +93,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.loadingPortAutoCompleteDef = this.pageService.getLoadingPortAutoCompleteDef(this.formConfig, this.form);
     this.dischargePortAutoCompleteDef = this.pageService.getDischargePortAutoCompleteDef(this.formConfig, this.form);
-    this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
@@ -307,6 +307,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   onClear_Document(): void {
     this.formService.resetFormValue<TaxInvoice>(this.formConfig, this.form);
+    this.selectedCustomerAddress = '';
     this.productListArray.clear();
     this.tableDef.data = [];
   }
@@ -432,7 +433,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     // this.loadPortList();
   }
 
-  onSearch_Product(event: string): void {
+  onSearch_Product(event: string, rowIndex: number): void {
     try {
       const dto: ProductRequest = {
         ProductName: event,
@@ -442,9 +443,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.productAutoCompleteDef.options = response.Data.Items;
+              this.productAutoCompleteDef[rowIndex].options = response.Data.Items;
             } else {
-              this.productAutoCompleteDef.options = [];
+              this.productAutoCompleteDef[rowIndex].options = [];
             }
           },
         });
@@ -452,27 +453,62 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Product(event: Product_SelectList): void {
-    this.form.get('ProductID')?.patchValue(null);
-    this.form.get('ProductName')?.patchValue(null);
+  // onSelect_Product(event: Product_SelectList): void {
+  //   this.form.get('ProductID')?.patchValue(null);
+  //   this.form.get('ProductName')?.patchValue(null);
 
-    if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //   if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //     this.alertService.showToast({
+  //       text: "Product already exists in the table"
+  //     });
+
+  //     return;
+  //   }
+
+  //   const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //   productItemForm.patchValue({
+  //     ProductID: event.ProductID,
+  //     ProductName: event.ProductName,
+  //     UOM: event.UOM,
+  //     SalesTaxRate: event.PurTaxRate
+  //   });
+
+  //   this.productListArray.push(productItemForm);
+  //   this.tableDef.data = this.productListArray.value;
+  // }
+
+  onSelect_Product(event: Product_SelectList, index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+
+    // Duplicate check
+    if (this.productListArray.controls.some(
+        (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
+    )) {
       this.alertService.showToast({
-        text: "Product already exists in the table"
+        text: 'Product already exists in the table'
       });
 
+      row.patchValue({ ProductName: null, ProductID: null });
       return;
     }
 
-    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-    productItemForm.patchValue({
+    row.patchValue({
       ProductID: event.ProductID,
       ProductName: event.ProductName,
-      UOM: event.UOM,
-      SalesTaxRate: event.PurTaxRate
+      UOM: event.UOM
     });
 
+    this.tableDef.data = this.productListArray.value
+  }
+
+  addProductRow(): void {
+    const productItemForm =
+      this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+
     this.productListArray.push(productItemForm);
+    const index = this.productListArray.length - 1;
+
+    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
     this.tableDef.data = this.productListArray.value;
   }
 
@@ -672,50 +708,54 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDetails(): void {
-    this.route.params.subscribe((params) => {
-      const taxInvoiceID = +params['id'];
-      if (taxInvoiceID) {
-        this.isEditMode = true;
-        try {
-          this.pageService.GetDetails(taxInvoiceID)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                if (response.IsSuccess) {
-                  console.log(response.Data);
-                  this.selectedCustomerAddress = response.Data.CustomerAddress!;
-                  this.statusText = response.Data.StatusText!;
-                  this.statusHex = response.Data.StatusHex!;
-                  response.Data.ProductList.Items.forEach(item => {
-                    const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                    productForm.patchValue(item);
-                    this.productListArray.push(productForm);
-                  });
+  // getDetails(): void {
+  //   this.route.params.subscribe((params) => {
+  //     const taxInvoiceID = +params['id'];
+  //     if (taxInvoiceID) {
+  //       this.isEditMode = true;
+  //       try {
+  //         this.pageService.GetDetails(taxInvoiceID)
+  //           .pipe(takeUntil(this.destroy$))
+  //           .subscribe({
+  //             next: (response) => {
+  //               if (response.IsSuccess) {
+  //                 console.log(response.Data);
+  //                 this.selectedCustomerAddress = response.Data.CustomerAddress!;
+  //                 this.statusText = response.Data.StatusText!;
+  //                 this.statusHex = response.Data.StatusHex!;
+                  
+  //                 response.Data.ProductList.Items.forEach(item => {
+  //                   const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //                   productItemForm.patchValue(item);
+  //                   this.productListArray.push(productItemForm);
+  //                   const index = this.productListArray.length - 1;
 
-                  this.tableDef.data = this.productListArray.value;
-                  const { ProductList, ...formValues } = response.Data;
-                  const data = {
-                    ...formValues,
-                    DocumentNo: response.Data.BasedOn === 1 ? response.Data.ProformaInvoiceNo : response.Data.ExportOrderNo,
-                    TaxInvoiceDate: DateUtils.toDate(response.Data.TaxInvoiceDate!),
-                    ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!),
-                    ReferenceDate: DateUtils.toDate(response.Data.ReferenceDate!)
-                  }
+  //                   this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
+  //                 });                  
 
-                  this.form.patchValue(data);
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
-            });
-        }
-        catch (error) {
+  //                 this.tableDef.data = this.productListArray.value;
+  //                 const { ProductList, ...formValues } = response.Data;
+  //                 const data = {
+  //                   ...formValues,
+  //                   DocumentNo: response.Data.BasedOn === 1 ? response.Data.ProformaInvoiceNo : response.Data.ExportOrderNo,
+  //                   TaxInvoiceDate: DateUtils.toDate(response.Data.TaxInvoiceDate!),
+  //                   ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!),
+  //                   ReferenceDate: DateUtils.toDate(response.Data.ReferenceDate!)
+  //                 }
 
-        }
-      }
-    });
-  }
+  //                 this.form.patchValue(data);
+  //               } else {
+  //                 this.alertService.showServerResponseAlert(response);
+  //               }
+  //             },
+  //           });
+  //       }
+  //       catch (error) {
+
+  //       }
+  //     }
+  //   });
+  // }
 
   private loadTaxInvoice(id: number): void {
     this.isEditMode = true;
@@ -735,9 +775,12 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.statusText = response.Data.StatusText!;
             this.statusHex = response.Data.StatusHex!;
             response.Data.ProductList.Items.forEach(item => {
-              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue(item);
-              this.productListArray.push(productForm);
+              const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productItemForm.patchValue(item);
+              this.productListArray.push(productItemForm);
+              const index = this.productListArray.length - 1;
+
+              this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
             });
 
             this.tableDef.data = this.productListArray.value;
@@ -766,8 +809,8 @@ export class CreateComponent implements OnInit, OnDestroy {
             if (response.IsSuccess) {
               this.productListArray.clear();
               response.Data.ProductList.Items.forEach(item => {
-                const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                productForm.patchValue({
+                const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                productItemForm.patchValue({
                   ProductID: item.ProductID,
                   ProductName: item.ProductName,
                   SalesQty: item.SalesQty,
@@ -775,7 +818,10 @@ export class CreateComponent implements OnInit, OnDestroy {
                   RatePerUnitFC: item.RatePerUnitFC,
                   SalesTaxRate: item.SalesTaxRate
                 });
-                this.productListArray.push(productForm);
+                this.productListArray.push(productItemForm);
+                const index = this.productListArray.length - 1;
+
+                this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
               });
 
               this.tableDef.data = this.productListArray.value;
@@ -806,9 +852,10 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              this.productListArray.clear();
               response.Data.ProductList.Items.forEach(item => {
-                const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                productForm.patchValue({
+                const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                productItemForm.patchValue({
                   ProductID: item.ProductID,
                   ProductName: item.ProductName,
                   SalesQty: item.SalesQty,
@@ -816,8 +863,12 @@ export class CreateComponent implements OnInit, OnDestroy {
                   RatePerUnitFC: item.RatePerUnitFC,
                   SalesTaxRate: item.SalesTaxRate
                 });
-                this.productListArray.push(productForm);
+                this.productListArray.push(productItemForm);
+                const index = this.productListArray.length - 1;
+
+                this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
               });
+
               this.tableDef.data = this.productListArray.value;
 
               // Create the document option for autocomplete

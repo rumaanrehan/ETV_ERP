@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../../../../core/services/api.service';
-import { Observable } from 'rxjs';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
-import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { SalesEnquiry, SalesEnquiry_Detail, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort, SalesEnquiry_SelectList, SalesEnquiryRequest } from './sales-enquiry';
-import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ProductRequest, Product_SelectList } from '../../../ims/settings/product-master/product-master';
-import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
-import { FormConfigType } from '../../../../shared/models/form.model';
 import { FormGroup, Validators } from '@angular/forms';
-import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { GreaterThan } from '../../../../shared/validators/greater-than.validator';
+import { Observable } from 'rxjs';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
+import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { FormConfigType } from '../../../../shared/models/form.model';
+import { GreaterThan } from '../../../../shared/validators/greater-than.validator';
+import { ProductRequest, Product_SelectList } from '../../../ims/settings/product-master/product-master';
+import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
+import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
+import { CompanyMasterService } from '../../settings/company-master/company-master.service';
+import { SalesEnquiry, SalesEnquiryBulkUpdateRequest, SalesEnquiryRequest, SalesEnquiry_Detail, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort, SalesEnquiry_SelectList } from './sales-enquiry';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { Environment } from '../../../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +26,8 @@ export class SalesEnquiryService {
   constructor(
     private apiService: ApiService,
     private companyMasterService: CompanyMasterService,
-    private productMasterService: ProductMasterService
+    private productMasterService: ProductMasterService,
+    private http: HttpClient,
   ) { }
 
   GetCompanyList(model: CompanyRequest): Observable<ApiListResponse<Company_SelectList>> {
@@ -56,6 +60,14 @@ export class SalesEnquiryService {
 
   CancelOrder(model: SalesEnquiry): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  BulkChangeStatus(model: SalesEnquiryBulkUpdateRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/BulkChangeStatus`, model);
+  }
+
+  GeneratePdf(request: any) {
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintInvoice`, request, { responseType: 'blob' });
   }
 
   getFormConfig_DataTableFilter(): FormConfigType<SalesEnquiry_IndexTableFilter> {
@@ -100,69 +112,64 @@ export class SalesEnquiryService {
       },
       EnquiryDate: {
         label: 'Enquiry Date',
-        defaultValue: null,
+        defaultValue: new Date(),
         validators: [Validators.required],
         validationMessages: {
           required: "Enquiry Date is required"
-        }
-      },
-      CustomerID: {
-        label: 'Customer ID',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Customer is required"
-        }
-      },
-      CustomerName: {
-        label: 'Customer Name',
-        defaultValue: null,
-      },
-      ContactName: {
-        label: 'Contact Name',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Contact Name is required"
-        }
-      },
-      ContactPhone: {
-        label: 'Contact Phone',
-        defaultValue: null,
-        validators: [
-          Validators.pattern(/^\+[1-9]\d{0,2}\s?\d{6,14}$/)
-        ],
-        validationMessages: {
-          pattern: "Enter a valid 10-digit phone number"
-        }
-      },
-      ContactEmail: {
-        label: 'Contact Email',
-        defaultValue: '',
-        validators: [
-          Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,4}$/)
-        ],
-        validationMessages: {
-          required: 'Email is required',
-          pattern: 'Please enter a valid email address'
-        }
-      },
-      Note: {
-        label: 'Note',
-        defaultValue: '',
+        },
+        type: 'control',
       },
       ExpectedDeliveryDate: {
         label: 'Expected Delivery Date',
         defaultValue: null,
         validators: [GreaterThan("EnquiryDate")],
         validationMessages: {
-          greaterThan: "Expected Delivery Date must be after Enquiry Date"
-        }
+          greaterThan: "Expected Delivery Date must be later than the Enquiry Date"
+        },
+        type: 'control'
       },
-      ProductName: {
-        label: 'Product Name',
-        defaultValue: null
+      CustomerID: {
+        label: 'Customer',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Customer is required"
+        },
+        type: 'control'
+      },
+      CustomerName: {
+        label: 'Customer Name',
+        defaultValue: null,
+        type: 'control'
+      },
+      ContactName: {
+        label: 'Contact Name',
+        defaultValue: null,
+        validators: [NotOnlyWhitespaceValidator()],
+        validationMessages: {
+          notOnlyWhitespace: "Name person name cannot be empty or whitespace"
+        },
+        type: 'control',
+      },
+      ContactPhone: {
+        label: 'Contact Phone',
+        defaultValue: null,
+        validators: [NotOnlyWhitespaceValidator(), Validators.pattern(/^\+?[0-9\s\-]{7,15}$/)],
+        validationMessages: {
+          notOnlyWhitespace: "Contact Phone cannot be empty or whitespace",
+          pattern: 'Enter a valid phone number'
+        },
+        type: 'control'
+      },
+      ContactEmail: {
+        label: 'Contact Email',
+        defaultValue: '',
+        validators: [NotOnlyWhitespaceValidator(), Validators.email],
+        validationMessages: {
+          notOnlyWhitespace: "Contact Email cannot be empty or whitespace",
+          email: 'Enter a valid email address'
+        },
+        type: 'control'
       },
       ProductList: {
         type: 'array',
@@ -177,15 +184,18 @@ export class SalesEnquiryService {
             validators: [Validators.required],
             validationMessages: {
               required: "Product is required"
-            }
+            },
+            type: 'control'
           },
           RequestedQty: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
+            validators: [Validators.required, Validators.min(1)],
             validationMessages: {
-              required: "Requested Qty is required"
-            }
+              required: "Requested Qty is required",
+              min: "Requested Qty must be at least 1"
+            },
+            type: 'control'
           },
           UOM: {
             label: 'Measurement Unit',
@@ -194,19 +204,22 @@ export class SalesEnquiryService {
           Remarks: {
             label: '',
             defaultValue: '',
-            validators: [
-              Validators.maxLength(200)
-            ],
+            validators: [Validators.maxLength(200)],
             validationMessages: {
               maxlength: 'Remarks cannot exceed 200 characters'
             }
           },
         }
       },
-      ProductID: {
-        label: 'ProductID',
-        defaultValue: null
-      }
+      Note: {
+        label: 'Note',
+        defaultValue: '',
+        validators: [Validators.maxLength(500)],
+        validationMessages: {
+          maxlength: 'Note cannot exceed 500 characters'
+        },
+        type: 'control'
+      },
     };
   }
 
@@ -227,13 +240,12 @@ export class SalesEnquiryService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<SalesEnquiry>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<SalesEnquiry>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,
       control: 'ProductName',
-      label: formConfig.ProductName.label,
-      validationMessage: formConfig.ProductName.error,
+      validationMessage: formConfig.ProductList.items.ProductName.error,
       placeholder: 'Search Product',
       options: [],
       optionLabel: 'ProductName',
