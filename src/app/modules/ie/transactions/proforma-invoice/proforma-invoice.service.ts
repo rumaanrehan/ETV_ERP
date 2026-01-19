@@ -345,7 +345,7 @@ export class ProformaInvoiceService {
         }
       },
       Narration: {
-        label: 'Narration',
+        label: 'Note',
         defaultValue: null,
         validators: [],
         validationMessages: {}

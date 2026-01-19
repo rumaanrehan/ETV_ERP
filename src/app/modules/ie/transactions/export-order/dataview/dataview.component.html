@@ -11,9 +11,9 @@
 </div>
 
 <ng-template #customTemplate let-exportOrders>
-    <div class="dataview-item" *ngFor="let item of exportOrders; let first = first">
+    <div class="dataview-item mb-3" *ngFor="let item of exportOrders; let first = first">
         <div class="col-12 p-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex justify-content-between dataview-record-title">
                 <a (click)="onClickEditDetails(item.ExportOrderID)">
                     <h5 class="primary-color mb-2">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
                 </a>

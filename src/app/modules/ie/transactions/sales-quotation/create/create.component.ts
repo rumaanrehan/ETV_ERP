@@ -21,6 +21,8 @@ import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/pa
 import { SalesEnquiry_Detail, SalesEnquiry_SelectList, SalesEnquiryRequest } from '../../sales-enquiry/sales-enquiry';
 import { SalesQuotation, SalesQuotation_Detail, SalesQuotationDetail } from '../sales-quotation';
 import { SalesQuotationService } from '../sales-quotation.service';
+import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
+import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
 
 @Component({
   selector: 'app-create',
@@ -39,7 +41,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('taxRateColTemplate', { static: true }) taxRateColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountBCColTemplate', { static: true }) taxableAmountBCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountBCColTemplate', { static: true }) taxAmountBCColTemplate!: TemplateRef<any>;
-  @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
   componentRef?: ComponentRef<any>;
@@ -51,6 +53,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
   isFromSalesEnquiry = false;
   isExportAlreadyExists = false;
+  isAddProductBtnLoading: boolean = false;
+  disablePrintButton: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<SalesQuotation>;
@@ -74,6 +78,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: SalesQuotationService,
+    private currencyExchangeService: CurrencyExchangeService,
     private formService: FormService,
     private alertService: AlertNotificationService,
     private router: Router,
@@ -97,7 +102,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "QuotedTaxRate", label: "Quoted Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountBCColTemplate },
         { data: "TaxAmountBC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountBCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     };
@@ -122,6 +127,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         }
 
         this.isEditMode = false;
+        if (this.productListArray.length === 0) {
+          this.addProductRow();
+        }
       });
   }
 
@@ -201,6 +209,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.selectedCustomerAddress = null;
   }
 
   get productListArray(): FormArray<FormGroup> {
@@ -212,9 +221,16 @@ export class CreateComponent implements OnInit, OnDestroy {
       text: 'Do you really want to remove this product item?',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.productListArray.removeAt(index);
-        this.tableDef.data = this.productListArray.value;
-        this.productCalculation();
+        if (this.productListArray.length > 1) {
+          this.productListArray.removeAt(index);
+          this.tableDef.data = this.productListArray.value;
+        }
+        else {
+          this.alertService.showToast({
+            text: 'At least one product item is required.',
+            type: 'warning'
+          });
+        }
       }
     });
   }
@@ -310,6 +326,21 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.selectedCustomerAddress = null;
   }
 
+  onCurrencyChange(): void {
+    const model: GetExchangeRateRequest = {
+      ToCurrencyCode: this.currencyExchangeService.BASE_CURRENCY_ISO,
+      CurrencyID: this.form.get('FCCurrencyID')?.value
+    }
+    this.pageService.GetExchangeRate(model)
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate.toFixed(3) });
+          }
+        },
+      });
+  }
+
   onSearch_Product(event: string, rowIndex: number): void {
     try {
       const dto: ProductRequest = {
@@ -335,13 +366,13 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     // Duplicate check
     if (this.productListArray.controls.some(
-        (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
+      (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
     )) {
       this.alertService.showToast({
         text: 'Product already exists in the table'
       });
 
-      row.patchValue({ ProductName: null, ProductID: null});
+      row.patchValue({ ProductName: null, ProductID: null });
       return;
     }
 
@@ -354,15 +385,24 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.tableDef.data = this.productListArray.value
   }
 
+  onClear_Product(index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+    row.patchValue({ ProductID: null, ProductName: null, UOM: null });
+
+    this.tableDef.data = this.productListArray.value;
+  }
+
   addProductRow(): void {
-    const productItemForm =
-      this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+    this.isAddProductBtnLoading = true;
+    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
 
     this.productListArray.push(productItemForm);
     const index = this.productListArray.length - 1;
 
     this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
     this.tableDef.data = this.productListArray.value;
+
+    this.isAddProductBtnLoading = false;
   }
 
   productCalculation(): void {
@@ -457,9 +497,8 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
-        this.alertService.showValidationAlert();
-
-        this.logInvalidControls(this.form);
+        console.log(this.formConfig.ValidityDate.error);
+        this.alertService.showValidationAlert(this.formService.getValidationMessages(this.formConfig));
         this.isSubmitted = false;
         return;
       }
@@ -491,8 +530,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   createRecord(model: SalesQuotation): void {
     try {
-      this.pageService
-        .CreateRecord(model)
+      this.pageService.CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -632,12 +670,12 @@ export class CreateComponent implements OnInit, OnDestroy {
             const model: SalesEnquiry_Detail = response.Data;
 
             this.selectedCustomerAddress = model.CustomerAddress,
-            this.form.patchValue({
-              SalesEnquiryID: model.SalesEnquiryID,
-              SalesEnquiryNo: model.SalesEnquiryNo,
-              CustomerID: model.CustomerID,
-              CustomerName: model.CustomerName,
-            });
+              this.form.patchValue({
+                SalesEnquiryID: model.SalesEnquiryID,
+                SalesEnquiryNo: model.SalesEnquiryNo,
+                CustomerID: model.CustomerID,
+                CustomerName: model.CustomerName,
+              });
 
             this.productListArray.clear();
             response.Data.ProductList.Items.forEach(item => {
@@ -731,7 +769,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     catch (error) { }
   }
 
-  formatDate(date: Date) {
+  formatDate(date: Date): string {
     return DateUtils.formatDate(date);
   }
 
@@ -787,6 +825,32 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: ProductMaster = this.formService.createNullObject<ProductMaster>();
     this.loadDynamicComponent(model);
+  }
+
+  printSalesQuotation(): void {
+    this.disablePrintButton = true;
+    this.route.params.subscribe(params => {
+      const salesQuotationID = +params['id'];
+
+      if (!salesQuotationID) return;
+
+      this.isEditMode = true;
+      const model = {
+        SalesQuotationID: salesQuotationID
+      };
+      this.pageService.GeneratePdf(model).subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          window.open(url);
+        },
+        error: (err) => {
+          console.error('PDF generation failed', err);
+        },
+        complete: () => {
+          this.disablePrintButton = false;
+        }
+      });
+    });
   }
 
   private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {

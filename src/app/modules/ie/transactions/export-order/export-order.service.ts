@@ -29,6 +29,8 @@ import { SalesQuotationService } from '../sales-quotation/sales-quotation.servic
 import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +47,8 @@ export class ExportOrderService {
     private paymentTermMasterService: PaymentTermMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
     private portService: PortMasterService,
-    private selectListService: SelectListService
+    private selectListService: SelectListService,
+    private currencyExchangeService: CurrencyExchangeService
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -58,6 +61,10 @@ export class ExportOrderService {
       taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest),
       currencyList: this.currencyMasterService.PopulateList({ PopulateType: 'SelectList' } as CurrencyRequest)
     });
+  }
+
+  GetExchangeRate(model: GetExchangeRateRequest): Observable<ApiDataResponse<ExchangeRateResponse>> {
+    return this.currencyExchangeService.GetRate(model);
   }
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
@@ -298,7 +305,7 @@ export class ExportOrderService {
       },
       ExchangeRateDate: {
         label: 'Exchange Date',
-        defaultValue: null,
+        defaultValue: new Date(),
         validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
         validationMessages: {
           RequiredIf: "Exchange Rate Date is required"
@@ -502,7 +509,7 @@ export class ExportOrderService {
         }
       },
       Narration: {
-        label: 'Narration',
+        label: 'Note',
         defaultValue: null,
         validators: [],
         validationMessages: {}

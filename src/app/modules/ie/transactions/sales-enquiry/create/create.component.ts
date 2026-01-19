@@ -14,7 +14,7 @@ import { PageHeaderService } from "../../../../../shared/services/page-header.se
 import { DateUtils } from "../../../../../shared/utility/date-utils";
 import { Product_SelectList, ProductMaster, ProductRequest } from "../../../../ims/settings/product-master/product-master";
 import { Company_SelectList, CompanyMaster, CompanyRequest } from "../../../settings/company-master/company-master";
-import { SalesEnquiry, SalesEnquiryDetail } from "../sales-enquiry";
+import { SalesEnquiry } from "../sales-enquiry";
 import { SalesEnquiryService } from "../sales-enquiry.service";
 
 @Component({
@@ -31,7 +31,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('requestedQtyColTemplate', { static: true }) requestedQtyColTemplate!: TemplateRef<any>;
   @ViewChild('remarkColTemplate', { static: true }) remarkColTemplate!: TemplateRef<any>;
-  @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
   componentRef?: ComponentRef<any>;
@@ -42,6 +42,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   isQuotationAlreadyExists: boolean = false;
+  isAddProductBtnLoading: boolean = false;
+  disablePrintButton: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<SalesEnquiry>;
@@ -74,8 +76,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "RequestedQty", label: "Requested Qty", width: "10%", customTemplate: this.requestedQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
         { data: "Remarks", label: "Remark", width: "25%", customTemplate: this.remarkColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
-      ], 
+        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
+      ],
       data: this.productListArray.value
     }
 
@@ -114,8 +116,16 @@ export class CreateComponent implements OnInit, OnDestroy {
       text: 'Do you really want to remove this product item?',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.productListArray.removeAt(index);
-        this.tableDef.data = this.productListArray.value;
+        if (this.productListArray.length > 1) {
+          this.productListArray.removeAt(index);
+          this.tableDef.data = this.productListArray.value;
+        }
+        else {
+          this.alertService.showToast({
+            text: 'At least one product item is required.',
+            type: 'warning'
+          });
+        }
       }
     });
   }
@@ -176,35 +186,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  // onSelect_Product(event: Product_SelectList): void {
-  //   this.form.get('ProductID')?.patchValue(null);
-  //   this.form.get('ProductName')?.patchValue(null);
-
-  //   if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
-  //     this.alertService.showToast({
-  //       text: "Product already exists in the table"
-  //     });
-
-  //     return;
-  //   }
-
-  //   const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-  //   productItemForm.patchValue({
-  //     ProductID: event.ProductID,
-  //     ProductName: event.ProductName,
-  //     UOM: event.UOM
-  //   });
-
-  //   this.productListArray.push(productItemForm);
-  //   this.tableDef.data = this.productListArray.value;
-  // }
-
   onSelect_Product(event: Product_SelectList, index: number): void {
     const row = this.productListArray.at(index) as FormGroup;
 
     // Duplicate check
     if (this.productListArray.controls.some(
-        (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
+      (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
     )) {
       this.alertService.showToast({
         text: 'Product already exists in the table'
@@ -224,6 +211,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   addProductRow(): void {
+    this.isAddProductBtnLoading = true;
     const productItemForm =
       this.formService.createFormArrayItem(this.formConfig.ProductList.items);
 
@@ -232,6 +220,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
     this.tableDef.data = this.productListArray.value;
+    this.isAddProductBtnLoading = false;
   }
 
   onSubmit(): void {
@@ -251,7 +240,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
-        this.alertService.showValidationAlert();
+        this.alertService.showValidationAlert(this.formService.getValidationMessages(this.formConfig));
         this.isSubmitted = false;
         return;
       }
@@ -383,6 +372,11 @@ export class CreateComponent implements OnInit, OnDestroy {
         }
         catch (error) { }
       }
+      else {
+        if (this.productListArray.length === 0) {
+          this.addProductRow();
+        }
+      }
     });
   }
 
@@ -433,5 +427,31 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: ProductMaster = this.formService.createNullObject<ProductMaster>();
     this.loadDynamicComponent(model);
+  }
+
+  printSalesEnquiry(): void {
+    this.disablePrintButton = true;
+    this.route.params.subscribe(params => {
+      const salesEnquiryID = +params['id'];
+
+      if (!salesEnquiryID) return;
+
+      this.isEditMode = true;
+      const model = {
+        SalesEnquiryID: salesEnquiryID
+      };
+      this.pageService.GeneratePdf(model).subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          window.open(url);
+        },
+        error: (err) => {
+          console.error('PDF generation failed', err);
+        },
+        complete: () => {
+          this.disablePrintButton = false;
+        }
+      });
+    });
   }
 }

@@ -12,36 +12,36 @@ export interface DataTableDef<T> {
     loading: boolean;
 }
 
-export type DataTableColumnDef = 
-  | {
-      data: string;
-      label?: string;
-      groupLabel?: string;
-      orderable?: boolean;
-      visible?: boolean;
-      hideVisToggle?: boolean;
-      filterable: true;
-      filterType: 'select';
-      filterKey: string; // Required when filterType is 'select' and filterable is true
-      filterSelectList?: DataTableFilterList[];
-      cssClass?: string;
-      width?: string;
-      customTemplate?: TemplateRef<any>;
+export type DataTableColumnDef =
+    | {
+        data: string;
+        label?: string;
+        groupLabel?: string;
+        orderable?: boolean;
+        visible?: boolean;
+        hideVisToggle?: boolean;
+        filterable: true;
+        filterType: 'select';
+        filterKey: string; // Required when filterType is 'select' and filterable is true
+        filterSelectList?: DataTableFilterList[];
+        cssClass?: string;
+        width?: string;
+        customTemplate?: TemplateRef<any>;
     }
-  | {
-      data: string;
-      label?: string;
-      groupLabel?: string;
-      orderable?: boolean;
-      visible?: boolean;
-      hideVisToggle?: boolean;
-      filterable?: boolean;
-      filterType?: 'text' | 'date' | 'daterange' | undefined;
-      filterKey?: string; // Optional in other cases
-    //   filterSelectList?: DataTableSelectList[];
-      cssClass?: string;
-      width?: string;
-      customTemplate?: TemplateRef<any>;
+    | {
+        data: string;
+        label?: string;
+        groupLabel?: string;
+        orderable?: boolean;
+        visible?: boolean;
+        hideVisToggle?: boolean;
+        filterable?: boolean;
+        filterType?: 'text' | 'date' | 'daterange' | undefined;
+        filterKey?: string; // Optional in other cases
+        //   filterSelectList?: DataTableSelectList[];
+        cssClass?: string;
+        width?: string;
+        customTemplate?: TemplateRef<any>;
     };
 
 // export interface DataTableColumnDef {

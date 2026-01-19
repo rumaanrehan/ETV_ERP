@@ -1,5 +1,5 @@
-import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, ComponentRef, NgModule, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormGroup, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { FormConfigType } from '../../../../../shared/models/form.model';
@@ -8,18 +8,19 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { SalesEnquiry, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort } from '../sales-enquiry';
+import { SalesEnquiry, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort, SalesEnquiryBulkUpdateRequest } from '../sales-enquiry';
 import { SalesEnquiryService } from '../sales-enquiry.service';
 import { CommonModule } from '@angular/common';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { DataViewDef, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 import { DataViewLazyLoadEvent } from 'primeng/dataview';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, FormsModule, CheckboxModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -38,6 +39,9 @@ export class DataviewComponent implements OnInit, OnDestroy {
   filterFormConfig!: FormConfigType<SalesEnquiry_IndexTableFilter>
   sortingForm!: FormGroup;
   sortingFormConfig!: FormConfigType<SalesEnquiry_IndexTableSort>
+
+  selectedSalesEnquiries: SalesEnquiry_IndexTableList[] = [];
+  selectAll = false;
 
   statusList: StaticList[] = []
 
@@ -161,6 +165,72 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
+  }
+
+  onSelectionChange(item: SalesEnquiry_IndexTableList) {
+
+    if (item._selected) {
+      this.selectedSalesEnquiries.push(item);
+    } else {
+      this.selectedSalesEnquiries =
+        this.selectedSalesEnquiries.filter(
+          x => x.SalesEnquiryID !== item.SalesEnquiryID
+        );
+    }
+
+    this.selectAll = this.selectedSalesEnquiries.length === this.dataViewDef.data.length;
+  }
+
+  toggleSelectAll(event: any) {
+    this.selectedSalesEnquiries = [];
+
+    this.dataViewDef.data.forEach((item: SalesEnquiry_IndexTableList) => {
+      item._selected = event.checked;
+      if (event.checked) {
+        this.selectedSalesEnquiries.push(item);
+      }
+    });
+  }
+
+  bulkChangeStatus(statusID: number) {
+    this.alertService
+      .showConfirmationWithInput({
+        text: 'Do you want to bulk update <b>Sales Enquiry</b>?',
+        inputPlaceholder: 'Reason to Bulk Update'
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const ids = this.selectedSalesEnquiries.map(x => x.SalesEnquiryID);
+          const dto: SalesEnquiryBulkUpdateRequest = {
+            SalesEnquiryIDs: ids,
+            StatusID: statusID
+          };
+
+          this.pageService.BulkChangeStatus(dto)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                this.loadData();
+                this.clearSelection();
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: 'success',
+                    text: response.Message,
+                    timer: 5000,
+                  });
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+      });
+  }
+
+  clearSelection() {
+    this.dataViewDef.data.forEach(x => x._selected = false);
+    this.selectedSalesEnquiries = [];
+    this.selectAll = false;
   }
 }
 

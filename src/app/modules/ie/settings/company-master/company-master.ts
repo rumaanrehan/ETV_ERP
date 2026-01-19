@@ -13,6 +13,7 @@ export interface CompanyMaster {
     TANNo: string | null;
     PANNo: string | null;
     BillingAddress: string | null;
+    IsShippingAddressSameAsBillingAddress: boolean | null;
     ShippingAddress: string | null;
 }
 

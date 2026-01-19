@@ -23,10 +23,13 @@
                 </div>
                 <div class="col-xl-6"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-span [text]="formatDate(form.get('SalesQuotationDate')?.value)" [label]="formConfig.SalesQuotationDate.label"></z-span>
+                  <z-datepicker [group]="form" [control]="'SalesQuotationDate'"
+                    [label]="formConfig.SalesQuotationDate.label"
+                    [validationMessage]="formConfig.SalesQuotationDate.error"></z-datepicker>
                 </div>
                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnSalesEnquiry">
-                  <z-autocomplete [controlDef]="salesEnquiryAutoCompleteDef" (onSearch)="loadSalesEnquiry($event)"
+                  <z-autocomplete [controlDef]="salesEnquiryAutoCompleteDef" [allowEmptySearch]="true"
+                    [isClearable]="!(isBasedOnSalesEnquiry && isEditMode)" (onSearch)="loadSalesEnquiry($event)"
                     (onSelect)="onSelect_SalesEnquiry($event)" (onClear)="onClear_SalesEnquiry()"></z-autocomplete>
                 </div>
 
@@ -34,14 +37,15 @@
                 <div class="col-xl-3 form-group px-2">
                   <div class="action-input-group">
                     <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCustomer($event)"
-                      (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+                      (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()"
+                      [isClearable]="!isBasedOnSalesEnquiry" [readonly]="isBasedOnSalesEnquiry">
                     </z-autocomplete>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Company"
                       (click)="handleComponentLoad('VendorCreateComponent')" *ngIf="!isBasedOnSalesEnquiry"></i>
                   </div>
                 </div>
                 <div class="col-xl-7"></div>
-                <div class="col-xl-5 form-group px-2">
+                <div class="col-xl-12 form-group px-2" *ngIf="form.get('CustomerID')?.value">
                   <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
                 </div>
 
@@ -50,7 +54,8 @@
                 <div class="col-xl-3 form-group px-2">
                   <div class="action-input-group">
                     <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
-                      [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [options]="currencyList"></z-select>
+                      [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [options]="currencyList"
+                      (onChange)="onCurrencyChange()"></z-select>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Currency"
                       (click)="handleComponentLoad('CurrencyCreateComponent')"></i>
                   </div>
@@ -72,22 +77,19 @@
                 </div>
                 <div class="col-xl-8"></div>
                 <!-- Product List -->
-                <div class="col-12 px-2">
+                <div class="col-12 px-2 d-flex flex-column mb-2">
                   <h6 class="form-group">Product List</h6>
-                  <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add Product"
-                    (click)="addProductRow()">
-                  </i>
                   <z-table [tableDef]="this.tableDef">
                   </z-table>
                 </div>
                 <!-- Payment & Shipment -->
-                <div class="col-xl-2 form-group px-3">
+                <div class="col-xl-2 form-group px-2">
                   <z-select [group]="form" [control]="'PaymentTermID'" [label]="formConfig.PaymentTermID.label"
                     [options]="paymentTermList" [optionLabel]="'PaymentTermName'"
                     [optionValue]="'PaymentTermID'"></z-select>
                 </div>
                 <!-- Narration -->
-                <div class="col-md-6 form-group px-3">
+                <div class="col-md-6 form-group px-2">
                   <z-textarea [group]="form" [control]="'Narration'" [label]="formConfig.Narration.label"></z-textarea>
                 </div>
                 <div class="col-xl-2"></div>
@@ -97,27 +99,28 @@
                 </div>
               </div>
             </div>
-          <div class="col-12 d-flex justify-content-end">
+            <div class="col-12 d-flex justify-content-end">
               <div class="card pt-2 pb-2 mb-2 col-auto">
-                  <div class="px-2 d-flex flex-column gap-2">
+                <div class="d-flex flex-column gap-2 px-2">
                   <div class="d-flex justify-content-between align-items-center">
-                      <p class="mb-0">Subtotal Amount: </p>
-                      <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'" [label]="formConfig.SubtotalAmountFC.label"
+                    <p class="mb-0">Subtotal Amount: </p> &nbsp; &nbsp; &nbsp;
+                    <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
+                      [label]="formConfig.SubtotalAmountFC.label"
                       [validationMessage]="formConfig.SubtotalAmountFC.error" [readonly]="true"></z-inputnumber>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">
-                      <p class="mb-0">Tax Amount: </p>
-                      <z-inputnumber [group]="form" [control]="'TaxAmountFC'" [label]="formConfig.TaxAmountFC.label"
+                    <p class="mb-0">Tax Amount: </p> &nbsp; &nbsp; &nbsp;
+                    <z-inputnumber [group]="form" [control]="'TaxAmountFC'" [label]="formConfig.TaxAmountFC.label"
                       [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">
-                      <p class="mb-0">Net Amount: </p>
-                      <z-inputnumber [group]="form" [control]="'NetAmountFC'" [label]="formConfig.NetAmountFC.label"
+                    <p class="mb-0">Net Amount: </p> &nbsp; &nbsp; &nbsp;
+                    <z-inputnumber [group]="form" [control]="'NetAmountFC'" [label]="formConfig.NetAmountFC.label"
                       [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
                   </div>
-                  </div>
+                </div>
               </div>
-          </div>
+            </div>
           </div>
         </div>
       </form>
@@ -128,6 +131,10 @@
       <div class="col-xl-4 px-1" *ngIf="isEditMode && !isExportAlreadyExists">
         <button type="submit" class="btn btn-md btn-primary w-100"
           (click)="onClickNavigateToExportOrder(this.form.get('SalesQuotationID')?.value || null)"> Add Export </button>
+      </div>
+      <div class="col-xl-4 px-1" *ngIf="isEditMode">
+        <z-button [label]="'Print Sales Quotation'" (clicked)="printSalesQuotation()"
+          [loading]="disablePrintButton"></z-button>
       </div>
     </div>
     <div class="col-xl-4">
@@ -154,16 +161,14 @@
 </ng-template>
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
-  <z-autocomplete
-    [controlDef]="productAutoCompleteDef[rowIndex]"
-    (onSearch)="onSearch_Product($event, rowIndex)"
-    (onSelect)="onSelect_Product($event, rowIndex)">
+  <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
+    (onSelect)="onSelect_Product($event, rowIndex)" (onClear)="onClear_Product(rowIndex)">
   </z-autocomplete>
 </ng-template>
 
 <ng-template #quotedQtyColTemplate let-row let-i="index">
   <z-inputnumber [group]="productListArray.at(i)" [control]="'QuotedQty'"
-    [label]="formConfig.ProductList.items.QuotedQty.label" [readonly]="isBasedOnSalesEnquiry"
+    [label]="formConfig.ProductList.items.QuotedQty.label"
     [validationMessage]="formConfig.ProductList.items.QuotedQty.error?.[i]" (onChange)="productCalculation()">
   </z-inputnumber>
 </ng-template>
@@ -206,11 +211,15 @@
   </div>
 </ng-template>
 
-<ng-template #removeProductItemColTemplate let-row let-i="index">
-  <div class="d-flex justify-content-end" *ngIf="!isBasedOnSalesEnquiry">
+<ng-template #actionColTemplate let-row let-i="index">
+  <div class="d-flex justify-content-end gap-3">
     <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
       (click)="onClickRemoveProductItem(i)">
       <i class="pi pi-minus-circle"></i></span>
+    <span *ngIf="i === this.productListArray.length - 1"
+      class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="addProductRow()">
+      <i class="pi pi-plus-circle"></i>
+    </span>
   </div>
 </ng-template>
 

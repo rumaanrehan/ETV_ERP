@@ -46,7 +46,7 @@
 
 /*Page Content Start*/
 .page-content {
-  padding: .75rem;
+  padding: 0.75rem 0 0.75rem 0.75rem;
 }
 
 .index-page-content {
@@ -56,8 +56,7 @@
 
 .page-content-scrollable {
   height: calc(100vh - 172px);
-  // max-height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 /*Page Content End*/
@@ -752,7 +751,7 @@ span {
 // Dataview
 
 .p-dataview-content {
-  height: calc(100vh - 203px);
+  height: calc(100vh - 257px);
   overflow-y: scroll;
 }
 
@@ -947,7 +946,6 @@ z-select-button .p-selectbutton {
 .dataview-item {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   border-radius: 0.75rem;
-  margin-bottom: 1rem;
   border: 1px solid var(--default-border);
 
 }
@@ -1103,4 +1101,29 @@ z-menu .p-button-icon {
   color: #fff !important;
   font-weight: 500;
 
+}
+
+div:where(.swal2-container) .swal2-html-container {
+  color: var(--default-text-color) !important;
+  text-align: start;
+}
+
+.dataview-record-title {
+  cursor: pointer;
+}
+
+.index-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.25rem 0;
+  padding: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.index-action-bar-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
 }

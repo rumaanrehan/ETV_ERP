@@ -22,7 +22,8 @@
                 </div>
                 <div class="col-xl-6"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-span [text]="formatDate(form.get('ExportOrderDate')?.value)" [label]="formConfig.ExportOrderDate.label"></z-span>
+                  <z-span [text]="formatDate(form.get('ExportOrderDate')?.value)"
+                    [label]="formConfig.ExportOrderDate.label"></z-span>
                 </div>
                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnSalesQuotation">
                   <z-autocomplete [controlDef]="salesQuotationAutoCompleteDef" (onSearch)="loadSalesQuotation($event)"
@@ -58,7 +59,7 @@
                   <div class="action-input-group">
                     <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
                       [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [readonly]="isBasedOnSalesQuotation"
-                      [options]="currencyList"></z-select>
+                      [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Currency"
                       (click)="handleComponentLoad('CurrencyCreateComponent')" *ngIf="!isBasedOnSalesQuotation"></i>
                   </div>
@@ -165,17 +166,18 @@
               <div class="card pt-2 pb-2 mb-2 col-auto">
                 <div class="px-2 d-flex flex-column gap-2">
                   <div class="d-flex justify-content-between align-items-center">
-                    <p class="mb-0">Subtotal Amount: </p>
-                    <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'" [label]="formConfig.SubtotalAmountFC.label"
+                    <p class="mb-0">Subtotal Amount: </p> &nbsp; &nbsp; &nbsp;
+                    <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
+                      [label]="formConfig.SubtotalAmountFC.label"
                       [validationMessage]="formConfig.SubtotalAmountFC.error" [readonly]="true"></z-inputnumber>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">
-                    <p class="mb-0">Tax Amount: </p>
+                    <p class="mb-0">Tax Amount: </p> &nbsp; &nbsp; &nbsp;
                     <z-inputnumber [group]="form" [control]="'TaxAmountFC'" [label]="formConfig.TaxAmountFC.label"
                       [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">
-                    <p class="mb-0">Net Amount: </p>
+                    <p class="mb-0">Net Amount: </p> &nbsp; &nbsp; &nbsp;
                     <z-inputnumber [group]="form" [control]="'NetAmountFC'" [label]="formConfig.NetAmountFC.label"
                       [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
                   </div>
@@ -256,9 +258,7 @@
 </ng-template>
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
-  <z-autocomplete
-    [controlDef]="productAutoCompleteDef[rowIndex]"
-    (onSearch)="onSearch_Product($event, rowIndex)"
+  <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
     (onSelect)="onSelect_Product($event, rowIndex)">
   </z-autocomplete>
 </ng-template>
@@ -266,32 +266,29 @@
 <ng-template #salesQtyColTemplate let-row let-i="index">
   <z-inputnumber [group]="productListArray.at(i)" [control]="'SalesQty'"
     [label]="formConfig.ProductList.items.SalesQty.label"
-    [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" [readonly]="isBasedOnSalesQuotation"
-    (onChange)="productCalculation()">
+    [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" (onChange)="productCalculation()">
   </z-inputnumber>
 </ng-template>
 
 <ng-template #ratePerUnitFCColTemplate let-row let-i="index">
   <div class="input-group">
-    <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
     <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"
       [label]="formConfig.ProductList.items.RatePerUnitFC.label"
-      [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [readonly]="isBasedOnSalesQuotation"
-      [styleClass]="'text-end'" (onChange)="productCalculation()"></z-inputnumber>
+      [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [styleClass]="'text-end'"
+      (onChange)="productCalculation()"></z-inputnumber>
   </div>
 </ng-template>
 
 <ng-template #taxRateColTemplate let-row let-i="index">
   <z-select [group]="productListArray.at(i)" [control]="'SalesTaxRate'"
     [label]="formConfig.ProductList.items.SalesTaxRate.label"
-    [validationMessage]="formConfig.ProductList.items.SalesTaxRate.error?.[i]" [readonly]="isBasedOnSalesQuotation"
-    [options]="taxSlabList" [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="productCalculation();">
+    [validationMessage]="formConfig.ProductList.items.SalesTaxRate.error?.[i]" [options]="taxSlabList"
+    [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="productCalculation();">
   </z-select>
 </ng-template>
 
 <ng-template #taxableAmountFCColTemplate let-row let-i="index">
   <div class="input-group">
-    <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
     <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxableAmountFC'"
       [label]="formConfig.ProductList.items.TaxableAmountFC.label"
       [validationMessage]="formConfig.ProductList.items.TaxableAmountFC.error?.[i]" [readonly]="true"
@@ -301,17 +298,15 @@
 
 <ng-template #taxAmountFCColTemplate let-row let-i="index">
   <div class="input-group">
-    <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
     <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxAmountFC'"
       [label]="formConfig.ProductList.items.TaxAmountFC.label"
       [validationMessage]="formConfig.ProductList.items.TaxAmountFC.error?.[i]" [readonly]="true"
       [styleClass]="'text-end'"></z-inputnumber>
-    <!-- <z-span class="flex-grow-1 numeric-span" [text]="getAmount(i)[1].toString()"></z-span> -->
   </div>
 </ng-template>
 
 <ng-template #removeProductItemColTemplate let-row let-i="index">
-  <div class="d-flex justify-content-end" *ngIf="!isBasedOnSalesQuotation">
+  <div class="d-flex justify-content-end">
     <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
       (click)="onClickRemoveProductItem(i)">
       <i class="pi pi-minus-circle"></i></span>

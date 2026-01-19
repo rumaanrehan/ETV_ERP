@@ -25,6 +25,8 @@ import { ExportOrderPaymentTemplate } from '../../export-order-payment/export-pa
 import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../../sales-quotation/sales-quotation';
 import { ExportOrder, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
+import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
+import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
 
 @Component({
   selector: 'app-create',
@@ -93,6 +95,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: ExportOrderService,
+    private currencyExchangeService: CurrencyExchangeService,
     private formService: FormService,
     private alertService: AlertNotificationService,
     private router: Router,
@@ -131,16 +134,16 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(paramMap => {
-        const id = paramMap.get('id');
-        const salesQuotationID = paramMap.get('salesQuotationID');
+        const exportOrderID = Number(paramMap.get('id'));
+        const salesQuotationID = Number(paramMap.get('salesQuotationID'));
 
-        if (id) {
-          this.loadExportOrder(+id);
+        if (exportOrderID) {
+          this.loadExportOrder(exportOrderID);
           return;
         }
         else if (salesQuotationID) {
           this.isFromSalesQuotation = true;
-          this.GetSalesQuotation(+salesQuotationID);
+          this.GetSalesQuotation(salesQuotationID);
           return;
         }
 
@@ -337,6 +340,21 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.selectedCustomerAddress = null;
   }
 
+  OnCurrencyChange(): void {
+    const model: GetExchangeRateRequest = {
+      ToCurrencyCode: this.currencyExchangeService.BASE_CURRENCY_ISO,
+      CurrencyID: this.form.get('FCCurrencyID')?.value
+    }
+    this.pageService.GetExchangeRate(model)
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate });
+          }
+        },
+      });
+  }
+
   loadLoadingPort(event: string): void {
     try {
       const shipmentModeID = this.form.get('ShipmentModeID')?.value;
@@ -460,7 +478,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     // Duplicate check
     if (this.productListArray.controls.some(
-        (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
+      (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
     )) {
       this.alertService.showToast({
         text: 'Product already exists in the table'
@@ -755,27 +773,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              const keysToPatch = Object.keys(this.formConfig).filter(
-                k => !['ExportOrderNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
-              );
-
-              const filteredModel = keysToPatch.reduce((acc, key) => {
-                const typedKey = key as keyof SalesQuotation_Detail;
-                const value = response.Data[typedKey] ?? undefined;
-                (acc as any)[typedKey] = value;
-                return acc;
-              }, {} as Partial<SalesQuotation_Detail>);
-
-              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
-              this.form.patchValue({
-                ...filteredModel,
-                CustomerID: response.Data.CustomerID,
-                CustomerName: response.Data.CustomerName,
-                // SalesQuotationNo: response.Data.SalesQuotationNo
-              });
-
-              // this.productListArray.clear();
-
+              this.selectedCustomerAddress = response.Data.CustomerAddress;
               response.Data.ProductList.Items.forEach(item => {
                 const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
                 productItemForm.patchValue({
@@ -783,19 +781,21 @@ export class CreateComponent implements OnInit, OnDestroy {
                   ProductName: item.ProductName,
                   SalesQty: item.QuotedQty,
                   UOM: item.UOM,
-                  RatePerUnitFC: item.RatePerUnitFC
+                  RatePerUnitFC: item.RatePerUnitFC,
+                  SalesTaxRate: item.TaxRate
                 });
-                this.productListArray.push(productItemForm);
-                const index = this.productAutoCompleteDef.length - 1;
 
+                this.productListArray.push(productItemForm);
+                const index = this.productListArray.length - 1;
                 this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
               });
 
-              this.tableDef.data = this.productListArray.value;
-              const { SalesQuotationNo, ProductList, BasedOn, IsRoundOff, ExchangeRateToBC, Narration, ...formValues } = response.Data;
-              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
-              this.form.patchValue(formValues);
+              console.log("ProductList", this.productListArray.value);
 
+              this.tableDef.data = this.productListArray.value;
+              const { ProductList, BasedOn, IsRoundOff, ExchangeRateToBC, Narration, ...formValues } = response.Data;
+
+              this.form.patchValue(formValues);
               this.productCalculation();
             } else {
               this.alertService.showServerResponseAlert(response);

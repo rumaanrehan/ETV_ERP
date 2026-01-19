@@ -390,7 +390,7 @@ export class TaxInvoiceService {
         }
       },
       Narration: {
-        label: 'Narration',
+        label: 'Note',
         defaultValue: null,
         validators: [],
         validationMessages: {}
