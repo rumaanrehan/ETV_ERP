@@ -108,6 +108,50 @@ export const ieRoute: Routes = [
             ]
           },
           {
+            path: 'purchase-quotation',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Purchase Quotation'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/purchase-quotation/dataview/dataview.component').then((m) => m.DataviewComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/PurchaseQuotation',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/purchase-quotation/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/PurchaseQuotation',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/purchase-quotation/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/PurchaseQuotation',
+                  breadcrumb: 'Edit'
+                }
+              },
+              {
+                path: 'from-enquiry/:purchaseEnquiryID',
+                loadComponent: () => import('./transactions/purchase-quotation/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/PurchaseQuotation',
+                  breadcrumb: 'Create'
+                }
+              }
+            ]
+          },
+          {
             path: 'export-order',
             canActivateChild: [AuthenticationGuard, AuthorizationGuard],
             data: {

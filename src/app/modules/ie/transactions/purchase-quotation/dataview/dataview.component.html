@@ -1,0 +1,72 @@
+<!--Page Header Action Button Template-->
+<ng-template #pageHeaderActionTemplate>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
+            class="pi pi-plus"></i>&nbsp;Add Quotation</button>
+</ng-template>
+
+<div class="col-xl-12 index-page-content">
+    <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+        (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+    </z-dataview>
+</div>
+
+<ng-template #customTemplate let-exportOrders>
+    <div class="dataview-item" *ngFor="let item of exportOrders; let first = first">
+        <div class="col-12 p-3">
+            <div class="d-flex justify-content-between">
+                <a (click)="onClickEditDetails(item.QuotationID)">
+                    <h5 class="primary-color mb-2">{{item.QuotationNo}} | {{item.VendorName}}</h5>
+                </a>
+                <div class="text-end">
+                    <span class="badge bg-outline-danger me-2" *ngIf="item.StatusText === 'Draft'" (click)="onClickCancel(item.QuotationID)">Cancel</span>
+                    <span class="badge bg-outline-primary">{{item.StatusText}}</span>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="d-flex flex-wrap justify-content-between">
+                    <div class="dataview-info-column">
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">Quotation Date:</span>
+                            <span class="fs-6 text-secondary"> {{formatDate(item.QuotationDate)}} </span>
+                        </div>
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">Valid Till:</span>
+                            <span class="fs-6 text-secondary"> {{formatDate(item.ValidityDate)}} </span>
+                        </div>
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">No of Products:</span>
+                            <span class="fs-6 text-secondary"> {{item.NoOfProducts}} </span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">Subtotal Amount (FC):</span>
+                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.SubtotalAmountFC |
+                                number:'1.2-2'}} </span>
+                        </div>
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">Tax Amount (FC):</span>
+                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.TaxAmountFC |
+                                number:'1.2-2' }} </span>
+                        </div>
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">Net Amount (FC):</span>
+                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.NetAmountFC |
+                                number:'1.2-2'}} </span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">Order Total:</span>
+                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }}{{ item.NetAmountFC |
+                                number:'1.2-2' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #container></ng-template>
