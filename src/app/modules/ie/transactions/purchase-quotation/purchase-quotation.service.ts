@@ -97,16 +97,20 @@ export class PurchaseQuotationService {
 
   getFormConfig_DataTableFilter(): FormConfigType<PurchaseQuotation_IndexTableFilter> {
     return {
-      QuotationNo: {
-        label: 'Quotation No',
+      PurchaseQuotationNo: {
+        label: 'Purchase Quotation No',
         defaultValue: ''
       },
-      CustomerName: {
-        label: 'Customer Name',
+      VendorName: {
+        label: 'Vendor Name',
         defaultValue: ''
       },
       BasedOn: {
         label: 'Based On',
+        defaultValue: 0
+      },
+      IncotermID: {
+        label: 'Incoterm',
         defaultValue: 0
       },
       StatusID: {
@@ -118,11 +122,11 @@ export class PurchaseQuotationService {
 
   getFormConfig_DataTableSort(): FormConfigType<PurchaseQuotation_IndexTableSort> {
     return {
-      QuotationNo: {
-        label: 'Quotation No',
+      PurchaseQuotationNo: {
+        label: 'Purchase Quotation No',
         defaultValue: -1
       },
-      QuotationDate: {
+      PurchaseQuotationDate: {
         label: 'Quotation Date',
         defaultValue: 0
       },
@@ -139,20 +143,28 @@ export class PurchaseQuotationService {
 
   getFormConfig(): FormConfigType<PurchaseQuotation> {
     return {
-      QuotationID: {
+      PurchaseQuotationID: {
         label: '',
         defaultValue: null
       },
-      QuotationNo: {
-        label: 'Quotation No',
+      PurchaseQuotationNo: {
+        label: 'Purchase Quotation No',
         defaultValue: "NEW"
       },
       BasedOn: {
         label: 'Based On',
-        defaultValue: 1,
+        defaultValue: 2,
         validators: [Validators.required],
         validationMessages: {
           required: "Based On is required"
+        }
+      },
+      PurchaseQuotationDate: {
+        label: 'Purchase Quotation Date',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Purchase Quotation Date is required"
         }
       },
       VendorID: {
@@ -167,27 +179,19 @@ export class PurchaseQuotationService {
         label: 'Vendor Name',
         defaultValue: null
       },
-      RequisitionID: {
-        label: 'Requisition ID',
+      PurchaseRequisitionID: {
+        label: 'Purchase Requisition ID',
         defaultValue: null
       },
-      QuotationDate: {
-        label: 'Quotation Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Quotation Date is required"
-        }
+      PurchaseRequisitionNo: {
+        label: 'Purchase Requisition No',
+        defaultValue: null
       },
       ValidityDate: {
         label: 'Validity Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Validity Date is required"
-        }
+        defaultValue: null
       },
-      ForeignCurrencyID: {
+      FCurrencyID: {
         label: 'Foreign Currency',
         defaultValue: null,
         validators: [Validators.required],
@@ -197,7 +201,7 @@ export class PurchaseQuotationService {
       },
       ExchangeRateDate: {
         label: 'Exchange Rate Date',
-        defaultValue: null,
+        defaultValue: new Date(),
         validators: [Validators.required],
         validationMessages: {
           required: "Exchange Rate is required"
@@ -206,9 +210,9 @@ export class PurchaseQuotationService {
       ExchangeRateToBC: {
         label: 'Exchange Rate',
         defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        validators: [Validators.required],
         validationMessages: {
-          RequiredIf: "Exchange Rate Date is required"
+          required: "Exchange Rate Date is required"
         }
       },
       IncotermID: {
@@ -240,7 +244,7 @@ export class PurchaseQuotationService {
               required: "Product name is required"
             }
           },
-          UOM:{
+          UOM: {
             label: '',
             defaultValue: null
           },

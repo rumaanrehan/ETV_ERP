@@ -1,14 +1,15 @@
 import { TList } from "../../../../shared/models/api-response";
 
 export interface PurchaseQuotation {
-    QuotationID: number | null;
-    QuotationNo: string | null;
-    QuotationDate: Date | null;
+    PurchaseQuotationID: number | null;
+    PurchaseQuotationNo: string | null;
+    BasedOn: number | null;
+    PurchaseQuotationDate: Date | null;
     VendorID: number | null;
     VendorName: string | null;
-    BasedOn: number | null;
-    RequisitionID: number | null;
-    ForeignCurrencyID: number | null;
+    PurchaseRequisitionID: number | null;
+    PurchaseRequisitionNo: string | null;
+    FCurrencyID: number | null;
     ExchangeRateDate: Date | null;
     ExchangeRateToBC: number | null;
     ValidityDate: number | null;
@@ -23,12 +24,6 @@ export interface PurchaseQuotation {
     NetAmountBC: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
-    
-    
-
-    //AutoComplete releted fields
-    ProductID: number | null;
-    ProductName: string | null;
 }
 
 export interface PurchaseQuotationDetail {
@@ -48,24 +43,28 @@ export interface PurchaseQuotationDetail {
 }
 
 export interface PurchaseQuotation_IndexTableFilter {
-    QuotationNo: string | null;
-    CustomerName: string | null;
+    PurchaseQuotationNo: string | null;
     BasedOn: number | null;
+    VendorName: string | null;
+    IncotermID: number | null;
     StatusID: number | null;
 }
 
 export interface PurchaseQuotation_IndexTableSort {
-    QuotationNo: 1 | 0 | -1;
-    QuotationDate: 1 | 0 | -1;
+    PurchaseQuotationNo: 1 | 0 | -1;
+    PurchaseQuotationDate: 1 | 0 | -1;
     NetAmountFC: 1 | 0 | -1;
     StatusID: 1 | 0 | -1;
 }
 
 export interface PurchaseQuotation_IndexTableList {
-    QuotationID: number;
-    QuotationNo: string;
-    QuotationDate: string;
+    PurchaseQuotationID: number;
+    PurchaseQuotationNo: string;
+    PurchaseQuotationDate: string;
     BasedOn: string;
+    VendorName: string;
+    NoOfProducts: number;
+    ValidityDate: Date | null;
     SubtotalAmountFC: number;
     TaxAmountFC: number;
     NetAmountFC: number;
@@ -73,27 +72,24 @@ export interface PurchaseQuotation_IndexTableList {
     StatusHex: string;
 }
 
-export interface PurchasesQuotationRequest {
-    QuotationNo?: string | null;
-    CustomerName?: string | null;
-    PopulateType?: string | null;
+export interface PurchaseQuotationRequest {
+    PurchaseQuotationNo?: string | null;
+    VendorName?: string | null;
+    PopulateType: string | null;
 }
 
 export interface PurchaseQuotation_Detail {
-    QuotationID: number;
-    QuotationNo: string;
+    PurchaseQuotationID: number;
+    PurchaseQuotationNo: string;
     BasedOn: number;
     VendorID: number;
-    QuotationDate: string;
     VendorName: string;
-    VendorAddress: string;
+    VendorAddress: string | null;
+    PurchaseQuotationDate: string;
     ValidityDate: string | null;
-    EnquiryID: number | null;
-    EnquiryNo: string | null;
-    CustomerID: number;
-    CustomerName: string;
-    CustomerAddress: string | null;
-    ForeignCurrencyID: number;
+    PurchaseRequisitionID: number | null;
+    PurchaseRequisitionNo: string | null;
+    FCurrencyID: number;
     ExchangeRateDate: string;
     ExchangeRateToBC: number;
     IncotermID: number | null;
@@ -105,7 +101,7 @@ export interface PurchaseQuotation_Detail {
     NetAmountFC: number;
     StatusText: string;
     StatusHex: string;
-    IsImportAlreadyExists: boolean;
+    IsPurchaseAlreadyExists: boolean;
     ProductList: TList<PurchaseQuotationProduct_Detail>;
 }
 
@@ -122,8 +118,8 @@ export interface PurchaseQuotationProduct_Detail {
 }
 
 export interface PurchaseQuotation_SelectList {
-    QuotationID: number;
-    QuotationNo: string;
-    CustomerName: string;
+    PurchaseQuotationID: number;
+    PurchaseQuotationNo: string;
+    VendorName: string;
     StatusID: number;
 }
