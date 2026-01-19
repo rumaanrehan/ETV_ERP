@@ -206,10 +206,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<SalesQuotation>(this.formConfig, this.form);
     this.form.get('BasedOn')?.patchValue(basedOnValue);
-
     this.productListArray.clear();
     this.tableDef.data = [];
     this.selectedCustomerAddress = null;
+
+    if (basedOnValue === 2) {
+      this.addProductRow();
+    }
   }
 
   get productListArray(): FormArray<FormGroup> {
@@ -221,15 +224,10 @@ export class CreateComponent implements OnInit, OnDestroy {
       text: 'Do you really want to remove this product item?',
     }).then((result) => {
       if (result.isConfirmed) {
-        if (this.productListArray.length > 1) {
-          this.productListArray.removeAt(index);
-          this.tableDef.data = this.productListArray.value;
-        }
-        else {
-          this.alertService.showToast({
-            text: 'At least one product item is required.',
-            type: 'warning'
-          });
+        this.productListArray.removeAt(index);
+        this.tableDef.data = this.productListArray.value;
+        if (this.productListArray.length == 0) {
+          this.addProductRow();
         }
       }
     });
@@ -497,7 +495,6 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
-        console.log(this.formConfig.ValidityDate.error);
         this.alertService.showValidationAlert(this.formService.getValidationMessages(this.formConfig));
         this.isSubmitted = false;
         return;
