@@ -1,28 +1,20 @@
 <div>
-  <p-table
-    [value]="tableDef.data"
-    [styleClass]="'p-paginator-striped'" 
-    [tableStyleClass]="'table page-table'"
-    [scrollable]="false"
-    [scrollHeight]="'flex'">
+  <p-table [value]="tableDef.data" [styleClass]="'p-paginator-striped'" [tableStyleClass]="'table page-table'"
+    [scrollable]="false" [scrollHeight]="'flex'">
     <ng-template pTemplate="caption">
       <div class="index-table-action-bar">
         <div class="d-flex justify-content-end">
-          <span><i class="pi pi-sliders-h column-visibility-toggle" (click)="columnMenu.toggle($event)" [ngClass]="{'active-toggle': columnMenu.overlayVisible}"></i></span>
+          <span><i class="pi pi-sliders-h column-visibility-toggle" (click)="columnMenu.toggle($event)"
+              [ngClass]="{'active-toggle': columnMenu.overlayVisible}"></i></span>
           <p-overlayPanel #columnMenu>
             <div class="column-toggle-panel">
               <ng-container *ngFor="let col of tableHeaderDef">
-                <p-checkbox
-                  *ngIf="!col.hideVisToggle"
-                  [(ngModel)]="col.visible"
-                  binary="true"
-                  [label]="col.label"
-                  (ngModelChange)="onChangeColVisSwitch(col)"
-                >
+                <p-checkbox *ngIf="!col.hideVisToggle" [(ngModel)]="col.visible" binary="true" [label]="col.label"
+                  (ngModelChange)="onChangeColVisSwitch(col)">
                 </p-checkbox>
               </ng-container>
               <hr class="m-0">
-              <button type="button" class="btn btn-primary">Reset to default</button>
+              <button type="button" class="btn btn-primary" (click)="resetColumnVisibility()">Reset to default</button>
             </div>
           </p-overlayPanel>
         </div>
@@ -31,10 +23,7 @@
     <ng-template pTemplate="header">
       <tr>
         <ng-container *ngFor="let col of tableDef.columnDef">
-          <th 
-              *ngIf="col.visible !== false"
-              [class]="col.cssClass"
-              [style.width]="col.width">
+          <th *ngIf="col.visible !== false" [class]="col.cssClass" [style.width]="col.width">
             {{ col.label }}
           </th>
         </ng-container>
@@ -43,12 +32,10 @@
     <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
       <tr>
         <ng-container *ngFor="let col of tableDef.columnDef">
-          <td 
-              *ngIf="col.visible !== false"
-              [class]="col.cssClass"
-              [style.width]="col.width">
+          <td *ngIf="col.visible !== false" [class]="col.cssClass" [style.width]="col.width">
             <ng-container *ngIf="col.customTemplate; else defaultTemplate">
-              <ng-container *ngTemplateOutlet="col.customTemplate; context: { $implicit: rowData, index: rowIndex }"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="col.customTemplate; context: { $implicit: rowData, index: rowIndex }"></ng-container>
             </ng-container>
             <ng-template #defaultTemplate>
               {{ col.data ? rowData[col.data] : '' }}

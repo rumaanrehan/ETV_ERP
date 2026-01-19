@@ -116,15 +116,10 @@ export class CreateComponent implements OnInit, OnDestroy {
       text: 'Do you really want to remove this product item?',
     }).then((result) => {
       if (result.isConfirmed) {
-        if (this.productListArray.length > 1) {
-          this.productListArray.removeAt(index);
-          this.tableDef.data = this.productListArray.value;
-        }
-        else {
-          this.alertService.showToast({
-            text: 'At least one product item is required.',
-            type: 'warning'
-          });
+        this.productListArray.removeAt(index);
+        this.tableDef.data = this.productListArray.value;
+        if (this.productListArray.length == 0) {
+          this.addProductRow();
         }
       }
     });
