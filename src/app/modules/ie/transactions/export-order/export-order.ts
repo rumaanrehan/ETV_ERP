@@ -48,10 +48,6 @@ export interface ExportOrder {
     StatusID: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
-
-    ProductID: number | null;
-    ProductName: string | null;
-
     Customer?: CompanyMaster
 }
 

@@ -152,7 +152,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
         this.isEditMode = false;
         if (this.productListArray.length === 0) {
-          this.addProductRow();
+          this.AddProductRow();
         }
       });
   }
@@ -241,28 +241,31 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
 
+
   onClickRemoveProductItem(index: number): void {
-    if(!(this.productListArray.length > 1)){
-      this.productListArray.at(index).reset();
-      return;
+    if (this.productListArray.at(index).value.ProductName !== null) {
+      this.alertService.showConfirmation({
+        text: `Do you really want to remove <b>${this.productListArray.at(index).value.ProductName}<b>?`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.productListArray.removeAt(index);
+          this.productAutoCompleteDef.splice(index, 1);
+          this.tableDef.data = this.productListArray.value;
+          if (this.productListArray.length == 0) {
+            this.AddProductRow();
+          }
+          return
+        }
+      });
     }
-
-    const productName = this.productListArray.at(index)?.get('ProductName')?.value;
-    if(productName == null){
+    else {
       this.productListArray.removeAt(index);
+      this.productAutoCompleteDef.splice(index, 1);
       this.tableDef.data = this.productListArray.value;
-      return;
-    }
-
-    this.alertService.showConfirmation({
-      text: `Do you really want to remove the product "${productName}"?`,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.productListArray.removeAt(index);
-        this.productAutoCompleteDef.splice(index, 1);
-        this.tableDef.data = this.productListArray.value;
+      if (this.productListArray.length == 0) {
+        this.AddProductRow();
       }
-    });
+    }
   }
 
   onBasedOnChange(): void {
@@ -272,6 +275,10 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productListArray.clear();
     this.tableDef.data = [];
+
+    if (basedOnValue === 2) {
+      this.AddProductRow();
+    }
   }
 
   loadSalesQuotation(event: string): void {
@@ -516,7 +523,14 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.tableDef.data = this.productListArray.value
   }
 
-  addProductRow(): void {
+  OnClear_Product(index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+    row.patchValue({ ProductID: null, ProductName: null, UOM: null });
+
+    this.tableDef.data = this.productListArray.value;
+  }
+
+  AddProductRow(): void {
     this.isAddProductBtnLoading = true;
     const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
 

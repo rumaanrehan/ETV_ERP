@@ -278,11 +278,7 @@ export class ExportOrderService {
       },
       ReferenceNo: {
         label: 'Reference Number',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Reference Number is required"
-        }
+        defaultValue: null
       },
       ReferenceDate: {
         label: 'Reference Date',
@@ -290,7 +286,12 @@ export class ExportOrderService {
       },
       CustomerID: {
         label: 'Customer',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Customer is required"
+        },
+        type: 'control'
       },
       CustomerName: {
         label: 'Customer Name',
@@ -303,23 +304,28 @@ export class ExportOrderService {
       },
       FCCurrencyID: {
         label: 'Foreign Currency',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Foreign Currency is required"
+        },
+        type: 'control'
       },
       ExchangeRateDate: {
         label: 'Exchange Date',
         defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        validators: [Validators.required],
         validationMessages: {
-          RequiredIf: "Exchange Rate Date is required"
+          required: "Exchange Rate Date is required"
         },
         type: 'control'
       },
       ExchangeRateToBC: {
         label: 'Exchange Rate to BC',
         defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        validators: [Validators.required],
         validationMessages: {
-          RequiredIf: "Exchange Rate to Base Currency is required"
+          required: "Exchange Rate to Base Currency is required"
         },
         type: 'control'
       },
@@ -341,7 +347,7 @@ export class ExportOrderService {
       },
       BankChargesFC: {
         label: 'Bank Charge (FC)',
-        defaultValue: null
+        defaultValue: 0
       },
       BankChargesBC: {
         label: 'Bank Charge (BC)',
@@ -349,7 +355,7 @@ export class ExportOrderService {
       },
       FreightChargeFC: {
         label: 'Freight Charge (FC)',
-        defaultValue: null
+        defaultValue: 0
       },
       FreightChargeBC: {
         label: 'Freight Charge (BC)',
@@ -357,18 +363,10 @@ export class ExportOrderService {
       },
       InsuranceAmountFC: {
         label: 'Insurance Amount (FC)',
-        defaultValue: null
+        defaultValue: 0
       },
       InsuranceAmountBC: {
         label: 'Insurance Amount (BC)',
-        defaultValue: null
-      },
-      ProductID: {
-        label: '',
-        defaultValue: null
-      },
-      ProductName: {
-        label: 'Product Name',
         defaultValue: null
       },
       ProductList: {
@@ -384,7 +382,7 @@ export class ExportOrderService {
             type: 'control'
           },
           ProductName: {
-            label: 'Product Name',
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
@@ -395,15 +393,16 @@ export class ExportOrderService {
           SalesQty: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(99999)],
             validationMessages: {
               required: "Sales Qty is required",
-              min: "Sales Qty must be at least 1"
+              min: "Sales Qty must be at least 1",
+              max: "Sales Qty cannot exceed 99999"
             },
             type: 'control'
           },
           UOM: {
-            label: 'Measurement Unit',
+            label: '',
             defaultValue: null
           },
           SalesTaxRate: {
@@ -420,7 +419,7 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Rate per unit in foreign currency is required"
+              required: "Rate per unit is required"
             },
             type: 'control'
           },
@@ -456,26 +455,34 @@ export class ExportOrderService {
       },
       PaymentTermID: {
         label: 'Payment Term',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Payment Term is required"
+        }
       },
       ShipmentModeID: {
         label: 'Shipment Mode',
-        defaultValue: null
-      },
-      LoadingPortName: {
-        label: 'Port Name',
-        defaultValue: null
-      },
-      DischargePortName: {
-        label: 'Port Name',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Shipment Mode is required"
+        }
       },
       LoadingPortID: {
         label: 'Loading Port',
         defaultValue: null
       },
+      LoadingPortName: {
+        label: 'Loading Port Name',
+        defaultValue: null
+      },
       DischargePortID: {
         label: 'Discharge Port',
+        defaultValue: null
+      },
+      DischargePortName: {
+        label: 'Discharge Port Name',
         defaultValue: null
       },
       FinalDestination: {

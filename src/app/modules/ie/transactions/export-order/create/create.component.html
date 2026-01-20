@@ -22,8 +22,7 @@
                 </div>
                 <div class="col-xl-6"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-datepicker [group]="form" [control]="'ExportOrderDate'"
-                    [label]="formConfig.ExportOrderDate.label"
+                  <z-datepicker [group]="form" [control]="'ExportOrderDate'" [label]="formConfig.ExportOrderDate.label"
                     [validationMessage]="formConfig.ExportOrderDate.error"></z-datepicker>
                 </div>
                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnSalesQuotation">
@@ -36,8 +35,9 @@
                 <div class="col-xl-3 form-group px-2">
                   <div class="action-input-group">
                     <z-autocomplete [controlDef]="companyMasterAutoCompleteDef"
-                      [isClearable]="form.get('BasedOn')?.value == 2" [readonly]="form.get('BasedOn')?.value == 1" 
-                      (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+                      [isClearable]="form.get('BasedOn')?.value == 2" [readonly]="form.get('BasedOn')?.value == 1"
+                      (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)"
+                      (onClear)="onClear_Customer()">
                     </z-autocomplete>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Company"
                       (click)="handleComponentLoad('VendorCreateComponent')" *ngIf="!isBasedOnSalesQuotation"></i>
@@ -52,7 +52,7 @@
                   <z-inputtext [group]="form" [control]="'ReferenceNo'" [label]="formConfig.ReferenceNo.label"
                     [validationMessage]="formConfig.ReferenceNo.error"></z-inputtext>
                 </div>
-                <div class="col-xl-12 form-group px-2"  *ngIf="form.get('CustomerID')?.value">
+                <div class="col-xl-12 form-group px-2" *ngIf="form.get('CustomerID')?.value">
                   <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
                 </div>
                 <div class="col-xl-6"></div>
@@ -259,7 +259,7 @@
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
   <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
-    (onSelect)="onSelect_Product($event, rowIndex)">
+    (onSelect)="onSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
   </z-autocomplete>
 </ng-template>
 
@@ -311,7 +311,7 @@
       (click)="onClickRemoveProductItem(i)">
       <i class="pi pi-minus-circle"></i></span>
     <span *ngIf="i === this.productListArray.length - 1"
-      class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="addProductRow()">
+      class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="AddProductRow()">
       <i class="pi pi-plus-circle"></i>
     </span>
   </div>
