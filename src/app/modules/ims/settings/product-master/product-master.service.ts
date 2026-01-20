@@ -32,11 +32,9 @@ export class ProductMasterService {
   constructor(
     private apiService: ApiService,
     private selectListService: SelectListService,
-    private itemTypeMasterService: ItemTypeMasterService,
     private itemGroupMasterService: ItemGroupMasterService,
     private itemCategoryMasterService: ItemCategoryMasterService,
     private genericMasterService: GenericMasterService,
-    private ManufacturerMasterService: ManufacturerMasterService,
     private uomMasterService: UOMMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
 
@@ -71,7 +69,6 @@ export class ProductMasterService {
   }
 
   PopulateList(model: ProductRequest): Observable<ApiListResponse<Product_SelectList>> {
-    console.log("Loading Product List...");
     return this.apiService.post<ApiListResponse<Product_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 

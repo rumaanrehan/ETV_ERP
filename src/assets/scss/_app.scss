@@ -129,22 +129,36 @@ footer {
 }
 
 /* Start - Invalid Border & Validation Tooltip */
+// .tooltip-container {
+//   position: absolute;
+// }
+
+// .validation-tooltip,
+// .password-capslock-tooltip {
+//   background-color: #FFFFA3;
+//   color: #555;
+//   border: 1px solid #F78B83;
+//   border-radius: var(--default-radius-sm);
+//   padding: 4px;
+//   z-index: 1000;
+//   /* Position the tooltip */
+//   margin-top: 8px;
+//   /* Adjust if needed */
+// }
+
 .tooltip-container {
-  position: absolute;
+  pointer-events: none;
 }
 
-.validation-tooltip,
-.password-capslock-tooltip {
-  background-color: #FFFFA3;
-  color: #555;
-  border: 1px solid #F78B83;
-  border-radius: var(--default-radius-sm);
-  padding: 4px;
-  z-index: 1000;
-  /* Position the tooltip */
-  margin-top: 8px;
-  /* Adjust if needed */
+.validation-tooltip {
+  background: #d9534f;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
 }
+
 
 .password-capslock-tooltip::after {
   content: "";
@@ -1126,4 +1140,16 @@ div:where(.swal2-container) .swal2-html-container {
   justify-content: space-between;
   gap: 0.5rem;
   align-items: center;
+}
+
+.tables-action-col {
+  display: flex;
+}
+
+.tables-action-col>div {
+  justify-items: center;
+}
+
+.swal2-html-container ul {
+  text-align: start;
 }
