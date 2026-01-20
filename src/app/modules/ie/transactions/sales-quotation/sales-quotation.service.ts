@@ -21,8 +21,13 @@ import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payme
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
 import { SalesEnquiry_Detail, SalesEnquiry_SelectList, SalesEnquiryRequest } from '../sales-enquiry/sales-enquiry';
 import { SalesEnquiryService } from '../sales-enquiry/sales-enquiry.service';
-import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_IndexTableSort, SalesQuotation_SelectList, SalesQuotationRequest } from './sales-quotation';
+import { SalesQuotation, SalesQuotation_Detail, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_IndexTableSort, SalesQuotation_SelectList, SalesQuotationBulkUpdateRequest, SalesQuotationRequest } from './sales-quotation';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
+import { HttpClient } from '@angular/common/http';
+import { Environment } from '../../../../../environments/environment';
+import { GreaterThan } from '../../../../shared/validators/greater-than.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +44,8 @@ export class SalesQuotationService {
     private taxSlabMasterService: TaxSlabMasterService,
     private currencyMasterService: CurrencyMasterService,
     private selectListService: SelectListService,
-
+    private currencyExchangeService: CurrencyExchangeService,
+    private http: HttpClient,
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -52,6 +58,10 @@ export class SalesQuotationService {
       taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest),
       currencyList: this.currencyMasterService.PopulateList({ PopulateType: 'SelectList' } as CurrencyRequest)
     });
+  }
+
+  GetExchangeRate(model: GetExchangeRateRequest): Observable<ApiDataResponse<ExchangeRateResponse>> {
+    return this.currencyExchangeService.GetRate(model);
   }
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
@@ -96,6 +106,14 @@ export class SalesQuotationService {
 
   CancelQuotation(model: SalesQuotation): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  BulkChangeStatus(model: SalesQuotationBulkUpdateRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/BulkChangeStatus`, model);
+  }
+
+  GeneratePdf(request: any) {
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintInvoice`, request, { responseType: 'blob' });
   }
 
   getFormConfig_DataTableFilter(): FormConfigType<SalesQuotation_IndexTableFilter> {
@@ -152,23 +170,29 @@ export class SalesQuotationService {
       },
       BasedOn: {
         label: 'Based On',
-        defaultValue: 1,
+        defaultValue: 2,
         validators: [Validators.required],
         validationMessages: {
           required: "Based On is required"
-        }
+        },
+        type: 'control'
       },
       SalesQuotationDate: {
         label: 'Quotation Date',
-        defaultValue: null,
+        defaultValue: new Date(),
         validators: [Validators.required],
         validationMessages: {
           required: "Quotation Date is required"
-        }
+        },
       },
       ValidityDate: {
         label: 'Validity Date',
-        defaultValue: null
+        defaultValue: null,
+        validators: [GreaterThan('SalesQuotationDate')],
+        validationMessages: {
+          greaterThan: "Validity Date should be greater than Quotation Date"
+        },
+        type: 'control'
       },
       SalesEnquiryID: {
         label: 'Enquiry ID',
@@ -180,7 +204,8 @@ export class SalesQuotationService {
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
         validationMessages: {
           required: "Sales Enquiry is required"
-        }
+        },
+        type: 'control'
       },
       CustomerID: {
         label: 'Customer',
@@ -192,7 +217,8 @@ export class SalesQuotationService {
         validators: [Validators.required],
         validationMessages: {
           required: "Customer is required"
-        }
+        },
+        type: 'control'
       },
       FCCurrencyID: {
         label: 'Foreign Currency',
@@ -200,15 +226,17 @@ export class SalesQuotationService {
         validators: [Validators.required],
         validationMessages: {
           required: "Foreign Currency is required"
-        }
+        },
+        type: 'control'
       },
       ExchangeRateToBC: {
         label: 'Exchange Rate',
         defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        validators: [Validators.required],
         validationMessages: {
-          RequiredIf: "Exchange Rate Date is required"
-        }
+          required: "Exchange Rate is required"
+        },
+        type: 'control'
       },
       IncotermID: {
         label: 'Incoterm',
@@ -224,7 +252,8 @@ export class SalesQuotationService {
             validators: [Validators.required],
             validationMessages: {
               required: "Product is required"
-            }
+            },
+            type: 'control'
           },
           ProductName: {
             label: '',
@@ -232,15 +261,19 @@ export class SalesQuotationService {
             validators: [Validators.required],
             validationMessages: {
               required: "Product name is required"
-            }
+            },
+            type: 'control'
           },
           QuotedQty: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
+            validators: [Validators.required, Validators.min(1), Validators.max(99999)],
             validationMessages: {
-              required: "Quoted quantity is required"
-            }
+              required: "Quoted quantity is required",
+              min: "Requested Qty must be at least 1",
+              max: "Requested Qty cannot exceed 99999"
+            },
+            type: 'control'
           },
           UOM: {
             label: 'Measurement Unit',
@@ -252,7 +285,8 @@ export class SalesQuotationService {
             validators: [Validators.required],
             validationMessages: {
               required: "Tax rate is required"
-            }
+            },
+            type: 'control'
           },
           RatePerUnitFC: {
             label: '',
@@ -260,7 +294,8 @@ export class SalesQuotationService {
             validators: [Validators.required],
             validationMessages: {
               required: "Rate per unit in foreign currency is required"
-            }
+            },
+            type: 'control'
           },
           RatePerUnitBC: {
             label: '',
@@ -297,7 +332,7 @@ export class SalesQuotationService {
         defaultValue: null
       },
       Narration: {
-        label: 'Narration',
+        label: 'Note',
         defaultValue: null
       },
       SubtotalAmountFC: {
@@ -332,14 +367,6 @@ export class SalesQuotationService {
         label: '',
         defaultValue: null
       },
-      ProductID: {
-        label: '',
-        defaultValue: null
-      },
-      ProductName: {
-        label: 'Product Name',
-        defaultValue: null
-      }
     };
   }
 
@@ -377,13 +404,12 @@ export class SalesQuotationService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<SalesQuotation>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<SalesQuotation>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,
       control: 'ProductName',
-      label: formConfig.ProductName.label,
-      validationMessage: formConfig.ProductName.error,
+      validationMessage: formConfig.ProductList.items.ProductName.error,
       placeholder: 'Search Product',
       options: [],
       optionLabel: 'ProductName',

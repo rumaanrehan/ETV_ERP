@@ -1,7 +1,7 @@
 <!--Page Header Action Button Template-->
 <ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
-            class="pi pi-plus"></i>&nbsp;Add Import Order</button>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()">
+        <i class="pi pi-plus"></i>&nbsp;Add Import Order</button>
 </ng-template>
 
 <div class="col-xl-12 index-page-content">
@@ -17,88 +17,50 @@
                 <a (click)="onClickEditDetails(item.ImportOrderID)">
                     <h5 class="primary-color mb-2">{{item.ImportOrderNo}} | {{item.CompanyName}}</h5>
                 </a>
-                <div class="text-end">
-                    <span class="badge bg-outline-primary">{{populateStatus(item.StatusID)}}</span>
+                <div class="text-end d-flex align-items-center justify-content-end gap-2">
+                    <span class="badge bg-outline-primary">{{item.StatusText}}</span>
+                    <!-- <z-menu [menus]="getMenuOptions(item)" [styleClass]="'dataview-action-menu'">
+                    </z-menu> -->
                 </div>
             </div>
-            <div class="col-12">
-                <div class="col-xl-12">
+            <div class="col-7">
+                <div class="d-flex flex-wrap justify-content-between">
                     <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
-                        <div class="col-xl-4 d-flex align-items-center">
-                            <div class="col-xl-4">
+                        <div class="dataview-info-column">
+                            <div class="dataview-info-item">
                                 <span class="fs-6 text-secondary">Order Date:</span>
+                                <span class="fs-6 text-secondary"> {{formatDate(item.ImportOrderDate)}} </span>
                             </div>
-                            <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{item.ImportOrderDate}} </span>
+                            <div class="dataview-info-item">
+                                <span class="fs-6 text-secondary">Reference No:</span>
+                                <span class="fs-6 text-secondary"> {{item.ReferenceNo}} </span>
+                            </div>
+                            <div class="dataview-info-item">
+                                <span class="fs-6 text-secondary">Reference Date:</span>
+                                <span class="fs-6 text-secondary"> {{formatDate(item.ReferenceDate)}} </span>
                             </div>
                         </div>
-                        <div class="col-xl-5 d-flex align-items-center">
-                            <div class="col-xl-4">
+                        <div>
+                            <div class="dataview-info-item">
                                 <span class="fs-6 text-secondary">Destination:</span>
+                                <span class="fs-6 text-secondary"> {{item.FinalDestination}} </span>
                             </div>
-                            <div class="col-xl-8">
+                            <div class="dataview-info-item">
+                                <span class="fs-6 text-secondary">Loading Port:</span>
+                                <span class="fs-6 text-secondary"> {{item.LoadingPortName}} </span>
+                            </div>
+                            <div class="dataview-info-item">
+                                <span class="fs-6 text-secondary">Destination:</span>
                                 <span class="fs-6 text-secondary"> {{item.FinalDestination}} </span>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
-                        <div class="col-xl-4 d-flex align-items-center">
-                            <div class="col-xl-4">
-                                <span class="fs-6 text-secondary">Reference No:</span>
-                            </div>
-                            <div class="col-xl-8">
-                                <span class="fs-6 text-secondary"> {{item.ReferenceNo}} </span>
-                            </div>
-                        </div>
-                        <div class="col-xl-5 d-flex align-items-center">
-                            <div class="col-xl-4">
-                                <span class="fs-6 text-secondary">Reference Date:</span>
-                            </div>
-                            <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{formatDateToIndian(item.ReferenceDate)}} </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-column flex-lg-row align-items-center mb-2">
-                        <div class="col-xl-4 d-flex align-items-center">
-                            <div class="col-xl-4">
+                        <div>
+                            <div class="dataview-info-item">
                                 <span class="fs-6 text-secondary">Order Total:</span>
+                                <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }}{{ item.NetAmountFC |
+                                    number:'1.2-2' }}
+                                </span>
                             </div>
-                            <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> <i
-                                        class="pi pi-indian-rupee"></i>{{item.NetAmountBC}} </span>
-                            </div>
-                        </div>
-                        <div class="col-xl-5 d-flex align-items-center">
-                            <div class="col-xl-4">
-                                <span class="fs-6 text-secondary">Loading Port:</span>
-                            </div>
-                            <div class="col-xl-7">
-                                <span class="fs-6 text-secondary"> {{item.LoadingPortName}} </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-12 d-flex flex-column gap-3 justify-content-between">
-                    <div class="col-12 d-flex gap-3 justify-content-end">
-                        <div class="col-2">
-                            <button class="btn btn-primary"
-                                (click)="handleComponentLoad('DocumentCreateComponent', item)">Add Document</button>
-                        </div>
-                        <div class="col-2" *ngIf="!item.IsKnockOff">
-                            <button class="btn btn-primary"
-                                (click)="handleComponentLoad('PaymentCreateComponent', item)">Add Payment</button>
-                        </div>
-                        <div class="col-2">
-                            <button class="btn btn-primary"
-                                (click)="handleComponentLoad('TrackingCreateComponent', item)">Add Tracking</button>
-                        </div>
-                        <div class="col-1">
-                            <button class="btn btn-primary"
-                                (click)="handleComponentLoad('LetterOfCreditCreateComponent', item)">Add LC</button>
-                        </div>
-                        <div class="col-1">
-                            <button class="btn btn-primary" (click)="onClickCancel(item)">Cancel</button>
                         </div>
                     </div>
                 </div>

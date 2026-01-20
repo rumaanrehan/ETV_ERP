@@ -154,11 +154,7 @@ export class TaxInvoiceService {
       },
       TaxInvoiceDate: {
         label: 'Tax Invoice Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Tax Invoice is required"
-        }
+        defaultValue: new Date()
       },
       DocumentID: {
         label: 'Document ID',
@@ -394,7 +390,7 @@ export class TaxInvoiceService {
         }
       },
       Narration: {
-        label: 'Narration',
+        label: 'Note',
         defaultValue: null,
         validators: [],
         validationMessages: {}
@@ -502,7 +498,7 @@ export class TaxInvoiceService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<TaxInvoice>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<TaxInvoice>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,

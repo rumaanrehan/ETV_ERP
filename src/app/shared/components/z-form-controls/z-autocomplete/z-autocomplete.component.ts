@@ -18,6 +18,7 @@ export class ZAutoCompleteComponent<T> {
   @Input() controlDef!: AutoCompleteDef<T>;
   @Input() isClearable: boolean = true;
   @Input() readonly: boolean = false;
+  @Input() allowEmptySearch: boolean = false;
 
   @Output() onSearch = new EventEmitter<string>();
   @Output() onSelect = new EventEmitter<T>();

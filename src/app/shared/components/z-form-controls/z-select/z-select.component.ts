@@ -39,8 +39,7 @@ export class ZSelectComponent {
     this.onChange.emit(value); // Emit the new value to the parent component
   }
 
-  clearDropdown(dropdown: any) {
-    console.log(dropdown.clear);
+  clearDropdown(dropdown: any): void {
     if (dropdown && dropdown.clear) {
       dropdown.clear();
     }

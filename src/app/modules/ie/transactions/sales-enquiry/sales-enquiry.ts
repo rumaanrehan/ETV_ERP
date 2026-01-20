@@ -14,9 +14,6 @@ export interface SalesEnquiry {
     ExpectedDeliveryDate: Date | null;
     Note: string | null;
     ProductList: SalesEnquiryDetail[];
-
-    ProductID: string | null;
-    ProductName: string | null;
     Customer?: CompanyMaster;
 }
 
@@ -59,6 +56,9 @@ export interface SalesEnquiry_IndexTableList {
     ProductCount: number;
     StatusText: string;
     StatusHex: string;
+
+    /** UI only */
+    _selected?: boolean;
 }
 
 export interface SalesEnquiryRequest {
@@ -92,4 +92,9 @@ export interface SalesEnquiryProduct_Detail {
     UOM: string;
     RequestedQty: number;
     Remarks: string | null;
+}
+
+export interface SalesEnquiryBulkUpdateRequest {
+    SalesEnquiryIDs: number[];
+    StatusID: number;
 }
