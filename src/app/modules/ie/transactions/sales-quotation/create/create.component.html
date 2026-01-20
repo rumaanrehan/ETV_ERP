@@ -161,9 +161,13 @@
 </ng-template>
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
-  <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="OnSearch_Product($event, rowIndex)"
-    (onSelect)="OnSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
-  </z-autocomplete>
+  <div class="action-input-group">
+    <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="OnSearch_Product($event, rowIndex)"
+      (onSelect)="OnSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
+    </z-autocomplete>
+    <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add Product Company"
+      (click)="HandleComponentLoad('ProductCreateComponent')" *ngIf="rowIndex === this.productListArray.length - 1"></i>
+  </div>
 </ng-template>
 
 <ng-template #quotedQtyColTemplate let-row let-i="index">
@@ -175,7 +179,6 @@
 
 <ng-template #ratePerUnitFCColTemplate let-row let-i="index">
   <div class="input-group">
-    <!-- <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span> -->
     <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"
       [label]="formConfig.ProductList.items.RatePerUnitFC.label"
       [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [styleClass]="'text-end'"
