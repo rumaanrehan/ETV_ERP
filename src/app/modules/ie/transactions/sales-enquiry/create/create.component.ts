@@ -42,7 +42,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   isQuotationAlreadyExists: boolean = false;
-  isAddProductBtnLoading: boolean = false;
   disablePrintButton: boolean = false;
 
   form!: FormGroup;
@@ -112,17 +111,29 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onClickRemoveProductItem(index: number): void {
-    this.alertService.showConfirmation({
-      text: 'Do you really want to remove this product item?',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.productListArray.removeAt(index);
-        this.tableDef.data = this.productListArray.value;
-        if (this.productListArray.length == 0) {
-          this.addProductRow();
+    if (this.productListArray.at(index).value.ProductName !== null) {
+      this.alertService.showConfirmation({
+        text: `Do you really want to remove <b>${this.productListArray.at(index).value.ProductName}<b>?`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.productListArray.removeAt(index);
+          this.productAutoCompleteDef.splice(index, 1);
+          this.tableDef.data = this.productListArray.value;
+          if (this.productListArray.length == 0) {
+            this.addProductRow();
+          }
+          return
         }
+      });
+    }
+    else {
+      this.productListArray.removeAt(index);
+      this.productAutoCompleteDef.splice(index, 1);
+      this.tableDef.data = this.productListArray.value;
+      if (this.productListArray.length == 0) {
+        this.addProductRow();
       }
-    });
+    }
   }
 
   loadCustomer(event: string): void {
@@ -206,16 +217,12 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   addProductRow(): void {
-    this.isAddProductBtnLoading = true;
-    const productItemForm =
-      this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-
+    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
     this.productListArray.push(productItemForm);
     const index = this.productListArray.length - 1;
 
-    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
+    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig.ProductList.items, productItemForm);
     this.tableDef.data = this.productListArray.value;
-    this.isAddProductBtnLoading = false;
   }
 
   onSubmit(): void {
@@ -267,8 +274,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   createRecord(model: SalesEnquiry): void {
     try {
-      this.pageService
-        .CreateRecord(model)
+      this.pageService.CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -298,8 +304,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   updateRecord(model: SalesEnquiry): void {
     try {
-      this.pageService
-        .UpdateRecord(model)
+      this.pageService.UpdateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -347,7 +352,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                     this.productListArray.push(productItemForm);
                     const index = this.productListArray.length - 1;
 
-                    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
+                    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig.ProductList.items, productItemForm);
                   });
 
                   this.tableDef.data = this.productListArray.value;
@@ -375,10 +380,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  formatDate(date: Date) {
-    return DateUtils.formatDate(date);
-  }
-
   handleComponentLoad(componentName: string) {
     if (this.componentRef) {
       this.destroyComponent();
@@ -394,7 +395,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadDynamicComponent(model: any) {
+  loadDynamicComponent(model: any): void {
     setTimeout(() => {
       this.componentRef?.instance.openSidebar(true, false, model);
       this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
@@ -403,7 +404,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     })
   }
 
-  destroyComponent() {
+  destroyComponent(): void {
     if (this.componentRef) {
       this.componentRef.destroy();
       this.componentRef = undefined;

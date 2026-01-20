@@ -1141,3 +1141,11 @@ div:where(.swal2-container) .swal2-html-container {
   gap: 0.5rem;
   align-items: center;
 }
+
+.tables-action-col {
+  display: flex;
+}
+
+.tables-action-col>div {
+  justify-items: center;
+}
