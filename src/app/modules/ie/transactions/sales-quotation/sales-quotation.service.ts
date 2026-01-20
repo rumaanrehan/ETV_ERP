@@ -232,9 +232,9 @@ export class SalesQuotationService {
       ExchangeRateToBC: {
         label: 'Exchange Rate',
         defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        validators: [Validators.required],
         validationMessages: {
-          RequiredIf: "Exchange Rate Date is required"
+          required: "Exchange Rate is required"
         },
         type: 'control'
       },
@@ -267,10 +267,11 @@ export class SalesQuotationService {
           QuotedQty: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(99999)],
             validationMessages: {
               required: "Quoted quantity is required",
-              min: "Requested Qty must be at least 1"
+              min: "Requested Qty must be at least 1",
+              max: "Requested Qty cannot exceed 99999"
             },
             type: 'control'
           },
