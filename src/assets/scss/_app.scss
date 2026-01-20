@@ -1149,3 +1149,7 @@ div:where(.swal2-container) .swal2-html-container {
 .tables-action-col>div {
   justify-items: center;
 }
+
+.swal2-html-container ul {
+  text-align: start;
+}

@@ -39,8 +39,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('quotedQtyColTemplate', { static: true }) quotedQtyColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitFCColTemplate', { static: true }) ratePerUnitFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxRateColTemplate', { static: true }) taxRateColTemplate!: TemplateRef<any>;
-  @ViewChild('taxableAmountBCColTemplate', { static: true }) taxableAmountBCColTemplate!: TemplateRef<any>;
-  @ViewChild('taxAmountBCColTemplate', { static: true }) taxAmountBCColTemplate!: TemplateRef<any>;
+  @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
+  @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
@@ -97,18 +97,17 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "QuotedQty", label: "Quoted Qty", width: "10%", customTemplate: this.quotedQtyColTemplate },
-        { data: "UOM", label: "UOM", width: "7%" },
-        { data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
+        { data: "UOM", label: "UOM", width: "8%" },
+        { data: "RatePerUnitFC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
         { data: "QuotedTaxRate", label: "Quoted Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
-        { data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountBCColTemplate },
-        { data: "TaxAmountBC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountBCColTemplate },
+        { data: "TaxableAmountFC", label: "Taxable Amount", width: "10%", customTemplate: this.taxableAmountFCColTemplate },
+        { data: "TaxAmountFC", label: "Tax Amount", width: "12%", customTemplate: this.taxAmountFCColTemplate },
         { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     };
 
-    this.loadDropdownList();
-    // this.getDetails();
+    this.LoadDropdownList();
 
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
@@ -117,7 +116,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         const salesEnquiryID = paramMap.get('salesEnquiryID');
 
         if (id) {
-          this.loadSalesQuotaion(+id);
+          this.LoadSalesQuotaion(+id);
           return;
         }
         else if (salesEnquiryID) {
@@ -128,7 +127,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
         this.isEditMode = false;
         if (this.productListArray.length === 0) {
-          this.addProductRow();
+          this.AddProductRow();
         }
       });
   }
@@ -142,8 +141,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadDropdownList(): void {
-    this.loadStaticLists([
+  LoadDropdownList(): void {
+    this.LoadStaticLists([
       { fieldName: 'IncotermID', targetList: 'incotermList' },
       { fieldName: 'BasedOn', targetList: 'basedOnList' }
     ]);
@@ -158,7 +157,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       });
   }
 
-  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
+  LoadStaticLists(listConfigs: { fieldName: string; targetList: keyof CreateComponent }[]): void {
     const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
 
     listConfigs.forEach(({ fieldName, targetList }) => {
@@ -184,13 +183,13 @@ export class CreateComponent implements OnInit, OnDestroy {
       });
   }
 
-  onClickPageHeaderBackButton(): void {
+  OnClickPageHeaderBackButton(): void {
     try {
       this.router.navigate(['/ie/sales-quotation/index']);
     } catch (error) { }
   }
 
-  onClickNavigateToExportOrder(salesQuotationID: number): void {
+  OnClickNavigateToExportOrder(salesQuotationID: number): void {
     if (salesQuotationID) {
       this.router.navigate([`ie/export-order/from-quotation/${salesQuotationID}`]);
     } else {
@@ -198,11 +197,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetForm(): void {
+  ResetForm(): void {
     this.formService.resetFormValue<SalesQuotation>(this.formConfig, this.form);
   }
 
-  onBasedOnChange(): void {
+  OnBasedOnChange(): void {
     const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<SalesQuotation>(this.formConfig, this.form);
     this.form.get('BasedOn')?.patchValue(basedOnValue);
@@ -211,7 +210,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.selectedCustomerAddress = null;
 
     if (basedOnValue === 2) {
-      this.addProductRow();
+      this.AddProductRow();
     }
   }
 
@@ -219,21 +218,33 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
 
-  onClickRemoveProductItem(index: number): void {
-    this.alertService.showConfirmation({
-      text: 'Do you really want to remove this product item?',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.productListArray.removeAt(index);
-        this.tableDef.data = this.productListArray.value;
-        if (this.productListArray.length == 0) {
-          this.addProductRow();
+  OnClickRemoveProductItem(index: number): void {
+    if (this.productListArray.at(index).value.ProductName !== null) {
+      this.alertService.showConfirmation({
+        text: `Do you really want to remove <b>${this.productListArray.at(index).value.ProductName}<b>?`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.productListArray.removeAt(index);
+          this.productAutoCompleteDef.splice(index, 1);
+          this.tableDef.data = this.productListArray.value;
+          if (this.productListArray.length == 0) {
+            this.AddProductRow();
+          }
+          return
         }
+      });
+    }
+    else {
+      this.productListArray.removeAt(index);
+      this.productAutoCompleteDef.splice(index, 1);
+      this.tableDef.data = this.productListArray.value;
+      if (this.productListArray.length == 0) {
+        this.AddProductRow();
       }
-    });
+    }
   }
 
-  loadSalesEnquiry(event: string): void {
+  LoadSalesEnquiry(event: string): void {
     try {
       const dto: SalesEnquiryRequest = {
         SearchBy: 1,
@@ -254,7 +265,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_SalesEnquiry(event: SalesEnquiry_SelectList): void {
+  OnSelect_SalesEnquiry(event: SalesEnquiry_SelectList): void {
     this.productListArray.clear();
     this.tableDef.data = [];
     if (event.StatusID === 1 || event.StatusID === 2 || event.StatusID === 3) {
@@ -275,14 +286,14 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClear_SalesEnquiry(): void {
+  OnClear_SalesEnquiry(): void {
     this.formService.resetFormValue<SalesQuotation>(this.formConfig, this.form);
     this.productListArray.clear();
     this.selectedCustomerAddress = null;
     this.tableDef.data = [];
   }
 
-  getAmount(index: number): number[] {
+  GetAmount(index: number): number[] {
     const group = this.productListArray.at(index);
     const quantity = group.get('QuotedQty')?.value || 0;
     const rate = group.get('RatePerUnitBC')?.value || 0;
@@ -291,7 +302,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     return [quantity * rate, quantity * rate * (salesTaxRate / 100)];
   }
 
-  loadCustomer(event: string): void {
+  LoadCustomer(event: string): void {
     try {
       const dto: CompanyRequest = {
         CompanyTypeID: 1,
@@ -313,18 +324,18 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Customer(event: Company_SelectList): void {
+  OnSelect_Customer(event: Company_SelectList): void {
     this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
     this.selectedCustomerAddress = event?.BillingAddress || '';
   }
 
-  onClear_Customer(): void {
+  OnClear_Customer(): void {
     this.form.get('CustomerID')?.patchValue(null);
     this.form.get('CustomerName')?.patchValue(null);
     this.selectedCustomerAddress = null;
   }
 
-  onCurrencyChange(): void {
+  OnCurrencyChange(): void {
     const model: GetExchangeRateRequest = {
       ToCurrencyCode: this.currencyExchangeService.BASE_CURRENCY_ISO,
       CurrencyID: this.form.get('FCCurrencyID')?.value
@@ -339,7 +350,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       });
   }
 
-  onSearch_Product(event: string, rowIndex: number): void {
+  OnSearch_Product(event: string, rowIndex: number): void {
     try {
       const dto: ProductRequest = {
         ProductName: event,
@@ -359,7 +370,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Product(event: Product_SelectList, index: number): void {
+  OnSelect_Product(event: Product_SelectList, index: number): void {
     const row = this.productListArray.at(index) as FormGroup;
 
     // Duplicate check
@@ -383,14 +394,14 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.tableDef.data = this.productListArray.value
   }
 
-  onClear_Product(index: number): void {
+  OnClear_Product(index: number): void {
     const row = this.productListArray.at(index) as FormGroup;
     row.patchValue({ ProductID: null, ProductName: null, UOM: null });
 
     this.tableDef.data = this.productListArray.value;
   }
 
-  addProductRow(): void {
+  AddProductRow(): void {
     this.isAddProductBtnLoading = true;
     const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
 
@@ -403,7 +414,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.isAddProductBtnLoading = false;
   }
 
-  productCalculation(): void {
+  ProductCalculation(): void {
     let netAmount = 0;
 
     this.productListArray.controls.forEach((group: FormGroup) => {
@@ -427,12 +438,12 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.form.patchValue({
       NetAmountFC: Number(netAmount.toFixed(3)),
-      SubtotalAmountFC: Number(this.getproductTaxableAmountFC().toFixed(3)),
-      TaxAmountFC: Number(this.getproductTaxAmountFCSum().toFixed(3)),
+      SubtotalAmountFC: Number(this.GetproductTaxableAmountFC().toFixed(3)),
+      TaxAmountFC: Number(this.GetproductTaxAmountFCSum().toFixed(3)),
     }, { emitEvent: true });
   }
 
-  convertAmountsToBC(): void {
+  ConvertAmountsToBC(): void {
     const exchangeRate = this.form.get('ExchangeRateToBC')?.value || 1;
 
     this.productListArray.controls.forEach((group: FormGroup) => {
@@ -450,8 +461,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
 
     // After updating all rows, recalc totals
-    const subtotalAmountFC = this.getproductTaxableAmountFC();
-    const taxAmountFC = this.getproductTaxAmountFCSum();
+    const subtotalAmountFC = this.GetproductTaxableAmountFC();
+    const taxAmountFC = this.GetproductTaxAmountFCSum();
     const isRoundOff = this.form.get('IsRoundOff')?.value === true;
     const netAmountFC = this.form.get('NetAmountFC')?.value;
 
@@ -463,25 +474,25 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  getproductTaxableAmountFC(): number {
+  GetproductTaxableAmountFC(): number {
     return this.productListArray.controls.reduce((sum, group) => {
       const value = group.get('TaxableAmountFC')?.value || 0;
       return sum + value;
     }, 0);
   }
 
-  getproductTaxAmountFCSum(): number {
+  GetproductTaxAmountFCSum(): number {
     return this.productListArray.controls.reduce((sum, group) => {
       const value = group.get('TaxAmountFC')?.value || 0;
       return sum + value;
     }, 0);
   }
 
-  onSubmit(): void {
+  OnSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
-    this.convertAmountsToBC();
+    this.ConvertAmountsToBC();
     try {
       if (this.form.value.ProductList.length === 0) {
         this.alertService.showToast({
@@ -510,14 +521,14 @@ export class CreateComponent implements OnInit, OnDestroy {
                 ...this.formService.transformFormData(this.form.value),
                 ReasonToUpdate: result.value,
               };
-              this.updateRecord(model);
+              this.UpdateRecord(model);
             } else {
               this.isSubmitted = false;
             }
           });
       }
       else {
-        this.createRecord(this.formService.transformFormData(this.form.value));
+        this.CreateRecord(this.formService.transformFormData(this.form.value));
       }
     }
     catch (error) {
@@ -525,7 +536,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  createRecord(model: SalesQuotation): void {
+  CreateRecord(model: SalesQuotation): void {
     try {
       this.pageService.CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
@@ -555,10 +566,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateRecord(model: SalesQuotation): void {
+  UpdateRecord(model: SalesQuotation): void {
     try {
-      this.pageService
-        .UpdateRecord(model)
+      this.pageService.UpdateRecord(model)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -586,7 +596,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDetails(): void {
+  GetDetails(): void {
     this.route.params.subscribe((params) => {
       const salesQuotationID = +params['id'];
       if (salesQuotationID) {
@@ -644,7 +654,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                   });
 
                   this.tableDef.data = this.productListArray.value;
-                  this.productCalculation();
+                  this.ProductCalculation();
                 } else {
                   this.alertService.showServerResponseAlert(response);
                 }
@@ -700,7 +710,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadSalesQuotaion(id: number): void {
+  private LoadSalesQuotaion(id: number): void {
     this.isEditMode = true;
 
     try {
@@ -759,72 +769,68 @@ export class CreateComponent implements OnInit, OnDestroy {
             });
 
             this.tableDef.data = this.productListArray.value;
-            this.productCalculation();
+            this.ProductCalculation();
           }
         });
     }
     catch (error) { }
   }
 
-  formatDate(date: Date): string {
-    return DateUtils.formatDate(date);
-  }
-
-  handleComponentLoad(componentName: string) {
+  HandleComponentLoad(componentName: string) {
     if (this.componentRef) {
-      this.destroyComponent();
+      this.DestroyComponent();
     }
 
     switch (componentName) {
       case 'VendorCreateComponent':
-        return this.createVendorComponent();
+        return this.CreateVendorComponent();
       case 'CurrencyCreateComponent':
-        return this.createCurrencyComponent();
+        return this.CreateCurrencyComponent();
       case 'ProductCreateComponent':
-        return this.createProductComponent();
+        return this.CreateProductComponent();
       default:
         throw new Error(`Component ${componentName} not found`);
     }
   }
 
-  loadDynamicComponent(model: any) {
+  LoadDynamicComponent(model: any) {
     setTimeout(() => {
       this.componentRef?.instance.openSidebar(true, false, model);
       this.componentRef?.instance.closeSidebarEvent.subscribe(() => {
-        this.destroyComponent();
+        this.DestroyComponent();
       });
     })
   }
 
-  destroyComponent() {
+  DestroyComponent() {
     if (this.componentRef) {
       this.componentRef.destroy();
       this.componentRef = undefined;
     }
   }
 
-  async createVendorComponent() {
+  async CreateVendorComponent() {
     const { CreateComponent } = await import('../../../settings/company-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CompanyMaster = this.formService.createNullObject<CompanyMaster>();
-    this.loadDynamicComponent(model);
+    this.LoadDynamicComponent(model);
   }
 
-  async createCurrencyComponent() {
+  async CreateCurrencyComponent() {
     const { CreateComponent } = await import('../../../../admin/settings/currency-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: CurrencyMaster = this.formService.createNullObject<CurrencyMaster>();
-    this.loadDynamicComponent(model);
+    this.LoadDynamicComponent(model);
   }
 
-  async createProductComponent() {
+  async CreateProductComponent() {
     const { CreateComponent } = await import('../../../../ims/settings/product-master/create/create.component');
     this.componentRef = this.container.createComponent(CreateComponent);
     const model: ProductMaster = this.formService.createNullObject<ProductMaster>();
-    this.loadDynamicComponent(model);
+    this.LoadDynamicComponent(model);
   }
 
-  printSalesQuotation(): void {
+  PrintSalesQuotation(): void {
     this.disablePrintButton = true;
     this.route.params.subscribe(params => {
       const salesQuotationID = +params['id'];
@@ -847,22 +853,6 @@ export class CreateComponent implements OnInit, OnDestroy {
           this.disablePrintButton = false;
         }
       });
-    });
-  }
-
-  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-    Object.keys(form.controls).forEach(key => {
-      const control = form.get(key);
-      const controlPath = parentKey ? `${parentKey}.${key}` : key;
-
-      if (control instanceof FormGroup || control instanceof FormArray) {
-        this.logInvalidControls(control, controlPath);
-      } else if (control && control.invalid) {
-        console.warn(
-          `❌ Invalid Control: ${controlPath}`,
-          control.errors
-        );
-      }
     });
   }
 }
