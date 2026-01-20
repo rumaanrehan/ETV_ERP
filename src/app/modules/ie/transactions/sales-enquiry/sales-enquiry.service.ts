@@ -12,7 +12,7 @@ import { ProductRequest, Product_SelectList } from '../../../ims/settings/produc
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { SalesEnquiry, SalesEnquiryBulkUpdateRequest, SalesEnquiryRequest, SalesEnquiry_Detail, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort, SalesEnquiry_SelectList } from './sales-enquiry';
+import { SalesEnquiry, SalesEnquiryBulkUpdateRequest, SalesEnquiryDetail, SalesEnquiryRequest, SalesEnquiry_Detail, SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableList, SalesEnquiry_IndexTableSort, SalesEnquiry_SelectList } from './sales-enquiry';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Environment } from '../../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -140,6 +140,10 @@ export class SalesEnquiryService {
       CustomerName: {
         label: 'Customer Name',
         defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Customer is required"
+        },
         type: 'control'
       },
       ContactName: {
@@ -190,10 +194,11 @@ export class SalesEnquiryService {
           RequestedQty: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(99999)],
             validationMessages: {
               required: "Requested Qty is required",
-              min: "Requested Qty must be at least 1"
+              min: "Requested Qty must be at least 1",
+              max: "Requested Qty cannot exceed 99999"
             },
             type: 'control'
           },
@@ -228,8 +233,8 @@ export class SalesEnquiryService {
       type: 'formControl',
       group: form,
       control: 'CustomerName',
-      label: formConfig.CustomerID.label,
-      validationMessage: formConfig.CustomerID.error,
+      label: formConfig.CustomerName.label,
+      validationMessage: formConfig.CustomerName.error,
       placeholder: 'Search Customer',
       options: [],
       optionLabel: 'CompanyName',
@@ -240,12 +245,12 @@ export class SalesEnquiryService {
     }
   }
 
-  getProductAutoCompleteDef(formConfig: FormConfigType<SalesEnquiry>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<SalesEnquiryDetail>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,
       control: 'ProductName',
-      validationMessage: formConfig.ProductList.items.ProductName.error,
+      validationMessage: formConfig.ProductName.error,
       placeholder: 'Search Product',
       options: [],
       optionLabel: 'ProductName',

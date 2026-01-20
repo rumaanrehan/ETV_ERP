@@ -52,10 +52,10 @@ export class ShowValidationTooltipDirective {
 
   private showTooltip() {
     if (!this.validationMessage) return;
+    console.log(this.validationMessage);
 
     const hostEl = this.el.nativeElement;
     const rect = hostEl.getBoundingClientRect();
-    console.log('Element Rect:', rect);
 
     // Tooltip container
     const tooltipContainer = this.renderer.createElement('div');
@@ -114,9 +114,10 @@ export class ShowValidationTooltipDirective {
 
 
   private removeTooltip() {
-    const tooltip = this.el.nativeElement.parentNode.querySelector('#validation-tooltip');
+    const tooltip = document.body.querySelector('#validation-tooltip');
+
     if (tooltip) {
-      this.renderer.removeChild(this.el.nativeElement.parentNode, tooltip);
+      this.renderer.removeChild(document.body, tooltip);
     }
   }
 }
