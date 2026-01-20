@@ -47,6 +47,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
   //Export Order Document Table Related Template
   @ViewChild('documentUploadDateTemplate', { static: true }) documentUploadDateTemplate!: TemplateRef<any>;
@@ -69,6 +70,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   isLoadPaymentVisible: boolean = true;
   isFromSalesQuotation = false;
   IsDocumentAlreadyExists = false;
+  isAddProductBtnLoading: boolean = false;
+  disablePrintButton: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrder>;
@@ -123,7 +126,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "TaxRate", label: "Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountFCColTemplate },
         { data: "TaxAmountBC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
@@ -148,6 +151,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         }
 
         this.isEditMode = false;
+        if (this.productListArray.length === 0) {
+          this.addProductRow();
+        }
       });
   }
 
@@ -236,13 +242,25 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onClickRemoveProductItem(index: number): void {
+    if(!(this.productListArray.length > 1)){
+      this.productListArray.at(index).reset();
+      return;
+    }
+
+    const productName = this.productListArray.at(index)?.get('ProductName')?.value;
+    if(productName == null){
+      this.productListArray.removeAt(index);
+      this.tableDef.data = this.productListArray.value;
+      return;
+    }
+
     this.alertService.showConfirmation({
-      text: 'Do you really want to remove this product item?',
+      text: `Do you really want to remove the product "${productName}"?`,
     }).then((result) => {
       if (result.isConfirmed) {
         this.productListArray.removeAt(index);
+        this.productAutoCompleteDef.splice(index, 1);
         this.tableDef.data = this.productListArray.value;
-        this.productCalculation();
       }
     });
   }
@@ -499,14 +517,16 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   addProductRow(): void {
-    const productItemForm =
-      this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+    this.isAddProductBtnLoading = true;
+    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
 
     this.productListArray.push(productItemForm);
     const index = this.productListArray.length - 1;
 
     this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
     this.tableDef.data = this.productListArray.value;
+
+    this.isAddProductBtnLoading = false;
   }
 
   productCalculation(): void {

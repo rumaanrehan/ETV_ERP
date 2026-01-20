@@ -428,16 +428,8 @@ export class SalesQuotationService {
       filterFields: [
         { field: 'SalesQuotationNo', label: 'Quotation No', type: 'text' },
         { field: 'CustomerName', label: 'Customer', type: 'text' },
-        {
-          field: 'BasedOn',
-          label: 'Based On',
-          type: 'dropdown',
-        },
-        {
-          field: 'StatusID',
-          label: 'Status',
-          type: 'dropdown'
-        }
+        { field: 'BasedOn', label: 'Based On', type: 'dropdown' },
+        { field: 'StatusID', label: 'Status', type: 'dropdown' }
       ],
       sortFields: [
         { field: 'SalesQuotationNo', label: 'Quotation No', enabled: true, order: 1 },
