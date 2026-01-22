@@ -18,7 +18,7 @@
                 <div class="col-xl-2 form-group px-2">
                   <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
                     [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="basedOnList" [readonly]="isEditMode"
-                    (onChange)="onBasedOnChange()"></z-select>
+                    [showClear]="false" (onChange)="onBasedOnChange()"></z-select>
                 </div>
                 <div class="col-xl-6"></div>
                 <div class="col-xl-2 form-group px-2">
@@ -60,9 +60,11 @@
                 <h6 class="form-group px-2">Exchange Rate Details</h6>
                 <div class="col-xl-3 form-group px-2">
                   <div class="action-input-group">
-                    <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
-                      [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [readonly]="isBasedOnSalesQuotation"
-                      [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
+                    <div class="col-11">
+                      <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
+                        [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [options]="currencyList"
+                        (onChange)="OnCurrencyChange()"></z-select>
+                    </div>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Currency"
                       (click)="handleComponentLoad('CurrencyCreateComponent')" *ngIf="!isBasedOnSalesQuotation"></i>
                   </div>
@@ -79,9 +81,10 @@
 
                 <!-- Incoterm and Charges -->
                 <div class="col-xl-3 form-group px-2">
-                  <z-select [group]="form" [control]="'IncotermID'" [label]="formConfig.IncotermID.label"
-                    [optionLabel]="'Text'" [optionValue]="'iValue'" [readonly]="isBasedOnSalesQuotation"
-                    [options]="incotermList"></z-select>
+                  <div class="col-11">
+                    <z-select [group]="form" [control]="'IncotermID'" [label]="formConfig.IncotermID.label"
+                      [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="incotermList"></z-select>
+                  </div>
                 </div>
                 <div class="col-xl-5"></div>
                 <div class="col-md-2 form-group px-2">
@@ -252,15 +255,21 @@
   </div>
 </div>
 
-<!-- Export Order Item Table Related Templates Start-->
+<!-- Export Order Item Table Related Templates Start -->
 <ng-template #serialNoColTemplate let-row let-i="index">
   {{i + 1}}
 </ng-template>
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
-  <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
-    (onSelect)="onSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
-  </z-autocomplete>
+  <div class="action-input-group">
+    <div class="col-11">
+      <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
+        (onSelect)="onSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
+      </z-autocomplete>
+    </div>
+    <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Product"
+      *ngIf="rowIndex === this.productListArray.length - 1" (click)="handleComponentLoad('ProductCreateComponent')"></i>
+  </div>
 </ng-template>
 
 <ng-template #salesQtyColTemplate let-row let-i="index">
@@ -305,25 +314,22 @@
   </div>
 </ng-template>
 
-<ng-template #actionColTemplate let-row let-i="index">
-  <div class="d-flex justify-content-end gap-3">
-    <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-      (click)="onClickRemoveProductItem(i)">
-      <i class="pi pi-minus-circle"></i></span>
-    <span *ngIf="i === this.productListArray.length - 1"
-      class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="AddProductRow()">
-      <i class="pi pi-plus-circle"></i>
-    </span>
+
+<ng-template #actionColTemplate let-row let-rowIndex="index">
+  <div class="col-12 tables-action-col">
+    <div class="col-6 justify-item-center">
+      <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+        (click)="onClickRemoveProductItem(rowIndex)">
+        <i class="pi pi-minus-circle"></i></span>
+    </div>
+    <div class="col-6 justify-item-center">
+      <span *ngIf="rowIndex === this.productListArray.length - 1"
+        class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="AddProductRow()">
+        <i class="pi pi-plus-circle"></i>
+      </span>
+    </div>
   </div>
 </ng-template>
-
-<!-- <ng-template #removeProductItemColTemplate let-row let-i="index">
-  <div class="d-flex justify-content-end">
-    <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-      (click)="onClickRemoveProductItem(i)">
-      <i class="pi pi-minus-circle"></i></span>
-  </div>
-</ng-template> -->
 <!-- Export Order Item Table Related Templates End-->
 
 

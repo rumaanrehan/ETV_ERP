@@ -26,11 +26,12 @@ import { ExportOrderDocumentTemplate } from '../export-order-document/export-ord
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
 import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
-import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
+import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
 import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
 import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -143,8 +144,12 @@ export class ExportOrderService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  CancelOrder(model: ExportOrder): Observable<ApiResponse> {
+  CancelOrder(model: ExportOrderCancelRequest): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  BulkChangeStatus(model: ExportOrderBulkUpdateRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/BulkChangeStatus`, model);
   }
 
   LoadDocument(exportOrderID: number): Observable<ApiListResponse<ExportOrderDocumentList>> {
@@ -278,11 +283,20 @@ export class ExportOrderService {
       },
       ReferenceNo: {
         label: 'Reference Number',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required, NotOnlyWhitespaceValidator()],
+        validationMessages: {
+          required: "Reference Number is required",
+          notOnlyWhitespace: "Reference Number cannot be empty or whitespace"
+        }
       },
       ReferenceDate: {
         label: 'Reference Date',
         defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Reference Date is required"
+        }
       },
       CustomerID: {
         label: 'Customer',
@@ -425,7 +439,12 @@ export class ExportOrderService {
           },
           RatePerUnitBC: {
             label: '',
-            defaultValue: null
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Amounts are not converted into base currency."
+            },
+            type: 'control'
           },
           TaxableAmountFC: {
             label: '',
@@ -433,7 +452,12 @@ export class ExportOrderService {
           },
           TaxableAmountBC: {
             label: '',
-            defaultValue: null
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Amounts are not converted into base currency."
+            },
+            type: 'control'
           },
           TaxAmountFC: {
             label: '',
@@ -441,7 +465,12 @@ export class ExportOrderService {
           },
           TaxAmountBC: {
             label: '',
-            defaultValue: null
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Amounts are not converted into base currency."
+            },
+            type: 'control'
           },
           SalesAmountFC: {
             label: '',
@@ -449,7 +478,12 @@ export class ExportOrderService {
           },
           SalesAmountBC: {
             label: '',
-            defaultValue: null
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Amounts are not converted into base currency."
+            },
+            type: 'control'
           }
         }
       },
@@ -507,27 +541,57 @@ export class ExportOrderService {
       },
       SubtotalAmountFC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Subtotal FC must be equal to the sum of Taxable Amount FC in Product List."
+        },
+        type: 'control'
       },
       SubtotalAmountBC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Amounts are not converted into base currency."
+        },
+        type: 'control'
       },
       TaxAmountFC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Tax Amount FC must be equal to the sum of Tax Amount FC in Product List."
+        },
+        type: 'control'
       },
       TaxAmountBC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Amounts are not converted into base currency."
+        },
+        type: 'control'
       },
       NetAmountFC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Net Amount FC must be equal to the sum of all amount in the order."
+        },
+        type: 'control'
       },
       NetAmountBC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Amounts are not converted into base currency."
+        },
+        type: 'control'
       },
       IsRoundOff: {
         label: 'Round Off',

@@ -119,20 +119,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
+        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "20%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "SalesQty", label: "Sales Qty", width: "10%", customTemplate: this.salesQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
         { data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
-        { data: "TaxRate", label: "Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
-        { data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountFCColTemplate },
-        { data: "TaxAmountBC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountFCColTemplate },
+        { data: "TaxRate", label: "Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
+        { data: "TaxableAmountBC", label: "Taxable Amount", width: "12%", customTemplate: this.taxableAmountFCColTemplate },
+        { data: "TaxAmountBC", label: "Tax Amount", width: "12%", customTemplate: this.taxAmountFCColTemplate },
         { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
 
     this.loadDropdownList();
-    // this.getDetails();
 
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
@@ -665,8 +664,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
-
-        // this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -792,7 +789,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
             }
 
-            // this.loadPortList();
             this.form.patchValue(data);
           }
         });
@@ -1065,20 +1061,4 @@ export class CreateComponent implements OnInit, OnDestroy {
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
-
-  //   private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-  //     Object.keys(form.controls).forEach(key => {
-  //       const control = form.get(key);
-  //       const controlPath = parentKey ? `${parentKey}.${key}` : key;
-
-  //       if (control instanceof FormGroup || control instanceof FormArray) {
-  //         this.logInvalidControls(control, controlPath);
-  //       } else if (control && control.invalid) {
-  //         console.warn(
-  //           `❌ Invalid Control: ${controlPath}`,
-  //           control.errors
-  //         );
-  //       }
-  //     });
-  //   }
 }
