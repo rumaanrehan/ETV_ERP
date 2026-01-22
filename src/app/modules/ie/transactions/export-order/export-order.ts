@@ -48,10 +48,6 @@ export interface ExportOrder {
     StatusID: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
-
-    ProductID: number | null;
-    ProductName: string | null;
-
     Customer?: CompanyMaster
 }
 
@@ -175,7 +171,21 @@ export interface ExportOrder_IndexTableList {
     NetAmountFC: number;
     IsKnockOff: boolean;
     StatusID: number;
+    StatusText: string;
     CurrencySymbol: string;
+
+    /** UI only */
+    _selected?: boolean;
+}
+
+export interface ExportOrderBulkUpdateRequest {
+    ExportOrderIDs: number[];
+    StatusID: number;
+}
+
+export interface ExportOrderCancelRequest {
+    ExportOrderID: number;
+    ReasonToCancel: number;
 }
 
 export interface ExportOrder_Detail {

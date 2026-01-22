@@ -47,6 +47,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
   //Export Order Document Table Related Template
   @ViewChild('documentUploadDateTemplate', { static: true }) documentUploadDateTemplate!: TemplateRef<any>;
@@ -69,6 +70,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   isLoadPaymentVisible: boolean = true;
   isFromSalesQuotation = false;
   IsDocumentAlreadyExists = false;
+  isAddProductBtnLoading: boolean = false;
+  disablePrintButton: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrder>;
@@ -116,20 +119,19 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
+        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "20%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "SalesQty", label: "Sales Qty", width: "10%", customTemplate: this.salesQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
         { data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
-        { data: "TaxRate", label: "Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
-        { data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountFCColTemplate },
-        { data: "TaxAmountBC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
+        { data: "TaxRate", label: "Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
+        { data: "TaxableAmountBC", label: "Taxable Amount", width: "12%", customTemplate: this.taxableAmountFCColTemplate },
+        { data: "TaxAmountBC", label: "Tax Amount", width: "12%", customTemplate: this.taxAmountFCColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
 
     this.loadDropdownList();
-    // this.getDetails();
 
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
@@ -148,6 +150,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         }
 
         this.isEditMode = false;
+        if (this.productListArray.length === 0) {
+          this.AddProductRow();
+        }
       });
   }
 
@@ -235,16 +240,31 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
 
+
   onClickRemoveProductItem(index: number): void {
-    this.alertService.showConfirmation({
-      text: 'Do you really want to remove this product item?',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.productListArray.removeAt(index);
-        this.tableDef.data = this.productListArray.value;
-        this.productCalculation();
+    if (this.productListArray.at(index).value.ProductName !== null) {
+      this.alertService.showConfirmation({
+        text: `Do you really want to remove <b>${this.productListArray.at(index).value.ProductName}<b>?`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.productListArray.removeAt(index);
+          this.productAutoCompleteDef.splice(index, 1);
+          this.tableDef.data = this.productListArray.value;
+          if (this.productListArray.length == 0) {
+            this.AddProductRow();
+          }
+          return
+        }
+      });
+    }
+    else {
+      this.productListArray.removeAt(index);
+      this.productAutoCompleteDef.splice(index, 1);
+      this.tableDef.data = this.productListArray.value;
+      if (this.productListArray.length == 0) {
+        this.AddProductRow();
       }
-    });
+    }
   }
 
   onBasedOnChange(): void {
@@ -254,6 +274,10 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productListArray.clear();
     this.tableDef.data = [];
+
+    if (basedOnValue === 2) {
+      this.AddProductRow();
+    }
   }
 
   loadSalesQuotation(event: string): void {
@@ -498,15 +522,24 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.tableDef.data = this.productListArray.value
   }
 
-  addProductRow(): void {
-    const productItemForm =
-      this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  OnClear_Product(index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+    row.patchValue({ ProductID: null, ProductName: null, UOM: null });
+
+    this.tableDef.data = this.productListArray.value;
+  }
+
+  AddProductRow(): void {
+    this.isAddProductBtnLoading = true;
+    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
 
     this.productListArray.push(productItemForm);
     const index = this.productListArray.length - 1;
 
     this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
     this.tableDef.data = this.productListArray.value;
+
+    this.isAddProductBtnLoading = false;
   }
 
   productCalculation(): void {
@@ -631,8 +664,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();
-
-        // this.logInvalidControls(this.form);
         this.isSubmitted = false;
         return;
       }
@@ -758,7 +789,6 @@ export class CreateComponent implements OnInit, OnDestroy {
               ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
             }
 
-            // this.loadPortList();
             this.form.patchValue(data);
           }
         });
@@ -1031,20 +1061,4 @@ export class CreateComponent implements OnInit, OnDestroy {
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
-
-  //   private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-  //     Object.keys(form.controls).forEach(key => {
-  //       const control = form.get(key);
-  //       const controlPath = parentKey ? `${parentKey}.${key}` : key;
-
-  //       if (control instanceof FormGroup || control instanceof FormArray) {
-  //         this.logInvalidControls(control, controlPath);
-  //       } else if (control && control.invalid) {
-  //         console.warn(
-  //           `❌ Invalid Control: ${controlPath}`,
-  //           control.errors
-  //         );
-  //       }
-  //     });
-  //   }
 }

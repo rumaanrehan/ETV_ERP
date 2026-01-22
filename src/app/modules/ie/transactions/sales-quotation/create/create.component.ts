@@ -218,6 +218,26 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
 
+  // onClickRemoveProductItem(index: number): void {
+  //   this.alertService.showConfirmation({
+  //     text: 'Do you really want to remove this product item?',
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       if (this.productListArray.length > 1) {
+  //         this.productListArray.removeAt(index);
+  //         this.productAutoCompleteDef.splice(index, 1);
+  //         this.tableDef.data = this.productListArray.value;
+  //       }
+  //       else {
+  //         this.alertService.showToast({
+  //           text: 'At least one product item is required.',
+  //           type: 'warning'
+  //         });
+  //       }
+  //     }
+  //   });
+  // }
+
   OnClickRemoveProductItem(index: number): void {
     if (this.productListArray.at(index).value.ProductName !== null) {
       this.alertService.showConfirmation({
