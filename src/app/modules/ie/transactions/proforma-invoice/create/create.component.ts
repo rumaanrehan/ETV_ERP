@@ -597,6 +597,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
+    this.productCalculation();
     this.convertAmountsToBC();
     try {
       if (this.form.value.ProductList.length === 0) {
