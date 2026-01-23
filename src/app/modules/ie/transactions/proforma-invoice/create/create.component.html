@@ -18,14 +18,17 @@
                                 <div class="col-xl-2 form-group px-2">
                                     <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
                                         [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="basedOnList"
-                                        [readonly]="isEditMode" (onChange)="onBasedOnChange()"></z-select>
+                                        [readonly]="isEditMode" (onChange)="onBasedOnChange()"
+                                        [showClear]="false"></z-select>
                                 </div>
                                 <div class="col-xl-6 form-group px-2"></div>
                                 <div class="col-xl-2 form-group px-2">
-                                    <z-span [text]="formatDate(form.get('ProformaInvoiceDate')?.value)" [label]="formConfig.ProformaInvoiceDate.label"></z-span>
+                                    <z-datepicker [group]="form" [control]="'ProformaInvoiceDate'"
+                                        [label]="formConfig.ProformaInvoiceDate.label"
+                                        [validationMessage]="formConfig.ProformaInvoiceDate.error"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnExportOrder">
-                                    <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"
+                                    <z-autocomplete [controlDef]="exportOrderAutoCompleteDef" [allowEmptySearch]="true"
                                         (onSearch)="loadExportOrder($event)" (onSelect)="onSelect_ExportOrder($event)"
                                         (onClear)="onClear_ExportOrder()"></z-autocomplete>
                                 </div>
@@ -37,7 +40,7 @@
                                             (onClear)="onClear_Customer()">
                                         </z-autocomplete>
                                         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
-                                            title="Add New Company"
+                                            *ngIf="form.get('BasedOn')?.value == 2" title="Add New Company"
                                             (click)="handleComponentLoad('VendorCreateComponent')"></i>
                                     </div>
                                 </div>
@@ -52,7 +55,7 @@
                                         [label]="formConfig.ReferenceNo.label"
                                         [validationMessage]="formConfig.ReferenceNo.error"></z-inputtext>
                                 </div>
-                                <div class="col-xl-5 form-group px-2">
+                                <div class="col-xl-12 form-group px-2" *ngIf="form.get('CustomerID')?.value !== null">
                                     <z-span [text]="selectedCustomerAddress"></z-span>
                                 </div>
 
@@ -62,7 +65,7 @@
                                         <z-select [group]="form" [control]="'FCCurrencyID'"
                                             [label]="formConfig.FCCurrencyID.label" [optionLabel]="'CurrencyName'"
                                             [optionValue]="'CurrencyID'" [readonly]="isBasedOnExportOrder"
-                                            [options]="currencyList"></z-select>
+                                            [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
                                         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
                                             title="Add New Currency"
                                             (click)="handleComponentLoad('CurrencyCreateComponent')"></i>
@@ -97,23 +100,11 @@
                                         [readonly]="isBasedOnExportOrder"></z-inputnumber>
                                 </div>
                                 <div class="col-xl-6"></div>
-                                <!-- <div class="col-12 px-2">
+                                <div class="col-12 px-2">
                                     <h6 class="form-group">Product List</h6>
-                                    <div class="col-xl-3 form-group" *ngIf="!isBasedOnExportOrder">
-                                        <div class="action-input-group">
-                                            <z-autocomplete class="flex-grow-1" [controlDef]="productAutoCompleteDef"
-                                                (onSearch)="onSearch_Product($event)"
-                                                (onSelect)="onSelect_Product($event)">
-                                            </z-autocomplete>
-                                            <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
-                                                title="Add New Product"
-                                                (click)="handleComponentLoad('ProductCreateComponent')">
-                                            </i>
-                                        </div>
-                                    </div>
-                                    <z-table [tableDef]="this.tableDef">
+                                    <z-table [tableDef]="tableDef">
                                     </z-table>
-                                </div> -->
+                                </div>
                                 <!-- Payment & Shipment -->
                                 <div class="col-xl-2 form-group px-2">
                                     <z-select [group]="form" [control]="'PaymentTermID'"
@@ -187,13 +178,15 @@
                                         <p class="mb-0">Tax Amount: </p>
                                         <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
                                             [label]="formConfig.TaxAmountFC.label"
-                                            [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
+                                            [validationMessage]="formConfig.TaxAmountFC.error"
+                                            [readonly]="true"></z-inputnumber>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="mb-0">Net Amount: </p>
                                         <z-inputnumber [group]="form" [control]="'NetAmountFC'"
                                             [label]="formConfig.NetAmountFC.label"
-                                            [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
+                                            [validationMessage]="formConfig.NetAmountFC.error"
+                                            [readonly]="true"></z-inputnumber>
                                     </div>
                                 </div>
                             </div>
@@ -243,11 +236,17 @@
 </ng-template>
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
-  <z-autocomplete
-    [controlDef]="productAutoCompleteDef[rowIndex]"
-    (onSearch)="onSearch_Product($event, rowIndex)"
-    (onSelect)="onSelect_Product($event, rowIndex)">
-  </z-autocomplete>
+    <div class="action-input-group">
+        <div class="col-11">
+            <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]"
+                (onSearch)="onSearch_Product($event, rowIndex)" (onSelect)="onSelect_Product($event, rowIndex)"
+                (onClear)="OnClear_Product(rowIndex)">
+            </z-autocomplete>
+        </div>
+        <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Product"
+            *ngIf="rowIndex === this.productListArray.length - 1"
+            (click)="handleComponentLoad('ProductCreateComponent')"></i>
+    </div>
 </ng-template>
 
 <ng-template #salesQtyColTemplate let-row let-i="index">
@@ -294,11 +293,19 @@
     </div>
 </ng-template>
 
-<ng-template #removeProductItemColTemplate let-row let-i="index">
-    <div class="d-flex justify-content-end" *ngIf="!isBasedOnExportOrder">
-        <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-            (click)="onClickRemoveProductItem(i)">
-            <i class="pi pi-minus-circle"></i></span>
+<ng-template #actionColTemplate let-row let-rowIndex="index">
+    <div class="col-12 tables-action-col">
+        <div class="col-6 justify-item-center">
+            <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+                (click)="onClickRemoveProductItem(rowIndex)">
+                <i class="pi pi-minus-circle"></i></span>
+        </div>
+        <div class="col-6 justify-item-center">
+            <span *ngIf="rowIndex === this.productListArray.length - 1"
+                class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="AddProductRow()">
+                <i class="pi pi-plus-circle"></i>
+            </span>
+        </div>
     </div>
 </ng-template>
 
