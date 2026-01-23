@@ -59,6 +59,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('paymentActionColTemplate', { static: true }) paymentActionColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
+  todayDate: Date = new Date();
+
   componentRef?: ComponentRef<any>;
 
   selectedCustomerAddress!: string | null;
@@ -125,8 +127,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
         { data: "TaxRate", label: "Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountBC", label: "Taxable Amount", width: "12%", customTemplate: this.taxableAmountFCColTemplate },
-        { data: "TaxAmountBC", label: "Tax Amount", width: "12%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
+        { data: "TaxAmountBC", label: "Tax Amount", width: "11%", customTemplate: this.taxAmountFCColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "6%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
@@ -253,6 +255,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           if (this.productListArray.length == 0) {
             this.AddProductRow();
           }
+          this.productCalculation();
           return
         }
       });
@@ -264,6 +267,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.productListArray.length == 0) {
         this.AddProductRow();
       }
+      this.productCalculation();
     }
   }
 
@@ -649,6 +653,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
+    this.productCalculation();
     this.convertAmountsToBC();
     try {
       if (this.form.value.ProductList.length === 0) {
