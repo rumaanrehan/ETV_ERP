@@ -780,7 +780,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               });
 
               this.tableDef.data = this.productListArray.value;
-              const { SalesQuotationNo, ProductList, BasedOn, IsRoundOff, ExchangeRateToBC, Narration, ...formValues } = response.Data;
+              const { SalesQuotationNo, ProductList, BasedOn, IsRoundOff, ExchangeRateDate, ExchangeRateToBC, Narration, ...formValues } = response.Data;
               this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
               formValues.ReferenceDate = DateUtils.toDate(formValues.ReferenceDate)!;
               this.form.patchValue(formValues);
