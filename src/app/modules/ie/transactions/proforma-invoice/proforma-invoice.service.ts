@@ -13,7 +13,7 @@ import { Product_SelectList, ProductRequest } from '../../../ims/settings/produc
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { ExportOrder, ExportOrder_Detail, ExportOrder_SelectList, ExportOrderDetail, ExportOrderRequest } from '../export-order/export-order';
+import { ExportOrder_Detail, ExportOrder_SelectList, ExportOrderRequest } from '../export-order/export-order';
 import { ExportOrderService } from '../export-order/export-order.service';
 import { ProformaInvoice, ProformaInvoice_Detail, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from './proforma-invoice';
 import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
@@ -26,6 +26,8 @@ import { PortMasterService } from '../../settings/port-master/port-master.servic
 import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
 import { Environment } from '../../../../../environments/environment';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +45,7 @@ export class ProformaInvoiceService {
     private portService: PortMasterService,
     private selectListService: SelectListService,
     private paymentTermMasterService: PaymentTermMasterService,
+    private currencyExchangeService: CurrencyExchangeService,
     private http: HttpClient
   ) { }
 
@@ -106,6 +109,10 @@ export class ProformaInvoiceService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel?proformaInvoiceID=${proformaInvoiceID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
+  GetExchangeRate(model: GetExchangeRateRequest): Observable<ApiDataResponse<ExchangeRateResponse>> {
+    return this.currencyExchangeService.GetRate(model);
+  }
+
   GeneratePdf(request: any) {
     return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintInvoice`, request, { responseType: 'blob' });
   }
@@ -131,17 +138,23 @@ export class ProformaInvoiceService {
         label: 'Proforma Invoice No',
         defaultValue: "NEW"
       },
-      ProformaInvoiceDate: {
-        label: 'Proforma Invoice Date',
-        defaultValue: new Date()
-      },
       BasedOn: {
         label: 'Based On',
-        defaultValue: 1, // 1 is for Export Order
+        defaultValue: 1,
         validators: [Validators.required],
         validationMessages: {
           required: "Based On is required"
-        }
+        },
+        type: 'control'
+      },
+      ProformaInvoiceDate: {
+        label: 'Proforma Invoice Date',
+        defaultValue: new Date(),
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Proforma Invoice Date is required"
+        },
+        type: 'control'
       },
       ExportOrderID: {
         label: 'Export Order',
@@ -149,7 +162,8 @@ export class ProformaInvoiceService {
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
         validationMessages: {
           required: "Export Order is required"
-        }
+        },
+        type: 'control'
       },
       ExportOrderNo: {
         label: 'Export Order',
@@ -157,15 +171,18 @@ export class ProformaInvoiceService {
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
         validationMessages: {
           required: "Export Order is required"
-        }
+        },
+        type: 'control'
       },
       ReferenceNo: {
         label: 'Reference Number',
         defaultValue: null,
-        validators: [Validators.required],
+        validators: [Validators.required, Validators.maxLength(100)],
         validationMessages: {
-          required: "Reference Number is required"
-        }
+          required: "Reference Number is required",
+          maxLength: "Reference Number cannot exceed 100 characters"
+        },
+        type: 'control'
       },
       ReferenceDate: {
         label: 'Reference Date',
@@ -173,7 +190,8 @@ export class ProformaInvoiceService {
         validators: [Validators.required],
         validationMessages: {
           required: "Reference Date is required"
-        }
+        },
+        type: 'control'
       },
       CustomerID: {
         label: 'Customer',
@@ -181,35 +199,48 @@ export class ProformaInvoiceService {
         validators: [Validators.required],
         validationMessages: {
           required: "Customer is required"
-        }
+        },
+        type: 'control'
       },
       CustomerName: {
         label: 'Customer Name',
         defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Customer is required"
+        },
+        type: 'control'
       },
       FCCurrencyID: {
         label: 'Foreign Currency',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Foreign Currency is required"
+        },
+        type: 'control'
       },
       ExchangeRateDate: {
         label: 'Exchange Date',
-        defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        defaultValue: new Date(),
+        validators: [Validators.required],
         validationMessages: {
           RequiredIf: "Exchange Rate Date is required"
-        }
+        },
+        type: 'control'
       },
       ExchangeRateToBC: {
         label: 'Exchange Rate to BC',
         defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        validators: [Validators.required],
         validationMessages: {
-          RequiredIf: "Exchange Rate to Base Currency is required"
-        }
+          RequiredIf: "Exchange Rate is required"
+        },
+        type: 'control'
       },
       BankChargesFC: {
         label: 'Bank Charge (FC)',
-        defaultValue: null
+        defaultValue: 0
       },
       BankChargesBC: {
         label: 'Bank Charge (BC)',
@@ -217,7 +248,7 @@ export class ProformaInvoiceService {
       },
       FreightChargeFC: {
         label: 'Freight Charge (FC)',
-        defaultValue: null
+        defaultValue: 0
       },
       FreightChargeBC: {
         label: 'Freight Charge (BC)',
@@ -225,46 +256,43 @@ export class ProformaInvoiceService {
       },
       InsuranceAmountFC: {
         label: 'Insurance Amount (FC)',
-        defaultValue: null
+        defaultValue: 0
       },
       InsuranceAmountBC: {
         label: 'Insurance Amount (BC)',
-        defaultValue: null
-      },
-      ProductID: {
-        label: '',
-        defaultValue: null
-      },
-      ProductName: {
-        label: 'Product Name',
         defaultValue: null
       },
       ProductList: {
         type: 'array',
         items: {
           ProductID: {
-            label: 'Product',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Product is required"
-            }
-          },
-          ProductName: {
-            label: 'Product Name',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Product is required"
-            }
-          },
-          SalesQty: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Sales Qty is required"
-            }
+              required: "Product is required"
+            },
+            type: 'control'
+          },
+          ProductName: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Product is required"
+            },
+            type: 'control'
+          },
+          SalesQty: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1), Validators.max(99999)],
+            validationMessages: {
+              required: "Sales Qty is required",
+              min: "Sales Qty must be at least 1",
+              max: "Sales Qty cannot exceed 99999"
+            },
+            type: 'control'
           },
           UOM: {
             label: 'Measurement Unit',
@@ -276,23 +304,26 @@ export class ProformaInvoiceService {
             validators: [Validators.required],
             validationMessages: {
               required: "Tax Rate is required"
-            }
+            },
+            type: 'control'
           },
           RatePerUnitFC: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Rate in foreign currency is required"
-            }
+              required: "Rate per unit is required"
+            },
+            type: 'control'
           },
           RatePerUnitBC: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Rate is required"
-            }
+              required: "Amounts are not converted into base currency"
+            },
+            type: 'control'
           },
           TaxableAmountFC: {
             label: '',
@@ -300,15 +331,17 @@ export class ProformaInvoiceService {
             validators: [Validators.required],
             validationMessages: {
               required: "Taxable amount in foreign currency is required"
-            }
+            },
+            type: 'control'
           },
           TaxableAmountBC: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Taxable Amount in base currency is required"
-            }
+              required: "Amounts are not converted into base currency"
+            },
+            type: 'control'
           },
           TaxAmountFC: {
             label: '',
@@ -316,15 +349,17 @@ export class ProformaInvoiceService {
             validators: [Validators.required],
             validationMessages: {
               required: "Tax in foreign currency is required"
-            }
+            },
+            type: 'control'
           },
           TaxAmountBC: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Tax in base currency is required"
-            }
+              required: "Amounts are not converted into base currency"
+            },
+            type: 'control'
           },
           SalesAmountFC: {
             label: '',
@@ -332,73 +367,52 @@ export class ProformaInvoiceService {
             validators: [Validators.required],
             validationMessages: {
               required: "Sales amount in foreign currency is required"
-            }
+            },
+            type: 'control'
           },
           SalesAmountBC: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Sales amount in base currency is required"
-            }
+              required: "Amounts are not converted into base currency"
+            },
+            type: 'control'
           }
         }
       },
-      Narration: {
-        label: 'Note',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
-      },
-      SubtotalAmountFC: {
-        label: '',
-        defaultValue: null
-      },
-      TaxAmountFC: {
-        label: '',
-        defaultValue: null
-      },
-      SubtotalAmountBC: {
-        label: 'Subtotal Amount (BC)',
-        defaultValue: null
-      },
-      TaxAmountBC: {
-        label: 'Tax Amount (BC)',
-        defaultValue: null
-      },
-      NetAmountFC: {
-        label: '',
-        defaultValue: null
-      },
-      NetAmountBC: {
-        label: '',
-        defaultValue: null
-      }, PaymentTermID: {
+      PaymentTermID: {
         label: 'Payment Term',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
           required: "Payment Terms are required"
-        }
+        },
+        type: 'control'
       },
       ShipmentModeID: {
         label: 'Shipment Mode',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Shipment Mode is required"
+        },
+        type: 'control'
+      },
+      LoadingPortID: {
+        label: 'Loading Port',
         defaultValue: null
       },
       LoadingPortName: {
         label: 'Port Name',
         defaultValue: null
       },
-      DischargePortName: {
-        label: 'Port Name',
-        defaultValue: null
-      },
-      LoadingPortID: {
-        label: 'Loading Port',
-        defaultValue: null
-      },
       DischargePortID: {
         label: 'Discharge Port',
+        defaultValue: null
+      },
+      DischargePortName: {
+        label: 'Port Name',
         defaultValue: null
       },
       FinalDestination: {
@@ -407,11 +421,71 @@ export class ProformaInvoiceService {
         validators: [Validators.required],
         validationMessages: {
           required: "Final Destination is required"
-        }
+        },
+        type: 'control'
       },
-      StatusID: {
+      Narration: {
+        label: 'Note',
+        defaultValue: null,
+        validators: [Validators.maxLength(255)],
+        validationMessages: {
+          maxLength: "Note cannot exceed 255 characters"
+        },
+        type: 'control'
+      },
+      SubtotalAmountFC: {
         label: '',
-        defaultValue: 1
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Subtotal FC must be equal to the sum of Taxable Amount FC in Product List."
+        },
+        type: 'control'
+      },
+      SubtotalAmountBC: {
+        label: 'Subtotal Amount (BC)',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Amounts are not converted into base currency."
+        },
+        type: 'control'
+      },
+      TaxAmountFC: {
+        label: '',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Tax Amount FC must be equal to the sum of Tax Amount FC in Product List."
+        },
+        type: 'control'
+      },
+      TaxAmountBC: {
+        label: 'Tax Amount (BC)',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Amounts are not converted into base currency."
+        },
+        type: 'control'
+      },
+      NetAmountFC: {
+        label: '',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Net Amount FC must be equal to the sum of all amount in the order."
+        },
+        type: 'control'
+      },
+      NetAmountBC: {
+        label: '',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Amounts are not converted into base currency."
+        },
+        type: 'control'
       },
       IsRoundOff: {
         label: 'Round Off',
@@ -492,12 +566,11 @@ export class ProformaInvoiceService {
     }
   }
 
-  getProductAutoCompleteDef(formConfig: FormConfigType<ProformaInvoice>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<ProformaInvoiceDetail>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,
       control: 'ProductName',
-      label: formConfig.ProductName.label,
       validationMessage: formConfig.ProductName.error,
       placeholder: 'Search Product',
       options: [],

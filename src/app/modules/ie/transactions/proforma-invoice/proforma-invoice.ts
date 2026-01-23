@@ -36,16 +36,12 @@ export interface ProformaInvoice {
     DischargePortName: string | null;
     FinalDestination: string | null;
     Narration: number | null;
-    StatusID: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
 
     ProductList: ProformaInvoiceDetail[];
 
     Customer?: CompanyMaster;
-
-    ProductID: number | null;
-    ProductName: string | null;
 }
 
 export interface ProformaInvoiceDetail {
