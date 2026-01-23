@@ -327,7 +327,7 @@ export class ExportOrderService {
       },
       ExchangeRateDate: {
         label: 'Exchange Date',
-        defaultValue: null,
+        defaultValue: new Date(),
         validators: [Validators.required],
         validationMessages: {
           required: "Exchange Rate Date is required"
