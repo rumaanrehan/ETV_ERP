@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DataViewModule } from 'primeng/dataview';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
@@ -22,13 +23,13 @@ import { ExportOrderPayment } from '../../export-order-payment/export-payment';
 import { ExportOrderShipping } from '../../export-order-shipping/export-order-shipping';
 import { ExportOrderTracking } from '../../export-order-tracking/export-order-tracking';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation } from '../export-order';
+import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, ZMenuComponent, ButtonModule],
+  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, ZMenuComponent, ButtonModule, FormsModule, CheckboxModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -49,6 +50,9 @@ export class DataviewComponent implements OnInit, OnDestroy {
   sortingFormConfig!: FormConfigType<ExportOrder_IndexTableSort>
 
   menuCache = new Map<number, MenuItem[]>();
+
+  selectedExportOrders: ExportOrder_IndexTableList[] = [];
+  selectAll = false;
 
   // menuItems: MenuItem[] = [
   //   {
@@ -199,9 +203,9 @@ export class DataviewComponent implements OnInit, OnDestroy {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          const model: ExportOrder = {
-            ...row,
-            ReasonToUpdate: result.Message
+          const model: ExportOrderCancelRequest = {
+            ExportOrderID: row.ExportOrderID,
+            ReasonToCancel: result.Message
           }
 
           this.pageService.CancelOrder(model)
@@ -222,6 +226,69 @@ export class DataviewComponent implements OnInit, OnDestroy {
             });
         }
       });
+  }
+
+  onSelectionChange(item: ExportOrder_IndexTableList) {
+    if (item._selected) {
+      this.selectedExportOrders.push(item);
+    } else {
+      this.selectedExportOrders =
+        this.selectedExportOrders.filter(
+          x => x.ExportOrderID !== item.ExportOrderID
+        );
+    }
+    this.selectAll = this.selectedExportOrders.length === this.dataViewDef.data.length;
+  }
+
+  toggleSelectAll(event: any) {
+    this.selectedExportOrders = [];
+    this.dataViewDef.data.forEach((item: ExportOrder_IndexTableList) => {
+      item._selected = event.checked;
+      if (event.checked) {
+        this.selectedExportOrders.push(item);
+      }
+    });
+  }
+
+  bulkChangeStatus(statusID: number) {
+    this.alertService
+      .showConfirmationWithInput({
+        text: 'Do you want to bulk update <b>Export Order</b>?',
+        inputPlaceholder: 'Reason to Bulk Update'
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const ids = this.selectedExportOrders.map(x => x.ExportOrderID);
+          const dto: ExportOrderBulkUpdateRequest = {
+            ExportOrderIDs: ids,
+            StatusID: statusID
+          };
+
+          this.pageService.BulkChangeStatus(dto)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                this.loadData();
+                this.clearSelection();
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: 'success',
+                    text: response.Message,
+                    timer: 5000,
+                  });
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+      });
+  }
+
+  clearSelection() {
+    this.dataViewDef.data.forEach(x => x._selected = false);
+    this.selectedExportOrders = [];
+    this.selectAll = false;
   }
 
   handleComponentLoad(componentName: string, model: any) {

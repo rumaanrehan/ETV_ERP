@@ -132,7 +132,7 @@
         <button type="submit" class="btn btn-md btn-primary w-100"
           (click)="OnClickNavigateToExportOrder(this.form.get('SalesQuotationID')?.value || null)"> Add Export </button>
       </div>
-      <div class="col-xl-4 px-1" *ngIf="isEditMode">
+      <div class="col-xl-5 px-1" *ngIf="isEditMode">
         <z-button [label]="'Print Sales Quotation'" (clicked)="PrintSalesQuotation()"
           [loading]="disablePrintButton"></z-button>
       </div>

@@ -5,14 +5,43 @@
 </ng-template>
 
 <div class="col-xl-12 index-page-content">
+    <div class="index-action-bar">
+        <div class="d-flex align-items-center gap-3">
+            <!-- SELECT ALL -->
+            <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
+            </p-checkbox>
+
+            <span class="text-muted">
+                <b>{{ selectedExportOrders.length }} selected</b>
+            </span>
+        </div>
+        <div class="col-6 index-action-bar-actions">
+            <button class="btn btn-primary" [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(1)">
+                Revert to Draft
+            </button>
+
+            <button class="btn btn-primary" [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(5)">
+                Mark as Dispatched
+            </button>
+
+            <button class="btn btn-primary" [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(9)">
+                Cancel
+            </button>
+        </div>
+    </div>
     <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
         (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
     </z-dataview>
 </div>
 
 <ng-template #customTemplate let-exportOrders>
-    <div class="dataview-item mb-3" *ngFor="let item of exportOrders; let first = first">
-        <div class="col-12 p-3">
+    <div class="d-flex align-items-center gap-3" *ngFor="let item of exportOrders; let first = first">
+        <div class="d-flex align-items-center gap-2">
+            <!-- BULK SELECT -->
+            <p-checkbox binary="true" [(ngModel)]="item._selected" (onChange)="onSelectionChange(item)">
+            </p-checkbox>
+        </div>
+        <div class="w-100 p-3 dataview-item mb-3">
             <div class="d-flex justify-content-between dataview-record-title">
                 <a (click)="onClickEditDetails(item.ExportOrderID)">
                     <h5 class="primary-color mb-2">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
@@ -49,7 +78,7 @@
                             <span class="fs-6 text-secondary"> {{item.LoadingPortName}} </span>
                         </div>
                         <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Destination:</span>
+                            <span class="fs-6 text-secondary">Final Destination:</span>
                             <span class="fs-6 text-secondary"> {{item.FinalDestination}} </span>
                         </div>
                     </div>
