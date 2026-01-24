@@ -16,6 +16,7 @@ import { SalesEnquiry, SalesEnquiryBulkUpdateRequest, SalesEnquiryDetail, SalesE
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Environment } from '../../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -194,11 +195,12 @@ export class SalesEnquiryService {
           RequestedQty: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required, Validators.min(1), Validators.max(99999)],
+            validators: [Validators.required, Validators.min(1), Validators.max(99999), noFractionValidator()],
             validationMessages: {
               required: "Requested Qty is required",
               min: "Requested Qty must be at least 1",
-              max: "Requested Qty cannot exceed 99999"
+              max: "Requested Qty cannot exceed 99999",
+              noFraction: "Requested Qty cannot have fractions"
             },
             type: 'control'
           },

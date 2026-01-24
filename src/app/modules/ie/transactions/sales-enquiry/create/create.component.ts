@@ -216,6 +216,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.tableDef.data = this.productListArray.value
   }
 
+  OnClear_Product(index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+    row.patchValue({ ProductID: null, ProductName: null, UOM: null });
+
+    this.tableDef.data = this.productListArray.value;
+  }
+
   addProductRow(): void {
     const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
     this.productListArray.push(productItemForm);
