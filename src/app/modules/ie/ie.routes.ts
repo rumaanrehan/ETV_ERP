@@ -96,15 +96,15 @@ export const ieRoute: Routes = [
                   breadcrumb: 'Edit'
                 }
               },
-              {
-                path: 'from-enquiry/:salesEnquiryID',
-                loadComponent: () => import('./transactions/sales-quotation/create/create.component').then((m) => m.CreateComponent),
-                data: {
-                  permission: 'CanCreate',
-                  menu: 'IE/SalesQuotation',
-                  breadcrumb: 'Create'
-                }
-              }
+              // {
+              //   path: 'from-enquiry/:salesEnquiryID',
+              //   loadComponent: () => import('./transactions/sales-quotation/create/create.component').then((m) => m.CreateComponent),
+              //   data: {
+              //     permission: 'CanCreate',
+              //     menu: 'IE/SalesQuotation',
+              //     breadcrumb: 'Create'
+              //   }
+              // }
             ]
           },
           {
