@@ -28,6 +28,7 @@ import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared
 import { HttpClient } from '@angular/common/http';
 import { Environment } from '../../../../../environments/environment';
 import { GreaterThan } from '../../../../shared/validators/greater-than.validator';
+import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -267,11 +268,12 @@ export class SalesQuotationService {
           QuotedQty: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required, Validators.min(1), Validators.max(99999)],
+            validators: [Validators.required, Validators.min(1), Validators.max(99999), noFractionValidator()],
             validationMessages: {
               required: "Quoted quantity is required",
               min: "Requested Qty must be at least 1",
-              max: "Requested Qty cannot exceed 99999"
+              max: "Requested Qty cannot exceed 99999",
+              noFraction: "Quoted quantity cannot have fractions"
             },
             type: 'control'
           },
