@@ -16,6 +16,7 @@ import { Product_SelectList, ProductMaster, ProductRequest } from "../../../../i
 import { Company_SelectList, CompanyMaster, CompanyRequest } from "../../../settings/company-master/company-master";
 import { SalesEnquiry } from "../sales-enquiry";
 import { SalesEnquiryService } from "../sales-enquiry.service";
+import { NavContextServiceService } from "../../../../../core/services/nav-context.service.service";
 
 @Component({
   selector: 'app-create',
@@ -58,6 +59,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private pageService: SalesEnquiryService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextServiceService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -96,9 +98,8 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   onClickNavigateToSalesQuotation(salesEnquiryID: number): void {
     if (salesEnquiryID) {
-      this.router.navigate([`ie/sales-quotation/from-enquiry/${salesEnquiryID}`]);
-    } else {
-      return;
+      this.navContextService.set('sales-enquiry', salesEnquiryID);
+      this.router.navigate([`ie/sales-quotation/create`]);
     }
   }
 
@@ -214,6 +215,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
 
     this.tableDef.data = this.productListArray.value
+  }
+
+  OnClear_Product(index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+    row.patchValue({ ProductID: null, ProductName: null, UOM: null });
+
+    this.tableDef.data = this.productListArray.value;
   }
 
   addProductRow(): void {

@@ -23,6 +23,7 @@ import { SalesQuotation, SalesQuotation_Detail, SalesQuotationDetail } from '../
 import { SalesQuotationService } from '../sales-quotation.service';
 import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
 import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
+import { NavContextServiceService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-create',
@@ -81,6 +82,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private currencyExchangeService: CurrencyExchangeService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextServiceService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -112,17 +114,14 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(paramMap => {
-        const id = paramMap.get('id');
-        const salesEnquiryID = paramMap.get('salesEnquiryID');
+        const salesQuotationID = Number(paramMap.get('id'));
 
-        if (id) {
-          this.LoadSalesQuotaion(+id);
+        if (salesQuotationID) {
+          this.LoadSalesQuotaion(salesQuotationID);
           return;
         }
-        else if (salesEnquiryID) {
-          this.isFromSalesEnquiry = true;
-          this.GetSalesEnquiryDetails(+salesEnquiryID);
-          return;
+        else if (this.navContextService.source) {
+          this.GetSalesEnquiryDetails(this.navContextService.sourceId!);
         }
 
         this.isEditMode = false;
@@ -218,26 +217,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
 
-  // onClickRemoveProductItem(index: number): void {
-  //   this.alertService.showConfirmation({
-  //     text: 'Do you really want to remove this product item?',
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       if (this.productListArray.length > 1) {
-  //         this.productListArray.removeAt(index);
-  //         this.productAutoCompleteDef.splice(index, 1);
-  //         this.tableDef.data = this.productListArray.value;
-  //       }
-  //       else {
-  //         this.alertService.showToast({
-  //           text: 'At least one product item is required.',
-  //           type: 'warning'
-  //         });
-  //       }
-  //     }
-  //   });
-  // }
-
   OnClickRemoveProductItem(index: number): void {
     if (this.productListArray.at(index).value.ProductName !== null) {
       this.alertService.showConfirmation({
@@ -247,6 +226,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           this.productListArray.removeAt(index);
           this.productAutoCompleteDef.splice(index, 1);
           this.tableDef.data = this.productListArray.value;
+          this.ProductCalculation();
           if (this.productListArray.length == 0) {
             this.AddProductRow();
           }
@@ -258,6 +238,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.productListArray.removeAt(index);
       this.productAutoCompleteDef.splice(index, 1);
       this.tableDef.data = this.productListArray.value;
+      this.ProductCalculation();
       if (this.productListArray.length == 0) {
         this.AddProductRow();
       }
@@ -307,10 +288,12 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   OnClear_SalesEnquiry(): void {
+    const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<SalesQuotation>(this.formConfig, this.form);
     this.productListArray.clear();
     this.selectedCustomerAddress = null;
     this.tableDef.data = [];
+    this.form.get('BasedOn')?.patchValue(basedOnValue);
   }
 
   GetAmount(index: number): number[] {
@@ -512,6 +495,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
+    this.ProductCalculation();
     this.ConvertAmountsToBC();
     try {
       if (this.form.value.ProductList.length === 0) {
@@ -698,6 +682,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
             this.selectedCustomerAddress = model.CustomerAddress,
               this.form.patchValue({
+                BasedOn: 1,
                 SalesEnquiryID: model.SalesEnquiryID,
                 SalesEnquiryNo: model.SalesEnquiryNo,
                 CustomerID: model.CustomerID,

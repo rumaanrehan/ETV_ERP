@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../../core/services/api.service';
-import { Company_IndexTableFilter, Company_IndexTableList, Company_SelectList, CompanyMaster, CompanyRequest, State_SelectList } from './company-master';
+import { Company_IndexTableFilter, Company_IndexTableList, Company_SelectList, CompanyMaster, CompanyRequest } from './company-master';
 import { forkJoin, Observable } from 'rxjs';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { EmailValidator, Validators } from '@angular/forms';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
-import { Country_SelectList, CountryMaster, CountryRequest } from '../../../admin/settings/country-master/country-master';
+import { Country_SelectList, CountryRequest } from '../../../admin/settings/country-master/country-master';
 import { StateRequest } from '../../../admin/settings/state-master/state-master';
 import { StaticListRequest, StaticList } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { StateMasterService } from '../../../admin/settings/state-master/state-master.service';
+import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 
 @Injectable({
   providedIn: 'root'

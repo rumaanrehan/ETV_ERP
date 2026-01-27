@@ -104,9 +104,15 @@
 </ng-template>
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
-  <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
-    (onSelect)="onSelect_Product($event, rowIndex)">
-  </z-autocomplete>
+  <div class="action-input-group">
+    <div class="col-11">
+      <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
+        (onSelect)="onSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
+      </z-autocomplete>
+    </div>
+    <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Product"
+      *ngIf="rowIndex === this.productListArray.length - 1" (click)="handleComponentLoad('ProductCreateComponent')"></i>
+  </div>
 </ng-template>
 
 <ng-template #requestedQtyColTemplate let-row let-i="index">
@@ -123,15 +129,15 @@
   </z-inputtext>
 </ng-template>
 
-<ng-template #actionColTemplate let-row let-i="index">
+<ng-template #actionColTemplate let-row let-rowIndex="index">
   <div class="col-12 tables-action-col">
     <div class="col-6 justify-item-center">
       <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-        (click)="onClickRemoveProductItem(i)">
+        (click)="onClickRemoveProductItem(rowIndex)">
         <i class="pi pi-minus-circle"></i></span>
     </div>
     <div class="col-6 justify-item-center">
-      <span *ngIf="i === this.productListArray.length - 1"
+      <span *ngIf="rowIndex === this.productListArray.length - 1"
         class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="addProductRow()">
         <i class="pi pi-plus-circle"></i>
       </span>

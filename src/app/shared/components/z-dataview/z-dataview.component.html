@@ -63,7 +63,7 @@
 
                                 <z-select *ngIf="field.type === 'dropdown'" [group]="dataViewDef.filterForm"
                                     [control]="field.field" [label]="field.label" [options]="field.options ?? []"
-                                    [optionLabel]="'Text'" [optionValue]="'Value'">
+                                    [showClear]="false" [optionLabel]="'Text'" [optionValue]="'Value'">
                                 </z-select>
                             </div>
                         </div>
