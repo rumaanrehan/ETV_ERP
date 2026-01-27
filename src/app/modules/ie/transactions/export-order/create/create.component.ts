@@ -559,13 +559,13 @@ export class CreateComponent implements OnInit, OnDestroy {
       const quantity = group.get('SalesQty')?.value || 0;
       const salesTaxRate = group.get('SalesTaxRate')?.value || 0;
 
-      const taxableAmountFC = quantity * rate;
-      const taxAmountFC = (taxableAmountFC * salesTaxRate) / 100;
+      const taxableAmountFC = Number((rate * quantity).toFixed(2));
+      const taxAmountFC = Number(((taxableAmountFC * salesTaxRate) / 100).toFixed(2));
 
       group.patchValue({
         TaxableAmountFC: taxableAmountFC,
         TaxAmountFC: taxAmountFC,
-        SalesAmountFC: taxableAmountFC + taxAmountFC
+        SalesAmountFC: Number((taxableAmountFC + taxAmountFC).toFixed(2))
       }, { emitEvent: true });
 
       subtotalAmount += taxableAmountFC;
@@ -795,6 +795,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             }
 
             this.form.patchValue(data);
+            this.OnCurrencyChange();
           }
         });
     }
