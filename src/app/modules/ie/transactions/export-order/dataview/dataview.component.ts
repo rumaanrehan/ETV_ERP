@@ -25,6 +25,7 @@ import { ExportOrderTracking } from '../../export-order-tracking/export-order-tr
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
 import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-dataview',
@@ -78,6 +79,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     private pageService: ExportOrderService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextService,
     private router: Router
   ) { }
 
@@ -144,6 +146,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   }
 
   onClickPageHeaderAddButton() {
+    this.navContextService.clear();
     this.router.navigate(['ie/export-order/create']);
   }
 

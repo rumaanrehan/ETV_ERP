@@ -1,12 +1,12 @@
 <ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderBackButton()">
+    <button class="btn btn-primary btn-page-header" (click)="OnClickPageHeaderBackButton()">
         <i class="pi pi-arrow-left"></i>&nbsp;Back</button>
 </ng-template>
 
 <div class="col-xl-12">
     <div class="col-xl-12 page-content">
         <div class="col-xl-12 page-content-scrollable">
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+            <form [formGroup]="form" (ngSubmit)="OnSubmit()" autocomplete="off">
                 <div class="col-xl-12 card m-auto mb-2">
                     <div class="card-body">
                         <div class="horizontal-form">
@@ -18,7 +18,7 @@
                                 <div class="col-xl-2 form-group px-2">
                                     <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
                                         [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="basedOnList"
-                                        [readonly]="isEditMode" (onChange)="onBasedOnChange()"
+                                        [readonly]="isEditMode" (onChange)="OnBasedOnChange()"
                                         [showClear]="false"></z-select>
                                 </div>
                                 <div class="col-xl-6 form-group px-2"></div>
@@ -29,19 +29,19 @@
                                 </div>
                                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnExportOrder">
                                     <z-autocomplete [controlDef]="exportOrderAutoCompleteDef" [allowEmptySearch]="true"
-                                        (onSearch)="loadExportOrder($event)" (onSelect)="onSelect_ExportOrder($event)"
-                                        (onClear)="onClear_ExportOrder()"></z-autocomplete>
+                                        (onSearch)="LoadExportOrder($event)" (onSelect)="OnSelect_ExportOrder($event)"
+                                        (onClear)="OnClear_ExportOrder()"></z-autocomplete>
                                 </div>
                                 <div class="col-xl-3 form-group px-2">
                                     <div class="action-input-group">
                                         <z-autocomplete [controlDef]="companyMasterAutoCompleteDef"
                                             [isClearable]="form.get('BasedOn')?.value == 2"
-                                            (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)"
-                                            (onClear)="onClear_Customer()">
+                                            (onSearch)="LoadCustomer($event)" (onSelect)="OnSelect_Customer($event)"
+                                            (onClear)="OnClear_Customer()">
                                         </z-autocomplete>
                                         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
                                             *ngIf="form.get('BasedOn')?.value == 2" title="Add New Company"
-                                            (click)="handleComponentLoad('VendorCreateComponent')"></i>
+                                            (click)="HandleComponentLoad('VendorCreateComponent')"></i>
                                     </div>
                                 </div>
                                 <div class="col-xl-{{isBasedOnExportOrder ? 3 : 5}}"></div>
@@ -68,7 +68,7 @@
                                             [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
                                         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
                                             title="Add New Currency"
-                                            (click)="handleComponentLoad('CurrencyCreateComponent')"></i>
+                                            (click)="HandleComponentLoad('CurrencyCreateComponent')"></i>
                                     </div>
                                 </div>
                                 <div class=" col-xl-5"></div>
@@ -80,7 +80,7 @@
                                 <div class="col-xl-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
                                         [label]="formConfig.ExchangeRateToBC.label"
-                                        (onChange)="productCalculation()"></z-inputnumber>
+                                        (onChange)="ProductCalculation()"></z-inputnumber>
                                 </div>
 
                                 <div class="col-md-2 form-group px-2">
@@ -130,24 +130,24 @@
                                 <div class="col-xl-3 form-group px-2">
                                     <div class="action-input-group">
                                         <z-autocomplete [controlDef]="loadingPortAutoCompleteDef"
-                                            (onSearch)="loadLoadingPort($event)"
-                                            (onSelect)="OnLoadingPortSelect($event)" (onClear)="onClear_LoadingPort()"
+                                            (onSearch)="LoadLoadingPort($event)"
+                                            (onSelect)="OnLoadingPortSelect($event)" (onClear)="OnClear_LoadingPort()"
                                             [readonly]="isBasedOnExportOrder"></z-autocomplete>
                                         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
                                             title="Add New Port"
-                                            (click)="handleComponentLoad('PortCreateComponent')"></i>
+                                            (click)="HandleComponentLoad('PortCreateComponent')"></i>
                                     </div>
                                 </div>
                                 <div class="col-xl-3 form-group px-2">
                                     <div class="action-input-group">
                                         <z-autocomplete [controlDef]="dischargePortAutoCompleteDef"
-                                            (onSearch)="loadDischargePort($event)"
+                                            (onSearch)="LoadDischargePort($event)"
                                             (onSelect)="OnDischargePortSelect($event)"
-                                            (onClear)="onClear_DischargePort()"
+                                            (onClear)="OnClear_DischargePort()"
                                             [readonly]="isBasedOnExportOrder"></z-autocomplete>
                                         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
                                             title="Add New Port"
-                                            (click)="handleComponentLoad('PortCreateComponent')"></i>
+                                            (click)="HandleComponentLoad('PortCreateComponent')"></i>
                                     </div>
                                 </div>
                                 <div class="col-md-3 form-group px-2">
@@ -168,21 +168,21 @@
                             <div class="card pt-2 pb-2 mb-2 col-auto">
                                 <div class="px-2 d-flex flex-column gap-2">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <p class="mb-0">Subtotal Amount: </p>
+                                        <p class="mb-0">Subtotal Amount: </p>&nbsp; &nbsp; &nbsp;
                                         <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
                                             [label]="formConfig.SubtotalAmountFC.label"
                                             [validationMessage]="formConfig.SubtotalAmountFC.error"
                                             [readonly]="true"></z-inputnumber>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <p class="mb-0">Tax Amount: </p>
+                                        <p class="mb-0">Tax Amount: </p>&nbsp; &nbsp; &nbsp;
                                         <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
                                             [label]="formConfig.TaxAmountFC.label"
                                             [validationMessage]="formConfig.TaxAmountFC.error"
                                             [readonly]="true"></z-inputnumber>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <p class="mb-0">Net Amount: </p>
+                                        <p class="mb-0">Net Amount: </p>&nbsp; &nbsp; &nbsp;
                                         <z-inputnumber [group]="form" [control]="'NetAmountFC'"
                                             [label]="formConfig.NetAmountFC.label"
                                             [validationMessage]="formConfig.NetAmountFC.error"
@@ -200,13 +200,13 @@
         <div class="col-xl-4">
             <div class="col-xl-4 px-1" *ngIf="isEditMode && !isTaxAlreadyExists">
                 <button type="submit" class="btn btn-md btn-primary w-100"
-                    (click)="onClickNavigateToTaxInvoice(this.form.get('ProformaInvoiceID')?.value || null)"> Add Tax
+                    (click)="OnClickNavigateToTaxInvoice(this.form.get('ProformaInvoiceID')?.value || null)"> Add Tax
                     Invoice </button>
             </div>
             <div class="col-xl-4 px-1" *ngIf="isEditMode">
                 <!-- <button type="submit" class="btn btn-md btn-primary w-100" (click)="printInvoice()"> Print
                     Proforma </button> -->
-                <z-button [label]="'Print Proforma Invoice'" (clicked)="printInvoice()"
+                <z-button [label]="'Print Proforma Invoice'" (clicked)="PrintInvoice()"
                     [loading]="disablePrintButton"></z-button>
             </div>
         </div>
@@ -219,12 +219,12 @@
             <div class="col-xl-3 px-1">
                 <button type="submit" class="btn btn-md btn-primary w-100"
                     [disabled]="(statusText === 'Ready To Dispatch' || statusText === 'Dispatched' || statusText === 'Completed') && isEditMode"
-                    (click)="onSubmit()"> {{ isEditMode ? "Update" : "Save" }}
+                    (click)="OnSubmit()"> {{ isEditMode ? "Update" : "Save" }}
                 </button>
             </div>
             <div class="col-xl-3 px-1">
                 <button type="submit" class="btn btn-md btn-primary w-100"
-                    [disabled]="(form.get('BasedOn')?.value == 1 && isEditMode)" (click)=" resetForm()">Reset</button>
+                    [disabled]="(form.get('BasedOn')?.value == 1 && isEditMode)" (click)=" ResetForm()">Reset</button>
             </div>
         </div>
     </div>
@@ -239,13 +239,13 @@
     <div class="action-input-group">
         <div class="col-11">
             <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]"
-                (onSearch)="onSearch_Product($event, rowIndex)" (onSelect)="onSelect_Product($event, rowIndex)"
+                (onSearch)="OnSearch_Product($event, rowIndex)" (onSelect)="OnSelect_Product($event, rowIndex)"
                 (onClear)="OnClear_Product(rowIndex)">
             </z-autocomplete>
         </div>
         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Product"
             *ngIf="rowIndex === this.productListArray.length - 1"
-            (click)="handleComponentLoad('ProductCreateComponent')"></i>
+            (click)="HandleComponentLoad('ProductCreateComponent')"></i>
     </div>
 </ng-template>
 
@@ -253,7 +253,7 @@
     <z-inputnumber [group]="productListArray.at(i)" [control]="'SalesQty'"
         [label]="formConfig.ProductList.items.SalesQty.label"
         [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" [readonly]="isBasedOnExportOrder"
-        (onChange)="productCalculation()">
+        (onChange)="ProductCalculation()">
     </z-inputnumber>
 </ng-template>
 
@@ -262,7 +262,7 @@
         <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"
             [label]="formConfig.ProductList.items.RatePerUnitFC.label"
             [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [styleClass]="'text-end'"
-            [readonly]="isBasedOnExportOrder" (onChange)="productCalculation()"></z-inputnumber>
+            [readonly]="isBasedOnExportOrder" (onChange)="ProductCalculation()"></z-inputnumber>
     </div>
 </ng-template>
 
@@ -271,7 +271,7 @@
         [label]="formConfig.ProductList.items.SalesTaxRate.label"
         [validationMessage]="formConfig.ProductList.items.SalesTaxRate.error?.[i]" [options]="taxSlabList"
         [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" [readonly]="isBasedOnExportOrder"
-        (onChange)="productCalculation();">
+        (onChange)="ProductCalculation();">
     </z-select>
 </ng-template>
 
@@ -280,7 +280,7 @@
         <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxableAmountFC'"
             [label]="formConfig.ProductList.items.TaxableAmountFC.label"
             [validationMessage]="formConfig.ProductList.items.TaxableAmountFC.error?.[i]" [styleClass]="'text-end'"
-            [readonly]="isBasedOnExportOrder"></z-inputnumber>
+            [readonly]="true"></z-inputnumber>
     </div>
 </ng-template>
 
@@ -289,15 +289,15 @@
         <z-inputnumber [group]="productListArray.at(i)" [control]="'TaxAmountFC'"
             [label]="formConfig.ProductList.items.TaxAmountFC.label"
             [validationMessage]="formConfig.ProductList.items.TaxAmountFC.error?.[i]" [styleClass]="'text-end'"
-            [readonly]="isBasedOnExportOrder"></z-inputnumber>
+            [readonly]="true"></z-inputnumber>
     </div>
 </ng-template>
 
 <ng-template #actionColTemplate let-row let-rowIndex="index">
-    <div class="col-12 tables-action-col">
+    <div class="col-12 tables-action-col" *ngIf="!isBasedOnExportOrder">
         <div class="col-6 justify-item-center">
             <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-                (click)="onClickRemoveProductItem(rowIndex)">
+                (click)="OnClickRemoveProductItem(rowIndex)">
                 <i class="pi pi-minus-circle"></i></span>
         </div>
         <div class="col-6 justify-item-center">
