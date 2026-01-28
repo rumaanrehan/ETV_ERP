@@ -46,7 +46,7 @@
                 <div class="col-xl-{{isBasedOnSalesQuotation ? 3 : 5}}"></div>
                 <div class="col-xl-2 form-group px-2">
                   <z-datepicker [group]="form" [control]="'ReferenceDate'" [label]="formConfig.ReferenceDate.label"
-                    [validationMessage]="formConfig.ReferenceDate.error"></z-datepicker>
+                    [validationMessage]="formConfig.ReferenceDate.error" [maxDate]="todayDate"></z-datepicker>
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-inputtext [group]="form" [control]="'ReferenceNo'" [label]="formConfig.ReferenceNo.label"

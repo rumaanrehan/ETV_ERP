@@ -16,6 +16,7 @@ import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 import { CheckboxModule } from 'primeng/checkbox';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-dataview',
@@ -56,6 +57,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     private pageService: SalesQuotationService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextService,
     private router: Router
   ) { }
 
@@ -123,6 +125,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   }
 
   onClickPageHeaderAddButton() {
+    this.navContextService.clear();
     this.router.navigate(['ie/sales-quotation/create']);
   }
 

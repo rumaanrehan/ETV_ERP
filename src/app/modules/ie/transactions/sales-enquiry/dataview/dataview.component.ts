@@ -16,6 +16,7 @@ import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/
 import { DataViewDef, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 import { DataViewLazyLoadEvent } from 'primeng/dataview';
 import { CheckboxModule } from 'primeng/checkbox';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-dataview',
@@ -56,6 +57,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     private pageService: SalesEnquiryService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextService,
     private router: Router
   ) { }
 
@@ -79,6 +81,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   }
 
   onClickPageHeaderAddButton() {
+    this.navContextService.clear();
     this.router.navigate(['ie/sales-enquiry/create']);
   }
 

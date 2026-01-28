@@ -136,7 +136,7 @@
         <button type="submit" class="btn btn-md btn-primary w-100"
           (click)="OnClickNavigateToExportOrder(this.form.get('SalesQuotationID')?.value || null)"> Add Export </button>
       </div>
-      <div class="col-xl-4 px-1" *ngIf="isEditMode">
+      <div class="col-xl-5 px-1" *ngIf="isEditMode">
         <z-button [label]="'Print Sales Quotation'" (clicked)="PrintSalesQuotation()"
           [loading]="disablePrintButton"></z-button>
       </div>
@@ -166,11 +166,13 @@
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
   <div class="action-input-group">
-    <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="OnSearch_Product($event, rowIndex)"
-      (onSelect)="OnSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
-    </z-autocomplete>
-    <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add Product Company"
-      (click)="HandleComponentLoad('ProductCreateComponent')" *ngIf="rowIndex === this.productListArray.length - 1"></i>
+    <div class="col-11">
+      <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="OnSearch_Product($event, rowIndex)"
+        (onSelect)="OnSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
+      </z-autocomplete>
+    </div>
+    <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Product"
+      *ngIf="rowIndex === this.productListArray.length - 1" (click)="HandleComponentLoad('ProductCreateComponent')"></i>
   </div>
 </ng-template>
 

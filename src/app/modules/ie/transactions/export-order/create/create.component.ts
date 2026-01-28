@@ -27,6 +27,7 @@ import { ExportOrder, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPay
 import { ExportOrderService } from '../export-order.service';
 import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
 import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-create',
@@ -58,6 +59,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('paymentDateTemplate', { static: true }) paymentDateTemplate!: TemplateRef<any>;
   @ViewChild('paymentActionColTemplate', { static: true }) paymentActionColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+
+  todayDate: Date = new Date();
 
   componentRef?: ComponentRef<any>;
 
@@ -101,6 +104,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private currencyExchangeService: CurrencyExchangeService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -125,8 +129,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
         { data: "TaxRate", label: "Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountBC", label: "Taxable Amount", width: "12%", customTemplate: this.taxableAmountFCColTemplate },
-        { data: "TaxAmountBC", label: "Tax Amount", width: "12%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
+        { data: "TaxAmountBC", label: "Tax Amount", width: "11%", customTemplate: this.taxAmountFCColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "6%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
@@ -137,15 +141,13 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(paramMap => {
         const exportOrderID = Number(paramMap.get('id'));
-        const salesQuotationID = Number(paramMap.get('salesQuotationID'));
 
         if (exportOrderID) {
-          this.loadExportOrder(exportOrderID);
+          this.GetDetails(exportOrderID);
           return;
         }
-        else if (salesQuotationID) {
-          this.isFromSalesQuotation = true;
-          this.GetSalesQuotation(salesQuotationID);
+        else if (this.navContextService.source) {
+          this.GetSalesQuotation(this.navContextService.sourceId!);
           return;
         }
 
@@ -218,17 +220,15 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   onClickAddProformaInvoice(exportOrderID: number): void {
     if (exportOrderID) {
-      this.router.navigate([`ie/proforma-invoice/from-export/${exportOrderID}`]);
-    } else {
-      return;
+      this.navContextService.set('export-order', exportOrderID);
+      this.router.navigate([`ie/proforma-invoice/create`]);
     }
   }
 
   onClickNavigateToTaxInvoice(exportOrderID: number): void {
     if (exportOrderID) {
-      this.router.navigate([`ie/tax-invoice/from-export/${exportOrderID}`]);
-    } else {
-      return;
+      this.navContextService.set('export-order', exportOrderID);
+      this.router.navigate([`ie/tax-invoice/create`]);
     }
   }
 
@@ -253,6 +253,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           if (this.productListArray.length == 0) {
             this.AddProductRow();
           }
+          this.productCalculation();
           return
         }
       });
@@ -264,6 +265,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.productListArray.length == 0) {
         this.AddProductRow();
       }
+      this.productCalculation();
     }
   }
 
@@ -321,10 +323,12 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onClear_SalesQuotation(): void {
+    const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<ExportOrder>(this.formConfig, this.form);
     this.selectedCustomerAddress = null;
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.form.get('BasedOn')?.patchValue(basedOnValue);
   }
 
   getAmount(index: number): number[] {
@@ -555,13 +559,13 @@ export class CreateComponent implements OnInit, OnDestroy {
       const quantity = group.get('SalesQty')?.value || 0;
       const salesTaxRate = group.get('SalesTaxRate')?.value || 0;
 
-      const taxableAmountFC = quantity * rate;
-      const taxAmountFC = (taxableAmountFC * salesTaxRate) / 100;
+      const taxableAmountFC = Number((rate * quantity).toFixed(3));
+      const taxAmountFC = Number(((taxableAmountFC * salesTaxRate) / 100).toFixed(3));
 
       group.patchValue({
-        TaxableAmountFC: taxableAmountFC,
-        TaxAmountFC: taxAmountFC,
-        SalesAmountFC: taxableAmountFC + taxAmountFC
+        TaxableAmountFC: Number(taxableAmountFC.toFixed(3)),
+        TaxAmountFC: Number(taxAmountFC.toFixed(3)),
+        SalesAmountFC: Number((taxableAmountFC + taxAmountFC).toFixed(3))
       }, { emitEvent: true });
 
       subtotalAmount += taxableAmountFC;
@@ -649,6 +653,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
+    this.productCalculation();
     this.convertAmountsToBC();
     try {
       if (this.form.value.ProductList.length === 0) {
@@ -663,7 +668,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
-        this.alertService.showValidationAlert();
+        this.alertService.showValidationAlert(this.formService.getValidationMessages(this.formConfig));
         this.isSubmitted = false;
         return;
       }
@@ -755,10 +760,10 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadExportOrder(id: number): void {
+  GetDetails(exportOrderID: number): void {
     this.isEditMode = true;
     try {
-      this.pageService.GetDetails(id)
+      this.pageService.GetDetails(exportOrderID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -790,6 +795,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             }
 
             this.form.patchValue(data);
+            this.OnCurrencyChange();
           }
         });
     }
@@ -820,12 +826,11 @@ export class CreateComponent implements OnInit, OnDestroy {
                 this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
               });
 
-              console.log("ProductList", this.productListArray.value);
-
               this.tableDef.data = this.productListArray.value;
               const { ProductList, BasedOn, IsRoundOff, ExchangeRateToBC, Narration, ...formValues } = response.Data;
-
               this.form.patchValue(formValues);
+              this.form.get('BasedOn')?.setValue(1);
+              this.OnCurrencyChange();
               this.productCalculation();
             } else {
               this.alertService.showServerResponseAlert(response);
