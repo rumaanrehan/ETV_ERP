@@ -11,6 +11,7 @@ import { ProformaInvoice, ProformaInvoice_IndexTableFilter, ProformaInvoice_Inde
 import { Subject, takeUntil } from 'rxjs';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { CommonModule } from '@angular/common';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-index',
@@ -38,6 +39,7 @@ export class IndexComponent {
     private pageService: ProformaInvoiceService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextService,
     private router: Router,
   ) { }
 
@@ -73,6 +75,7 @@ export class IndexComponent {
   }
 
   onClickPageHeaderAddButton(): void {
+    this.navContextService.clear();
     this.router.navigate(['ie/proforma-invoice/create']);
   }
 

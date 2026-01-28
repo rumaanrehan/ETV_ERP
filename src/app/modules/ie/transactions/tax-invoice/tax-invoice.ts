@@ -43,9 +43,6 @@ export interface TaxInvoice {
     ProductList: TaxInvoiceDetail[];
 
     Customer?: CompanyMaster;
-
-    ProductID: number | null;
-    ProductName: string | null;
 }
 
 export interface TaxInvoiceDetail {

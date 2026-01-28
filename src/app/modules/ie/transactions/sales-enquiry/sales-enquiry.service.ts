@@ -17,6 +17,8 @@ import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-on
 import { Environment } from '../../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
+import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
+import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -114,18 +116,19 @@ export class SalesEnquiryService {
       EnquiryDate: {
         label: 'Enquiry Date',
         defaultValue: new Date(),
-        validators: [Validators.required],
+        validators: [Validators.required, LessThanOrEqual("ExpectedDeliveryDate")],
         validationMessages: {
-          required: "Enquiry Date is required"
+          required: "Enquiry Date is required",
+          lessThanOrEqual: "Enquiry Date must be less than or equal to Expected Delivery Date"
         },
         type: 'control',
       },
       ExpectedDeliveryDate: {
         label: 'Expected Delivery Date',
         defaultValue: null,
-        validators: [GreaterThan("EnquiryDate")],
+        validators: [GreaterThanOrEqual("EnquiryDate")],
         validationMessages: {
-          greaterThan: "Expected Delivery Date must be later than the Enquiry Date"
+          greaterThanOrEqual: "Expected Delivery Date must be greater than or equal to Enquiry Date"
         },
         type: 'control'
       },

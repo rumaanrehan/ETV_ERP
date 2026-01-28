@@ -11,6 +11,7 @@ import { FormService } from '../../../../../shared/services/form.service';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { TaxInvoiceService } from '../tax-invoice.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-index',
@@ -29,7 +30,7 @@ export class IndexComponent {
   @ViewChild('taxAmountFCTemplate', { static: true }) taxAmountFCTemplate!: TemplateRef<any>;
   @ViewChild('netAmountFCTemplate', { static: true }) netAmountFCTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-  
+
   tableDef!: DataTableDef<TaxInvoice_IndexTableList>;
   tableEvent!: TableLazyLoadEvent;
 
@@ -38,9 +39,10 @@ export class IndexComponent {
     private pageService: TaxInvoiceService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextService,
     private router: Router
   ) { }
-  
+
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.tableDef = {
@@ -61,7 +63,7 @@ export class IndexComponent {
       { data: 'CustomerName', label: 'Customer', width: "20%", filterable: true },
       { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "12%", customTemplate: this.subtotalAmountFCTemplate },
       { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "12%", customTemplate: this.taxAmountFCTemplate },
-      { data: 'NetAmountFC', label: 'Net Amount', width: "12%" , customTemplate: this.netAmountFCTemplate },
+      { data: 'NetAmountFC', label: 'Net Amount', width: "12%", customTemplate: this.netAmountFCTemplate },
       { data: 'StatusID', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'Status', cssClass: 'text-center', customTemplate: this.taxInvoiceStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "6%", customTemplate: this.actionColTemplate },
     ];
@@ -73,6 +75,7 @@ export class IndexComponent {
   }
 
   onClickPageHeaderAddButton(): void {
+    this.navContextService.clear();
     this.router.navigate(['ie/tax-invoice/create']);
   }
 
@@ -80,7 +83,7 @@ export class IndexComponent {
     this.tableEvent = event;
     this.loadData();
   }
-  
+
   loadData(): void {
     try {
       const model: DataTableParams<TaxInvoice_IndexTableFilter> = {

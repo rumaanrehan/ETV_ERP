@@ -16,7 +16,7 @@ import { Product_SelectList, ProductMaster, ProductRequest } from "../../../../i
 import { Company_SelectList, CompanyMaster, CompanyRequest } from "../../../settings/company-master/company-master";
 import { SalesEnquiry } from "../sales-enquiry";
 import { SalesEnquiryService } from "../sales-enquiry.service";
-import { NavContextServiceService } from "../../../../../core/services/nav-context.service.service";
+import { NavContextService } from "../../../../../core/services/nav-context.service.service";
 
 @Component({
   selector: 'app-create',
@@ -59,7 +59,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     private pageService: SalesEnquiryService,
     private formService: FormService,
     private alertService: AlertNotificationService,
-    private navContextService: NavContextServiceService,
+    private navContextService: NavContextService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
