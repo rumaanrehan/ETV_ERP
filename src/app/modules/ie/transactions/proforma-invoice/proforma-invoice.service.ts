@@ -1,39 +1,38 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { Environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
 import { SelectListService } from '../../../../shared/services/select-list.service';
+import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
+import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
+import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
+import { NonZero } from '../../../../shared/validators/non-zero.validator';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { Product_SelectList, ProductRequest } from '../../../ims/settings/product-master/product-master';
-import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
-import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
-import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { ExportOrder_Detail, ExportOrder_SelectList, ExportOrderRequest } from '../export-order/export-order';
-import { ExportOrderService } from '../export-order/export-order.service';
-import { ProformaInvoice, ProformaInvoice_Detail, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from './proforma-invoice';
 import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
 import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
 import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
-import { HttpClient } from '@angular/common/http';
-import { Port_SelectList, PortRequest } from '../../settings/port-master/port-master';
-import { PortMasterService } from '../../settings/port-master/port-master.service';
+import { Product_SelectList, ProductRequest } from '../../../ims/settings/product-master/product-master';
+import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
+import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
+import { CompanyMasterService } from '../../settings/company-master/company-master.service';
 import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
-import { Environment } from '../../../../../environments/environment';
-import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
-import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
-import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
-import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
-import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { NotEqualToValidator } from '../../../../shared/validators/not-equal-to.validator';
-import { NonZero } from '../../../../shared/validators/non-zero.validator';
-import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
+import { Port_SelectList, PortRequest } from '../../settings/port-master/port-master';
+import { PortMasterService } from '../../settings/port-master/port-master.service';
+import { ExportOrder_Detail, ExportOrder_SelectList, ExportOrderRequest } from '../export-order/export-order';
+import { ExportOrderService } from '../export-order/export-order.service';
+import { ProformaInvoice, ProformaInvoice_Detail, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_SelectList, ProformaInvoiceDetail, ProformaInvoiceRequest } from './proforma-invoice';
 
 @Injectable({
   providedIn: 'root'
@@ -241,10 +240,11 @@ export class ProformaInvoiceService {
       ExchangeRateToBC: {
         label: 'Exchange Rate to BC',
         defaultValue: null,
-        validators: [Validators.required, NonZero()],
+        validators: [Validators.required, Validators.min(0.01), Validators.max(999999999)],
         validationMessages: {
           required: "Exchange Rate is required.",
-          nonZero: "Exchange Rate cannot be 0."
+          min: "Exchange Rate must be greater than 0.",
+          max: "Exchange Rate to BC must be less than or equal to 999,999,999."
         },
         type: 'control'
       },
