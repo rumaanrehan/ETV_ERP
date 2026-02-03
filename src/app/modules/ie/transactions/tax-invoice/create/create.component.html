@@ -28,7 +28,7 @@
                                         [validationMessage]="formConfig.TaxInvoiceDate.error"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnDocument">
-                                    <z-autocomplete [controlDef]="documentAutoCompleteDef"
+                                    <z-autocomplete [controlDef]="documentAutoCompleteDef" [allowEmptySearch]="true"
                                         (onSearch)="LoadDocument($event)" (onSelect)="OnSelect_Document($event)"
                                         (onClear)="OnClear_Document()"></z-autocomplete>
                                 </div>
@@ -79,9 +79,8 @@
                                 <div class="col-xl-5"></div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
-                                        [label]="formConfig.ExchangeRateDate.label"
-                                        [validationMessage]="formConfig.ExchangeRateDate.error"
-                                        [readonly]="isBasedOnDocument"></z-datepicker>
+                                        [label]="formConfig.ExchangeRateDate.label" [validationMessage]="formConfig.ExchangeRateDate.error"
+                                        [readonly]="isBasedOnDocument" [maxDate]="todayDate"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
@@ -246,11 +245,11 @@
         <div class="col-11">
             <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]"
                 (onSearch)="OnSearch_Product($event, rowIndex)" (onSelect)="OnSelect_Product($event, rowIndex)"
-                (onClear)="OnClear_Product(rowIndex)">
+                (onClear)="OnClear_Product(rowIndex)" [readonly]="isBasedOnDocument" [isClearable]="!isBasedOnDocument">
             </z-autocomplete>
         </div>
         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Product"
-            *ngIf="rowIndex === this.productListArray.length - 1"
+            *ngIf="rowIndex === this.productListArray.length - 1 && !isBasedOnDocument"
             (click)="HandleComponentLoad('ProductCreateComponent')"></i>
     </div>
 </ng-template>
@@ -261,6 +260,14 @@
         [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" [readonly]="isBasedOnDocument"
         (onChange)="ProductCalculation()">
     </z-inputnumber>
+</ng-template>
+
+<ng-template #hSCodeColTemplate let-row let-i="index">
+    <div class="input-group">
+        <z-inputtext [group]="productListArray.at(i)" [control]="'HSCode'"
+            [validationMessage]="formConfig.ProductList.items.HSCode.error?.[i]"
+            [readonly]="isBasedOnDocument"></z-inputtext>
+    </div>
 </ng-template>
 
 <ng-template #ratePerUnitFCColTemplate let-row let-i="index">

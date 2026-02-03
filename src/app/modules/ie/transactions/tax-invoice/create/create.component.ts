@@ -41,12 +41,15 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('salesQtyColTemplate', { static: true }) salesQtyColTemplate!: TemplateRef<any>;
+  @ViewChild('hSCodeColTemplate', { static: true }) hSCodeColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitFCColTemplate', { static: true }) ratePerUnitFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxRateColTemplate', { static: true }) taxRateColTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+
+  todayDate: Date = new Date(new Date().setHours(23, 59, 59, 999));
 
   componentRef?: ComponentRef<any>;
   loaderService = inject(LoaderService);
@@ -103,6 +106,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "SalesQty", label: "Sales Qty", width: "8%", customTemplate: this.salesQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
+        { data: "HSCode", label: "HS Code", width: "8%", customTemplate: this.hSCodeColTemplate },
         { data: "RatePerUnitFC", label: "Rate", width: "8%", customTemplate: this.ratePerUnitFCColTemplate },
         { data: "TaxRate", label: "Tax Rate", width: "10%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountFC", label: "Taxable Amount", width: "10%", customTemplate: this.taxableAmountFCColTemplate },
@@ -267,6 +271,9 @@ export class CreateComponent implements OnInit, OnDestroy {
                 );
               } else {
                 this.documentAutoCompleteDef.options = [];
+                if (response.Message != "Record not found.") {
+                  this.alertService.showServerResponseAlert(response);
+                }
               }
             },
           });
@@ -296,8 +303,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             },
           });
       }
-    } catch (error) {
-    }
+    } catch (error) { }
   }
 
   OnSelect_Document(event: Document_SelectList): void {
@@ -319,10 +325,12 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   OnClear_Document(): void {
+    const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<TaxInvoice>(this.formConfig, this.form);
     this.selectedCustomerAddress = '';
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.form.get('BasedOn')?.patchValue(basedOnValue);
   }
 
   LoadCustomer(event: string): void {
@@ -784,12 +792,12 @@ export class CreateComponent implements OnInit, OnDestroy {
               });
 
               this.tableDef.data = this.productListArray.value;
-              const { ProductList, BasedOn, IsRoundOff, ExchangeRateDate, ExchangeRateToBC, ...formValues } = response.Data;
+              const { ProductList, ExportOrderID, ExportOrderNo, BasedOn, IsRoundOff, ExchangeRateDate, ExchangeRateToBC, ...formValues } = response.Data;
               this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
               formValues.ReferenceDate = DateUtils.toDate(formValues.ReferenceDate)!
               this.form.patchValue({
                 ...formValues,
-                DocumentNo: formValues.ExportOrderNo,
+                DocumentNo: formValues.ProformaInvoiceNo,
                 BasedOn: 1
               });
 

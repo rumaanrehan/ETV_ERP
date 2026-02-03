@@ -337,6 +337,17 @@ export class TaxInvoiceService {
             label: 'Measurement Unit',
             defaultValue: null,
           },
+          HSCode: {
+            label: 'HS Code',
+            defaultValue: null,
+            validators: [Validators.minLength(2), Validators.maxLength(8), Validators.pattern(/^\d{2,8}$/)],
+            validationMessages: {
+              minlength: "HS Code must be at least 2 digits.",
+              maxlength: "HS Code cannot exceed 8 digits.",
+              pattern: "HS Code must contain only digits."
+            },
+            type: 'control'
+          },
           RatePerUnitFC: {
             label: '',
             defaultValue: null,
@@ -622,7 +633,7 @@ export class TaxInvoiceService {
       group: form,
       control: 'ProductName',
       label: formConfig.ProductName.label,
-      validationMessage: formConfig.ProductName.error,
+      validationMessage: formConfig.ProductName.error?.[0],
       placeholder: 'Search Product',
       options: [],
       optionLabel: 'ProductName',

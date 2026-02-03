@@ -49,6 +49,7 @@ export interface TaxInvoiceDetail {
     ProductID: number | null;
     ProductName: string | null;
     UOM: string | null;
+    HSCode: string | null;
     SalesQty: number | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
