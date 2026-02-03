@@ -69,6 +69,7 @@ export interface SalesQuotation_IndexTableList {
     TaxAmountFC: number;
     NetAmountFC: number;
     StatusText: string;
+    StatusHex: string;
     CurrencySymbol: string;
 
     /** UI only */

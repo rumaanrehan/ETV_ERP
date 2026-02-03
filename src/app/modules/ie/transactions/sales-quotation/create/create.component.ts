@@ -99,12 +99,12 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "QuotedQty", label: "Quoted Qty", width: "10%", customTemplate: this.quotedQtyColTemplate },
-        { data: "UOM", label: "UOM", width: "8%" },
+        { data: "UOM", label: "UOM", width: "7%" },
         { data: "RatePerUnitFC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
-        { data: "QuotedTaxRate", label: "Quoted Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
-        { data: "TaxableAmountFC", label: "Taxable Amount", width: "10%", customTemplate: this.taxableAmountFCColTemplate },
+        { data: "QuotedTaxRate", label: "Quoted Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
+        { data: "TaxableAmountFC", label: "Taxable Amount", width: "12%", customTemplate: this.taxableAmountFCColTemplate },
         { data: "TaxAmountFC", label: "Tax Amount", width: "12%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "7%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     };

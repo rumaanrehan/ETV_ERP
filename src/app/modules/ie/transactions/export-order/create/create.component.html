@@ -71,7 +71,7 @@
                 </div>
                 <div class="col-xl-5"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
+                  <z-datepicker [group]="form" [control]="'ExchangeRateDate'" [maxDate]="todayDate"
                     [label]="formConfig.ExchangeRateDate.label"></z-datepicker>
                 </div>
                 <div class="col-xl-2 form-group px-2">
@@ -239,7 +239,7 @@
       </div>
     </div>
     <div class="col-xl-4">
-      <div class="status-pill" [ngStyle]="{'background-color': '#'+statusHex}" *ngIf="isEditMode">
+      <div class="status-pill" [ngStyle]="{'background-color': statusHex}" *ngIf="isEditMode">
         <span>Status: {{statusText}}</span>
       </div>
     </div>
