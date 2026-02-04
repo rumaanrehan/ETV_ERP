@@ -48,6 +48,7 @@ export interface ProformaInvoiceDetail {
     ProductID: number | null;
     ProductName: string | null;
     SalesQty: number | null;
+    HSCode: string | null;
     UOM: string | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
