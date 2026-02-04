@@ -111,38 +111,54 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "TaxRate", label: "Tax Rate", width: "10%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountFC", label: "Taxable Amount", width: "10%", customTemplate: this.taxableAmountFCColTemplate },
         { data: "TaxAmountFC", label: "Tax Amount", width: "10%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "8%", customTemplate: this.actionColTemplate },
+        { data: "ActionCol", label: "", hideVisToggle: true, width: "8%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
-
+    this.updateActionColWidth(this.form.get('BasedOn')?.value);
     this.LoadDropdownList();
 
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
-      .subscribe(paramMap => {
-        const taxInvoiceID = Number(paramMap.get('id'));
-        if (taxInvoiceID) {
-          this.isEditMode = true;
-          this.GetDetails(taxInvoiceID);
-          return;
-        }
-        else if (this.navContextService.source) {
-          if (this.navContextService.source == 'export-order') {
-            this.GetExportOrder(this.navContextService.sourceId!);
+      .subscribe({
+        next: paramMap => {
+          const taxInvoiceID = Number(paramMap.get('id'));
+          if (taxInvoiceID) {
+            this.isEditMode = true;
+            this.GetDetails(taxInvoiceID);
             return;
           }
-          else if (this.navContextService.source == 'proforma-invoice') {
-            this.GetProformaInvoice(this.navContextService.sourceId!);
-            return;
+          else if (this.navContextService.source) {
+            if (this.navContextService.source == 'export-order') {
+              this.GetExportOrder(this.navContextService.sourceId!);
+              return;
+            }
+            else if (this.navContextService.source == 'proforma-invoice') {
+              this.GetProformaInvoice(this.navContextService.sourceId!);
+              return;
+            }
           }
-        }
 
-        this.isEditMode = false;
-        if (this.productListArray.length === 0) {
-          this.AddProductRow();
+          this.isEditMode = false;
+          if (this.productListArray.length === 0) {
+            this.AddProductRow();
+          }
+        },
+        complete: () => {
+          this.updateActionColWidth(this.form.get('BasedOn')?.value);
         }
       });
+  }
+
+  updateActionColWidth(value: number) {
+    this.tableDef = {
+      ...this.tableDef,
+      columnDef: this.tableDef.columnDef.map(col =>
+        col.data === 'ActionCol'
+          ? { ...col, width: value <= 2 ? '0%' : '7%' }
+          : col
+      )
+    };
   }
 
   ngOnDestroy(): void {
@@ -243,6 +259,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.updateActionColWidth(basedOnValue);
 
     if (basedOnValue === 3) {
       this.AddProductRow();
@@ -312,11 +329,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     const basedOn = this.form.get('BasedOn')?.value;
     if (event.DocumentID) {
       if (basedOn == 1) {
-        this.form.patchValue({ ProformInvoiceID: this.form.get('DocumentID')?.value });
+        // this.form.patchValue({ ProformInvoiceID: this.form.get('DocumentID')?.value });
         this.GetProformaInvoice(event.DocumentID);
       }
       else if (basedOn == 2) {
-        this.form.patchValue({ ExportOrderID: this.form.get('DocumentID')?.value });
+        // this.form.patchValue({ ExportOrderID: this.form.get('DocumentID')?.value });
         this.GetExportOrder(event.DocumentID);
       }
     }
@@ -748,6 +765,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               const { ProductList, ...formValues } = response.Data;
               const data = {
                 ...formValues,
+                DocumentID: response.Data.BasedOn === 1 ? response.Data.ProformaInvoiceID : response.Data.ExportOrderID,
                 DocumentNo: response.Data.BasedOn === 1 ? response.Data.ProformaInvoiceNo : response.Data.ExportOrderNo,
                 TaxInvoiceDate: DateUtils.toDate(response.Data.TaxInvoiceDate!),
                 ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!),
@@ -760,6 +778,9 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.alertService.showServerResponseAlert(response);
             }
           },
+          complete: () => {
+            this.updateActionColWidth(this.form.get('BasedOn')?.value);
+          }
         });
     }
     catch (error) {
@@ -774,6 +795,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data);
               this.productListArray.clear();
               response.Data.ProductList.Items.forEach(item => {
                 const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
@@ -797,9 +819,11 @@ export class CreateComponent implements OnInit, OnDestroy {
               formValues.ReferenceDate = DateUtils.toDate(formValues.ReferenceDate)!
               this.form.patchValue({
                 ...formValues,
+                DocumentID: response.Data.ProformaInvoiceID,
                 DocumentNo: formValues.ProformaInvoiceNo,
                 BasedOn: 1
               });
+              console.log(this.form.value);
 
               this.OnCurrencyChange();
               this.ProductCalculation();
@@ -842,9 +866,9 @@ export class CreateComponent implements OnInit, OnDestroy {
 
               // Create the document option for autocomplete
               const documentOption: Document_SelectList = {
+                DocumentID: response.Data.ExportOrderID, // Add other required fields
                 DocumentNo: response.Data.ExportOrderNo,
-                CustomerName: response.Data.CustomerName,
-                DocumentID: response.Data.ExportOrderID  // Add other required fields
+                CustomerName: response.Data.CustomerName
               };
 
               // Set the autocomplete options

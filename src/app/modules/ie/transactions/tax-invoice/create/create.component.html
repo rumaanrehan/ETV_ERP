@@ -223,13 +223,13 @@
         <div class="col-xl-4">
             <div class="col-xl-3 px-1">
                 <button type="submit" class="btn btn-md btn-primary w-100"
-                    [disabled]="!(statusText === 'Draft') && isEditMode" (click)="OnSubmit()"> {{ isEditMode ? "Update"
-                    : "Save" }}
+                    [disabled]="!(statusText === 'Draft' || statusText === 'Generated') && isEditMode"
+                    (click)="OnSubmit()"> {{ isEditMode ? "Update" : "Save" }}
                 </button>
             </div>
             <div class="col-xl-3 px-1">
                 <button type="submit" class="btn btn-md btn-primary w-100"
-                    [disabled]="(form.get('BasedOn')?.value == 1 && isEditMode)" (click)=" ResetForm()">Reset</button>
+                    [disabled]="(form.get('BasedOn')?.value <= 2 && isEditMode)" (click)=" ResetForm()">Reset</button>
             </div>
         </div>
     </div>

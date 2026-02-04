@@ -119,26 +119,26 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: paramMap => {
-        const proformaInvoiceID = Number(paramMap.get('id'));
+          const proformaInvoiceID = Number(paramMap.get('id'));
 
-        if (proformaInvoiceID) {
-          this.GetDetails(proformaInvoiceID);
-          return;
-        }
-        else if (this.navContextService.source) {
-          this.GetExportOrder(this.navContextService.sourceId!);
-          return;
-        }
+          if (proformaInvoiceID) {
+            this.GetDetails(proformaInvoiceID);
+            return;
+          }
+          else if (this.navContextService.source) {
+            this.GetExportOrder(this.navContextService.sourceId!);
+            return;
+          }
 
-        this.isEditMode = false;
-        if (this.productListArray.length === 0) {
-          this.AddProductRow();
+          this.isEditMode = false;
+          if (this.productListArray.length === 0) {
+            this.AddProductRow();
+          }
+        },
+        complete: () => {
+          this.updateActionColWidth(this.form.get('BasedOn')?.value);
         }
-      },
-      complete: () => {
-        this.updateActionColWidth(this.form.get('BasedOn')?.value);
-      }
-    });
+      });
   }
 
   get isBasedOnExportOrder(): boolean {
