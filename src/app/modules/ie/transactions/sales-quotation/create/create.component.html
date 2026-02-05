@@ -183,6 +183,13 @@
   </z-inputnumber>
 </ng-template>
 
+<ng-template #hSCodeColTemplate let-row let-i="index">
+    <div class="input-group">
+        <z-inputtext [group]="productListArray.at(i)" [control]="'HSCode'"
+            [validationMessage]="formConfig.ProductList.items.HSCode.error?.[i]"></z-inputtext>
+    </div>
+</ng-template>
+
 <ng-template #ratePerUnitFCColTemplate let-row let-i="index">
   <div class="input-group">
     <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"

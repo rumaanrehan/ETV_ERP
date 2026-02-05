@@ -31,6 +31,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('requestedQtyColTemplate', { static: true }) requestedQtyColTemplate!: TemplateRef<any>;
+  @ViewChild('hSCodeColTemplate', { static: true }) hSCodeColTemplate!: TemplateRef<any>;
   @ViewChild('remarkColTemplate', { static: true }) remarkColTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
@@ -76,6 +77,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "ProductName", label: "Product", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "RequestedQty", label: "Requested Qty", width: "10%", customTemplate: this.requestedQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
+        { data: "HSCode", label: "HS Code", width: "8%", customTemplate: this.hSCodeColTemplate },
         { data: "Remarks", label: "Remark", width: "25%", customTemplate: this.remarkColTemplate },
         { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
       ],

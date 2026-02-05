@@ -746,6 +746,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                   ProductName: item.ProductName,
                   SalesQty: item.SalesQty,
                   UOM: item.UOM,
+                  HSCode: item.HSCode,
                   RatePerUnitFC: item.RatePerUnitFC,
                   SalesTaxRate: item.SalesTaxRate
                 });
