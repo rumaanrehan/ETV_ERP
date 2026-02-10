@@ -38,7 +38,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('quotedQtyColTemplate', { static: true }) quotedQtyColTemplate!: TemplateRef<any>;
-  @ViewChild('hSCodeColTemplate', { static: true }) hSCodeColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitFCColTemplate', { static: true }) ratePerUnitFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxRateColTemplate', { static: true }) taxRateColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
@@ -101,7 +100,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "20%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "QuotedQty", label: "Quoted Qty", width: "10%", customTemplate: this.quotedQtyColTemplate },
         { data: "UOM", label: "UOM", width: "8%" },
-        { data: "HSCode", label: "HS Code", width: "8%", customTemplate: this.hSCodeColTemplate },
+        { data: "HSCode", label: "HS Code", width: "8%" },
         { data: "RatePerUnitFC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
         { data: "QuotedTaxRate", label: "Quoted Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountFC", label: "Taxable Amount", width: "10%", customTemplate: this.taxableAmountFCColTemplate },

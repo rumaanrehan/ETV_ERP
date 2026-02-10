@@ -457,13 +457,13 @@ export class ExportOrderService {
           HSCode: {
             label: 'HS Code',
             defaultValue: null,
-            validators: [Validators.minLength(2), Validators.maxLength(8), Validators.pattern(/^\d{2,8}$/)],
-            validationMessages: {
-              minlength: "HS Code must be at least 2 digits.",
-              maxlength: "HS Code cannot exceed 8 digits.",
-              pattern: "HS Code must contain only digits."
-            },
-            type: 'control'
+            // validators: [Validators.minLength(2), Validators.maxLength(8), Validators.pattern(/^\d{2,8}$/)],
+            // validationMessages: {
+            //   minlength: "HS Code must be at least 2 digits.",
+            //   maxlength: "HS Code cannot exceed 8 digits.",
+            //   pattern: "HS Code must contain only digits."
+            // },
+            // type: 'control'
           },
           RatePerUnitFC: {
             label: '',

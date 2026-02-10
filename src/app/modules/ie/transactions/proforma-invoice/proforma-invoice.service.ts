@@ -31,7 +31,6 @@ import { CurrencyExchangeService } from '../../../../shared/services/currency-ex
 import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
 import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { NotEqualToValidator } from '../../../../shared/validators/not-equal-to.validator';
 import { NonZero } from '../../../../shared/validators/non-zero.validator';
 import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
 
