@@ -76,6 +76,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "ProductName", label: "Product", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "RequestedQty", label: "Requested Qty", width: "10%", customTemplate: this.requestedQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
+        { data: "HSCode", label: "HS Code", width: "8%" },
         { data: "Remarks", label: "Remark", width: "25%", customTemplate: this.remarkColTemplate },
         { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
       ],

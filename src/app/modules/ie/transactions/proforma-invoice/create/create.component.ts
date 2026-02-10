@@ -104,6 +104,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "20%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "SalesQty", label: "Sales Qty", width: "10%", customTemplate: this.salesQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
+        { data: "HSCode", label: "HS Code", width: "8%" },
         { data: "RatePerUnitFC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
         { data: "TaxRate", label: "Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountFC", label: "Taxable Amount", width: "12%", customTemplate: this.taxableAmountFCColTemplate },
@@ -477,7 +478,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     row.patchValue({
       ProductID: event.ProductID,
       ProductName: event.ProductName,
-      UOM: event.UOM
+      UOM: event.UOM,
+      HSCode: event.HSCode
     });
 
     this.tableDef.data = this.productListArray.value
@@ -794,6 +796,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                   ProductName: item.ProductName,
                   SalesQty: item.SalesQty,
                   UOM: item.UOM,
+                  HSCode: item.HSCode,
                   RatePerUnitFC: item.RatePerUnitFC,
                   SalesTaxRate: item.SalesTaxRate
                 });
