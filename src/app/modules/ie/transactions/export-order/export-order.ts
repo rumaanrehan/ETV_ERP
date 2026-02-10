@@ -124,6 +124,7 @@ export interface ExportOrderDetail {
     ProductName: string | null;
     SalesQty: number | null;
     UOM: string | null;
+    HSCode: string | null;
     SalesTaxRate: number | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
@@ -231,6 +232,7 @@ export interface ExportOrderProductDetail {
     ProductID: number;
     ProductName: string;
     UOM: string;
+    HSCode: string | null;
     SalesQty: number;
     RatePerUnitFC: number;
     SalesTaxRate: number;
