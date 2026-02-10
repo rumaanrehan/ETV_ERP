@@ -146,6 +146,7 @@ export interface TaxInvoiceProductDetail {
     ProductName: string;
     SalesQty: number;
     UOM: string;
+    HSCode: string | null;
     RatePerUnitFC: number;
     TaxRate: number;
     TaxableAmountFC: number;
