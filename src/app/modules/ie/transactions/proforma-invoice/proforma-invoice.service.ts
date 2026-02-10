@@ -240,7 +240,7 @@ export class ProformaInvoiceService {
       ExchangeRateToBC: {
         label: 'Exchange Rate to BC',
         defaultValue: null,
-        validators: [Validators.required, Validators.min(0.01), Validators.max(999999999)],
+        validators: [Validators.required, Validators.min(0.00000001), Validators.max(999999999)],
         validationMessages: {
           required: "Exchange Rate is required.",
           min: "Exchange Rate must be greater than 0.",

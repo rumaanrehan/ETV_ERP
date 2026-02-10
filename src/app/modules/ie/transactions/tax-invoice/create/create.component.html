@@ -83,10 +83,9 @@
                                         [readonly]="isBasedOnDocument" [maxDate]="todayDate"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
-                                    <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
-                                        [label]="formConfig.ExchangeRateToBC.label"
+                                    <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="formConfig.ExchangeRateToBC.label"
                                         [validationMessage]="formConfig.ExchangeRateToBC.error"
-                                        (onChange)="ProductCalculation()"></z-inputnumber>
+                                        (onChange)="ProductCalculation()" [maxFractionDigits] = 8></z-inputnumber>
                                 </div>
 
                                 <div class="col-md-2 form-group px-2">

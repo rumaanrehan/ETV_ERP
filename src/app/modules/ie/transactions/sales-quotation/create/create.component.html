@@ -64,8 +64,8 @@
                 </div>
                 <div class="col-xl-5"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
-                    [label]="formConfig.ExchangeRateToBC.label" (onChange)="ProductCalculation()"></z-inputnumber>
+                  <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="formConfig.ExchangeRateToBC.label"
+                  (onChange)="ProductCalculation()"  [maxFractionDigits]=8></z-inputnumber>
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-datepicker [group]="form" [control]="'ValidityDate'" [label]="formConfig.ValidityDate.label"

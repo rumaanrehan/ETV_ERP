@@ -75,8 +75,8 @@
                     [label]="formConfig.ExchangeRateDate.label"></z-datepicker>
                 </div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
-                    [label]="formConfig.ExchangeRateToBC.label" (onChange)="productCalculation()"></z-inputnumber>
+                  <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="formConfig.ExchangeRateToBC.label"
+                  (onChange)="productCalculation()" [maxFractionDigits] = 8></z-inputnumber>
                 </div>
 
                 <!-- Incoterm and Charges -->
