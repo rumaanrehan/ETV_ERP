@@ -337,6 +337,10 @@ export class TaxInvoiceService {
             label: 'Measurement Unit',
             defaultValue: null,
           },
+          HSCode: {
+            label: 'HS Code',
+            defaultValue: null
+          },
           RatePerUnitFC: {
             label: '',
             defaultValue: null,
