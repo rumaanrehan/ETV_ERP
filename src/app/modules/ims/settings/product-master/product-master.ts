@@ -27,6 +27,7 @@ export interface Product_SelectList {
   ProductCode: number | null;
   ProductName: string | null;
   UOM: string | null;
+  HSCode: string | null;
   PurTaxRate: number | null;
 }
 
