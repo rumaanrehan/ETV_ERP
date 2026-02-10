@@ -105,7 +105,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "QuotedTaxRate", label: "Quoted Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountFC", label: "Taxable Amount", width: "10%", customTemplate: this.taxableAmountFCColTemplate },
         { data: "TaxAmountFC", label: "Tax Amount", width: "12%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "7%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     };

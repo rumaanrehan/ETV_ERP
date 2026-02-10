@@ -49,7 +49,7 @@
                     <h5 class="primary-color mb-2">{{item.SalesEnquiryNo}} | {{item.CustomerName}}</h5>
                 </a>
                 <div class="text-end">
-                    <span class="badge bg-outline-primary">{{item.StatusText}}</span>
+                    <span class="badge bg-outline-primary" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
                 </div>
             </div>
             <div class="col-7">
