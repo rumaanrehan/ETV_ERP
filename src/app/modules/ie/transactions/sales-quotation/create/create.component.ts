@@ -3,13 +3,16 @@ import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, Vie
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { TableDef } from '../../../../../shared/components/z-table/z-table';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
+import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
@@ -19,11 +22,8 @@ import { Product_SelectList, ProductMaster, ProductRequest } from '../../../../i
 import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../settings/company-master/company-master';
 import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
 import { SalesEnquiry_Detail, SalesEnquiry_SelectList, SalesEnquiryRequest } from '../../sales-enquiry/sales-enquiry';
-import { SalesQuotation, SalesQuotation_Detail, SalesQuotationDetail } from '../sales-quotation';
+import { SalesQuotation, SalesQuotationDetail } from '../sales-quotation';
 import { SalesQuotationService } from '../sales-quotation.service';
-import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
-import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
-import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-create',
@@ -346,7 +346,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate.toFixed(3) });
+            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate });
           }
         },
       });
@@ -417,11 +417,13 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   ProductCalculation(): void {
-    let netAmount = 0;
+    var subtotalAmount: number = 0;
+    var taxAmount: number = 0;
+    var netAmount: number = 0;
 
     this.productListArray.controls.forEach((group: FormGroup) => {
-      const quantity = group.get('QuotedQty')?.value || 0;
       const rate = group.get('RatePerUnitFC')?.value || 0;
+      const quantity = group.get('QuotedQty')?.value || 0;
       const taxRate = group.get('TaxRate')?.value || 0;
 
       const taxableAmountFC = Number((quantity * rate).toFixed(3));
@@ -429,66 +431,85 @@ export class CreateComponent implements OnInit, OnDestroy {
       const quotationAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
 
       group.patchValue({
-        TaxableAmountFC: Number(taxableAmountFC.toFixed(3)),
-        TaxAmountFC: Number(taxAmountFC.toFixed(3)),
-        QuotationAmountFC: Number(quotationAmountFC.toFixed(3))
-      }, { emitEvent: true });
+        TaxableAmountFC: taxableAmountFC,
+        TaxAmountFC: taxAmountFC,
+        QuotationAmountFC: quotationAmountFC
+      }, { emitEvent: false });
 
+      subtotalAmount += taxableAmountFC;
+      taxAmount += taxAmountFC;
       netAmount += quotationAmountFC;
-
     });
 
     this.form.patchValue({
+      SubtotalAmountFC: Number(subtotalAmount.toFixed(3)),
+      TaxAmountFC: Number(taxAmount.toFixed(3)),
       NetAmountFC: Number(netAmount.toFixed(3)),
-      SubtotalAmountFC: Number(this.GetproductTaxableAmountFC().toFixed(3)),
-      TaxAmountFC: Number(this.GetproductTaxAmountFCSum().toFixed(3)),
     }, { emitEvent: true });
   }
 
   ConvertAmountsToBC(): void {
+    // 1️⃣ Get Exchange Rate
     const exchangeRate = this.form.get('ExchangeRateToBC')?.value || 1;
 
     this.productListArray.controls.forEach((group: FormGroup) => {
       const ratePerUnitFC = Number((group.get('RatePerUnitFC')?.value || 0).toFixed(3));
       const taxableAmountFC = Number((group.get('TaxableAmountFC')?.value || 0).toFixed(3));
       const taxAmountFC = Number((group.get('TaxAmountFC')?.value || 0).toFixed(3));
-      const quotedAmountFC = Number((group.get('QuotationAmountFC')?.value || 0).toFixed(3));
+      const quotationAmountFC = Number((group.get('QuotationAmountFC')?.value || 0).toFixed(3));
 
       group.patchValue({
         RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
         TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
         TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
-        QuotationAmountBC: Number((quotedAmountFC * exchangeRate).toFixed(3))
-      }, { emitEvent: true });
+        QuotationAmountBC: Number((quotationAmountFC * exchangeRate).toFixed(3))
+      }, { emitEvent: false });
     });
-
-    // After updating all rows, recalc totals
-    const subtotalAmountFC = this.GetproductTaxableAmountFC();
-    const taxAmountFC = this.GetproductTaxAmountFCSum();
-    const isRoundOff = this.form.get('IsRoundOff')?.value === true;
+    
+    const subtotalAmountFC = this.form.get('SubtotalAmountFC')?.value || 0;
+    const taxAmountFC = this.form.get('TaxAmountFC')?.value || 0;
     const netAmountFC = this.form.get('NetAmountFC')?.value;
+    const isRoundOff = this.form.get('IsRoundOff')?.value === true;
 
+    // 4️⃣ Calculate BC Values and Coin Adjustment
+    const subtotalAmountBC = subtotalAmountFC * exchangeRate;
+    const taxAmountBC = taxAmountFC * exchangeRate;
+    const netAmountBC = netAmountFC * exchangeRate;
+
+    const roundedNetBC = Math.round(netAmountBC);
+    const coinAdjustment = isRoundOff ? Number((netAmountBC - roundedNetBC).toFixed(3)) : 0;
+
+    // 5️⃣ Patch All Summary Fields (Once)
     this.form.patchValue({
-      SubtotalAmountBC: Number((subtotalAmountFC * exchangeRate).toFixed(3)),
-      TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
-      NetAmountBC: isRoundOff ? Math.round(netAmountFC * exchangeRate) : (netAmountFC * exchangeRate),
-      CoinAdjustment: isRoundOff ? Number(((netAmountFC * exchangeRate) - Math.round(netAmountFC * exchangeRate)).toFixed(3)) : 0
-    });
+      SubtotalAmountBC: Number(subtotalAmountBC.toFixed(3)),
+      TaxAmountBC: Number(taxAmountBC.toFixed(3)),
+      NetAmountBC: isRoundOff ? roundedNetBC :  Number(netAmountBC.toFixed(3)),
+      CoinAdjustment: coinAdjustment
+    }, { emitEvent: false });
+
+    // 6️⃣ Debug Log to Verify Calculations only for development, should be removed in production
+    if(this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
+      console.log(
+        "Discrepancy in SubtotalAmountBC Calculation!, Backend Should Verify This. Product List total:",
+        this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0),
+        " Patched SubtotalAmountBC:", this.form.get('SubtotalAmountBC')?.value
+      );
+    }
   }
 
-  GetproductTaxableAmountFC(): number {
-    return this.productListArray.controls.reduce((sum, group) => {
-      const value = group.get('TaxableAmountFC')?.value || 0;
-      return sum + value;
-    }, 0);
-  }
+  // GetproductTaxableAmountFC(): number {
+  //   return this.productListArray.controls.reduce((sum, group) => {
+  //     const value = group.get('TaxableAmountFC')?.value || 0;
+  //     return sum + value;
+  //   }, 0);
+  // }
 
-  GetproductTaxAmountFCSum(): number {
-    return this.productListArray.controls.reduce((sum, group) => {
-      const value = group.get('TaxAmountFC')?.value || 0;
-      return sum + value;
-    }, 0);
-  }
+  // GetproductTaxAmountFCSum(): number {
+  //   return this.productListArray.controls.reduce((sum, group) => {
+  //     const value = group.get('TaxAmountFC')?.value || 0;
+  //     return sum + value;
+  //   }, 0);
+  // }
 
   OnSubmit(): void {
     if (this.isSubmitted) return;

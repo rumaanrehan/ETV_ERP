@@ -359,7 +359,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate.toFixed(3) });
+            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate });
           }
         },
       });
@@ -516,34 +516,32 @@ export class CreateComponent implements OnInit, OnDestroy {
 
       const taxableAmountFC = Number((rate * quantity).toFixed(3));
       const taxAmountFC = Number((taxableAmountFC * salesTaxRate / 100).toFixed(3));
+      const salesAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
 
       group.patchValue({
-        TaxableAmountFC: Number(taxableAmountFC.toFixed(3)),
-        TaxAmountFC: Number(taxAmountFC.toFixed(3)),
-        SalesAmountFC: Number((taxableAmountFC + taxAmountFC).toFixed(3))
-      }, { emitEvent: true });
+        TaxableAmountFC: taxableAmountFC,
+        TaxAmountFC: taxAmountFC,
+        SalesAmountFC: salesAmountFC
+      }, { emitEvent: false });
 
       subtotalAmount += taxableAmountFC;
       taxAmount += taxAmountFC;
-      netAmount += (taxableAmountFC + taxAmountFC);
+      netAmount += salesAmountFC;
     });
+    netAmount += Number((freightCharge + bankCharges).toFixed(3));
 
-    netAmount += (freightCharge + bankCharges);
-
-    this.form.patchValue({ NetAmountFC: netAmount, SubtotalAmountFC: subtotalAmount, TaxAmountFC: taxAmount }, { emitEvent: true });
+    this.form.patchValue({ 
+      SubtotalAmountFC: Number(subtotalAmount.toFixed(3)),
+      TaxAmountFC: Number(taxAmount.toFixed(3)),
+      NetAmountFC: Number(netAmount.toFixed(3))
+    }, { emitEvent: false });
   }
 
   ConvertAmountsToBC(): void {
+    // 1️⃣ Get Exchange Rate
     const exchangeRate = this.form.get('ExchangeRateToBC')?.value || 1;
 
-    this.form.patchValue({
-      SubtotalAmountBC: this.form.get('SubtotalAmountFC')?.value * exchangeRate,
-      TaxAmountBC: this.form.get('TaxAmountFC')?.value * exchangeRate,
-      InsuranceAmountBC: this.form.get('InsuranceAmountFC')?.value * exchangeRate,
-      BankChargesBC: this.form.get('BankChargesFC')?.value * exchangeRate,
-      NetAmountBC: this.form.get('NetAmountFC')?.value * exchangeRate
-    }, { emitEvent: true });
-
+    // 2️⃣ Convert Product List Items (FC → BC)
     this.productListArray.controls.forEach((group: FormGroup) => {
       const ratePerUnitFC = Number(((group.get('RatePerUnitFC')?.value) || 0).toFixed(3));
       const taxableAmountFC = Number(((group.get('TaxableAmountFC')?.value) || 0).toFixed(3));
@@ -551,42 +549,65 @@ export class CreateComponent implements OnInit, OnDestroy {
       const salesAmountFC = Number(((group.get('SalesAmountFC')?.value) || 0).toFixed(3));
 
       group.patchValue({
-        TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
         RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
         TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
+        TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
         SalesAmountBC: Number((salesAmountFC * exchangeRate).toFixed(3)),
-      }, { emitEvent: true });
+      }, { emitEvent: false });
     });
 
-    const subtotalAmountFC = this.GetproductTaxableAmountFC();
-    const taxAmountFC = this.GetproductTaxAmountFCSum();
+    const subtotalAmountFC = this.form.get('SubtotalAmountFC')?.value || 0;
+    const taxAmountFC = this.form.get('TaxAmountFC')?.value || 0;
+    const netAmountFC = this.form.get('NetAmountFC')?.value || 0;
     const isRoundOff = this.form.get('IsRoundOff')?.value === true;
-    const netAmountFC = this.form.get('NetAmountFC')?.value;
 
+    // 4️⃣ Calculate BC Values and Coin Adjustment
+    const subtotalAmountBC = subtotalAmountFC * exchangeRate;
+    const taxAmountBC = taxAmountFC * exchangeRate;
+    const netAmountBC = netAmountFC * exchangeRate;
+
+    const roundedNetBC = Math.round(netAmountBC);
+    const coinAdjustment = isRoundOff ? Number((netAmountBC - roundedNetBC).toFixed(3)) : 0;
+
+    //Convert other charges to BC
+    const insuranceBC = ((this.form.get('InsuranceAmountFC')?.value) || 0) * exchangeRate;
+    const freightBC = ((this.form.get('FreightChargeFC')?.value) || 0) * exchangeRate;
+    const bankChargesBC = ((this.form.get('BankChargesFC')?.value) || 0) * exchangeRate;
+
+    // 5️⃣ Patch All Summary Fields (Once)
     this.form.patchValue({
-      SubtotalAmountFC: Number(subtotalAmountFC.toFixed(3)),
-      SubtotalAmountBC: Number((subtotalAmountFC * exchangeRate).toFixed(3)),
-      FreightChargeBC: this.form.get('FreightChargeFC')?.value * exchangeRate,
-      TaxAmountFC: Number(taxAmountFC.toFixed(3)),
-      TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
-      NetAmountBC: isRoundOff ? Math.round(netAmountFC * exchangeRate) : (netAmountFC * exchangeRate),
-      CoinAdjustment: isRoundOff ? Number(((netAmountFC * exchangeRate)) - Math.round(netAmountFC * exchangeRate)).toFixed(3) : 0
-    });
+      SubtotalAmountBC: Number(subtotalAmountBC.toFixed(3)),
+      TaxAmountBC: Number(taxAmountBC.toFixed(3)),
+      InsuranceAmountBC: Number(insuranceBC.toFixed(3)),
+      FreightChargeBC: Number(freightBC.toFixed(3)),
+      BankChargesBC: Number(bankChargesBC.toFixed(3)),
+      NetAmountBC: isRoundOff ? roundedNetBC : Number(netAmountBC.toFixed(3)),
+      CoinAdjustment: coinAdjustment
+    }, { emitEvent: false });
+
+    // 6️⃣ Debug Log to Verify Calculations only for development, should be removed in production
+    if(this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
+      console.log(
+        "Discrepancy in SubtotalAmountBC Calculation!, Backend Should Verify This. Product List total:",
+        this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0),
+        " Patched SubtotalAmountBC:", this.form.get('SubtotalAmountBC')?.value
+      );
+    }
   }
 
-  GetproductTaxableAmountFC(): number {
-    return this.productListArray.controls.reduce((sum, group) => {
-      const value = group.get('TaxableAmountFC')?.value || 0;
-      return sum + value;
-    }, 0);
-  }
+  // GetproductTaxableAmountFC(): number {
+  //   return this.productListArray.controls.reduce((sum, group) => {
+  //     const value = group.get('TaxableAmountFC')?.value || 0;
+  //     return sum + value;
+  //   }, 0);
+  // }
 
-  GetproductTaxAmountFCSum(): number {
-    return this.productListArray.controls.reduce((sum, group) => {
-      const value = group.get('TaxAmountFC')?.value || 0;
-      return sum + value;
-    }, 0);
-  }
+  // GetproductTaxAmountFCSum(): number {
+  //   return this.productListArray.controls.reduce((sum, group) => {
+  //     const value = group.get('TaxAmountFC')?.value || 0;
+  //     return sum + value;
+  //   }, 0);
+  // }
 
   OnSubmit(): void {
     if (this.isSubmitted) return;
@@ -603,6 +624,10 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.isSubmitted = false;
         return;
       }
+
+      const rawData = this.formService.transformFormData(this.form.value);
+      const { ProformaInvoiceNo, ExportOrderNo, CustomerName, ProductList, LoadingPortName, DischargePortName, ...cleanModel } = rawData;
+      const model: ProformaInvoice = { ...cleanModel };
 
       if (this.form.invalid) {
         this.form.markAllAsTouched();
@@ -621,7 +646,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           .then((result) => {
             if (result.isConfirmed) {
               const model: ProformaInvoice = {
-                ...this.formService.transformFormData(this.form.value),
+                ...cleanModel,
                 ReasonToUpdate: result.value,
               };
               this.UpdateRecord(model);
@@ -631,7 +656,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           });
       }
       else {
-        this.CreateRecord(this.formService.transformFormData(this.form.value));
+        this.CreateRecord(model);
       }
     }
     catch (error) {
