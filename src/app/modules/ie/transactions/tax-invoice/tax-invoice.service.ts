@@ -626,7 +626,7 @@ export class TaxInvoiceService {
       group: form,
       control: 'ProductName',
       label: formConfig.ProductName.label,
-      validationMessage: formConfig.ProductName.error,
+      validationMessage: formConfig.ProductName.error?.[0],
       placeholder: 'Search Product',
       options: [],
       optionLabel: 'ProductName',

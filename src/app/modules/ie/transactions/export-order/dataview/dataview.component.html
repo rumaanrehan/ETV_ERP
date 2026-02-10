@@ -47,7 +47,7 @@
                     <h5 class="primary-color mb-2">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
                 </a>
                 <div class="text-end d-flex align-items-center justify-content-end gap-2">
-                    <span class="badge bg-outline-primary">{{item.StatusText}}</span>
+                    <span class="badge bg-outline-primary" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
                     <z-menu [menus]="getMenuOptions(item)" [styleClass]="'dataview-action-menu'">
                     </z-menu>
                 </div>
