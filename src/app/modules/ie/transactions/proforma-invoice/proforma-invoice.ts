@@ -138,6 +138,7 @@ export interface ProformaInvoiceProductDetail {
     ProductID: number;
     ProductName: string;
     UOM: string;
+    HSCode: string | null;
     SalesQty: number;
     RatePerUnitFC: number;
     SalesTaxRate: number;
