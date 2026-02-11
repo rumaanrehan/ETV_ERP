@@ -1,27 +1,22 @@
-
+import { Injectable } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { forkJoin, Observable } from 'rxjs';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
+import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { SelectListService } from '../../../../shared/services/select-list.service';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
+import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
 import { GenericMasterService } from '../generic-master/generic-master.service';
 import { ItemCategory_SelectList, ItemCategoryRequest } from '../item-category-master/item-category-master';
 import { ItemCategoryMasterService } from '../item-category-master/item-category-master.service';
-import { ItemGroup_SelectList, ItemGroupRequest } from '../item-group-master/item-group-master';
 import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
-import { ManufacturerMasterService } from '../manufacturer-master/manufacturer-master.service';
 import { UOM_SelectList, UOMRequest } from '../uom-master/uom-master';
 import { UOMMasterService } from '../uom-master/uom-master.service';
-import { Product_Details, Product_SelectList, ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList, ProductRequest } from './product-master';
-import { ItemTypeMasterService } from '../item-type-master/item-type-master.service';
-import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { Observable, forkJoin } from 'rxjs';
-import { ApiService } from '../../../../core/services/api.service';
-import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { StaticListRequest, StaticList } from '../../../../shared/models/select-list';
-import { SelectListService } from '../../../../shared/services/select-list.service';
-import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { GenericRequest, Generic_SelectList } from '../generic-master/generic-master';
-import { TaxSlabMasterService } from '../../../admin/settings/tax-slab-master/tax-slab-master.service';
-import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
+import { Product_Details, Product_IndexTableFilter, Product_IndexTableList, Product_SelectList, ProductMaster, ProductRequest } from './product-master';
 
 @Injectable({
   providedIn: 'root',
@@ -32,14 +27,11 @@ export class ProductMasterService {
   constructor(
     private apiService: ApiService,
     private selectListService: SelectListService,
-    private itemTypeMasterService: ItemTypeMasterService,
     private itemGroupMasterService: ItemGroupMasterService,
     private itemCategoryMasterService: ItemCategoryMasterService,
     private genericMasterService: GenericMasterService,
-    private ManufacturerMasterService: ManufacturerMasterService,
     private uomMasterService: UOMMasterService,
-    private taxSlabMasterService: TaxSlabMasterService,
-
+    private taxSlabMasterService: TaxSlabMasterService
   ) { }
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
@@ -58,25 +50,16 @@ export class ProductMasterService {
     });
   }
 
-  LoadItemGroup(model: ItemGroupRequest): Observable<ApiListResponse<ItemGroup_SelectList>> {
-    return this.itemGroupMasterService.PopulateList(model)
-  }
-
   LoadItemCategory(model: ItemCategoryRequest): Observable<ApiListResponse<ItemCategory_SelectList>> {
     return this.itemCategoryMasterService.PopulateList(model)
   }
 
-  loadGeneric(model: GenericRequest): Observable<ApiListResponse<Generic_SelectList>> {
-    return this.genericMasterService.PopulateList(model)
-  }
-
   PopulateList(model: ProductRequest): Observable<ApiListResponse<Product_SelectList>> {
-    console.log("Loading Product List...");
     return this.apiService.post<ApiListResponse<Product_SelectList>>(`${this.endpoint}/PopulateList`, model);
   }
 
-  PopulateGrid(model: DataTableParams<ProductMaster_IndexTableFilter>): Observable<ApiPagedListResponse<ProductMaster_IndexTableList>> {
-    return this.apiService.post<ApiPagedListResponse<ProductMaster_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  PopulateGrid(model: DataTableParams<Product_IndexTableFilter>): Observable<ApiPagedListResponse<Product_IndexTableList>> {
+    return this.apiService.post<ApiPagedListResponse<Product_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
   GetDetails(productID: number): Observable<ApiDataResponse<Product_Details>> {
@@ -91,18 +74,15 @@ export class ProductMasterService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Update`, model);
   }
 
-  DeleteReactivate(ProductID: number, reasonToUpdate: string): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?ProductID=${ProductID}&reasonToUpdate=${reasonToUpdate}`, {});
+  DeleteReactivate(productID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Delete?ProductID=${productID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
-  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<ProductMaster_IndexTableFilter> {
+  getFormConfig_DataTableFilter(): DataTableFilterFormConfigType<Product_IndexTableFilter> {
     return {
       ProductCode: '',
       ProductName: '',
-      ItemGroupName: '',
       ItemCategoryName: '',
-      GenericItemName: '',
-      ManufacturerName: '',
       UOMName: '',
       ActiveStatusID: 0
     };
@@ -112,83 +92,69 @@ export class ProductMasterService {
     return {
       ProductID: {
         label: '',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
+        defaultValue: null
       },
       ProductCode: {
         label: 'Product Code',
-        defaultValue: 'NEW',
-        validators: [],
-        validationMessages: {}
+        defaultValue: 'NEW'
       },
       ItemCategoryID: {
-        label: 'Item Category ID',
+        label: 'Item Category',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          require: "Item Category is required"
+          required: 'Item Category is required.'
         }
       },
       ProductName: {
         label: 'Product Name',
         defaultValue: '',
-        validators: [Validators.required, NotOnlyWhitespaceValidator()],
+        validators: [Validators.required, Validators.maxLength(150), NotOnlyWhitespaceValidator()],
         validationMessages: {
           required: 'Product Name is required.',
-        },
+          maxlength: 'Maximum 150 characters allowed.'
+        }
       },
       UOMID: {
         label: 'UOM',
         defaultValue: null,
-        validators: [],
-        validationMessages: {}
+        validators: [Validators.required],
+        validationMessages: {
+          required: 'Unit of Measure is required.'
+        }
       },
       Unit: {
         label: 'Unit',
-        defaultValue: null,
+        defaultValue: null
+        // validators: [Validators.required, Validators.min(0.0001), Validators.max(10000)],
+        // validationMessages: {
+        //   required: 'Unit is required.',
+        //   min: 'Unit must be greater than zero.',
+        //   max: 'Unit cannot exceed 10,000.'
+        // }
       },
       HSCode: {
         label: 'HS Code',
         defaultValue: '',
+        validators: [Validators.pattern(/^\d{4,8}$/)],
+        validationMessages: {
+          pattern: 'HS Code must be 4 to 8 digits.'
+        }
       },
       TaxSlabID: {
-        label: 'Tax Slab ID',
+        label: 'Tax Slab',
         defaultValue: null,
-      },
-      PurTaxRate: {
-        label: 'Purchase Tax Rate',
-        defaultValue: 0,
-
-      },
-      NetWeight: {
-        label: 'Net Weight',
-        defaultValue: null,
-        validators: [Validators.min(0)],
+        validators: [Validators.required],
         validationMessages: {
-          min: 'Net Weight cannot be negative.',
-        },
-      },
-      GrossWeight: {
-        label: 'Gross Weight',
-        defaultValue: null,
-        validators: [Validators.min(0)],
-        validationMessages: {
-          min: 'Gross Weight cannot be negative.',
-        },
-      },
-      ProductDescription: {
-        label: 'Product Description',
-        defaultValue: null,
-        validators: [],
-        validationMessages: {}
+          required: 'Tax Slab is required.'
+        }
       },
       PurTaxOn: {
-        label: 'Tax on',
+        label: 'Pur Tax on',
         defaultValue: "",
         validators: [Validators.required],
         validationMessages: {
-          required: 'Purchase Tax On is required',
+          required: 'Purchase Tax is required',
         },
       },
     };

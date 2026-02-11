@@ -35,7 +35,7 @@
 
 <ng-template #taxInvoiceStatusTemplate let-row>
     <span class="table-row-status">
-        <i class="pi pi-circle-fill" [ngStyle]="{'color': '#'+row.StatusHex}"></i>
+        <i class="pi pi-circle-fill" [style.color]="row.StatusHex"></i>
         {{ row.StatusText }}
     </span>
 </ng-template>

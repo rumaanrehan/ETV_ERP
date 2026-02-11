@@ -14,9 +14,6 @@ export interface SalesEnquiry {
     ExpectedDeliveryDate: Date | null;
     Note: string | null;
     ProductList: SalesEnquiryDetail[];
-
-    ProductID: string | null;
-    ProductName: string | null;
     Customer?: CompanyMaster;
 }
 
@@ -25,6 +22,7 @@ export interface SalesEnquiryDetail {
     ProductName: string | null;
     RequestedQty: number | null;
     UOM: string | null;
+    HSCode: string | null;
     Remarks: string | null;
 
     Product?: ProductMaster; // Ye hatega
@@ -59,6 +57,9 @@ export interface SalesEnquiry_IndexTableList {
     ProductCount: number;
     StatusText: string;
     StatusHex: string;
+
+    /** UI only */
+    _selected?: boolean;
 }
 
 export interface SalesEnquiryRequest {
@@ -91,5 +92,11 @@ export interface SalesEnquiryProduct_Detail {
     ProductName: string;
     UOM: string;
     RequestedQty: number;
+    HSCode: string | null;
     Remarks: string | null;
+}
+
+export interface SalesEnquiryBulkUpdateRequest {
+    SalesEnquiryIDs: number[];
+    StatusID: number;
 }

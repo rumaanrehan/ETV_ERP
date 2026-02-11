@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { ShowValidationTooltipDirective } from '../../../layouts/directives/show-validation-tooltip.directive';
@@ -20,6 +20,7 @@ export class ZDatePickerComponent {
   @Input() minDate: Date | null = null;
   @Input() maxDate: Date | null = null;
   @Input() readonly: boolean = false;
+  @Input() isDisabled: boolean = false;
   @Output() valueChange = new EventEmitter<Date>(); // Event emitter for value changes
 
   onDateSelect(value: Date): void {

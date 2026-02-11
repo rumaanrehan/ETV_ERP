@@ -72,6 +72,12 @@
                 </z-textarea>
             </div>
             <div class="col-xl-12 form-group">
+                <z-checkbox [group]="form" [control]="'IsShippingAddressSameAsBillingAddress'"
+                    [label]="formConfig.IsShippingAddressSameAsBillingAddress.label"
+                    [validationMessage]="formConfig.IsShippingAddressSameAsBillingAddress.error">
+                </z-checkbox>
+            </div>
+            <div class="col-xl-12 form-group" *ngIf="!this.form.get('IsShippingAddressSameAsBillingAddress')?.value">
                 <z-textarea [group]="form" [control]="'ShippingAddress'" [label]="formConfig.ShippingAddress.label"
                     [validationMessage]="formConfig.ShippingAddress.error">
                 </z-textarea>

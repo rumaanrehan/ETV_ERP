@@ -93,4 +93,14 @@ export class ZTableComponent<T> {
       });
     }
   }
+
+  resetColumnVisibility(): void {
+    this.tableDef.columnDef.forEach(col => {
+      col.visible = true;
+    });
+
+    this.tableHeaderDef.forEach(header => {
+      header.visible = true;
+    });
+  }
 }

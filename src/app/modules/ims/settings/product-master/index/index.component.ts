@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { ProductMaster, ProductMaster_IndexTableFilter, ProductMaster_IndexTableList } from '../product-master';
-import { ProductMasterService } from '../product-master.service';
-import { CreateComponent } from '../create/create.component';
 import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { CreateComponent } from '../create/create.component';
+import { Product_IndexTableFilter, Product_IndexTableList, ProductMaster } from '../product-master';
+import { ProductMasterService } from '../product-master.service';
 
 @Component({
   selector: 'app-index',
@@ -26,15 +25,14 @@ export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<ProductMaster_IndexTableList>;
+  tableDef!: DataTableDef<Product_IndexTableList>;
   tableEvent!: DataTableLazyLoadEvent;
 
   constructor(
-    private pageService: ProductMasterService,
     private pageHeaderService: PageHeaderService,
+    private pageService: ProductMasterService,
     private formService: FormService,
-    private alertService: AlertNotificationService,
-    private router: Router
+    private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
@@ -44,19 +42,19 @@ export class IndexComponent implements OnInit, OnDestroy {
       tableKey: 'IMS_ProductMaster_IndexTable',
       columnDef: [],
       defaultSortColumn: { sortField: 'ProductCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ProductMaster_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
+      filterForm: this.formService.createFormGroup_DataTableFilter<Product_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
       loading: false,
     };
 
     this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "3%" },
-      { data: 'ProductCode', label: 'Code', hideVisToggle: true, filterable: true, width: "5%", customTemplate: this.productCodeTemplate },
-      { data: 'ProductName', label: 'Product Name', filterable: true },
-      { data: 'ItemCategoryName', label: 'Item Category', width: "10%", filterable: true },
-      { data: 'UOMName', label: 'UOM Name', width: "10%", filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.productActiveStatusTemplate },
+      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "5%" },
+      { data: 'ProductCode', label: 'Code', hideVisToggle: true, filterable: true, width: "11%", customTemplate: this.productCodeTemplate },
+      { data: 'ProductName', label: 'Product Name', width: "27%", filterable: true },
+      { data: 'ItemCategoryName', label: 'Item Category', width: "20%", filterable: true },
+      { data: 'UOMName', label: 'UOM Name', width: "16%", filterable: true },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "18%", customTemplate: this.productActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate }
     ];
   }
@@ -110,7 +108,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loadData() {
     try {
-      const model: DataTableParams<ProductMaster_IndexTableFilter> = {
+      const model: DataTableParams<Product_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
@@ -171,8 +169,7 @@ export class IndexComponent implements OnInit, OnDestroy {
               });
           }
         });
-    } catch (error) {
-
     }
+    catch (error) {}
   }
 }

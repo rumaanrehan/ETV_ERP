@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
@@ -10,16 +10,18 @@ import { AlertNotificationService } from '../../../../../shared/services/alert-n
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { SalesQuotation, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_IndexTableSort } from '../sales-quotation';
+import { SalesQuotation, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_IndexTableSort, SalesQuotationBulkUpdateRequest } from '../sales-quotation';
 import { SalesQuotationService } from '../sales-quotation.service';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
+import { CheckboxModule } from 'primeng/checkbox';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, FormsModule, CheckboxModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -38,6 +40,10 @@ export class DataviewComponent implements OnInit, OnDestroy {
   sortingForm!: FormGroup;
   sortingFormConfig!: FormConfigType<SalesQuotation_IndexTableSort>
 
+  selectedSalesQuotations: SalesQuotation_IndexTableList[] = [];
+  selectAll = false;
+
+
   statusList: StaticList[] = []
   basedOnList: StaticList[] = []
 
@@ -51,6 +57,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     private pageService: SalesQuotationService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextService,
     private router: Router
   ) { }
 
@@ -118,6 +125,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   }
 
   onClickPageHeaderAddButton() {
+    this.navContextService.clear();
     this.router.navigate(['ie/sales-quotation/create']);
   }
 
@@ -199,6 +207,74 @@ export class DataviewComponent implements OnInit, OnDestroy {
             });
         }
       });
+  }
+
+
+
+  onSelectionChange(item: SalesQuotation_IndexTableList) {
+
+    if (item._selected) {
+      this.selectedSalesQuotations.push(item);
+    } else {
+      this.selectedSalesQuotations =
+        this.selectedSalesQuotations.filter(
+          x => x.SalesQuotationID !== item.SalesQuotationID
+        );
+    }
+
+    this.selectAll = this.selectedSalesQuotations.length === this.dataViewDef.data.length;
+  }
+
+  toggleSelectAll(event: any) {
+    this.selectedSalesQuotations = [];
+
+    this.dataViewDef.data.forEach((item: SalesQuotation_IndexTableList) => {
+      item._selected = event.checked;
+      if (event.checked) {
+        this.selectedSalesQuotations.push(item);
+      }
+    });
+  }
+
+  bulkChangeStatus(statusID: number) {
+    this.alertService
+      .showConfirmationWithInput({
+        text: 'Do you want to bulk update <b>Sales Quotation</b>?',
+        inputPlaceholder: 'Reason to Bulk Update'
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const ids = this.selectedSalesQuotations.map(x => x.SalesQuotationID);
+          const dto: SalesQuotationBulkUpdateRequest = {
+            SalesQuotationIDs: ids,
+            StatusID: statusID
+          };
+
+          this.pageService.BulkChangeStatus(dto)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                this.loadData();
+                this.clearSelection();
+                if (response.IsSuccess) {
+                  this.alertService.showAlert({
+                    type: 'success',
+                    text: response.Message,
+                    timer: 5000,
+                  });
+                } else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+      });
+  }
+
+  clearSelection() {
+    this.dataViewDef.data.forEach(x => x._selected = false);
+    this.selectedSalesQuotations = [];
+    this.selectAll = false;
   }
 
   formatDate(date: Date) {
