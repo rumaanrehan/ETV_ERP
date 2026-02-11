@@ -1,20 +1,19 @@
-import { Injectable, model } from '@angular/core';
-import { ApiService } from '../../../../core/services/api.service';
-import { forkJoin, Observable } from 'rxjs';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
-import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
-import { CompanyMasterService } from '../../settings/company-master/company-master.service';
-import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
-import { ProductRequest, Product_SelectList } from '../../../ims/settings/product-master/product-master';
-import { CompanyRequest, Company_SelectList } from '../../settings/company-master/company-master';
-import { FormConfigType } from '../../../../shared/models/form.model';
+import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { forkJoin, Observable } from 'rxjs';
+import { ApiService } from '../../../../core/services/api.service';
+import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
-import { PurchaseRequisition, PurchaseRequisition_Detail, PurchaseRequisition_IndexTableFilter, PurchaseRequisition_IndexTableList, PurchaseRequisition_IndexTableSort, PurchaseRequisition_SelectList, PurchaseRequisitionDetail, PurchaseRequisitionRequest } from './purchase-requisition';
-import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
+import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { FormConfigType } from '../../../../shared/models/form.model';
 import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
 import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
+import { Product_SelectList, ProductRequest } from '../../../ims/settings/product-master/product-master';
+import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
+import { Company_SelectList, CompanyRequest } from '../../settings/company-master/company-master';
+import { CompanyMasterService } from '../../settings/company-master/company-master.service';
+import { PurchaseRequisition, PurchaseRequisition_Detail, PurchaseRequisition_IndexTableFilter, PurchaseRequisition_IndexTableList, PurchaseRequisition_IndexTableSort, PurchaseRequisitionRequest } from './purchase-requisition';
 
 @Injectable({
   providedIn: 'root'
@@ -45,16 +44,16 @@ export class PurchaseRequisitionService {
     return this.productMasterService.PopulateList(model);
   }
   
-  PopulateList(model: PurchaseRequisitionRequest): Observable<ApiListResponse<PurchaseRequisition_SelectList>> {
-    return this.apiService.post<ApiListResponse<PurchaseRequisition_SelectList>>(`${this.endpoint}/PopulateList`, model);
+  PopulateList(model: PurchaseRequisitionRequest): Observable<ApiListResponse<PurchaseRequisition_Detail>> {
+    return this.apiService.post<ApiListResponse<PurchaseRequisition_Detail>>(`${this.endpoint}/PopulateList`, model);
   }
 
   PopulateGrid(model: DataTableParams<PurchaseRequisition_IndexTableFilter>): Observable<ApiPagedListResponse<PurchaseRequisition_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<PurchaseRequisition_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(PurchaseRequisitionID: number): Observable<ApiDataResponse<PurchaseRequisition_Detail>> {
-    return this.apiService.post<ApiDataResponse<PurchaseRequisition_Detail>>(`${this.endpoint}/GetDetails?PurchaseRequisitionID=${PurchaseRequisitionID}`, {});
+  GetDetails(purchaseRequisitionID: number): Observable<ApiDataResponse<PurchaseRequisition_Detail>> {
+    return this.apiService.post<ApiDataResponse<PurchaseRequisition_Detail>>(`${this.endpoint}/GetDetails?PurchaseRequisitionID=${purchaseRequisitionID}`, {});
   }
 
   CreateRecord(model: PurchaseRequisition): Observable<ApiResponse> {
@@ -69,13 +68,43 @@ export class PurchaseRequisitionService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel?purchaseRequisitionID=${purchaseRequisitionID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
+  getFormConfig_DataTableFilter(): FormConfigType<PurchaseRequisition_IndexTableFilter> {
+    return {
+      PurchaseRequisitionNo: {
+        label: 'Purchase Requisition No',
+        defaultValue: null
+      },
+      CustomerName: {
+        label: 'Customer Name',
+        defaultValue: ''
+      },
+      StatusID: {
+        label: 'Status',
+        defaultValue: 0
+      }
+    }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<PurchaseRequisition_IndexTableSort> {
+    return {
+      PurchaseRequisitionNo: {
+        label: 'Requisition No',
+        defaultValue: +1
+      },
+      StatusID: {
+        label: 'Status',
+        defaultValue: 0
+      }
+    }
+  }
+
   getFormConfig(): FormConfigType<PurchaseRequisition> {
     return {
       PurchaseRequisitionID: {
         label: '',
         defaultValue: null
       },
-      RequisitionNo: {
+      PurchaseRequisitionNo: {
         label: 'Requisition No',
         defaultValue: "NEW"
       },
@@ -83,20 +112,28 @@ export class PurchaseRequisitionService {
         label: 'Requisition Date',
         defaultValue: new Date()
       },
-      RequestedBy: {
-        label: 'Requested By',
+      CustomerID: {
+        label: 'Customer ID',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Requested By is required"
+          required: "Customer is required"
         }
+      },
+      CustomerName: {
+        label: 'Customer Name',
+        defaultValue: null,
       },
       FCCurrencyID: {
         label: 'Foreign Currency',
         defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Foreign Currency is required"
+        }
       },
       ExchangeRateDate: {
-        label: 'Exchang Rate Date',
+        label: 'Exchange Rate Date',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
@@ -114,9 +151,9 @@ export class PurchaseRequisitionService {
       ExchangeRateToBC: {
         label: 'Exchange Rate to BC',
         defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        validators: [Validators.required],
         validationMessages: {
-          RequiredIf: "Exchange Rate to Base Currency is required"
+          required: "Exchange Rate to Base Currency is required"
         }
       },
       Note: {
@@ -133,13 +170,17 @@ export class PurchaseRequisitionService {
           ProductID: {
             label: '',
             defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Product ID is required"
+            }
           },
           ProductName: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Product is required"
+              required: "Product Name is required"
             }
           },
           RequestedQty: {
@@ -157,9 +198,7 @@ export class PurchaseRequisitionService {
           Remarks: {
             label: '',
             defaultValue: '',
-            validators: [
-              Validators.maxLength(200)
-            ],
+            validators: [Validators.maxLength(200)],
             validationMessages: {
               maxlength: 'Remarks cannot exceed 200 characters'
             }
@@ -172,34 +211,21 @@ export class PurchaseRequisitionService {
       }
     };
   }
-
-  getFormConfig_DataTableFilter(): FormConfigType<PurchaseRequisition_IndexTableFilter> {
+  
+  getCompanyMasterAutoCompleteDef(formConfig: FormConfigType<PurchaseRequisition>, form: FormGroup): AutoCompleteDef<Company_SelectList> {
     return {
-      RequisitionNo: {
-        label: 'Purchase Requisition ID',
-        defaultValue: null
-      },
-      RequestedBy: {
-        label: 'Customer Name',
-        defaultValue: ''
-      },
-      StatusID: {
-        label: 'Status',
-        defaultValue: 0
-      }
-    }
-  }
-
-  getFormConfig_DataTableSort(): FormConfigType<PurchaseRequisition_IndexTableSort> {
-    return {
-      RequisitionNo: {
-        label: 'Requisition No',
-        defaultValue: -1
-      },
-      StatusID: {
-        label: 'Status',
-        defaultValue: 0
-      }
+      type: 'formControl',
+      group: form,
+      control: 'CustomerName',
+      label: formConfig.CustomerID.label,
+      validationMessage: formConfig.CustomerID.error,
+      placeholder: 'Search Customer',
+      options: [],
+      optionLabel: 'CompanyName',
+      columns: [
+        { data: 'CompanyCode', label: 'Code', width: '150px' },
+        { data: 'CompanyName', label: 'Name', width: '150px' }
+      ],
     }
   }
 
@@ -223,16 +249,16 @@ export class PurchaseRequisitionService {
   getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<PurchaseRequisition_IndexTableList> {
     return {
       tableKey: 'IE_PurchaseRequisition_IndexDataView',
-      defaultSortColumn: { sortField: 'RequisitionNo', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'PurchaseRequisitionNo', sortOrder: 1 },
       filterForm: filterForm,
       sortingForm: sortingForm,
       filterFields: [
-        { field: 'RequisitionNo', label: 'Requisition No', type: 'text'},
-        { field: 'RequestedBy', label: 'Requested By', type: 'text' },
+        { field: 'PurchaseRequisitionNo', label: 'Requisition No', type: 'text'},
+        { field: 'CustomerName', label: 'Customer', type: 'text' },
         { field: 'StatusID', label: 'Status', type: 'dropdown' }
       ],
       sortFields: [
-        { field: 'RequisitionNo', label: 'Requisition No', enabled: true, order: 1 },
+        { field: 'PurchaseRequisitionNo', label: 'Requisition No', enabled: true, order: 1 },
         { field: 'StatusID', label: 'Status', enabled: true, order: 0 }
       ],
 

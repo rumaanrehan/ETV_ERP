@@ -1,21 +1,21 @@
 import { TList } from "../../../../shared/models/api-response";
-import { ProductMaster } from "../../../ims/settings/product-master/product-master";
-import { CompanyMaster } from "../../settings/company-master/company-master";
+
 export interface PurchaseRequisition {
     PurchaseRequisitionID: number | null;
-    RequisitionNo: string | null;
+    PurchaseRequisitionNo: string | null;
     RequisitionDate: Date | null;
-    RequestedBy: string | null;
-    FCCurrencyID: number | null;
+    CustomerID: number | null;
+    CustomerName: string | null;
     ExchangeRateDate: Date | null;
     RequiredByDate: Date | null;
     ExchangeRateToBC: number | null;
+    FCCurrencyID: number | null;
     Note: string | null;
     ProductList: PurchaseRequisitionDetail[];
 
     ProductID: string | null;
     ProductName: string | null;
-    Customer?: CompanyMaster;
+    // Customer?: CompanyMaster;
 }
 
 export interface PurchaseRequisitionDetail {
@@ -25,33 +25,32 @@ export interface PurchaseRequisitionDetail {
     UOM: string | null;
     Remarks: string | null;
 
-    Product?: ProductMaster; 
+    // Product?: ProductMaster; // Ye hatega
 }
 
 export interface PurchaseRequisition_SelectList {
     PurchaseRequisitionID: number;
-    RequisitionNo: string;
-    RequestedBy: string;
+    PurchaseRequisitionNo: string;
+    CustomerName: string;
     StatusID: number;
 }
 
 export interface PurchaseRequisition_IndexTableFilter {
-    RequisitionNo: string | null;
-    RequestedBy: string | null;
+    PurchaseRequisitionNo: string | null;
+    CustomerName: string | null;
     StatusID: number | null;
 }
 
 export interface PurchaseRequisition_IndexTableSort {
-    RequisitionNo: 1 | 0 | -1;
+    PurchaseRequisitionNo: 1 | 0 | -1;
     StatusID: 1 | 0 | -1;
 }
 
 export interface PurchaseRequisition_IndexTableList {
     PurchaseRequisitionID: number;
-    RequisitionNo: string;
-    RequestedBy: string;
+    PurchaseRequisitionNo: string;
+    CustomerName: string;
     RequisitionDate: Date;
-    FCCurrencyID: number;
     RequiredByDate: Date;
     ProductCount: number;
     StatusText: string;
@@ -59,30 +58,24 @@ export interface PurchaseRequisition_IndexTableList {
 }
 
 export interface PurchaseRequisitionRequest {
-    SearchBy?: number | null;
-    SearchValue?: string | null;
-    RequisitionNo?: string | null;
+    PurchaseRequisitionNo?: string | null;
+    CustomerName?: string | null;
     PopulateType?: string | null;
 }
-
+//get detail interface
 export interface PurchaseRequisition_Detail {
     PurchaseRequisitionID: number;
-    RequisitionNo: string;
+    PurchaseRequisitionNo: string;
     RequisitionDate: Date;
     RequiredByDate: Date;
+    CustomerID: number;
+    CustomerName: string;
     ExchangeRateDate: Date;
-    RequestedBy: number;
+    ExchangeRateToBC: number;
+    FCCurrencyID: number;
     Note: string | null;
     StatusText: string;
     StatusHex: string;
     IsQuotationAlreadyExists: boolean;
-    ProductList: TList<PurchaseRequisition_Detail>;
-}
-
-export interface PurchaseRequisition_Detail {
-    ProductID: number;
-    ProductName: string;
-    UOM: string;
-    RequestedQty: number;
-    Remarks: string | null;
+    ProductList: TList<PurchaseRequisitionDetail>;
 }

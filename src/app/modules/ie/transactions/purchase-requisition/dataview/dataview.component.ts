@@ -1,19 +1,18 @@
-import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
-import { PurchaseRequisition, PurchaseRequisition_IndexTableFilter, PurchaseRequisition_IndexTableList, PurchaseRequisition_IndexTableSort } from '../purchase-requisition';
-import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FormConfigType } from '../../../../../shared/models/form.model';
-import { StaticList } from '../../../../../shared/models/select-list';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { PurchaseRequisitionService } from '../purchase-requisition.service';
-import { FormService } from '../../../../../shared/services/form.service';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { Router } from '@angular/router';
-import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { CommonModule } from '@angular/common';
+import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { DateUtils } from '../../../../../shared/utility/date-utils';
+import { PurchaseRequisition_IndexTableFilter, PurchaseRequisition_IndexTableList, PurchaseRequisition_IndexTableSort } from '../purchase-requisition';
+import { PurchaseRequisitionService } from '../purchase-requisition.service';
 
 @Component({
   selector: 'app-dataview',
@@ -26,8 +25,6 @@ export class DataviewComponent  implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
-  
-  componentRef?: ComponentRef<any>;
   
   dataViewDef!: DataViewDef<PurchaseRequisition_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
@@ -46,7 +43,6 @@ export class DataviewComponent  implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit(): void {
-    this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
     this.filterForm = this.formService.createFormGroup<PurchaseRequisition_IndexTableFilter>(this.filterFormConfig);
     this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
@@ -104,10 +100,7 @@ export class DataviewComponent  implements OnInit, OnDestroy {
           }
         });
     }
-
-    catch (error) {
-
-    }
+    catch (error) {}
   }
 
   onClickEditDetails(purchaseRequisitionID: number) {
@@ -143,6 +136,7 @@ export class DataviewComponent  implements OnInit, OnDestroy {
         }
       });
   }
+
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }

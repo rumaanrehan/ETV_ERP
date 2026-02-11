@@ -1,23 +1,23 @@
-import { Component, ComponentRef, createComponent, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
-import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
-import { Subject, takeUntil } from 'rxjs';
-import { PurchaseRequisition, PurchaseRequisitionDetail } from '../purchase-requisition';
-import { FormConfigType } from '../../../../../shared/models/form.model';
-import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
-import { Product_SelectList, ProductMaster, ProductRequest } from '../../../../ims/settings/product-master/product-master';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { PurchaseRequisitionService } from '../purchase-requisition.service';
-import { FormService } from '../../../../../shared/services/form.service';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TableDef } from '../../../../../shared/components/z-table/z-table';
-import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../settings/company-master/company-master';
-import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { DataViewModule } from 'primeng/dataview';
+import { Subject, takeUntil } from 'rxjs';
+import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { TableDef } from '../../../../../shared/components/z-table/z-table';
+import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
+import { FormConfigType } from '../../../../../shared/models/form.model';
+import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { Currency_SelectList } from '../../../../admin/settings/currency-master/currency-master';
+import { Product_SelectList, ProductMaster, ProductRequest } from '../../../../ims/settings/product-master/product-master';
+import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../settings/company-master/company-master';
+import { PurchaseRequisition, PurchaseRequisitionDetail } from '../purchase-requisition';
+import { PurchaseRequisitionService } from '../purchase-requisition.service';
 
 @Component({
   selector: 'app-create',
@@ -28,7 +28,6 @@ import { Currency_SelectList } from '../../../../admin/settings/currency-master/
 })
 export class CreateComponent  implements OnInit, OnDestroy  {
   private destroy$ = new Subject<void>();
-
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('requestedQtyColTemplate', { static: true }) requestedQtyColTemplate!: TemplateRef<any>;
@@ -36,10 +35,8 @@ export class CreateComponent  implements OnInit, OnDestroy  {
   @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
   
-  
   componentRef?: ComponentRef<any>;
 
-  selectedCustomerAddress!: string | null;
   statusText!: string | null;
   statusHex!: string | null;
   isEditMode: boolean = false;
@@ -69,6 +66,7 @@ export class CreateComponent  implements OnInit, OnDestroy  {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<PurchaseRequisition>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form)
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.loadDropdownList();
     this.tableDef = {
@@ -92,14 +90,14 @@ export class CreateComponent  implements OnInit, OnDestroy  {
   }
   
   loadDropdownList(): void {
-      this.pageService.GetMasterDropdownLists()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (data) => {
-            this.currencyList = data.currencyList.Data?.Items ?? [];
-          },
-        });
-    }
+    this.pageService.GetMasterDropdownLists()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.currencyList = data.currencyList.Data?.Items ?? [];
+        },
+      });
+  }
 
   onClickPageHeaderBackButton(): void {
     try {
@@ -138,8 +136,6 @@ export class CreateComponent  implements OnInit, OnDestroy  {
           next: (response) => {
             if (response.IsSuccess) {
               this.companyMasterAutoCompleteDef.options = response.Data.Items;
-              console.log(this.companyMasterAutoCompleteDef.options);
-            } else {
             }
           },
         });
@@ -147,13 +143,15 @@ export class CreateComponent  implements OnInit, OnDestroy  {
 
     }
   }
-  
+
+  onSelect_Customer(event: Company_SelectList): void {
+    this.form.patchValue({ CustomerID: event.CompanyID});
+    
+  }
   onClear_Customer(): void {
     this.form.get('CustomerID')?.patchValue(null);
     this.form.get('CustomerName')?.patchValue(null);
-    this.selectedCustomerAddress = null;
   }
-  
   onSearch_Product(event: string): void {
     try {
       const dto: ProductRequest = {
@@ -211,7 +209,9 @@ export class CreateComponent  implements OnInit, OnDestroy  {
         return;
       }
 
-      if (this.form.invalid) {
+      if (this.form.invalid) {  
+        console.log(this.form.value);
+
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
         this.alertService.showValidationAlert();

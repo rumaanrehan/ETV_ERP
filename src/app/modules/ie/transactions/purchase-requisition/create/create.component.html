@@ -12,7 +12,7 @@
               <div class="row">
               <!-- Customer Details -->
                 <div class="col-xl-2 form-group px-2">
-                  <z-span [text]="form.get('RequisitionNo')?.value" [label]="formConfig.RequisitionNo.label"></z-span>
+                  <z-span [text]="form.get('PurchaseRequisitionNo')?.value" [label]="formConfig.PurchaseRequisitionNo.label"></z-span>
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-span [text]="formatDate(form.get('RequisitionDate')?.value)" [label]="formConfig.RequisitionDate.label"></z-span>
@@ -25,14 +25,16 @@
                 </div>
                 <div class="col-xl-3 form-group px-2">
                   <div class="action-input-group">
-                    <z-inputtext [group]="form" [control]="'RequestedBy'" [label]="formConfig.RequestedBy.label"
-                    [validationMessage]="formConfig.RequestedBy.error">
-                    </z-inputtext>
+                    <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCustomer($event)"
+                    (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+                    </z-autocomplete>
+                    <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Company"
+                      (click)="handleComponentLoad('VendorCreateComponent')"></i>
                   </div>
                 </div>
-                <div class="col-xl-3"></div>
+                <div class="col-xl-2"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-datepicker [group]="form" [control]="'RequiredByDate'"
+                  <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
                     [label]="formConfig.ExchangeRateDate.label"
                     [validationMessage]="formConfig.ExchangeRateDate.error"></z-datepicker>
                 </div>
@@ -40,7 +42,7 @@
                   <z-inputtext [group]="form" [control]="'ExchangeRateToBC'" [label]="formConfig.ExchangeRateToBC.label"
                     [validationMessage]="formConfig.ExchangeRateToBC.error"></z-inputtext>
                 </div>
-                <div class="col-xl-2 form-group px-1 ">
+                <div class="col-3 form-group ">
                     <z-select [group]="form" [control]="'FCCurrencyID'" [label]="formConfig.FCCurrencyID.label"
                       [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" 
                       [options]="currencyList"></z-select>
