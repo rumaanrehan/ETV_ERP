@@ -141,7 +141,7 @@ export const ieRoute: Routes = [
                 }
               },
               {
-                path: 'from-enquiry/:purchaseEnquiryID',
+                path: 'from-requisition/:purchaseRequisitionID',
                 loadComponent: () => import('./transactions/purchase-quotation/create/create.component').then((m) => m.CreateComponent),
                 data: {
                   permission: 'CanCreate',

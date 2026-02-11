@@ -43,12 +43,12 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   componentRef?: ComponentRef<any>;
 
-  selectedCustomerAddress!: string | null;
+  selectedVendorAddress!: string | null;
   statusText!: string | null;
   statusHex!: string | null;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
-  isFromPurchaseEnquiry = false;
+  isFromPurchaseRequisition = false;
   isImportAlreadyExists = false;
 
   form!: FormGroup;
@@ -56,7 +56,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   tableDef!: TableDef<PurchaseQuotationDetail>;
 
   //Master Lists
-  customerList: Company_SelectList[] = [];
+  VendorList: Company_SelectList[] = [];
   paymentTermList: PaymentTerm_SelectList[] = [];
   taxSlabList: TaxSlab_SelectList[] = [];
   currencyList: Currency_SelectList[] = [];
@@ -66,7 +66,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   incotermList: StaticList[] = [];
 
   //AutoComplete Definitions
-  purchaseEnquiryAutoCompleteDef!: AutoCompleteDef<PurchaseQuotation_SelectList>;
+  purchaseRequisitionAutoCompleteDef!: AutoCompleteDef<PurchaseQuotation_SelectList>;
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
 
@@ -84,7 +84,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<PurchaseQuotation>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.purchaseEnquiryAutoCompleteDef = this.pageService.getPurchaseEnquiryAutoCompleteDef(this.formConfig, this.form);
+    this.purchaseRequisitionAutoCompleteDef = this.pageService.getPurchaseRequisitionAutoCompleteDef(this.formConfig, this.form);
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
@@ -109,15 +109,15 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(paramMap => {
         const id = paramMap.get('id');
-        const purchaseEnquiryID = paramMap.get('purchaseEnquiryID');
+        const purchaseRequisitionID = paramMap.get('purchaseRequisitionID');
 
         if (id) {
           this.loadPurchaseQuotaion(+id);
           return;
         }
-        else if (purchaseEnquiryID) {
-          this.isFromPurchaseEnquiry = true;
-          this.GetPurchaseEnquiryDetails(+purchaseEnquiryID);
+        else if (purchaseRequisitionID) {
+          this.isFromPurchaseRequisition = true;
+          this.GetPurchaseRequisitionDetails(+purchaseRequisitionID);
           return;
         }
 
@@ -125,7 +125,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       });
   }
 
-  get isBasedOnPurchaseEnquiry(): boolean {
+  get isBasedOnPurchaseRequisition(): boolean {
     return this.form.get('BasedOn')?.value === 1;
   }
 
@@ -182,9 +182,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     } catch (error) { }
   }
 
-  onClickNavigateToImportOrder(QuotationID: number): void {
-    if (QuotationID) {
-      this.router.navigate([`ie/export-order/from-quotation/${QuotationID}`]);
+  onClickNavigateToImportOrder(PurchaseQuotationID: number): void {
+    if (PurchaseQuotationID) {
+      this.router.navigate([`ie/export-order/from-quotation/${PurchaseQuotationID}`]);
     } else {
       return;
     }
@@ -276,7 +276,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     return [quantity * rate, quantity * rate * (purchaseTaxRate / 100)];
   }
 
-  loadCustomer(event: string): void {
+  loadVendor(event: string): void {
     try {
       const dto: CompanyRequest = {
         CompanyTypeID: 1,
@@ -298,15 +298,15 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Customer(event: Company_SelectList): void {
-    this.form.patchValue({ VendorID: event.CompanyID, CustomerName: event.CompanyName });
-    this.selectedCustomerAddress = event?.BillingAddress || '';
+  onSelect_Vendor(event: Company_SelectList): void {
+    this.form.patchValue({ VendorID: event.CompanyID, VendorName: event.CompanyName });
+    this.selectedVendorAddress = event?.BillingAddress || '';
   }
 
-  onClear_Customer(): void {
+  onClear_Vendor(): void {
     this.form.get('VendorID')?.patchValue(null);
     this.form.get('VendorName')?.patchValue(null);
-    this.selectedCustomerAddress = null;
+    this.selectedVendorAddress = null;
   }
 
   onSearch_Product(event: string): void {
@@ -369,15 +369,15 @@ export class CreateComponent implements OnInit, OnDestroy {
 
       const taxableAmountFC = quantity * rate;
       const taxAmountFC = taxableAmountFC * taxRate / 100;
-      const quotationAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
+      const totalAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
 
       group.patchValue({
         TaxableAmountFC: taxableAmountFC,
         TaxAmountFC: taxAmountFC,
-        QuotationAmountFC: quotationAmountFC
+        TotalAmountFC: totalAmountFC
       }, { emitEvent: true });
 
-      netAmount += quotationAmountFC;
+      netAmount += totalAmountFC;
 
     });
 
@@ -395,13 +395,13 @@ export class CreateComponent implements OnInit, OnDestroy {
       const ratePerUnitFC = Number((group.get('RatePerUnitFC')?.value || 0).toFixed(3));
       const taxableAmountFC = Number((group.get('TaxableAmountFC')?.value || 0).toFixed(3));
       const taxAmountFC = Number((group.get('TaxAmountFC')?.value || 0).toFixed(3));
-      const quotedAmountFC = Number((group.get('QuotationAmountFC')?.value || 0).toFixed(3));
+      const totalAmountFC = Number((group.get('QuotationAmountFC')?.value || 0).toFixed(3));
 
       group.patchValue({
         RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
         TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
         TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
-        QuotationAmountBC: Number((quotedAmountFC * exchangeRate).toFixed(3))
+        TotalAmountBC: Number((totalAmountFC * exchangeRate).toFixed(3))
       }, { emitEvent: true });
     });
 
@@ -496,7 +496,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000,
               });
-              this.selectedCustomerAddress = null;
+              this.selectedVendorAddress = null;
               setTimeout(() => {
                 this.ngOnInit();
               }, 2000);
@@ -527,7 +527,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000,
               });
-              this.selectedCustomerAddress = null;
+              this.selectedVendorAddress = null;
               setTimeout(() => {
                 this.router.navigate(['/ie/purchase-quotation/index']);
               }, 2000);
@@ -547,11 +547,11 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getDetails(): void {
     this.route.params.subscribe((params) => {
-      const QuotationID = +params['id'];
-      if (QuotationID) {
+      const PurchaseQuotationID = +params['id'];
+      if (PurchaseQuotationID) {
         this.isEditMode = true;
         try {
-          this.pageService.GetDetails(QuotationID)
+          this.pageService.GetDetails(PurchaseQuotationID)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
@@ -560,19 +560,15 @@ export class CreateComponent implements OnInit, OnDestroy {
 
                   this.statusText = response.Data.StatusText;
                   this.statusHex = response.Data.StatusHex;
-                  this.selectedCustomerAddress = model.CustomerAddress;
+                  this.selectedVendorAddress = model.VendorAddress;
 
                   this.form.patchValue({
-                    QuotationID: model.QuotationID,
-                    QuotationNo: model.QuotationNo,
+                    PurchaseQuotationID: model.PurchaseQuotationID,
+                    PurchaseQuotationNo: model.PurchaseQuotationNo,
                     VendorID: model.VendorID,
                     BasedOn: model.BasedOn,
-                    EnquiryID: model.EnquiryID,
-                    EnquiryNo: model.EnquiryNo,
-                    CustomerID: model.CustomerID,
-                    CustomerName: model.CustomerName,
-                    QuotationDate: DateUtils.toDate(response.Data.QuotationDate!),
-                    ForeignCurrencyID: model.ForeignCurrencyID,
+                    VendorName: model.VendorName,
+                    FCurrencyID: model.FCurrencyID,
                     IncotermID: model.IncotermID,
                     PaymentTermID: model.PaymentTermID,
                     ExchangeRateToBC: model.ExchangeRateToBC,
@@ -616,20 +612,20 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  GetPurchaseEnquiryDetails(purchaseEnquiryID: number): void {
-    this.pageService.GetPurchaseEnquiryDetails(purchaseEnquiryID)
+  GetPurchaseRequisitionDetails(purchaseRequisitionID: number): void {
+    this.pageService.GetPurchaseRequisitionDetails(purchaseRequisitionID)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response.IsSuccess) {
             const model: PurchaseQuotation_Detail = response.Data;
 
-            this.selectedCustomerAddress = model.CustomerAddress,
+            this.selectedVendorAddress = model.VendorAddress,
               this.form.patchValue({
-                EnquiryID: model.EnquiryID,
-                EnquiryNo: model.EnquiryNo,
-                CustomerID: model.CustomerID,
-                CustomerName: model.CustomerName,
+                PurchaseRequisitionID: model.PurchaseRequisitionID,
+                PurchaseRequisitionNo: model.PurchaseRequisitionNo,
+                VendorID: model.VendorID,
+                VendorName: model.VendorName,
               });
 
             this.productListArray.clear();
@@ -673,22 +669,18 @@ export class CreateComponent implements OnInit, OnDestroy {
             
             this.statusText = response.Data.StatusText;
             this.statusHex = response.Data.StatusHex;
-            this.selectedCustomerAddress = model.VendorAddress,
-            this.isImportAlreadyExists = response.Data.IsImportAlreadyExists;
+            this.selectedVendorAddress = model.VendorAddress,
+            this.isImportAlreadyExists = response.Data.IsPurchaseAlreadyExists;
 
             this.form.patchValue({
-              QuotationID: model.QuotationID,
-              QuotationNo: model.QuotationNo,
+              PurchaseQuotationID: model.PurchaseQuotationID,
+              PurchaseQuotationNo: model.PurchaseQuotationNo,
               BasedOn: model.BasedOn,
-              EnquiryID: model.EnquiryID,
-              EnquiryNo: model.EnquiryNo,
-              CustomerID: model.CustomerID,
-              CustomerName: model.CustomerName,
-              QuotationDate: DateUtils.toDate(response.Data.QuotationDate!),
-              VendorID: model.VendorID,
               VendorName: model.VendorName,
+              PurchaseQuotationDate: DateUtils.toDate(response.Data.PurchaseQuotationDate!),
+              VendorID: model.VendorID,
               VendorAddress: model.VendorAddress,
-              ForeignCurrencyID: model.ForeignCurrencyID,
+              FCurrencyID: model.FCurrencyID,
               IncotermID: model.IncotermID,
               PaymentTermID: model.PaymentTermID,
               ExchangeRateToBC: model.ExchangeRateToBC,

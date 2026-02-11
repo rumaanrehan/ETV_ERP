@@ -8,7 +8,6 @@ import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } f
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
-import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
 import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
 import { TaxSlab_SelectList, TaxSlabRequest } from '../../../admin/settings/tax-slab-master/tax-slab-master';
@@ -20,14 +19,14 @@ import { CompanyMasterService } from '../../settings/company-master/company-mast
 import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
-import { PurchaseQuotation_SelectList, PurchaseQuotation_IndexTableFilter, PurchaseQuotation_IndexTableList, PurchaseQuotation_Detail, PurchaseQuotation, PurchaseQuotation_IndexTableSort, PurchasesQuotationRequest } from './purchase-quotation';
+import { PurchaseQuotation_SelectList, PurchaseQuotation_IndexTableFilter, PurchaseQuotation_IndexTableList, PurchaseQuotation_Detail, PurchaseQuotation, PurchaseQuotation_IndexTableSort, PurchaseQuotationRequest } from './purchase-quotation';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PurchaseQuotationService {
   private endpoint = 'IE/PurchaseQuotation';
-  purchaseEnquiryService: any;
+  purchaseRequisitionService: any;
 
   constructor(
     private apiService: ApiService,
@@ -63,15 +62,15 @@ export class PurchaseQuotationService {
     return this.productMasterService.PopulateList(model);
   }
 
-  GetPurchaseEnquiryList(model: PurchasesQuotationRequest): Observable<ApiListResponse<PurchaseQuotation_SelectList>> {
-    return this.purchaseEnquiryService.PopulateList(model);
+  GetPurchaseRequisitionList(model: PurchaseQuotationRequest): Observable<ApiListResponse<PurchaseQuotation_SelectList>> {
+    return this.purchaseRequisitionService.PopulateList(model);
   }
 
-  GetPurchaseEnquiryDetails(purchaseEnquiryID: number): Observable<ApiDataResponse<PurchaseQuotation_Detail>> {
-    return this.purchaseEnquiryService.GetDetails(purchaseEnquiryID);
+  GetPurchaseRequisitionDetails(purchaseRequisitionID: number): Observable<ApiDataResponse<PurchaseQuotation_Detail>> {
+    return this.purchaseRequisitionService.GetDetails(purchaseRequisitionID);
   }
 
-  PopulateList(model: PurchasesQuotationRequest): Observable<ApiListResponse<PurchaseQuotation_SelectList>> {
+  PopulateList(model: PurchaseQuotationRequest): Observable<ApiListResponse<PurchaseQuotation_SelectList>> {
     return this.apiService.post<ApiListResponse<PurchaseQuotation_SelectList>>(`${this.endpoint}/PopulateList?`, model);
   }
 
@@ -79,8 +78,8 @@ export class PurchaseQuotationService {
     return this.apiService.post<ApiPagedListResponse<PurchaseQuotation_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
   }
 
-  GetDetails(purchaseQuotationID: number): Observable<ApiDataResponse<PurchaseQuotation_Detail>> {
-    return this.apiService.post<ApiDataResponse<PurchaseQuotation_Detail>>(`${this.endpoint}/GetDetails?purchaseQuotationID=${purchaseQuotationID}`, {});
+  GetDetails(PurchaseQuotationID: number): Observable<ApiDataResponse<PurchaseQuotation_Detail>> {
+    return this.apiService.post<ApiDataResponse<PurchaseQuotation_Detail>>(`${this.endpoint}/GetDetails?purchaseQuotationID=${PurchaseQuotationID}`, {});
   }
 
   CreateRecord(model: PurchaseQuotation): Observable<ApiResponse> {
@@ -91,8 +90,8 @@ export class PurchaseQuotationService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  CancelQuotation(quotationID: number, reasonToUpdate: string): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel?quotationID=${quotationID}&reasonToUpdate=${reasonToUpdate}`, {});
+  CancelQuotation(purchaseQuotationID: number, reasonToUpdate: string): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel?PurchaseQuotationID=${purchaseQuotationID}&reasonToUpdate=${reasonToUpdate}`, {});
   }
 
   getFormConfig_DataTableFilter(): FormConfigType<PurchaseQuotation_IndexTableFilter> {
@@ -237,7 +236,7 @@ export class PurchaseQuotationService {
             }
           },
           ProductName: {
-            label: '',
+            label: 'Product Name',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
@@ -292,11 +291,11 @@ export class PurchaseQuotationService {
             label: '',
             defaultValue: null,
           },
-          QuotationAmountFC: {
+          TotalAmountFC: {
             label: '',
             defaultValue: null
           },
-          QuotationAmountBC: {
+          TotalAmountBC: {
             label: '',
             defaultValue: null,
           }
@@ -304,6 +303,10 @@ export class PurchaseQuotationService {
       },
       PaymentTermID: {
         label: 'Payment Term',
+        defaultValue: null
+      },
+      Narration: {
+        label: 'Narration',
         defaultValue: null
       },
       SubtotalAmountFC: {
@@ -345,22 +348,22 @@ export class PurchaseQuotationService {
       ProductName: {
         label: 'Product Name',
         defaultValue: null
-      }
+      }      
     };
   }
 
-  getPurchaseEnquiryAutoCompleteDef(formConfig: FormConfigType<PurchaseQuotation>, form: FormGroup): AutoCompleteDef<PurchaseQuotation_SelectList> {
+  getPurchaseRequisitionAutoCompleteDef(formConfig: FormConfigType<PurchaseQuotation>, form: FormGroup): AutoCompleteDef<PurchaseQuotation_SelectList> {
     return {
       type: 'formControl',
       group: form,
-      control: 'PurchaseEnquiryNo',
-      label: formConfig.QuotationNo.label,
-      placeholder: 'Search Purchase Enquiry',
+      control: 'PurchaseRequisitionNo',
+      label: formConfig.PurchaseQuotationNo.label,
+      placeholder: 'Search Purchase Requisition',
       options: [],
-      optionLabel: 'PurchaseEnquiryNo',
+      optionLabel: 'PurchaseRequisitionNo',
       columns: [
-        { data: 'PurchaseEnquiryNo', label: 'Purchase Enquiry No', width: '200px' },
-        { data: 'CustomerName', label: 'Customer Name', width: '200px' }
+        { data: 'PurchaseRequisitionNo', label: 'Purchase Requisition No', width: '200px' },
+        { data: 'VendorName', label: 'Vendor Name', width: '200px' }
       ],
     }
   }
@@ -372,7 +375,7 @@ export class PurchaseQuotationService {
       control: 'VendorName',
       label: formConfig.VendorName.label,
       validationMessage: formConfig.VendorName.error,
-      placeholder: 'Search Customer',
+      placeholder: 'Search Vendor',
       options: [],
       optionLabel: 'CompanyName',
       columns: [
@@ -401,13 +404,13 @@ export class PurchaseQuotationService {
 
   getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<PurchaseQuotation_IndexTableList> {
     return {
-      tableKey: 'IE_SalesQuotation_IndexDataView',
+      tableKey: 'IE_PurchaseQuotation_IndexDataView',
       defaultSortColumn: { sortField: 'QuotationNo', sortOrder: 1 },
       filterForm: filterForm,
       sortingForm: sortingForm,
       filterFields: [
-        { field: 'QuotationNo', label: 'Quotation No', type: 'text' },
-        { field: 'CustomerName', label: 'Customer', type: 'text' },
+        { field: 'PurchaseQuotationNo', label: 'Quotation No', type: 'text' },
+        { field: 'VendorName', label: 'Vendor', type: 'text' },
         {
           field: 'BasedOn',
           label: 'Based On',
@@ -420,8 +423,8 @@ export class PurchaseQuotationService {
         }
       ],
       sortFields: [
-        { field: 'QuotationNo', label: 'Quotation No', enabled: true, order: 1 },
-        { field: 'QuotationDate', label: 'Quotation Date', enabled: true, order: 0 },
+        { field: 'PurchaseQuotationNo', label: 'PurchaseQuotation No', enabled: true, order: 1 },
+        { field: 'PurchaseQuotationDate', label: 'PurchaseQuotation Date', enabled: true, order: 0 },
         { field: 'NetAmountFC', label: 'Quotation Amount', enabled: true, order: 0 },
         { field: 'StatusID', label: 'Status', enabled: true, order: 0 }
       ],

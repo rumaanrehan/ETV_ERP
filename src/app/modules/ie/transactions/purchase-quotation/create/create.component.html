@@ -13,8 +13,8 @@
               <div class="row">
                 <!-- Order Details -->
                 <div class="col-xl-2 form-group px-2">
-                  <z-span [text]="form.get('QuotationNo')?.value"
-                    [label]="formConfig.QuotationNo.label"></z-span>
+                  <z-span [text]="form.get('PurchaseQuotationNo')?.value"
+                    [label]="formConfig.PurchaseQuotationNo.label"></z-span>
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
@@ -23,31 +23,31 @@
                 </div>
                 <div class="col-xl-6"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-datepicker [group]="form" [control]="'QuotationDate'"
-                    [label]="formConfig.QuotationDate.label"
-                    [validationMessage]="formConfig.QuotationDate.error"></z-datepicker>
+                  <z-datepicker [group]="form" [control]="'PurchaseQuotationDate'"
+                    [label]="formConfig.PurchaseQuotationDate.label"
+                    [validationMessage]="formConfig.PurchaseQuotationDate.error"></z-datepicker>
                 </div>
 
                 <!-- Customer Details -->
                 <div class="col-xl-3 form-group px-2">
                   <div class="action-input-group">
-                    <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCustomer($event)"
-                      (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+                    <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadVendor($event)"
+                      (onSelect)="onSelect_Vendor($event)" (onClear)="onClear_Vendor()">
                     </z-autocomplete>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Company"
-                      (click)="handleComponentLoad('VendorCreateComponent')" *ngIf="!isBasedOnPurchaseEnquiry"></i>
+                      (click)="handleComponentLoad('VendorCreateComponent')" *ngIf="!isBasedOnPurchaseRequisition"></i>
                   </div>
                 </div>
                 <div class="col-xl-7"></div>
                 <div class="col-xl-5 form-group px-2">
-                  <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
+                  <z-span [text]="selectedVendorAddress ?? ''"></z-span>
                 </div>
 
                 <!-- Currency & Exchange -->
                 <h6 class="form-group px-2">Exchange Rate Details</h6>
                 <div class="col-xl-3 form-group px-2">
                   <div class="action-input-group">
-                    <z-select [group]="form" [control]="'ForeignCurrencyID'" [label]="formConfig.ForeignCurrencyID.label"
+                    <z-select [group]="form" [control]="'FCurrencyID'" [label]="formConfig.FCurrencyID.label"
                       [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'" [options]="currencyList"></z-select>
                     <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Currency"
                       (click)="handleComponentLoad('CurrencyCreateComponent')"></i>
@@ -77,7 +77,7 @@
                 <!-- Product List -->
                 <div class="col-12 px-2">
                   <h6 class="form-group">Product List</h6>
-                  <div class="col-xl-3 form-group" *ngIf="!isBasedOnPurchaseEnquiry">
+                  <div class="col-xl-3 form-group" *ngIf="!isBasedOnPurchaseRequisition">
                     <div class="action-input-group">
                       <z-autocomplete class="flex-grow-1" [controlDef]="productAutoCompleteDef"
                         (onSearch)="onSearch_Product($event)" (onSelect)="onSelect_Product($event)">
@@ -91,15 +91,14 @@
                   </z-table>
                 </div>
                 <!-- Payment & Shipment -->
-                <div class="col-xl-2 form-group px-3">
+                <div class="col-xl-2 form-group px-2">
                   <z-select [group]="form" [control]="'PaymentTermID'" [label]="formConfig.PaymentTermID.label"
                     [options]="paymentTermList" [optionLabel]="'PaymentTermName'"
                     [optionValue]="'PaymentTermID'"></z-select>
                 </div>
-                <!-- Narration
                 <div class="col-md-6 form-group px-3">
                   <z-textarea [group]="form" [control]="'Narration'" [label]="formConfig.Narration.label"></z-textarea>
-                </div> -->
+                </div>
                 <div class="col-xl-2"></div>
                 <div class="col-xl-1 pe-2 form-group ms-auto">
                   <z-checkbox [group]="form" [control]="'IsRoundOff'" [label]="formConfig.IsRoundOff.label">
@@ -165,7 +164,7 @@
 
 <ng-template #quotedQtyColTemplate let-row let-i="index">
   <z-inputnumber [group]="productListArray.at(i)" [control]="'QuotedQty'"
-    [label]="formConfig.ProductList.items.QuotedQty.label" [readonly]="isBasedOnPurchaseEnquiry"
+    [label]="formConfig.ProductList.items.QuotedQty.label" [readonly]="isBasedOnPurchaseRequisition"
     [validationMessage]="formConfig.ProductList.items.QuotedQty.error?.[i]" (onChange)="productCalculation()">
   </z-inputnumber>
 </ng-template>
@@ -209,7 +208,7 @@
 </ng-template>
 
 <ng-template #removeProductItemColTemplate let-row let-i="index">
-  <div class="d-flex justify-content-end" *ngIf="!isBasedOnPurchaseEnquiry">
+  <div class="d-flex justify-content-end" *ngIf="!isBasedOnPurchaseRequisition">
     <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
       (click)="onClickRemoveProductItem(i)">
       <i class="pi pi-minus-circle"></i></span>

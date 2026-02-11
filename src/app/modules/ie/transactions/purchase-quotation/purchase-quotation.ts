@@ -16,6 +16,7 @@ export interface PurchaseQuotation {
     IncotermID: number | null;
     ProductList: PurchaseQuotationDetail[];
     PaymentTermID: number | null;
+    Narration: string | null;
     SubtotalAmountFC: number | null;
     SubtotalAmountBC: number | null;
     TaxAmountFC: number | null;
@@ -24,6 +25,10 @@ export interface PurchaseQuotation {
     NetAmountBC: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
+
+    //AutoComplete releted fields
+    ProductID: number | null;
+    ProductName: string | null;
 }
 
 export interface PurchaseQuotationDetail {
@@ -38,8 +43,8 @@ export interface PurchaseQuotationDetail {
     TaxableAmountBC: number | null;
     TaxAmountFC: number | null;
     TaxAmountBC: number | null;
-    QuotationAmountFC: number | null;
-    QuotationAmountBC: number | null;
+    TotalAmountFC: number | null;
+    TotalAmountBC: number | null;
 }
 
 export interface PurchaseQuotation_IndexTableFilter {

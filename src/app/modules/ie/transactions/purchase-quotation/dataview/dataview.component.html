@@ -1,7 +1,7 @@
 <!--Page Header Action Button Template-->
 <ng-template #pageHeaderActionTemplate>
     <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
-            class="pi pi-plus"></i>&nbsp;Add Quotation</button>
+            class="pi pi-plus"></i>&nbsp;Add PurchaseQuotation</button>
 </ng-template>
 
 <div class="col-xl-12 index-page-content">
@@ -14,11 +14,11 @@
     <div class="dataview-item" *ngFor="let item of exportOrders; let first = first">
         <div class="col-12 p-3">
             <div class="d-flex justify-content-between">
-                <a (click)="onClickEditDetails(item.QuotationID)">
-                    <h5 class="primary-color mb-2">{{item.QuotationNo}} | {{item.VendorName}}</h5>
+                <a (click)="onClickEditDetails(item.PurchaseQuotationID)">
+                    <h5 class="primary-color mb-2">{{item.PurchaseQuotationNo}} | {{item.VendorName}}</h5>
                 </a>
                 <div class="text-end">
-                    <span class="badge bg-outline-danger me-2" *ngIf="item.StatusText === 'Draft'" (click)="onClickCancel(item.QuotationID)">Cancel</span>
+                    <span class="badge bg-outline-danger me-2" *ngIf="item.StatusText === 'Draft'" (click)="onClickCancel(item.PurchaseQuotationID)">Cancel</span>
                     <span class="badge bg-outline-primary">{{item.StatusText}}</span>
                 </div>
             </div>
@@ -26,8 +26,8 @@
                 <div class="d-flex flex-wrap justify-content-between">
                     <div class="dataview-info-column">
                         <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Quotation Date:</span>
-                            <span class="fs-6 text-secondary"> {{formatDate(item.QuotationDate)}} </span>
+                            <span class="fs-6 text-secondary">PurchaseQuotation Date:</span>
+                            <span class="fs-6 text-secondary"> {{formatDate(item.PurchaseQuotationDate)}} </span>
                         </div>
                         <div class="dataview-info-item">
                             <span class="fs-6 text-secondary">Valid Till:</span>

@@ -42,7 +42,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   basedOnList: StaticList[] = []
 
   sortFieldList: any[] = [
-    { value: "PurchaseQuotationDate", text: "Quotation Date" },
+    { value: "PurchaseQuotationDate", text: "Purchase QuotationDate" },
     { value: "StatusID", text: "Status" },
   ]
 
@@ -162,13 +162,13 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(QuotationID: number) {
-    if (QuotationID) {
-      this.router.navigate([`ie/purchase-quotation/edit/${QuotationID}`]);
+  onClickEditDetails(PurchaseQuotationID: number) {
+    if (PurchaseQuotationID) {
+      this.router.navigate([`ie/purchase-quotation/edit/${PurchaseQuotationID}`]);
     }
   }
 
-  onClickCancel(quotationID: number) {
+  onClickCancel(PurchaseQuotationID: number) {
     this.alertService
       .showConfirmationWithInput({
         text: 'Do you want to cancel?',
@@ -176,7 +176,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          this.pageService.CancelQuotation(quotationID, result.value)
+          this.pageService.CancelQuotation(PurchaseQuotationID, result.value)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
