@@ -1,0 +1,234 @@
+<ng-template #pageHeaderActionTemplate>
+  <button class="btn btn-primary btn-page-header" [routerLink]="'/home'">
+    <i class="pi pi-arrow-left"></i>&nbsp;Home</button>
+</ng-template>
+
+<div class="col-xl-12">
+    <div class="col-xl-12 page-content">
+        <div class="col-xl-6 page-content-scrollable align-items-center m-auto">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+                <div class="col-xl-12 card m-auto mb-2 p-3">
+                    <div class="d-flex">
+                        <div class="col-4 fs-6">Organization logo</div>
+                        <div class="col-8 d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm w-auto" (click)="removeLogo()" [disabled]="!logoImageSrc">Remove logo</button>
+                            <button type="button" class="btn btn-primary btn-sm w-auto" (click)="updateLogo = !updateLogo">Replace logo</button>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="col-5 d-flex justify-content-center align-items-center" *ngIf="!updateLogo">
+                            <ng-container *ngIf="logoImageSrc; else nameAvatar">
+                                <img [src]="logoImageSrc" alt="logo" width="80" height="80" class="rounded"style="object-fit: cover;"/>
+                            </ng-container>
+                            <ng-template #nameAvatar>
+                                <div class="d-flex justify-content-center align-items-center rounded fw-bold text-white"
+                                style="width: 80px; height: 80px; background-color: #6c757d;font-size: 32px;">{{ getOrganizationInitial(form.get('OrganizationName')?.value) }}
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div class="col-5 p-2" *ngIf="updateLogo">
+                            <z-file-upload [group]="logoForm" [control]="'Logo'" [label]="'Organization'" [accept]="'.png,.jpg,.jpeg'" 
+                            [maxFileSize]="1048576" fieldLabel="image" [showDragnDrop]="false" (fileSelected)="onLogoUpdate($event)">
+                            </z-file-upload>
+                        </div>
+                        <div class="col-7">
+                            <div class="d-flex align-items-center justify-content-between">  
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold">Display Name</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="fw-semibold mt-1">
+                                    {{ form.get('OrganizationName')?.value }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="border-secondary opacity-25 my-2">
+                    <div class="d-flex pb-3">
+                        <div class="col-4 fs-6">Organization details</div>
+                        <div class="col-8 d-flex justify-content-end">
+                            <button type="button" class="btn btn-primary btn-sm w-auto ps-3 pe-3" (click)="editMode = !editMode">Edit</button>
+                        </div>
+                    </div>
+
+                    <!-- ========================= -->
+                    <!-- Company Details -->
+                    <!-- ========================= -->
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.OrganizationName.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('OrganizationName')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'OrganizationName'"
+                                [validationMessage]="formConfig.OrganizationName.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.OrganizationWebsite.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('OrganizationWebsite')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'OrganizationWebsite'"
+                                [validationMessage]="formConfig.OrganizationWebsite.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.CINNumber.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('CINNumber')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'CINNumber'"
+                                [validationMessage]="formConfig.CINNumber.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.PANNumber.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('PANNumber')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'PANNumber'"
+                                [validationMessage]="formConfig.PANNumber.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.IECNumber.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('IECNumber')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'IECNumber'"
+                                [validationMessage]="formConfig.IECNumber.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.GSTNumber.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('GSTNumber')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'GSTNumber'"
+                                [validationMessage]="formConfig.GSTNumber.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.CRNumber.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('CRNumber')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'CRNumber'"
+                                [validationMessage]="formConfig.CRNumber.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.Industry.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('Industry')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'Industry'"
+                                [validationMessage]="formConfig.Industry.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.Address.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('Address')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'Address'"
+                                [validationMessage]="formConfig.Address.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" *ngIf="editMode">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.CountryID.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('CountryID')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-select [group]="form" [control]="'CountryID'" [options]="countryList" 
+                                [optionLabel]="'CountryName'" [optionValue]="'CountryID'"(onChange)="loadStateList($event)">
+                            </z-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.StateID.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ stateName}}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-select [group]="form" [control]="'StateID'" [validationMessage]="formConfig.StateID.error" 
+                                [options]="stateList" [optionLabel]="'StateName'" [optionValue]="'StateID'">
+                            </z-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.PostalCode.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('PostalCode')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'PostalCode'"
+                                [validationMessage]="formConfig.PostalCode.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.EmailID.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('EmailID')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'EmailID'"
+                                [validationMessage]="formConfig.EmailID.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">{{ formConfig.PhoneNumber.label }}</label>
+                        <div class="col-sm-9 fw-semibold mt-1" *ngIf="!editMode">
+                            : {{ form.get('PhoneNumber')?.value }}
+                        </div>
+                        <div class="col-sm-9" *ngIf="editMode">
+                            <z-inputtext [group]="form" [control]="'PhoneNumber'"
+                                [validationMessage]="formConfig.PhoneNumber.error">
+                            </z-inputtext>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="page-action-panel d-flex justify-content-end">
+        <div class="px-2 pe-3 ms-auto">
+            <button type="submit" class="btn btn-primary px-4" (click)="onSubmit()" [disabled]="isSubmitted || !editMode"> Update </button>
+        </div>  
+    </div>
+</div>

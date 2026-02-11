@@ -1,5 +1,3 @@
-import { StringUtils } from "../../../../core/utility/string-utils";
-
 export interface CompanyMaster {
     CompanyID: number | null;
     CompanyCode: string | null;
@@ -15,6 +13,7 @@ export interface CompanyMaster {
     TANNo: string | null;
     PANNo: string | null;
     BillingAddress: string | null;
+    IsShippingAddressSameAsBillingAddress: boolean | null;
     ShippingAddress: string | null;
 }
 
@@ -66,6 +65,7 @@ export interface Company_Details {
     TANNo: string | null;
     PANNo: string | null;
     BillingAddress: string | null;
+    ShippingAddress: string | null;
 }
 
 export interface State_SelectList {

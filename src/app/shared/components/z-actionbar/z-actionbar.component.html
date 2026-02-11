@@ -1,0 +1,19 @@
+<div class="z-action-bar" *ngIf="selectedCount > 0">
+  <div class="left">
+    <span class="count">{{ selectedCount }} selected</span>
+  </div>
+
+  <div class="right">
+    <button
+      *ngFor="let action of actions"
+      [disabled]="action.disabled"
+      (click)="onActionClick(action.key)"
+      class="action-btn"
+      [ngClass]="action.color"
+    >
+      <i *ngIf="action.icon" [class]="action.icon"></i>
+      {{ action.label }}
+    </button>
+  </div>
+</div>
+

@@ -43,15 +43,13 @@ export interface TaxInvoice {
     ProductList: TaxInvoiceDetail[];
 
     Customer?: CompanyMaster;
-
-    ProductID: number | null;
-    ProductName: string | null;
 }
 
 export interface TaxInvoiceDetail {
     ProductID: number | null;
     ProductName: string | null;
     UOM: string | null;
+    HSCode: string | null;
     SalesQty: number | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
@@ -148,6 +146,7 @@ export interface TaxInvoiceProductDetail {
     ProductName: string;
     SalesQty: number;
     UOM: string;
+    HSCode: string | null;
     RatePerUnitFC: number;
     TaxRate: number;
     TaxableAmountFC: number;

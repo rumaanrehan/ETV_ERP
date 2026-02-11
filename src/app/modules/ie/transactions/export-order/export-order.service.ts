@@ -26,9 +26,16 @@ import { ExportOrderDocumentTemplate } from '../export-order-document/export-ord
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
 import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
-import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
+import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
+import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
+import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
+import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
+import { NonZero } from '../../../../shared/validators/non-zero.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +52,8 @@ export class ExportOrderService {
     private paymentTermMasterService: PaymentTermMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
     private portService: PortMasterService,
-    private selectListService: SelectListService
+    private selectListService: SelectListService,
+    private currencyExchangeService: CurrencyExchangeService
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -58,6 +66,10 @@ export class ExportOrderService {
       taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest),
       currencyList: this.currencyMasterService.PopulateList({ PopulateType: 'SelectList' } as CurrencyRequest)
     });
+  }
+
+  GetExchangeRate(model: GetExchangeRateRequest): Observable<ApiDataResponse<ExchangeRateResponse>> {
+    return this.currencyExchangeService.GetRate(model);
   }
 
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
@@ -136,8 +148,12 @@ export class ExportOrderService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
-  CancelOrder(model: ExportOrder): Observable<ApiResponse> {
+  CancelOrder(model: ExportOrderCancelRequest): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  BulkChangeStatus(model: ExportOrderBulkUpdateRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/BulkChangeStatus`, model);
   }
 
   LoadDocument(exportOrderID: number): Observable<ApiListResponse<ExportOrderDocumentList>> {
@@ -236,20 +252,31 @@ export class ExportOrderService {
         label: 'Order No',
         defaultValue: "NEW"
       },
-      ExportOrderDate: {
-        label: 'Order Date',
-        defaultValue: null,
+      BasedOn: {
+        label: 'Based On',
+        defaultValue: 2,
         validators: [Validators.required],
         validationMessages: {
-          required: "Order Date is required"
-        }
+          required: "Based On is required."
+        },
+        type: 'control'
+      },
+      ExportOrderDate: {
+        label: 'Order Date',
+        defaultValue: new Date(),
+        validators: [Validators.required, GreaterThanOrEqual("ReferenceDate")],
+        validationMessages: {
+          required: "Export Order Date is required.",
+          greaterThanOrEqual: "Order Date must be greater than or equal to Reference Date."
+        },
+        type: 'control'
       },
       SalesQuotationID: {
         label: 'Sales Quotation',
         defaultValue: null,
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
         validationMessages: {
-          required: "Sales Quotation is required"
+          required: "Sales Quotation is required."
         }
       },
       SalesQuotationNo: {
@@ -257,31 +284,27 @@ export class ExportOrderService {
         defaultValue: null,
         validators: [RequiredIf("BasedOn", Operator.EqualTo, 1)],
         validationMessages: {
-          required: "Sales Quotation is required"
-        }
-      },
-      BasedOn: {
-        label: 'Based On',
-        defaultValue: 1,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Based On is required"
-        }
-      },
-      ReferenceNo: {
-        label: 'Reference Number',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Reference Number is required"
+          required: "Sales Quotation is required."
         }
       },
       ReferenceDate: {
         label: 'Reference Date',
         defaultValue: null,
-        validators: [Validators.required],
+        validators: [Validators.required, LessThanOrEqual("ExportOrderDate")],
         validationMessages: {
-          required: "Reference Date is required"
+          required: "Reference Date is required.",
+          lessThanOrEqual: "Reference Date must be less than or equal to Order Date."
+        },
+        type: 'control'
+      },
+      ReferenceNo: {
+        label: 'Reference Number',
+        defaultValue: null,
+        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(100)],
+        validationMessages: {
+          required: "Reference Number is required.",
+          notOnlyWhitespace: "Reference Number cannot be empty or whitespace.",
+          maxLength: "Reference Number cannot exceed 100 characters."
         }
       },
       CustomerID: {
@@ -289,39 +312,53 @@ export class ExportOrderService {
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Customer is required"
-        }
+          required: "Customer is required."
+        },
+        type: 'control'
       },
       CustomerName: {
         label: 'Customer Name',
         defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Customer is required."
+        },
+        type: 'control'
       },
       FCCurrencyID: {
         label: 'Foreign Currency',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Foreign Currency is required."
+        },
+        type: 'control'
       },
       ExchangeRateDate: {
         label: 'Exchange Date',
-        defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        defaultValue: new Date(),
+        validators: [Validators.required],
         validationMessages: {
-          RequiredIf: "Exchange Rate Date is required"
-        }
+          required: "Exchange Rate Date is required."
+        },
+        type: 'control'
       },
       ExchangeRateToBC: {
         label: 'Exchange Rate to BC',
         defaultValue: null,
-        validators: [RequiredIf('FCCurrencyID', Operator.NotEqualTo, null)],
+        validators: [Validators.required, NonZero()],
         validationMessages: {
-          RequiredIf: "Exchange Rate to Base Currency is required"
-        }
+          required: "Exchange Rate to Base Currency is required.",
+          nonZero: "Exchange Rate cannot be 0."
+        },
+        type: 'control'
       },
       IncotermID: {
         label: 'Incoterm',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Incoterm is required"
+          required: "Incoterm is required."
         }
       },
       IsDutyDrawable: {
@@ -334,35 +371,51 @@ export class ExportOrderService {
       },
       BankChargesFC: {
         label: 'Bank Charge (FC)',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.min(0)],
+        validationMessages: {
+          min: "Bank charges cannot be less than 0."
+        }
       },
       BankChargesBC: {
         label: 'Bank Charge (BC)',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.min(0)],
+        validationMessages: {
+          min: "Bank charges cannot be less than 0."
+        }
       },
       FreightChargeFC: {
         label: 'Freight Charge (FC)',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.min(0)],
+        validationMessages: {
+          min: "Freight Charge cannot be less than 0."
+        }
       },
       FreightChargeBC: {
         label: 'Freight Charge (BC)',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.min(0)],
+        validationMessages: {
+          min: "Freight Charge cannot be less than 0."
+        }
       },
       InsuranceAmountFC: {
         label: 'Insurance Amount (FC)',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.min(0)],
+        validationMessages: {
+          min: "Insurance Amount cannot be less than 0."
+        }
       },
       InsuranceAmountBC: {
         label: 'Insurance Amount (BC)',
-        defaultValue: null
-      },
-      ProductID: {
-        label: '',
-        defaultValue: null
-      },
-      ProductName: {
-        label: 'Product Name',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.min(0)],
+        validationMessages: {
+          min: "Insurance Amount cannot be less than 0."
+        }
       },
       ProductList: {
         type: 'array',
@@ -372,100 +425,133 @@ export class ExportOrderService {
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Product is required"
-            }
+              required: "Product is required."
+            },
+            type: 'control'
           },
           ProductName: {
-            label: 'Product Name',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Product is required"
-            }
-          },
-          SalesQty: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Sales Qty is required"
-            }
+              required: "Product is required."
+            },
+            type: 'control'
+          },
+          SalesQty: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1), Validators.max(99999), noFractionValidator()],
+            validationMessages: {
+              required: "Sales Qty is required.",
+              min: "Sales Qty must be at least 1.",
+              max: "Sales Qty cannot exceed 99999.",
+              noFraction: "Sales quantity cannot have fractions."
+            },
+            type: 'control'
           },
           UOM: {
-            label: 'Measurement Unit',
+            label: '',
             defaultValue: null
+          },
+          HSCode: {
+            label: 'HS Code',
+            defaultValue: null,
+            // validators: [Validators.minLength(2), Validators.maxLength(8), Validators.pattern(/^\d{2,8}$/)],
+            // validationMessages: {
+            //   minlength: "HS Code must be at least 2 digits.",
+            //   maxlength: "HS Code cannot exceed 8 digits.",
+            //   pattern: "HS Code must contain only digits."
+            // },
+            // type: 'control'
+          },
+          RatePerUnitFC: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, NonZero(), Validators.max(10000000)],
+            validationMessages: {
+              required: "Rate in foreign currency is required.",
+              nonZero: "Rate per unit cannot be 0.",
+              max: "Maximum Rate Per Unit allowed is 10,000,000."
+            },
+            type: 'control'
+          },
+          RatePerUnitBC: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, NonZero()],
+            validationMessages: {
+              required: "Amounts are not converted into base currency.",
+              nonZero: "Rate per unit cannot be 0."
+            },
+            type: 'control'
+          },
+          TaxableAmountFC: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, NonZero()],
+            validationMessages: {
+              required: "Amounts are not converted into base currency.",
+              nonZero: "Taxable Amount cannot be 0."
+            },
+            type: 'control'
+          },
+          TaxableAmountBC: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, NonZero()],
+            validationMessages: {
+              required: "Amounts are not converted into base currency.",
+              nonZero: "Taxable Amount cannot be 0."
+            },
+            type: 'control'
           },
           SalesTaxRate: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Tax Rate is required"
-            }
-          },
-          RatePerUnitFC: {
-            label: '',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Rate in foreign currency is required"
-            }
-          },
-          RatePerUnitBC: {
-            label: '',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Rate is required"
-            }
-          },
-          TaxableAmountFC: {
-            label: '',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Taxable amount in foreign currency is required"
-            }
-          },
-          TaxableAmountBC: {
-            label: '',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Taxable Amount in base currency is required"
-            }
+              required: "Tax Rate is required."
+            },
+            type: 'control'
           },
           TaxAmountFC: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Tax in foreign currency is required"
-            }
+              required: "Tax in foreign currency is required."
+            },
+            type: 'control'
           },
           TaxAmountBC: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Tax in base currency is required"
-            }
+              required: "Amounts are not converted into base currency."
+            },
+            type: 'control'
           },
           SalesAmountFC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
+            validators: [Validators.required, NonZero()],
             validationMessages: {
-              required: "Sales amount in foreign currency is required"
-            }
+              required: "Sales Amount is required.",
+              nonZero: "Sales Amount cannot be 0."
+            },
+            type: 'control'
           },
           SalesAmountBC: {
             label: '',
             defaultValue: null,
-            validators: [Validators.required],
+            validators: [Validators.required, NonZero()],
             validationMessages: {
-              required: "Sales amount in base currency is required"
-            }
+              required: "Amounts are not converted into base currency.",
+              nonZero: "Sales Amount cannot be 0."
+            },
+            type: 'control'
           }
         }
       },
@@ -474,42 +560,51 @@ export class ExportOrderService {
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Payment Terms are required"
+          required: "Payment Term is required."
         }
       },
       ShipmentModeID: {
         label: 'Shipment Mode',
-        defaultValue: null
-      },
-      LoadingPortName: {
-        label: 'Port Name',
-        defaultValue: null
-      },
-      DischargePortName: {
-        label: 'Port Name',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Shipment Mode is required."
+        }
       },
       LoadingPortID: {
         label: 'Loading Port',
+        defaultValue: null
+      },
+      LoadingPortName: {
+        label: 'Loading Port Name',
         defaultValue: null
       },
       DischargePortID: {
         label: 'Discharge Port',
         defaultValue: null
       },
+      DischargePortName: {
+        label: 'Discharge Port Name',
+        defaultValue: null
+      },
       FinalDestination: {
         label: 'Final Destination',
         defaultValue: null,
-        validators: [Validators.required],
+        validators: [Validators.required, Validators.maxLength(100)],
         validationMessages: {
-          required: "Final Destination is required"
-        }
+          required: "Final Destination is required.",
+          maxlength: "Final Destination cannot exceed 100 characters."
+        },
+        type: 'control'
       },
       Narration: {
-        label: 'Narration',
+        label: 'Note',
         defaultValue: null,
-        validators: [],
-        validationMessages: {}
+        validators: [Validators.maxLength(500)],
+        validationMessages: {
+          maxLength: "Note cannot exceed 500 characters."
+        },
+        type: 'control'
       },
       StatusID: {
         label: 'Status',
@@ -521,34 +616,68 @@ export class ExportOrderService {
       },
       SubtotalAmountFC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required, NonZero()],
+        validationMessages: {
+          required: "Subtotal FC must be equal to the sum of Taxable Amount FC in Product List.",
+          nonZero: "Subtotal Amount cannot be 0."
+        },
+        type: 'control'
+      },
+      SubtotalAmountBC: {
+        label: 'Subtotal Amount (BC)',
+        defaultValue: null,
+        validators: [Validators.required, NonZero()],
+        validationMessages: {
+          required: "Amounts are not converted into base currency.",
+          nonZero: "Subtotal Amount cannot be 0."
+        },
+        type: 'control'
       },
       TaxAmountFC: {
         label: '',
-        defaultValue: null
-      },
-      SubtotalAmountBC: {
-        label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Tax Amount FC must be equal to the sum of Tax Amount FC in Product List."
+        },
+        type: 'control'
       },
       TaxAmountBC: {
-        label: '',
-        defaultValue: null
+        label: 'Tax Amount (BC)',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Amounts are not converted into base currency."
+        },
+        type: 'control'
       },
       NetAmountFC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required, NonZero()],
+        validationMessages: {
+          required: "Net Amount FC must be equal to the sum of all amount in the order.",
+          nonZero: "Net Amount cannot be 0."
+        },
+        type: 'control'
       },
       NetAmountBC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required, NonZero()],
+        validationMessages: {
+          required: "Amounts are not converted into base currency.",
+          nonZero: "Net Amount cannot be 0."
+        },
+        type: 'control'
       },
       IsRoundOff: {
         label: 'Round Off',
         defaultValue: true
       },
       CoinAdjustment: {
-        label: 'Coin Adjustment',
+        label: '',
         defaultValue: null
       }
     };
@@ -565,7 +694,7 @@ export class ExportOrderService {
       options: [],
       optionLabel: 'SalesQuotationNo',
       columns: [
-        { data: 'SalesQuotationNo', label: 'Quotation No', width: '100px' },
+        { data: 'SalesQuotationNo', label: 'Sales Quotation No', width: '200px' },
         { data: 'CustomerName', label: 'Customer Name', width: '200px' }
       ],
     }
@@ -654,13 +783,12 @@ export class ExportOrderService {
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,
       control: 'ProductName',
-      label: formConfig.ProductName.label,
-      validationMessage: formConfig.ProductName.error,
+      validationMessage: formConfig.ProductList.items.ProductName.error,
       placeholder: 'Search Product',
       options: [],
       optionLabel: 'ProductName',
@@ -681,21 +809,9 @@ export class ExportOrderService {
         { field: 'ExportOrderNo', label: 'Order No', type: 'text' },
         { field: 'ReferenceNo', label: 'Ref No', type: 'text' },
         { field: 'CustomerName', label: 'Customer', type: 'text' },
-        {
-          field: 'BasedOn',
-          label: 'Based On',
-          type: 'dropdown',
-        },
-        {
-          field: 'IncotermID',
-          label: 'Incoterm',
-          type: 'dropdown'
-        },
-        {
-          field: 'StatusID',
-          label: 'Status',
-          type: 'dropdown'
-        }
+        { field: 'BasedOn', label: 'Based On', type: 'dropdown' },
+        { field: 'IncotermID', label: 'Incoterm', type: 'dropdown' },
+        { field: 'StatusID', label: 'Status', type: 'dropdown' }
       ],
       sortFields: [
         { field: 'ExportOrderNo', label: 'Order No', enabled: true, order: 1 },

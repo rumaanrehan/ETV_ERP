@@ -3,14 +3,17 @@ import { Component, ComponentRef, EventEmitter, OnDestroy, OnInit, Output, Templ
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { TableDef } from '../../../../../shared/components/z-table/z-table';
 import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
+import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
@@ -22,7 +25,7 @@ import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/pa
 import { Port_SelectList, PortMaster, PortRequest } from '../../../settings/port-master/port-master';
 import { ExportOrderDocumentTemplate } from '../../export-order-document/export-order-document';
 import { ExportOrderPaymentTemplate } from '../../export-order-payment/export-payment';
-import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../../sales-quotation/sales-quotation';
+import { SalesQuotation_SelectList, SalesQuotationRequest } from '../../sales-quotation/sales-quotation';
 import { ExportOrder, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
 
@@ -37,6 +40,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('salesQtyColTemplate', { static: true }) salesQtyColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitFCColTemplate', { static: true }) ratePerUnitFCColTemplate!: TemplateRef<any>;
@@ -44,6 +48,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
   //Export Order Document Table Related Template
   @ViewChild('documentUploadDateTemplate', { static: true }) documentUploadDateTemplate!: TemplateRef<any>;
@@ -54,6 +59,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('paymentDateTemplate', { static: true }) paymentDateTemplate!: TemplateRef<any>;
   @ViewChild('paymentActionColTemplate', { static: true }) paymentActionColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+
+  todayDate = new Date(new Date().setHours(23, 59, 59, 999));
 
   componentRef?: ComponentRef<any>;
 
@@ -66,6 +73,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   isLoadPaymentVisible: boolean = true;
   isFromSalesQuotation = false;
   IsDocumentAlreadyExists = false;
+  isAddProductBtnLoading: boolean = false;
+  disablePrintButton: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrder>;
@@ -87,14 +96,15 @@ export class CreateComponent implements OnInit, OnDestroy {
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
   loadingPortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
   dischargePortAutoCompleteDef!: AutoCompleteDef<Port_SelectList>;
-  productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
-
+  productAutoCompleteDef: AutoCompleteDef<Product_SelectList>[] = [];
 
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: ExportOrderService,
+    private currencyExchangeService: CurrencyExchangeService,
     private formService: FormService,
     private alertService: AlertNotificationService,
+    private navContextService: NavContextService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -108,44 +118,44 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.loadingPortAutoCompleteDef = this.pageService.getLoadingPortAutoCompleteDef(this.formConfig, this.form);
     this.dischargePortAutoCompleteDef = this.pageService.getDischargePortAutoCompleteDef(this.formConfig, this.form);
-    this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.exportOrderDocumentTableDef = this.pageService.getExportOrderDocumentTableDef({ SerialNoTemplate: this.serialNoColTemplate, IsVerfiedTemplate: this.isDocumentVerifiedTemplate, UpdateDateTemplate: this.documentUploadDateTemplate, ActionTemplate: this.documentActionColTemplate } as ExportOrderDocumentTemplate);
     this.exportOrderPaymentTableDef = this.pageService.getExportOrderPaymentTableDef({ SerialNoTemplate: this.serialNoColTemplate, PaymentDateTemplate: this.paymentDateTemplate, ActionTemplate: this.paymentActionColTemplate } as ExportOrderPaymentTemplate);
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%" },
+        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "20%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "SalesQty", label: "Sales Qty", width: "10%", customTemplate: this.salesQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
+        { data: "HSCode", label: "HS Code", width: "8%" },
         { data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
-        { data: "TaxRate", label: "Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
-        { data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountFCColTemplate },
-        { data: "TaxAmountBC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
+        { data: "TaxRate", label: "Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
+        { data: "TaxableAmountBC", label: "Taxable Amount", width: "12%", customTemplate: this.taxableAmountFCColTemplate },
+        { data: "TaxAmountBC", label: "Tax Amount", width: "11%", customTemplate: this.taxAmountFCColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "6%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
 
     this.loadDropdownList();
-    // this.getDetails();
 
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(paramMap => {
-        const id = paramMap.get('id');
-        const salesQuotationID = paramMap.get('salesQuotationID');
+        const exportOrderID = Number(paramMap.get('id'));
 
-        if (id) {
-          this.loadExportOrder(+id);
+        if (exportOrderID) {
+          this.GetDetails(exportOrderID);
           return;
         }
-        else if (salesQuotationID) {
-          this.isFromSalesQuotation = true;
-          this.GetSalesQuotation(+salesQuotationID);
+        else if (this.navContextService.source) {
+          this.GetSalesQuotation(this.navContextService.sourceId!);
           return;
         }
 
         this.isEditMode = false;
+        if (this.productListArray.length === 0) {
+          this.AddProductRow();
+        }
       });
   }
 
@@ -211,17 +221,15 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   onClickAddProformaInvoice(exportOrderID: number): void {
     if (exportOrderID) {
-      this.router.navigate([`ie/proforma-invoice/from-export/${exportOrderID}`]);
-    } else {
-      return;
+      this.navContextService.set('export-order', exportOrderID);
+      this.router.navigate([`ie/proforma-invoice/create`]);
     }
   }
 
   onClickNavigateToTaxInvoice(exportOrderID: number): void {
     if (exportOrderID) {
-      this.router.navigate([`ie/tax-invoice/from-export/${exportOrderID}`]);
-    } else {
-      return;
+      this.navContextService.set('export-order', exportOrderID);
+      this.router.navigate([`ie/tax-invoice/create`]);
     }
   }
 
@@ -233,16 +241,33 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
 
+
   onClickRemoveProductItem(index: number): void {
-    this.alertService.showConfirmation({
-      text: 'Do you really want to remove this product item?',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.productListArray.removeAt(index);
-        this.tableDef.data = this.productListArray.value;
-        this.productCalculation();
+    if (this.productListArray.at(index).value.ProductName !== null) {
+      this.alertService.showConfirmation({
+        text: `Do you really want to remove <b>${this.productListArray.at(index).value.ProductName}<b>?`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.productListArray.removeAt(index);
+          this.productAutoCompleteDef.splice(index, 1);
+          this.tableDef.data = this.productListArray.value;
+          if (this.productListArray.length == 0) {
+            this.AddProductRow();
+          }
+          this.ProductCalculation();
+          return
+        }
+      });
+    }
+    else {
+      this.productListArray.removeAt(index);
+      this.productAutoCompleteDef.splice(index, 1);
+      this.tableDef.data = this.productListArray.value;
+      if (this.productListArray.length == 0) {
+        this.AddProductRow();
       }
-    });
+      this.ProductCalculation();
+    }
   }
 
   onBasedOnChange(): void {
@@ -252,6 +277,10 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productListArray.clear();
     this.tableDef.data = [];
+
+    if (basedOnValue === 2) {
+      this.AddProductRow();
+    }
   }
 
   loadSalesQuotation(event: string): void {
@@ -295,10 +324,12 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   onClear_SalesQuotation(): void {
+    const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<ExportOrder>(this.formConfig, this.form);
     this.selectedCustomerAddress = null;
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.form.get('BasedOn')?.patchValue(basedOnValue);
   }
 
   getAmount(index: number): number[] {
@@ -336,6 +367,21 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.get('CustomerID')?.patchValue(null);
     this.form.get('CustomerName')?.patchValue(null);
     this.selectedCustomerAddress = null;
+  }
+
+  OnCurrencyChange(): void {
+    const model: GetExchangeRateRequest = {
+      ToCurrencyCode: this.currencyExchangeService.BASE_CURRENCY_ISO,
+      CurrencyID: this.form.get('FCCurrencyID')?.value
+    }
+    this.pageService.GetExchangeRate(model)
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate });
+          }
+        },
+      });
   }
 
   loadLoadingPort(event: string): void {
@@ -412,7 +458,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.get('DischargePortName')?.patchValue(null);
   }
 
-  onSearch_Product(event: string): void {
+  onSearch_Product(event: string, rowIndex: number): void {
     try {
       const dto: ProductRequest = {
         ProductName: event,
@@ -422,9 +468,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.productAutoCompleteDef.options = response.Data.Items;
+              this.productAutoCompleteDef[rowIndex].options = response.Data.Items;
             } else {
-              this.productAutoCompleteDef.options = [];
+              this.productAutoCompleteDef[rowIndex].options = [];
             }
           },
         });
@@ -432,31 +478,76 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Product(event: Product_SelectList): void {
-    this.form.get('ProductID')?.patchValue(null);
-    this.form.get('ProductName')?.patchValue(null);
+  // onSelect_Product(event: Product_SelectList, index: number): void {
+  //   this.form.get('ProductID')?.patchValue(null);
+  //   this.form.get('ProductName')?.patchValue(null);
 
-    if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //   if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //     this.alertService.showToast({
+  //       text: "Product already exists in the table"
+  //     });
+
+  //     return;
+  //   }
+
+  //   const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //   productItemForm.patchValue({
+  //     ProductID: event.ProductID,
+  //     ProductName: event.ProductName,
+  //     UOM: event.UOM,
+  //     SalesTaxRate: event.PurTaxRate
+  //   });
+
+  //   this.productListArray.push(productItemForm);
+  //   this.tableDef.data = this.productListArray.value;
+  // }
+
+  onSelect_Product(event: Product_SelectList, index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+
+    // Duplicate check
+    if (this.productListArray.controls.some(
+      (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
+    )) {
       this.alertService.showToast({
-        text: "Product already exists in the table"
+        text: 'Product already exists in the table'
       });
 
+      row.patchValue({ ProductName: null, ProductID: null });
       return;
     }
 
-    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-    productItemForm.patchValue({
+    row.patchValue({
       ProductID: event.ProductID,
       ProductName: event.ProductName,
       UOM: event.UOM,
       SalesTaxRate: event.PurTaxRate
     });
 
-    this.productListArray.push(productItemForm);
+    this.tableDef.data = this.productListArray.value
+  }
+
+  OnClear_Product(index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+    row.patchValue({ ProductID: null, ProductName: null, UOM: null });
+
     this.tableDef.data = this.productListArray.value;
   }
 
-  productCalculation(): void {
+  AddProductRow(): void {
+    this.isAddProductBtnLoading = true;
+    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+
+    this.productListArray.push(productItemForm);
+    const index = this.productListArray.length - 1;
+
+    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
+    this.tableDef.data = this.productListArray.value;
+
+    this.isAddProductBtnLoading = false;
+  }
+
+  ProductCalculation(): void {
     var subtotalAmount: number = 0;
     var taxAmount: number = 0;
     var netAmount: number = 0;
@@ -469,35 +560,34 @@ export class CreateComponent implements OnInit, OnDestroy {
       const quantity = group.get('SalesQty')?.value || 0;
       const salesTaxRate = group.get('SalesTaxRate')?.value || 0;
 
-      const taxableAmountFC = quantity * rate;
-      const taxAmountFC = (taxableAmountFC * salesTaxRate) / 100;
+      const taxableAmountFC = Number((rate * quantity).toFixed(3));
+      const taxAmountFC = Number(((taxableAmountFC * salesTaxRate) / 100).toFixed(3));
+      const salesAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
 
       group.patchValue({
         TaxableAmountFC: taxableAmountFC,
         TaxAmountFC: taxAmountFC,
-        SalesAmountFC: taxableAmountFC + taxAmountFC
-      }, { emitEvent: true });
+        SalesAmountFC: salesAmountFC
+      }, { emitEvent: false });
 
       subtotalAmount += taxableAmountFC;
       taxAmount += taxAmountFC;
-      netAmount += (taxableAmountFC + taxAmountFC);
+      netAmount += salesAmountFC;
     });
-    netAmount += (freightCharge + bankCharges);
+    netAmount += Number((freightCharge + bankCharges).toFixed(3));
 
-    this.form.patchValue({ NetAmountFC: netAmount, SubtotalAmountFC: subtotalAmount, TaxAmountFC: taxAmount }, { emitEvent: true });
+    this.form.patchValue({
+      SubtotalAmountFC: Number(subtotalAmount.toFixed(3)),
+      NetAmountFC: Number(netAmount.toFixed(3)),
+      TaxAmountFC: Number(taxAmount.toFixed(3))
+    }, { emitEvent: false });
   }
 
   convertAmountsToBC(): void {
+    // 1️⃣ Get Exchange Rate
     const exchangeRate = this.form.get('ExchangeRateToBC')?.value || 1;
 
-    this.form.patchValue({
-      SubtotalAmountBC: this.form.get('SubtotalAmountFC')?.value * exchangeRate,
-      TaxAmountBC: this.form.get('TaxAmountFC')?.value * exchangeRate,
-      InsuranceAmountBC: this.form.get('InsuranceAmountFC')?.value * exchangeRate,
-      BankChargesBC: this.form.get('BankChargesFC')?.value * exchangeRate,
-      NetAmountBC: this.form.get('NetAmountFC')?.value * exchangeRate
-    }, { emitEvent: true });
-
+    // 2️⃣ Convert Product List Items (FC → BC)
     this.productListArray.controls.forEach((group: FormGroup) => {
       const ratePerUnitFC = Number(((group.get('RatePerUnitFC')?.value) || 0).toFixed(3));
       const taxableAmountFC = Number(((group.get('TaxableAmountFC')?.value) || 0).toFixed(3));
@@ -505,42 +595,65 @@ export class CreateComponent implements OnInit, OnDestroy {
       const salesAmountFC = Number(((group.get('SalesAmountFC')?.value) || 0).toFixed(3));
 
       group.patchValue({
-        TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
         RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
         TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
+        TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
         SalesAmountBC: Number((salesAmountFC * exchangeRate).toFixed(3))
-      }, { emitEvent: true });
+      }, { emitEvent: false });
     });
 
-    const subtotalAmountFC = this.getproductTaxableAmountFC();
-    const taxAmountFC = this.getproductTaxAmountFCSum();
+    const subtotalAmountFC = this.form.get('SubtotalAmountFC')?.value || 0;
+    const taxAmountFC = this.form.get('TaxAmountFC')?.value || 0;
+    const netAmountFC = this.form.get('NetAmountFC')?.value || 0;
     const isRoundOff = this.form.get('IsRoundOff')?.value === true;
-    const netAmountFC = this.form.get('NetAmountFC')?.value;
 
+    // 4️⃣ Calculate BC Values and Coin Adjustment
+    const subtotalAmountBC = subtotalAmountFC * exchangeRate;
+    const taxAmountBC = taxAmountFC * exchangeRate;
+    const netAmountBC = netAmountFC * exchangeRate;
+
+    const roundedNetBC = Math.round(netAmountBC);
+    const coinAdjustment = isRoundOff ? Number((netAmountBC - roundedNetBC).toFixed(3)) : 0;
+
+    //Convert other charges to BC
+    const insuranceBC = ((this.form.get('InsuranceAmountFC')?.value) || 0) * exchangeRate;
+    const freightBC = ((this.form.get('FreightChargeFC')?.value) || 0) * exchangeRate;
+    const bankChargesBC = ((this.form.get('BankChargesFC')?.value) || 0) * exchangeRate;
+
+    // 5️⃣ Patch All Summary Fields (Once)
     this.form.patchValue({
-      SubtotalAmountFC: Number(subtotalAmountFC.toFixed(3)),
-      SubtotalAmountBC: Number((subtotalAmountFC * exchangeRate).toFixed(3)),
-      FreightChargeBC: this.form.get('FreightChargeFC')?.value * exchangeRate,
-      TaxAmountFC: Number(taxAmountFC.toFixed(3)),
-      TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
-      NetAmountBC: isRoundOff ? Math.round(netAmountFC * exchangeRate) : (netAmountFC * exchangeRate),
-      CoinAdjustment: isRoundOff ? Number(((netAmountFC * exchangeRate)) - Math.round(netAmountFC * exchangeRate)).toFixed(3) : 0
-    });
+      SubtotalAmountBC: Number(subtotalAmountBC.toFixed(3)),
+      TaxAmountBC: Number(taxAmountBC.toFixed(3)),
+      InsuranceAmountBC: Number(insuranceBC.toFixed(3)),
+      FreightChargeBC: Number(freightBC.toFixed(3)),
+      BankChargesBC: Number(bankChargesBC.toFixed(3)),
+      NetAmountBC: isRoundOff ? roundedNetBC : Number(netAmountBC.toFixed(3)),
+      CoinAdjustment: coinAdjustment
+    }, { emitEvent: false });
+
+    // 6️⃣ Debug Log to Verify Calculations only for development, should be removed in production
+    if(this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
+      console.log(
+        "Discrepancy in SubtotalAmountBC Calculation!, Backend Should Verify This. Product List total:",
+        this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0),
+        " Patched SubtotalAmountBC:", this.form.get('SubtotalAmountBC')?.value
+      );
+    }
   }
 
-  getproductTaxableAmountFC(): number {
-    return this.productListArray.controls.reduce((sum, group) => {
-      const value = group.get('TaxableAmountFC')?.value || 0;
-      return sum + value;
-    }, 0);
-  }
+  // getproductTaxableAmountFC(): number {
+  //   return this.productListArray.controls.reduce((sum, group) => {
+  //     const value = group.get('TaxableAmountFC')?.value || 0;
+  //     return sum + value;
+  //   }, 0);
+  // }
 
-  getproductTaxAmountFCSum(): number {
-    return this.productListArray.controls.reduce((sum, group) => {
-      const value = group.get('TaxAmountFC')?.value || 0;
-      return sum + value;
-    }, 0);
-  }
+  // getproductTaxAmountFCSum(): number {
+  //   return this.productListArray.controls.reduce((sum, group) => {
+  //     const value = group.get('TaxAmountFC')?.value || 0;
+  //     return sum + value;
+  //   }, 0);
+  // }
 
   onSelect_Customer(event: Company_SelectList): void {
     this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
@@ -563,6 +676,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
+    this.ProductCalculation();
     this.convertAmountsToBC();
     try {
       if (this.form.value.ProductList.length === 0) {
@@ -577,9 +691,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
-        this.alertService.showValidationAlert();
-
-        // this.logInvalidControls(this.form);
+        this.alertService.showValidationAlert(this.formService.getValidationMessages(this.formConfig));
         this.isSubmitted = false;
         return;
       }
@@ -622,6 +734,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000,
               });
+              this.selectedCustomerAddress = null;
               setTimeout(() => {
                 this.ngOnInit();
               }, 2000);
@@ -652,6 +765,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000,
               });
+              this.selectedCustomerAddress = null;
               setTimeout(() => {
                 this.router.navigate(['/ie/export-order/index']);
               }, 2000);
@@ -669,11 +783,10 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadExportOrder(id: number): void {
+  GetDetails(exportOrderID: number): void {
     this.isEditMode = true;
-
     try {
-      this.pageService.GetDetails(id)
+      this.pageService.GetDetails(exportOrderID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
@@ -687,9 +800,12 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.statusHex = response.Data.StatusHex!;
             this.IsDocumentAlreadyExists = response.Data.IsDocumentAlreadyExists!;
             response.Data.ProductList.Items.forEach(item => {
-              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue(item);
-              this.productListArray.push(productForm);
+              const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productItemForm.patchValue(item);
+              this.productListArray.push(productItemForm);
+              const index = this.productListArray.length - 1;
+
+              this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm)
             });
 
             this.tableDef.data = this.productListArray.value;
@@ -701,8 +817,8 @@ export class CreateComponent implements OnInit, OnDestroy {
               ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!)
             }
 
-            // this.loadPortList();
             this.form.patchValue(data);
+            this.OnCurrencyChange();
           }
         });
     }
@@ -716,46 +832,30 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              const keysToPatch = Object.keys(this.formConfig).filter(
-                k => !['ExportOrderNo', 'BasedOn', 'IsRoundOff', 'ExchangeRateToBC', 'Narration', 'ProductList'].includes(k)
-              );
-
-              const filteredModel = keysToPatch.reduce((acc, key) => {
-                const typedKey = key as keyof SalesQuotation_Detail;
-                const value = response.Data[typedKey] ?? undefined;
-                (acc as any)[typedKey] = value;
-                return acc;
-              }, {} as Partial<SalesQuotation_Detail>);
-
-              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
-              this.form.patchValue({
-                ...filteredModel,
-                CustomerID: response.Data.CustomerID,
-                CustomerName: response.Data.CustomerName,
-                // SalesQuotationNo: response.Data.SalesQuotationNo
-              });
-
-              this.productListArray.clear();
-
+              this.selectedCustomerAddress = response.Data.CustomerAddress;
               response.Data.ProductList.Items.forEach(item => {
-                const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                productForm.patchValue({
+                const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                productItemForm.patchValue({
                   ProductID: item.ProductID,
                   ProductName: item.ProductName,
                   SalesQty: item.QuotedQty,
                   UOM: item.UOM,
+                  HSCode: item.HSCode,
                   RatePerUnitFC: item.RatePerUnitFC,
                   SalesTaxRate: item.TaxRate
                 });
-                this.productListArray.push(productForm);
+
+                this.productListArray.push(productItemForm);
+                const index = this.productListArray.length - 1;
+                this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig, productItemForm);
               });
 
               this.tableDef.data = this.productListArray.value;
-              const { SalesQuotationNo, ProductList, BasedOn, IsRoundOff, ExchangeRateToBC, Narration, ...formValues } = response.Data;
-              this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
+              const { ProductList, BasedOn, IsRoundOff, ExchangeRateToBC, Narration, ...formValues } = response.Data;
               this.form.patchValue(formValues);
-
-              this.productCalculation();
+              this.form.get('BasedOn')?.setValue(1);
+              this.OnCurrencyChange();
+              this.ProductCalculation();
             } else {
               this.alertService.showServerResponseAlert(response);
             }
@@ -990,20 +1090,4 @@ export class CreateComponent implements OnInit, OnDestroy {
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
   }
-
-  //   private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-  //     Object.keys(form.controls).forEach(key => {
-  //       const control = form.get(key);
-  //       const controlPath = parentKey ? `${parentKey}.${key}` : key;
-
-  //       if (control instanceof FormGroup || control instanceof FormArray) {
-  //         this.logInvalidControls(control, controlPath);
-  //       } else if (control && control.invalid) {
-  //         console.warn(
-  //           `❌ Invalid Control: ${controlPath}`,
-  //           control.errors
-  //         );
-  //       }
-  //     });
-  //   }
 }

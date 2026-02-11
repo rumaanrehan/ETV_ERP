@@ -25,10 +25,6 @@ export interface SalesQuotation {
     NetAmountBC: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
-
-    //AutoComplete releted fields
-    ProductID: number | null;
-    ProductName: string | null;
 }
 
 export interface SalesQuotationDetail {
@@ -36,6 +32,7 @@ export interface SalesQuotationDetail {
     ProductName: string | null;
     QuotedQty: number | null;
     UOM: string | null;
+    HSCode: string | null;
     TaxRate: number | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
@@ -73,7 +70,11 @@ export interface SalesQuotation_IndexTableList {
     TaxAmountFC: number;
     NetAmountFC: number;
     StatusText: string;
+    StatusHex: string;
     CurrencySymbol: string;
+
+    /** UI only */
+    _selected?: boolean;
 }
 
 export interface SalesQuotationRequest {
@@ -112,6 +113,7 @@ export interface SalesQuotationProduct_Detail {
     ProductID: number;
     ProductName: string;
     UOM: string;
+    HSCode: string | null;
     QuotedQty: number;
     RatePerUnitFC: number;
     TaxRate: number;
@@ -124,5 +126,10 @@ export interface SalesQuotation_SelectList {
     SalesQuotationID: number;
     SalesQuotationNo: string;
     CustomerName: string;
+    StatusID: number;
+}
+
+export interface SalesQuotationBulkUpdateRequest {
+    SalesQuotationIDs: number[];
     StatusID: number;
 }

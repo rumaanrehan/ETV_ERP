@@ -65,7 +65,6 @@ export class PortMasterService {
       PortCode: '',
       PortName: '',
       PortTypeID: 0,
-      CountryName: '',
       ActiveStatusID: 0,
     }
   }

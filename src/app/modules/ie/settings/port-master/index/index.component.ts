@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { CreateComponent } from '../create/create.component';
-import { PortMaster, Port_IndexFilter, Port_IndexList } from '../port-master';
-import { PortMasterService } from '../port-master.service';
 import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../../shared/services/form-validation.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { CreateComponent } from '../create/create.component';
+import { PortMaster, Port_IndexFilter, Port_IndexList } from '../port-master';
+import { PortMasterService } from '../port-master.service';
 
 @Component({
   selector: 'app-index',
@@ -42,7 +42,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.tableDef = {
       tableKey: 'IE_PortMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: 'CountryCode', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'PortCode', sortOrder: 1 },
       filterForm: this.formService.createFormGroup_DataTableFilter<Port_IndexFilter>(this.pageService.getFormConfig_DataTableFilter()),
       data: [],
       totalRecords: 0,
@@ -51,9 +51,9 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', width: "5%", hideVisToggle: true, orderable: false },
-      { data: 'CountryID', visible: false, hideVisToggle: true, orderable: false },
-      { data: 'CountryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.portCodeTemplate },
-      { data: 'CountryName', label: 'Port Name', filterable: true },
+      { data: 'PortID', visible: false, hideVisToggle: true, orderable: false },
+      { data: 'PortCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.portCodeTemplate },
+      { data: 'PortName', label: 'Port Name', filterable: true },
       { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.portActiveStatusTemplate },
       { data: '', hideVisToggle: true, orderable: false, cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
     ];
@@ -79,11 +79,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                const model: PortMaster = {
-                  ...response.Data,
-                };
-                this.createSidebar.openSidebar(activeStatus, true, model);
-
+                this.createSidebar.openSidebar(activeStatus, true, response.Data);
               } else {
                 this.alertService.showServerResponseAlert(response);
               }

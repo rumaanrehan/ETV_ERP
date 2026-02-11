@@ -21,13 +21,25 @@ export class ZFileUploadComponent {
   @Input() multiple: boolean = false; // Multiple file upload
   @Input() accept: string = ''; // Accepted file types
   @Input() maxFileSize: number = 1048576; // Maximum file size
+  @Input() showDragnDrop: boolean = true; // to show drag and drop area
+  @Output() fileSelected = new EventEmitter<File | File[]>(); // Event emitter for selected files
 
   constructor() {}
 
   ngOnInit(): void {}
+  
+  onUpload(event: any): void {
+    const files: File[] = event.files;
+
+    if (!files || files.length === 0) { return; }
+
+    this.group.get(this.control)?.setValue( this.multiple ? files : files[0]);
+    this.group.get(this.control)?.markAsTouched();
+
+    this.fileSelected.emit(this.multiple ? files : files[0]);
+  }
 
   onSelectedFiles(event: any): void {
-    console.log(event);
     const selectedFiles = this.multiple ? Array.from(event.currentFiles) : [event.currentFiles[0]];
     this.group.get(this.control)?.setValue(selectedFiles);
     this.group.get(this.control)?.markAsTouched();

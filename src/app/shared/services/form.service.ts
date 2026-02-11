@@ -216,6 +216,7 @@ export class FormService {
         else if (formConfig[field].type == 'control' && !control.valid && control.touched) {
           formConfig[field].error = '';
           const messages = formConfig[field]?.validationMessages ?? {};
+          console.log(messages);
           for (const key in control.errors) {
             if (Object.prototype.hasOwnProperty.call(control.errors, key)) {
               formConfig[field].error = (messages[key] ?? control.errors[key]) + '';
@@ -226,6 +227,38 @@ export class FormService {
       }
     });
   }
+
+  getValidationMessages(formConfig: FormConfig): string[] {
+    const messages: string[] = [];
+
+    Object.keys(formConfig).forEach(field => {
+      const config = formConfig[field];
+
+      // ✅ Normal control error (string)
+      if (config.type === 'control' && typeof config.error === 'string' && config.error) {
+        messages.push(config.error);
+      }
+
+      // ✅ FormArray errors (object → strings)
+      if (config.type === 'array' && config.items) {
+        Object.keys(config.items).forEach(itemKey => {
+          const itemError = config.items[itemKey].error;
+
+          if (itemError && typeof itemError === 'object') {
+            Object.values(itemError).forEach(err => {
+              if (typeof err === 'string') {
+                messages.push(err);
+              }
+            });
+          }
+        });
+      }
+    });
+
+    return messages;
+  }
+
+
 
   // private setFieldValidationErrors(data: any, formConfig: FormConfig, form: FormGroup): void {
   //   if (!form) {
