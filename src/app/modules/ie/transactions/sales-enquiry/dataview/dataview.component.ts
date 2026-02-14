@@ -1,6 +1,6 @@
-import { Component, ComponentRef, NgModule, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, NgModule, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
@@ -21,15 +21,14 @@ import { NavContextService } from '../../../../../core/services/nav-context.serv
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, FormsModule, CheckboxModule],
+  imports: [CommonModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, FormsModule, CheckboxModule, RouterLink],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
 
 export class DataviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+  @Output() selectionChange = new EventEmitter<SalesEnquiry_IndexTableList[]>();
 
   componentRef?: ComponentRef<any>;
 
@@ -62,7 +61,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
     this.filterForm = this.formService.createFormGroup<SalesEnquiry_IndexTableFilter>(this.filterFormConfig);
     this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
@@ -171,7 +169,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
   }
 
   onSelectionChange(item: SalesEnquiry_IndexTableList) {
-
     if (item._selected) {
       this.selectedSalesEnquiries.push(item);
     } else {
@@ -180,19 +177,19 @@ export class DataviewComponent implements OnInit, OnDestroy {
           x => x.SalesEnquiryID !== item.SalesEnquiryID
         );
     }
-
     this.selectAll = this.selectedSalesEnquiries.length === this.dataViewDef.data.length;
+    this.selectionChange.emit(this.selectedSalesEnquiries);
   }
 
-  toggleSelectAll(event: any) {
+  toggleSelectAll(checked: boolean) {
     this.selectedSalesEnquiries = [];
-
     this.dataViewDef.data.forEach((item: SalesEnquiry_IndexTableList) => {
-      item._selected = event.checked;
-      if (event.checked) {
+      item._selected = checked;
+      if (checked) {
         this.selectedSalesEnquiries.push(item);
       }
     });
+    this.selectionChange.emit(this.selectedSalesEnquiries);
   }
 
   bulkChangeStatus(statusID: number) {

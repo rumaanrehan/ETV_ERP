@@ -1,40 +1,6 @@
-<!--Page Header Action Button Template-->
-<ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
-            class="pi pi-plus"></i>&nbsp; Add Sales Enquiry</button>
-</ng-template>
-
-<div class="col-xl-12 index-page-content">
-    <div class="index-action-bar">
-        <div class="d-flex align-items-center gap-3">
-            <!-- SELECT ALL -->
-            <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
-            </p-checkbox>
-
-            <span class="text-muted">
-                <b>{{ selectedSalesEnquiries.length }} selected</b>
-            </span>
-        </div>
-
-        <div class="col-6 index-action-bar-actions">
-            <!-- BULK ACTIONS -->
-            <button class="btn btn-primary" [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(1)">
-                Revert to Received
-            </button>
-
-            <button class="btn btn-primary" [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(2)">
-                Mark as Under Review
-            </button>
-
-            <button class="btn btn-primary" [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(6)">
-                Cancel
-            </button>
-        </div>
-    </div>
-    <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
-        (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
-    </z-dataview>
-</div>
+<z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+</z-dataview>
 
 <ng-template #customTemplate let-salesEnquiry>
     <div class="d-flex align-items-center gap-3 mb-3" *ngFor="let item of salesEnquiry; let first = first">
