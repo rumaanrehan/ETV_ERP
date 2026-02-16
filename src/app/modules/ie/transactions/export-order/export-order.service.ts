@@ -1,14 +1,24 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { Environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { TableDef } from '../../../../shared/components/z-table/z-table';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { DataTableFilterList, DataTableFilterListRequest, StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
 import { SelectListService } from '../../../../shared/services/select-list.service';
+import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
+import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
+import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
+import { NonZero } from '../../../../shared/validators/non-zero.validator';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
 import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
@@ -24,18 +34,10 @@ import { Port_SelectList, PortRequest } from '../../settings/port-master/port-ma
 import { PortMasterService } from '../../settings/port-master/port-master.service';
 import { ExportOrderDocumentTemplate } from '../export-order-document/export-order-document';
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
+import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
 import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
-import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
-import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
-import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
-import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
-import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
-import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
-import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
-import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
-import { NonZero } from '../../../../shared/validators/non-zero.validator';
+import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulationRequest, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +55,8 @@ export class ExportOrderService {
     private taxSlabMasterService: TaxSlabMasterService,
     private portService: PortMasterService,
     private selectListService: SelectListService,
-    private currencyExchangeService: CurrencyExchangeService
+    private currencyExchangeService: CurrencyExchangeService,
+    private http: HttpClient
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -150,6 +153,10 @@ export class ExportOrderService {
 
   CancelOrder(model: ExportOrderCancelRequest): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }  
+  
+  UploadPODocument(formData: FormData): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${Environment.apiBaseUrl}/${this.endpoint}/POUpload`, formData);
   }
 
   BulkChangeStatus(model: ExportOrderBulkUpdateRequest): Observable<ApiResponse> {
