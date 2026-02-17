@@ -1,10 +1,25 @@
 <!--Page Header Action Button Template-->
 <ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
-            class="pi pi-plus"></i>&nbsp; Add Sales Enquiry</button>
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-primary btn-page-header rounded-pill shadow-sm" (click)="onClickPageHeaderAddButton()">
+            <i class="pi pi-plus"></i>&nbsp; Add Sales Enquiry</button>
+
+        <!-- VIEW SWITCHER -->
+        <div class="btn-group view-switcher-group" role="group">
+            <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'card'"
+                (click)="toggleView('card')">
+                <i class="pi pi-th-large"></i> Card
+            </button>
+            <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'table'"
+                (click)="toggleView('table')">
+                <i class="pi pi-list"></i> Table
+            </button>
+        </div>
+    </div>
 </ng-template>
 
 <div class="col-xl-12 index-page-content">
+    @if (selectedSalesEnquiries.length > 0) {
     <div class="index-action-bar">
         <div class="d-flex align-items-center gap-3">
             <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
@@ -16,32 +31,24 @@
         </div>
 
         <div class="col-6 index-action-bar-actions">
-            <!-- VIEW SWITCHER -->
-            <div class="btn-group me-2">
-                <button class="btn btn-outline-primary" [class.active]="viewType() === 'card'"
-                    (click)="toggleView('card')">
-                    <i class="pi pi-th-large"></i> Card
-                </button>
-                <button class="btn btn-outline-primary" [class.active]="viewType() === 'table'"
-                    (click)="toggleView('table')">
-                    <i class="pi pi-list"></i> Table
-                </button>
-            </div>
-
             <!-- BULK ACTIONS -->
-            <button class="btn btn-primary" [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(1)">
+            <button class="btn btn-primary rounded-pill" [disabled]="!selectedSalesEnquiries.length"
+                (click)="bulkChangeStatus(1)">
                 Revert to Received
             </button>
 
-            <button class="btn btn-primary" [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(2)">
+            <button class="btn btn-primary rounded-pill" [disabled]="!selectedSalesEnquiries.length"
+                (click)="bulkChangeStatus(2)">
                 Mark as Under Review
             </button>
 
-            <button class="btn btn-primary" [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(6)">
+            <button class="btn btn-danger rounded-pill" [disabled]="!selectedSalesEnquiries.length"
+                (click)="bulkChangeStatus(6)">
                 Cancel
             </button>
         </div>
     </div>
+    }
 
     @if (viewType() === 'card') {
     <app-dataview [filterForm]="filterForm" [sortingForm]="sortingForm"

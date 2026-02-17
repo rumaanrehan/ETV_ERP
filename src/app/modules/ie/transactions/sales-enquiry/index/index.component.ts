@@ -93,6 +93,8 @@ export class SalesEnquiryIndexComponent implements OnInit, OnDestroy, AfterViewI
     toggleView(type: 'card' | 'table') {
         this.viewType.set(type);
         localStorage.setItem('salesEnquiryViewType', type);
+        this.selectedSalesEnquiries = [];
+        this.selectAll = false;
     }
 
     onClickPageHeaderAddButton() {
