@@ -86,9 +86,10 @@
 
 /* Footer Start*/
 app-footer {
-  position: sticky;
+  position: fixed;
   bottom: 0;
-  z-index: 11;
+  width: 100%;
+  z-index: 999;
 }
 
 footer {
@@ -863,32 +864,9 @@ z-table .p-datatable-wrapper {
   font-size: 0.85rem;
 }
 
-.index-filter-panel {
-  background-color: var(--custom-white);
-  position: absolute;
-  right: 1rem;
-  top: 2rem;
-  z-index: 5;
-}
 
-.index-filter-panel .field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-  flex-grow: 1;
-}
 
-.index-filter-panel .field label {
-  width: 50%;
-}
 
-.index-sorting-panel {
-  background-color: var(--custom-white);
-  position: absolute;
-  right: 5rem;
-  top: 2rem;
-}
 
 .index-sorting-panel .field {
   display: flex;
@@ -937,9 +915,15 @@ z-select-button .p-selectbutton {
 .index-sorting-panel {
   background-color: var(--custom-white);
   position: absolute;
-  right: 5rem;
+  right: 1rem;
   top: 2rem;
-  z-index: 1;
+  z-index: 5;
+  width: 25rem;
+}
+
+.index-sorting-panel .btn,
+.index-filter-panel .btn {
+  width: auto;
 }
 
 .index-sorting-panel .field {

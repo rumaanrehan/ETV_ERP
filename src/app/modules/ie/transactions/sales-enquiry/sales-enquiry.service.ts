@@ -269,7 +269,7 @@ export class SalesEnquiryService {
   getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<SalesEnquiry_IndexTableList> {
     return {
       tableKey: 'IE_SalesEnquiry_IndexDataView',
-      defaultSortColumn: { sortField: 'ExportOrderNo', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'SalesEnquiryNo', sortOrder: 1 },
       filterForm: filterForm,
       sortingForm: sortingForm,
       filterFields: [

@@ -10,7 +10,7 @@ export interface SalesEnquiry {
     CustomerName: string | null;
     ContactName: string | null;
     ContactEmail: string | null;
-    ContactPhone: number | null;
+    ContactPhone: string | null;
     ExpectedDeliveryDate: Date | null;
     Note: string | null;
     ProductList: SalesEnquiryDetail[];
@@ -77,7 +77,7 @@ export interface SalesEnquiry_Detail {
     ContactName: string;
     CustomerAddress: string;
     ContactEmail: string;
-    ContactPhone: number | null;
+    ContactPhone: string | null;
     ExpectedDeliveryDate: Date | null;
     Note: string | null;
     StatusText: string;

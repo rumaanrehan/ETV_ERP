@@ -1,4 +1,4 @@
-import { Component, ComponentRef, EventEmitter, NgModule, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, Input, NgModule, OnChanges, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -26,24 +26,17 @@ import { NavContextService } from '../../../../../core/services/nav-context.serv
   styleUrl: './dataview.component.scss'
 })
 
-export class DataviewComponent implements OnInit, OnDestroy {
+export class DataviewComponent implements OnInit, OnDestroy, OnChanges {
   private destroy$ = new Subject<void>();
   @Output() selectionChange = new EventEmitter<SalesEnquiry_IndexTableList[]>();
-
-  componentRef?: ComponentRef<any>;
+  @Input() filterForm!: FormGroup;
+  @Input() sortingForm!: FormGroup;
 
   dataViewDef!: DataViewDef<SalesEnquiry_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
 
-  filterForm!: FormGroup;
-  filterFormConfig!: FormConfigType<SalesEnquiry_IndexTableFilter>
-  sortingForm!: FormGroup;
-  sortingFormConfig!: FormConfigType<SalesEnquiry_IndexTableSort>
-
   selectedSalesEnquiries: SalesEnquiry_IndexTableList[] = [];
   selectAll = false;
-
-  statusList: StaticList[] = []
 
   sortFieldList: any[] = [
     { value: "SalesEnquiryNo", text: "Sales Enquiry No" },
@@ -61,11 +54,16 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
-    this.filterForm = this.formService.createFormGroup<SalesEnquiry_IndexTableFilter>(this.filterFormConfig);
-    this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
-    this.sortingForm = this.formService.createFormGroup<SalesEnquiry_IndexTableSort>(this.sortingFormConfig);
-    this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
+    if (this.filterForm && this.sortingForm) {
+      this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
+    }
+  }
+
+  ngOnChanges(): void {
+    // Re-initialize if inputs change or become available
+    if (this.filterForm && this.sortingForm) {
+      this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
+    }
   }
 
   ngOnDestroy(): void {
@@ -78,16 +76,11 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  onClickPageHeaderAddButton() {
-    this.navContextService.clear();
-    this.router.navigate(['ie/sales-enquiry/create']);
-  }
-
   onResetForm(formGroup: FormGroup): void {
     if (formGroup === this.filterForm) {
-      this.formService.resetFormValue<SalesEnquiry_IndexTableFilter>(this.filterFormConfig, formGroup);
+      this.formService.resetFormValue<SalesEnquiry_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter(), formGroup);
     } else if (formGroup === this.sortingForm) {
-      this.formService.resetFormValue<SalesEnquiry_IndexTableSort>(this.sortingFormConfig, formGroup);
+      this.formService.resetFormValue<SalesEnquiry_IndexTableSort>(this.pageService.getFormConfig_DataTableSort(), formGroup);
     }
     this.loadData();
   }
@@ -121,7 +114,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
 
     catch (error) {
-
+      this.dataViewDef.loading = false;
+      console.error('Error loading sales enquiry data:', error);
     }
   }
 
@@ -189,42 +183,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
         this.selectedSalesEnquiries.push(item);
       }
     });
+    this.selectAll = checked;
     this.selectionChange.emit(this.selectedSalesEnquiries);
-  }
-
-  bulkChangeStatus(statusID: number) {
-    this.alertService
-      .showConfirmationWithInput({
-        text: 'Do you want to bulk update <b>Sales Enquiry</b>?',
-        inputPlaceholder: 'Reason to Bulk Update'
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          const ids = this.selectedSalesEnquiries.map(x => x.SalesEnquiryID);
-          const dto: SalesEnquiryBulkUpdateRequest = {
-            SalesEnquiryIDs: ids,
-            StatusID: statusID
-          };
-
-          this.pageService.BulkChangeStatus(dto)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                this.loadData();
-                this.clearSelection();
-                if (response.IsSuccess) {
-                  this.alertService.showAlert({
-                    type: 'success',
-                    text: response.Message,
-                    timer: 5000,
-                  });
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
-            });
-        }
-      });
   }
 
   clearSelection() {

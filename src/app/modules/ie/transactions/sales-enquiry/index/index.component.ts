@@ -1,9 +1,12 @@
-import { Component, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SalesEnquiryService } from '../sales-enquiry.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { FormService } from '../../../../../shared/services/form.service';
+import { FormGroup } from '@angular/forms';
+import { SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableSort } from '../sales-enquiry';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { DataviewComponent } from '../dataview/dataview.component';
 import { GridviewComponent } from '../gridview/gridview.component';
@@ -19,35 +22,72 @@ import { NavContextService } from '../../../../../core/services/nav-context.serv
     templateUrl: './index.component.html',
     styleUrl: './index.component.scss'
 })
-export class SalesEnquiryIndexComponent implements OnInit, OnDestroy {
+export class SalesEnquiryIndexComponent implements OnInit, OnDestroy, AfterViewInit {
     private destroy$ = new Subject<void>();
-    @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
     @ViewChild(DataviewComponent) dataview?: DataviewComponent;
     @ViewChild(GridviewComponent) gridview?: GridviewComponent;
+
+    @ViewChild('pageHeaderActionTemplate') pageHeaderActionTemplate!: TemplateRef<any>;
 
     viewType = signal<'card' | 'table'>('card');
     selectedSalesEnquiries: SalesEnquiry_IndexTableList[] = [];
     selectAll = false;
 
+    filterForm!: FormGroup;
+    sortingForm!: FormGroup;
+
     constructor(
         private pageHeaderService: PageHeaderService,
         private pageService: SalesEnquiryService,
+        private formService: FormService,
         private alertService: AlertNotificationService,
         private navContextService: NavContextService,
         private router: Router
     ) { }
 
     ngOnInit(): void {
-        this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
         const savedView = localStorage.getItem('salesEnquiryViewType');
+
         if (savedView === 'card' || savedView === 'table') {
             this.viewType.set(savedView);
         }
+
+        this.filterForm = this.formService.createFormGroup<SalesEnquiry_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
+        this.sortingForm = this.formService.createFormGroup<SalesEnquiry_IndexTableSort>(this.pageService.getFormConfig_DataTableSort());
+
+        // LOAD SAVED STATE
+        const savedFilter = localStorage.getItem('salesEnquiryFilter');
+        if (savedFilter) {
+            this.filterForm.patchValue(JSON.parse(savedFilter), { emitEvent: false });
+        }
+
+        const savedSort = localStorage.getItem('salesEnquirySort');
+        if (savedSort) {
+            this.sortingForm.patchValue(JSON.parse(savedSort), { emitEvent: false });
+        }
+
+        // SAVE STATE ON CHANGE
+        this.filterForm.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(value => {
+                localStorage.setItem('salesEnquiryFilter', JSON.stringify(value));
+            });
+
+        this.sortingForm.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(value => {
+                localStorage.setItem('salesEnquirySort', JSON.stringify(value));
+            });
+    }
+
+    ngAfterViewInit(): void {
+        this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     }
 
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+        this.pageHeaderService.setTemplate(null);
     }
 
     toggleView(type: 'card' | 'table') {
@@ -100,6 +140,12 @@ export class SalesEnquiryIndexComponent implements OnInit, OnDestroy {
                                     // Trigger reload in child
                                     this.selectedSalesEnquiries = [];
                                     this.selectAll = false;
+
+                                    if (this.viewType() === 'card') {
+                                        this.dataview?.loadData();
+                                    } else {
+                                        this.gridview?.loadData();
+                                    }
                                 } else {
                                     this.alertService.showServerResponseAlert(response);
                                 }

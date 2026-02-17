@@ -44,8 +44,10 @@
     </div>
 
     @if (viewType() === 'card') {
-    <app-dataview (selectionChange)="onSelectionChange($event)"></app-dataview>
+    <app-dataview [filterForm]="filterForm" [sortingForm]="sortingForm"
+        (selectionChange)="onSelectionChange($event)"></app-dataview>
     } @else {
-    <app-gridview (selectionChange)="onSelectionChange($event)"></app-gridview>
+    <app-gridview [filterForm]="filterForm" [sortingForm]="sortingForm"
+        (selectionChange)="onSelectionChange($event)"></app-gridview>
     }
 </div>

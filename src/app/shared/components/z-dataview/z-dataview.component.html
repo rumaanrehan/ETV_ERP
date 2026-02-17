@@ -1,6 +1,6 @@
-<div style="height: calc(100vh - 178px);">
-    <p-dataView #dv [value]="dataViewDef.data" [rows]="5" [totalRecords]="dataViewDef.totalRecords" [paginator]="true"
-        [lazy]="true" (onLazyLoad)="loadData($event)" [layout]="'list'">
+<div style="height: calc(100vh - 220px); padding-bottom: 50px;">
+    <p-dataView *ngIf="dataViewDef" #dv [value]="dataViewDef.data" [rows]="5" [totalRecords]="dataViewDef.totalRecords"
+        [paginator]="true" [lazy]="true" (onLazyLoad)="loadData($event)" [layout]="'list'">
         <ng-template pTemplate="header">
             <div class="index-table-action-bar d-flex justify-content-end">
                 <ng-container *ngIf="dataViewDef.sortingForm && isSortPanelVisible">

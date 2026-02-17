@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
@@ -9,13 +9,14 @@ import { DataTableDef, DataTableHeaderColDef, DataTableLazyLoadEvent } from './z
 import { first, last, Subject, takeUntil } from 'rxjs';
 import { DataTableFilterList, DataTableFilterListRequest, StaticList } from '../../models/select-list';
 import { SelectListService } from '../../services/select-list.service';
-import { ZInputTextComponent } from '../z-form-controls/z-input-text/z-input-text.component';
-import { ZSelectComponent } from '../z-form-controls/z-select/z-select.component';
+import { ZFormControlsModule } from '../z-form-controls/z-form-controls.module';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { DataViewSortRow } from '../z-dataview/z-dataview';
 
 @Component({
   selector: 'z-datatable',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, OverlayPanelModule, CheckboxModule, ZInputTextComponent, ZSelectComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, OverlayPanelModule, CheckboxModule, ZFormControlsModule, SelectButtonModule],
   templateUrl: './z-datatable.component.html',
   styleUrl: './z-datatable.component.scss'
 })
@@ -25,12 +26,14 @@ export class ZDataTable<T> {
   /* Declarations */
   @Input() tableDef!: DataTableDef<T>;
   @Output() lazyLoad: EventEmitter<DataTableLazyLoadEvent> = new EventEmitter();
+  @Output() resetFormEmitter = new EventEmitter<FormGroup>();
 
   tableStateKey!: string;
   tableName!: string[];
   tableHeaderDef: DataTableHeaderColDef[] = [];
   tableSubHeaderDef?: DataTableHeaderColDef[];
   showFilterPanel: boolean = false;
+  isSortPanelVisible: boolean = false;
   selectedRow: any;
   tableLazyLoadEvent!: DataTableLazyLoadEvent;
 
@@ -39,13 +42,13 @@ export class ZDataTable<T> {
     { Value: 2, Text: 'No' },
     { Value: 0, Text: 'All' }
   ];
-  
+
   isApprovalRequiredList: any[] = [
     { Value: 1, Text: 'Yes' },
     { Value: 2, Text: 'No' },
     { Value: 0, Text: 'All' }
   ];
-  
+
   companyTypeList: any[] = [
     { Value: 1, Text: 'Client' },
     { Value: 2, Text: 'Vendor' },
@@ -109,19 +112,19 @@ export class ZDataTable<T> {
         if (col.filterKey == 'ActiveStatusID') {
           col.filterSelectList = this.activeStatusList;
         }
-        else if(col.filterKey == 'IsApprovalRequired'){
+        else if (col.filterKey == 'IsApprovalRequired') {
           col.filterSelectList = this.isApprovalRequiredList;
         }
-        else if(col.filterKey == 'IsServiceAccountCodeID'){
+        else if (col.filterKey == 'IsServiceAccountCodeID') {
           col.filterSelectList = this.isServiceAccountCodeList;
         }
-        else if(col.filterKey == 'CompanyTypeID'){
+        else if (col.filterKey == 'CompanyTypeID') {
           col.filterSelectList = this.companyTypeList;
         }
-        else if(col.filterKey == 'IsServiceAccountCodeID'){
+        else if (col.filterKey == 'IsServiceAccountCodeID') {
           col.filterSelectList = this.companyTypeList;
         }
-        else{
+        else {
           this.loadFilterList(col.filterKey);
         }
       }
@@ -170,6 +173,12 @@ export class ZDataTable<T> {
         });
       }
     });
+
+    this.tableDef.filterFields
+      ?.filter(f => f.type === 'dropdown')
+      .forEach(f => {
+        this.loadFilterList(f.field);
+      });
   }
 
   loadStatusList(ColumnName: string) {
@@ -194,6 +203,9 @@ export class ZDataTable<T> {
               //pending return message in toast mesage
             }
           },
+          error: (err) => {
+            console.error('Error loading status list:', err);
+          }
         });
     }
     catch (error) {
@@ -219,11 +231,20 @@ export class ZDataTable<T> {
               if (targetRow && targetRow.filterType == 'select') {
                 targetRow.filterSelectList = response.Data.Items;
               }
+
+              const dropdownField = this.tableDef.filterFields
+                ?.find(f => f.type === 'dropdown' && f.field === ColumnName);
+              if (dropdownField) {
+                dropdownField.options = response.Data.Items;
+              }
             }
             else {
               //pending return message in toast mesage
             }
           },
+          error: (err) => {
+            console.error('Error loading filter list:', err);
+          }
         });
     }
     catch (error) {
@@ -232,11 +253,45 @@ export class ZDataTable<T> {
   }
 
   toggleFilterPanel() {
+    this.isSortPanelVisible = false;
     this.showFilterPanel = !this.showFilterPanel;
+  }
+
+  onClickApplyFilter() {
+    this.toggleFilterPanel();
+    setTimeout(() => {
+      this.lazyLoad.emit(this.tableLazyLoadEvent);
+    }, 1);
   }
 
   onFilter(event: any) {
     this.table.saveState();
+  }
+
+  toggleSortPanel(): void {
+    this.showFilterPanel = false;
+    this.isSortPanelVisible = !this.isSortPanelVisible;
+  }
+
+  onClickApplySorting(): void {
+    this.toggleSortPanel();
+    setTimeout(() => {
+      this.lazyLoad.emit(this.tableLazyLoadEvent);
+    }, 1);
+  }
+
+  getAscLabel(field: string): string {
+    return field.includes('Date') ? 'Oldest first' : 'A to Z';
+  }
+
+  getDescLabel(field: string): string {
+    return field.includes('Date') ? 'Newest first' : 'Z to A';
+  }
+
+  resetForm(formGroup: FormGroup) {
+    this.isSortPanelVisible = false;
+    this.showFilterPanel = false;
+    this.resetFormEmitter.emit(formGroup);
   }
 
   loadData(event: TableLazyLoadEvent) {
