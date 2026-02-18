@@ -3,7 +3,7 @@
 </z-dataview>
 
 <ng-template #customTemplate let-salesEnquiry>
-    <div class="d-flex align-items-center gap-3 mb-3" *ngFor="let item of salesEnquiry; let first = first">
+    <div class="d-flex align-items-center gap-3 mb-0" *ngFor="let item of salesEnquiry; let first = first">
         <div class="d-flex align-items-center gap-2">
             <!-- BULK SELECT -->
             <p-checkbox binary="true" [(ngModel)]="item._selected" (onChange)="onSelectionChange(item)">

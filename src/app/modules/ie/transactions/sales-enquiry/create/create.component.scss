@@ -1,0 +1,190 @@
+/* =========================
+   PAGE LAYOUT
+========================= */
+
+.page-content {
+    padding: 0.75rem 1rem;
+}
+
+.page-content-scrollable {
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+    padding-bottom: 1rem;
+}
+
+/* =========================
+   HEADER BACK BUTTON
+========================= */
+
+.btn-page-header {
+    margin-bottom: 0.75rem;
+    border-radius: 6px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card {
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.card-body {
+    padding: 1rem 1.25rem;
+}
+
+/* =========================
+   FORM STACK
+========================= */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Vertical rhythm */
+.d-flex.flex-column.gap-2 {
+    gap: 0.75rem !important;
+}
+
+/* =========================
+   LABELS (Field Name)
+========================= */
+
+.form-label,
+z-inputtext label,
+z-inputnumber label,
+z-datepicker label,
+z-textarea label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 4px;
+}
+
+/* =========================
+   INPUT COMPONENTS
+========================= */
+
+z-inputtext,
+z-inputnumber,
+z-datepicker,
+z-autocomplete,
+z-textarea {
+    width: 100%;
+}
+
+/* =========================
+   AUTOCOMPLETE + ICON
+========================= */
+
+.action-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+        cursor: pointer;
+        transition: transform 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            transform: scale(1.15);
+            color: var(--primary-color);
+        }
+    }
+}
+
+/* =========================
+   Z-SPAN (Read-only Fields)
+========================= */
+
+z-span {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    span:first-child {
+        font-size: 0.7rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    span:last-child {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #111827;
+    }
+}
+
+/* =========================
+   PRODUCT LIST
+========================= */
+
+h6.form-group {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.tables-action-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    span {
+        cursor: pointer;
+        transition: transform 0.15s ease;
+
+        &:hover {
+            transform: scale(1.15);
+        }
+    }
+}
+
+/* =========================
+   PAGE ACTION PANEL (BOTTOM BAR)
+========================= */
+
+.page-action-panel {
+    position: sticky;
+    bottom: 0;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* =========================
+   STATUS PILL
+========================= */
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* =========================
+   BUTTON REFINEMENTS
+========================= */
+
+.btn {
+    border-radius: 6px;
+}
+
+.btn-md {
+    height: 38px;
+}

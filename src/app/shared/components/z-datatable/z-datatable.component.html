@@ -1,4 +1,4 @@
-<div style="height: calc(100vh - 220px); padding-bottom: 30px;">
+<div style="height: calc(100vh - 90px); padding-bottom: 2rem;">
   <p-table #dt [styleClass]="'p-paginator-striped'" [tableStyleClass]="'table index-table'" [value]="tableDef.data"
     [totalRecords]="tableDef.totalRecords" [rows]="25" [showCurrentPageReport]="true"
     [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'" [scrollable]="true"
@@ -9,18 +9,90 @@
     [sortOrder]="tableDef.defaultSortColumn.sortOrder">
     <ng-template pTemplate="caption">
       <div class="index-table-action-bar">
-        <div class="d-flex justify-content-end">
-          <span class="refresh-filter" (click)="toggleSortPanel();" [ngClass]="{'active-toggle': isSortPanelVisible}"
-            title="Sorting">
-            <i class="pi pi-sort-alt"></i>
-          </span>
+        <div class="d-flex justify-content-end me-4">
+          <!-- Sorting Wrapper -->
+          <div class="action-item-wrapper">
+            <span class="refresh-filter" (click)="toggleSortPanel();" [ngClass]="{'active-toggle': isSortPanelVisible}"
+              title="Sorting">
+              <i class="pi pi-sort-alt"></i>
+            </span>
+            <ng-container *ngIf="tableDef.sortingForm && isSortPanelVisible">
+              <div #sortingPanel class="index-sorting-panel card" [formGroup]="tableDef.sortingForm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6>Sorting</h6>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-primary" [type]="'button'" (click)="resetForm(tableDef.sortingForm)">Clear
+                    </button>
+                    <button class="btn btn-primary" [type]="'button'" (click)="onClickApplySorting()">Apply
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div *ngFor="let field of tableDef.sortFields" class="field">
+                    <label>
+                      {{ field.label }}
+                    </label>
+                    <div>
+                      <z-select-button [group]="tableDef.sortingForm" [control]="field.field" [allowEmpty]="true">
+                        {{ getAscLabel(field.field)}}
+                      </z-select-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
           <span class="refresh-filter" (click)="refreshData();" title="Refresh">
             <i class="pi pi-refresh"></i>
           </span>
-          <span class="filter-toggle" (click)="toggleFilterPanel();" [ngClass]="{'active-toggle': showFilterPanel}"
-            title="Filter">
-            <i class="pi pi-filter"></i>
-          </span>
+
+          <!-- Filter Wrapper -->
+          <div class="action-item-wrapper">
+            <span class="filter-toggle" (click)="toggleFilterPanel();" [ngClass]="{'active-toggle': showFilterPanel}"
+              title="Filter">
+              <i class="pi pi-filter"></i>
+            </span>
+            <ng-container *ngIf="tableDef.filterForm && showFilterPanel">
+              <div #filterPanel class="index-filter-panel card" [formGroup]="tableDef.filterForm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6>Filter</h6>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-primary" [type]="'button'" (click)="resetForm(tableDef.filterForm)">Clear
+                    </button>
+                    <button class="btn btn-primary" [type]="'button'" (click)="onClickApplyFilter()">Apply
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div *ngFor="let field of tableDef.filterFields" class="field">
+                    <!-- <label>{{field.label}}</label> -->
+                    <z-inputtext *ngIf="field.type === 'text'" [group]="tableDef.filterForm" [control]="field.field"
+                      [label]="field.label">
+                    </z-inputtext>
+
+                    <z-inputnumber *ngIf="field.type === 'number'" [group]="tableDef.filterForm" [control]="field.field"
+                      [label]="field.label">
+                    </z-inputnumber>
+
+                    <z-datepicker *ngIf="field.type === 'date'" [group]="tableDef.filterForm" [control]="field.field"
+                      [label]="field.label">
+                    </z-datepicker>
+
+                    <z-select *ngIf="field.type === 'dropdown'" [group]="tableDef.filterForm" [control]="field.field"
+                      [label]="field.label" [options]="field.options ?? []" [showClear]="false" [optionLabel]="'Text'"
+                      [optionValue]="'Value'" [appendTo]="'body'">
+                    </z-select>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
           <span class="column-visibility-toggle" (click)="columnMenu.toggle($event)"
             [ngClass]="{'active-toggle': columnMenu.overlayVisible}">
             <i class="pi pi-sliders-h"></i>
@@ -37,69 +109,6 @@
             </div>
           </p-overlayPanel>
         </div>
-        <ng-container *ngIf="tableDef.sortingForm && isSortPanelVisible">
-          <div #sortingPanel class="index-sorting-panel card" [formGroup]="tableDef.sortingForm">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <div>
-                <h6>Sorting</h6>
-              </div>
-              <div class="d-flex gap-2">
-                <button class="btn btn-primary" [type]="'button'" (click)="resetForm(tableDef.sortingForm)">Clear
-                </button>
-                <button class="btn btn-primary" [type]="'button'" (click)="onClickApplySorting()">Apply
-                </button>
-              </div>
-            </div>
-            <div class="card-body">
-              <div *ngFor="let field of tableDef.sortFields" class="field">
-                <label>
-                  {{ field.label }}
-                </label>
-                <div>
-                  <z-select-button [group]="tableDef.sortingForm" [control]="field.field" [allowEmpty]="true">
-                    {{ getAscLabel(field.field)}}
-                  </z-select-button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="tableDef.filterForm && showFilterPanel">
-          <div #filterPanel class="index-filter-panel card" [formGroup]="tableDef.filterForm">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <div>
-                <h6>Filter</h6>
-              </div>
-              <div class="d-flex gap-2">
-                <button class="btn btn-primary" [type]="'button'" (click)="resetForm(tableDef.filterForm)">Clear
-                </button>
-                <button class="btn btn-primary" [type]="'button'" (click)="onClickApplyFilter()">Apply
-                </button>
-              </div>
-            </div>
-            <div class="card-body">
-              <div *ngFor="let field of tableDef.filterFields" class="field">
-                <label>{{field.label}}</label>
-                <z-inputtext *ngIf="field.type === 'text'" [group]="tableDef.filterForm" [control]="field.field"
-                  [label]="field.label">
-                </z-inputtext>
-
-                <z-inputnumber *ngIf="field.type === 'number'" [group]="tableDef.filterForm" [control]="field.field"
-                  [label]="field.label">
-                </z-inputnumber>
-
-                <z-datepicker *ngIf="field.type === 'date'" [group]="tableDef.filterForm" [control]="field.field"
-                  [label]="field.label">
-                </z-datepicker>
-
-                <z-select *ngIf="field.type === 'dropdown'" [group]="tableDef.filterForm" [control]="field.field"
-                  [label]="field.label" [options]="field.options ?? []" [showClear]="false" [optionLabel]="'Text'"
-                  [optionValue]="'Value'">
-                </z-select>
-              </div>
-            </div>
-          </div>
-        </ng-container>
       </div>
     </ng-template>
     <ng-template pTemplate="header">

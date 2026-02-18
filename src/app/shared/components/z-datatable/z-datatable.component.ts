@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
@@ -23,6 +23,8 @@ import { DataViewSortRow } from '../z-dataview/z-dataview';
 export class ZDataTable<T> {
   private destroy$ = new Subject<void>();
   @ViewChild('dt') table!: Table;
+  @ViewChild('sortingPanel') sortingPanel!: ElementRef;
+  @ViewChild('filterPanel') filterPanel!: ElementRef;
   /* Declarations */
   @Input() tableDef!: DataTableDef<T>;
   @Output() lazyLoad: EventEmitter<DataTableLazyLoadEvent> = new EventEmitter();
@@ -36,6 +38,20 @@ export class ZDataTable<T> {
   isSortPanelVisible: boolean = false;
   selectedRow: any;
   tableLazyLoadEvent!: DataTableLazyLoadEvent;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const isClickInsideSort = this.sortingPanel?.nativeElement.contains(target);
+    const isClickInsideFilter = this.filterPanel?.nativeElement.contains(target);
+    const isClickOnToggle = target.closest('.refresh-filter') || target.closest('.filter-toggle') || target.closest('.column-visibility-toggle') || target.closest('.p-overlaypanel');
+    const isClickInsideOverlay = target.closest('.p-dropdown-panel') || target.closest('.p-multiselect-panel') || target.closest('.p-datepicker') || target.closest('.p-overlay');
+
+    if (!isClickInsideSort && !isClickInsideFilter && !isClickOnToggle && !isClickInsideOverlay) {
+      this.isSortPanelVisible = false;
+      this.showFilterPanel = false;
+    }
+  }
 
   isServiceAccountCodeList: any[] = [
     { Value: 1, Text: 'Yes' },

@@ -1,1 +1,133 @@
-// Z-Dataview component styles
+.z-dataview-viewport {
+    max-height: calc(100vh - var(--z-dataview-viewport-offset, 90px));
+    max-height: calc(100dvh - var(--z-dataview-viewport-offset, 90px));
+    padding-bottom: var(--z-dataview-viewport-padding-bottom, 0rem);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.z-dataview-viewport > p-dataView {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+}
+
+:host ::ng-deep .z-dataview-root.p-dataview {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+:host ::ng-deep .z-dataview-root .p-dataview-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+
+:host ::ng-deep .z-dataview-root .p-paginator {
+    flex: 0 0 auto;
+}
+
+:host ::ng-deep .z-dataview-root .p-paginator-bottom {
+    margin-top: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.index-table-action-bar {
+
+    .action-item-wrapper {
+        position: relative;
+        display: inline-flex;
+    }
+
+    .refresh-filter,
+    .filter-toggle {
+        cursor: pointer;
+        padding: 0.0rem 0.6rem;
+        margin: 5px 0.2rem;
+        margin-left: 10px;
+        color: #23272b;
+        background-color: #f8f9fa;
+        border-radius: 10%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding-left: 20px;
+        padding-right: 20px;
+
+        i {
+            font-size: 14px;
+            background-color: transparent;
+        }
+
+        &:hover,
+        &.active-toggle {
+            color: var(--primary-color, #007bff);
+            background-color: rgba(var(--primary-rgb), 0.1);
+        }
+
+        &.active-toggle {
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+    }
+
+    .index-filter-panel,
+    .index-sorting-panel {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 300px;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+
+        .card-header {
+            padding: 0.75rem 1rem;
+            background: var(--background-tertiary);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+            h6 {
+                margin: 0;
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 0.25rem 0.75rem;
+                font-size: 0.75rem;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                width: auto;
+                border-radius: 4px;
+            }
+        }
+
+        .card-body {
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+
+            .field {
+                margin-bottom: 1rem;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                label {
+                    display: block;
+                    margin-bottom: 0.4rem;
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    color: var(--default-text-color);
+                }
+            }
+        }
+    }
+}

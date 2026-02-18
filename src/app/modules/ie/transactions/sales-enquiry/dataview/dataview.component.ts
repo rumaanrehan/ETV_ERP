@@ -87,6 +87,7 @@ export class DataviewComponent implements OnInit, OnDestroy, OnChanges {
 
   loadData() {
     try {
+      this.dataViewDef.loading = true;
       const model: DataViewParams<SalesEnquiry_IndexTableFilter, SalesEnquiry_IndexTableSort> = {
         first: this.dataViewEvent.first,
         last: this.dataViewEvent.rows,

@@ -1,7 +1,7 @@
 <!--Page Header Action Button Template-->
 <ng-template #pageHeaderActionTemplate>
     <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-primary btn-page-header rounded-pill shadow-sm" (click)="onClickPageHeaderAddButton()">
+        <button class="btn btn-primary btn-page-header btn-md shadow-sm" (click)="onClickPageHeaderAddButton()">
             <i class="pi pi-plus"></i>&nbsp; Add Sales Enquiry</button>
 
         <!-- VIEW SWITCHER -->
@@ -32,18 +32,21 @@
 
         <div class="col-6 index-action-bar-actions">
             <!-- BULK ACTIONS -->
-            <button class="btn btn-primary rounded-pill" [disabled]="!selectedSalesEnquiries.length"
-                (click)="bulkChangeStatus(1)">
+            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(1)">
+                <i class="pi pi-check-circle"></i>
                 Revert to Received
             </button>
 
-            <button class="btn btn-primary rounded-pill" [disabled]="!selectedSalesEnquiries.length"
-                (click)="bulkChangeStatus(2)">
+            <button class="btn btn-primary bg-primary  d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(2)">
+                <i class="pi pi-hourglass"></i>
                 Mark as Under Review
             </button>
 
-            <button class="btn btn-danger rounded-pill" [disabled]="!selectedSalesEnquiries.length"
-                (click)="bulkChangeStatus(6)">
+            <button class="btn btn-danger  d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedSalesEnquiries.length" (click)="bulkChangeStatus(6)">
+                <i class="pi pi-ban m-0"></i>
                 Cancel
             </button>
         </div>

@@ -27,6 +27,7 @@ export class ZSelectComponent {
 
   @Input() multi: boolean = false;
   @Input() maxSelectionLimit: number | null = null;
+  @Input() appendTo: any = null;
 
   @Output() onChange = new EventEmitter<any>(); // Event emitter for value changes
 
