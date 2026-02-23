@@ -27,8 +27,7 @@ export interface PurchaseQuotation {
     CoinAdjustment: number | null;
 
     //AutoComplete releted fields
-    ProductID: number | null;
-    ProductName: string | null;
+    // ProductName: string | null;
 }
 
 export interface PurchaseQuotationDetail {
@@ -36,6 +35,7 @@ export interface PurchaseQuotationDetail {
     ProductName: string | null;
     QuotedQty: number | null;
     UOM: string | null;
+    HSCode: string | null;
     TaxRate: number | null;
     RatePerUnitFC: number | null;
     RatePerUnitBC: number | null;
@@ -75,6 +75,8 @@ export interface PurchaseQuotation_IndexTableList {
     NetAmountFC: number;
     StatusText: string;
     StatusHex: string;
+    /** UI only */
+    _selected?: boolean;
 }
 
 export interface PurchaseQuotationRequest {
@@ -106,7 +108,7 @@ export interface PurchaseQuotation_Detail {
     NetAmountFC: number;
     StatusText: string;
     StatusHex: string;
-    IsPurchaseAlreadyExists: boolean;
+    IsImportAlreadyExists: boolean;
     ProductList: TList<PurchaseQuotationProduct_Detail>;
 }
 
@@ -114,6 +116,7 @@ export interface PurchaseQuotationProduct_Detail {
     ProductID: number;
     ProductName: string;
     UOM: string;
+    HSCode: string | null;
     QuotedQty: number;
     RatePerUnitFC: number;
     TaxRate: number;
@@ -126,5 +129,9 @@ export interface PurchaseQuotation_SelectList {
     PurchaseQuotationID: number;
     PurchaseQuotationNo: string;
     VendorName: string;
+    StatusID: number;
+}
+export interface PurchaseQuotationBulkUpdateRequest {
+    SalesQuotationIDs: number[];
     StatusID: number;
 }

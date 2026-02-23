@@ -19,7 +19,15 @@ import { CompanyMasterService } from '../../settings/company-master/company-mast
 import { PaymentTerm_SelectList, PaymentTermRequest } from '../../settings/payment-term-master/payment-term-master';
 import { PaymentTermMasterService } from '../../settings/payment-term-master/payment-term-master.service';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
-import { PurchaseQuotation_SelectList, PurchaseQuotation_IndexTableFilter, PurchaseQuotation_IndexTableList, PurchaseQuotation_Detail, PurchaseQuotation, PurchaseQuotation_IndexTableSort, PurchaseQuotationRequest } from './purchase-quotation';
+import { PurchaseQuotation_SelectList, PurchaseQuotation_IndexTableFilter, PurchaseQuotation_IndexTableList, PurchaseQuotation_Detail, PurchaseQuotation, PurchaseQuotation_IndexTableSort, PurchaseQuotationRequest, PurchaseQuotationDetail, PurchaseQuotationBulkUpdateRequest } from './purchase-quotation';
+import { Environment } from '../../../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
+import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
+import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
+import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
+import { NonZero } from '../../../../shared/validators/non-zero.validator';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +43,9 @@ export class PurchaseQuotationService {
     private paymentTermMasterService: PaymentTermMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
     private currencyMasterService: CurrencyMasterService,
-    private selectListService: SelectListService
+    private selectListService: SelectListService,
+    private currencyExchangeService: CurrencyExchangeService,
+    private http: HttpClient,
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -50,10 +60,19 @@ export class PurchaseQuotationService {
     });
   }
 
+  GetExchangeRate(model: GetExchangeRateRequest): Observable<ApiDataResponse<ExchangeRateResponse>> {
+    return this.currencyExchangeService.GetRate(model);
+  }
+  GeneratePdf(request: any) {
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintInvoice`, request, { responseType: 'blob' });
+  }
   GetStaticList(model: StaticListRequest): Observable<ApiListResponse<StaticList>> {
     return this.selectListService.GetStaticList(model);
   }
 
+  BulkChangeStatus(model: PurchaseQuotationBulkUpdateRequest): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/BulkChangeStatus`, model);
+  }
   GetCompanyList(model: CompanyRequest): Observable<ApiListResponse<Company_SelectList>> {
     return this.companyMasterService.PopulateList(model);
   }
@@ -110,7 +129,7 @@ export class PurchaseQuotationService {
       },
       IncotermID: {
         label: 'Incoterm',
-        defaultValue: 0
+        defaultValue: null
       },
       StatusID: {
         label: 'Status',
@@ -159,24 +178,32 @@ export class PurchaseQuotationService {
         }
       },
       PurchaseQuotationDate: {
-        label: 'Purchase Quotation Date',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: "Purchase Quotation Date is required"
-        }
-      },
+              label: 'Quotation Date',
+              defaultValue: new Date(),
+              validators: [Validators.required, LessThanOrEqual("ValidityDate")],
+              validationMessages: {
+                required: "Quotation Date is required.",
+                lessThanOrEqual: "Quotation Date should be less than Validity Date."
+              },
+              type: 'control'
+            },
       VendorID: {
         label: 'Vendor ID',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
           required: "Vendor ID is required"
-        }
+        },
+        type: 'control'
       },
       VendorName: {
         label: 'Vendor Name',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Vendor is required."
+        },
+        type: 'control'
       },
       PurchaseRequisitionID: {
         label: 'Purchase Requisition ID',
@@ -186,10 +213,15 @@ export class PurchaseQuotationService {
         label: 'Purchase Requisition No',
         defaultValue: null
       },
-      ValidityDate: {
-        label: 'Validity Date',
-        defaultValue: null
-      },
+            ValidityDate: {
+              label: 'Validity Date',
+              defaultValue: null,
+              validators: [GreaterThanOrEqual('PurchaseQuotationDate')],
+              validationMessages: {
+                greaterThanOrEqual: "Validity Date should be greater than Quotation Date."
+              },
+              type: 'control'
+            },
       FCurrencyID: {
         label: 'Foreign Currency',
         defaultValue: null,
@@ -211,8 +243,10 @@ export class PurchaseQuotationService {
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
-          required: "Exchange Rate Date is required"
-        }
+          required: "Exchange Rate is required.",
+          nonZero: "Exchange Rate cannot be 0."
+        },
+        type: 'control'
       },
       IncotermID: {
         label: 'Incoterm',
@@ -225,36 +259,61 @@ export class PurchaseQuotationService {
 
       ProductList: {
         type: 'array',
-        items:
-        {
+        items: {
           ProductID: {
             label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Product is required"
-            }
+              required: "Product is required."
+            },
+            type: 'control'
           },
           ProductName: {
-            label: 'Product Name',
+            label: '',
             defaultValue: null,
             validators: [Validators.required],
             validationMessages: {
-              required: "Product name is required"
-            }
+              required: "Product name is required."
+            },
+            type: 'control'
           },
+          // ProductName: {
+          //   label: '',
+          //   defaultValue: null,
+          //   validators: [Validators.required],
+          //   validationMessages: {
+          //     required: "Product name is required"
+          //   },
+          //   type: 'control'
+          // },
           UOM: {
-            label: '',
+            label: 'Measurement Unit',
             defaultValue: null
           },
-          QuotedQty: {
-            label: '',
+          HSCode: {
+            label: 'HS Code',
             defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Quoted quantity is required"
-            }
+            // validators: [Validators.minLength(2), Validators.maxLength(8), Validators.pattern(/^\d{2,8}$/)],
+            // validationMessages: {
+            //   minlength: "HS Code must be at least 2 digits.",
+            //   maxlength: "HS Code cannot exceed 8 digits.",
+            //   pattern: "HS Code must contain only digits."
+            // },
+            // type: 'control'
           },
+                    QuotedQty: {
+                      label: '',
+                      defaultValue: null,
+                      validators: [Validators.required, Validators.min(1), Validators.max(99999), noFractionValidator()],
+                      validationMessages: {
+                        required: "Quoted quantity is required.",
+                        min: "Requested Qty must be at least 1.",
+                        max: "Requested Qty cannot exceed 99999.",
+                        noFraction: "Quoted quantity cannot have fractions."
+                      },
+                      type: 'control'
+                    },
           TaxRate: {
             label: '',
             defaultValue: null,
@@ -263,33 +322,64 @@ export class PurchaseQuotationService {
               required: "Tax rate is required"
             }
           },
-          RatePerUnitFC: {
-            label: '',
-            defaultValue: null,
-            validators: [Validators.required],
-            validationMessages: {
-              required: "Rate per unit in foreign currency is required"
-            }
-          },
+                    RatePerUnitFC: {
+                      label: '',
+                      defaultValue: null,
+                      validators: [Validators.required, NonZero(), Validators.max(10000000)],
+                      validationMessages: {
+                        required: "Rate in foreign currency is required.",
+                        nonZero: "Rate per unit cannot be 0.",
+                        max: "Maximum Rate Per Unit allowed is 10,000,000."
+                      },
+                      type: 'control'
+                    },
           RatePerUnitBC: {
             label: '',
             defaultValue: null,
+            validators: [Validators.required, NonZero()],
+            validationMessages: {
+              required: "Amounts are not converted into base currency.",
+              nonZero: "Rate per unit cannot be 0."
+            },
+            type: 'control'
           },
           TaxableAmountFC: {
             label: '',
             defaultValue: null,
+            validators: [Validators.required, NonZero()],
+            validationMessages: {
+              required: "Amounts are not converted into base currency.",
+              nonZero: "Taxable Amount cannot be 0."
+            },
+            type: 'control'
           },
           TaxableAmountBC: {
             label: '',
             defaultValue: null,
+            validators: [Validators.required, NonZero()],
+            validationMessages: {
+              required: "Amounts are not converted into base currency.",
+              nonZero: "Taxable Amount cannot be 0."
+            },
+            type: 'control'
           },
           TaxAmountFC: {
             label: '',
             defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Tax Amount is required."
+            },
+            type: 'control'
           },
           TaxAmountBC: {
             label: '',
             defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Amounts are not converted into base currency."
+            },
+            type: 'control'
           },
           TotalAmountFC: {
             label: '',
@@ -306,49 +396,94 @@ export class PurchaseQuotationService {
         defaultValue: null
       },
       Narration: {
-        label: 'Narration',
-        defaultValue: null
+        label: 'Note',
+        defaultValue: null,
+        validators: [Validators.maxLength(500)],
+        validationMessages: {
+          maxLength: "Note cannot exceed 500 characters."
+        },
+        type: 'control'
       },
       SubtotalAmountFC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required, NonZero()],
+        validationMessages: {
+          required: "Subtotal FC must be equal to the sum of Taxable Amount FC in Product List.",
+          nonZero: "Subtotal Amount cannot be 0."
+        },
+        type: 'control'
       },
       SubtotalAmountBC: {
-        label: '',
-        defaultValue: null
+        label: 'Subtotal Amount (BC)',
+        defaultValue: null,
+        validators: [Validators.required, NonZero()],
+        validationMessages: {
+          required: "Amounts are not converted into base currency.",
+          nonZero: "Subtotal Amount cannot be 0."
+        },
+        type: 'control'
       },
       TaxAmountFC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Tax Amount FC must be equal to the sum of Tax Amount FC in Product List."
+        },
+        type: 'control'
       },
       TaxAmountBC: {
-        label: '',
-        defaultValue: null
+        label: 'Tax Amount (BC)',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Amounts are not converted into base currency."
+        },
+        type: 'control'
       },
       NetAmountFC: {
         label: '',
-        defaultValue: null
+        defaultValue: null,
+        validators: [Validators.required, NonZero()],
+        validationMessages: {
+          required: "Net Amount FC must be equal to the sum of all amount in the order.",
+          nonZero: "Net Amount cannot be 0."
+        },
+        type: 'control'
       },
-      NetAmountBC: {
-        label: '',
-        defaultValue: null
-      },
+          NetAmountBC: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, NonZero()],
+            validationMessages: {
+              required: "Amounts are not converted into base currency.",
+              nonZero: "Net Amount cannot be 0."
+            },
+            type: 'control'
+          },
+        
       IsRoundOff: {
         label: 'Round Off',
         defaultValue: true
       },
-      CoinAdjustment: {
-        label: '',
+                CoinAdjustment: {
+        label: 'Round Off',
         defaultValue: null
       },
-      ProductID: {
-        label: '',
-        defaultValue: null
-      },
-      ProductName: {
-        label: 'Product Name',
-        defaultValue: null
-      }      
+      // ProductID: {
+      //   label: '',
+      //   defaultValue: null
+      // },
+      //     ProductName: {
+      //       label: '',
+      //       defaultValue: null,
+      //       validators: [Validators.required],
+      //       validationMessages: {
+      //         required: "Product name is required."
+      //       },
+      //       type: 'control'
+      //     },      
     };
   }
 
@@ -368,29 +503,45 @@ export class PurchaseQuotationService {
     }
   }
 
+  // getCompanyMasterAutoCompleteDef(formConfig: FormConfigType<PurchaseQuotation>, form: FormGroup): AutoCompleteDef<Company_SelectList> {
+  //   return {
+  //     type: 'formControl',
+  //     group: form,
+  //     control: 'VendorName',
+  //     label: formConfig.VendorName.label,
+  //     validationMessage: formConfig.VendorName.error,
+  //     placeholder: 'Search Vendor',
+  //     options: [],
+  //     optionLabel: 'CompanyName',
+  //     columns: [
+  //       { data: 'CompanyCode', label: 'Code', width: '150px' },
+  //       { data: 'CompanyName', label: 'Name', width: '150px' }
+  //     ],
+  //   }
+  // }
+
   getCompanyMasterAutoCompleteDef(formConfig: FormConfigType<PurchaseQuotation>, form: FormGroup): AutoCompleteDef<Company_SelectList> {
     return {
       type: 'formControl',
       group: form,
       control: 'VendorName',
-      label: formConfig.VendorName.label,
-      validationMessage: formConfig.VendorName.error,
+      label: formConfig.VendorID.label,
+      validationMessage: formConfig.VendorID.error,
       placeholder: 'Search Vendor',
       options: [],
-      optionLabel: 'CompanyName',
+      optionLabel: 'ProductName',
       columns: [
-        { data: 'CompanyCode', label: 'Code', width: '150px' },
-        { data: 'CompanyName', label: 'Name', width: '150px' }
+        { data: 'CompanyCode', label: 'Company Code', width: '100px' },
+        { data: 'CompanyName', label: 'Company Name', width: '200px' }
       ],
     }
   }
 
-  getProductMasterAutoCompleteDef(formConfig: FormConfigType<PurchaseQuotation>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
+  getProductAutoCompleteDef(formConfig: FormConfigType<PurchaseQuotationDetail>, form: FormGroup): AutoCompleteDef<Product_SelectList> {
     return {
       type: 'formControl',
       group: form,
       control: 'ProductName',
-      label: formConfig.ProductName.label,
       validationMessage: formConfig.ProductName.error,
       placeholder: 'Search Product',
       options: [],
@@ -401,7 +552,6 @@ export class PurchaseQuotationService {
       ],
     }
   }
-
   getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<PurchaseQuotation_IndexTableList> {
     return {
       tableKey: 'IE_PurchaseQuotation_IndexDataView',

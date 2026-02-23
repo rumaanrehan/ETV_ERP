@@ -21,6 +21,8 @@ import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../sett
 import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
 import { PurchaseQuotation, PurchaseQuotationDetail, PurchaseQuotation_SelectList, PurchaseQuotation_Detail } from '../purchase-quotation';
 import { PurchaseQuotationService } from '../purchase-quotation.service';
+import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
+import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
 
 @Component({
   selector: 'app-create',
@@ -32,13 +34,14 @@ import { PurchaseQuotationService } from '../purchase-quotation.service';
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('quotedQtyColTemplate', { static: true }) quotedQtyColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitFCColTemplate', { static: true }) ratePerUnitFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxRateColTemplate', { static: true }) taxRateColTemplate!: TemplateRef<any>;
-  @ViewChild('taxableAmountBCColTemplate', { static: true }) taxableAmountBCColTemplate!: TemplateRef<any>;
-  @ViewChild('taxAmountBCColTemplate', { static: true }) taxAmountBCColTemplate!: TemplateRef<any>;
-  @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
+  @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
+  @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
   componentRef?: ComponentRef<any>;
@@ -48,8 +51,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   statusHex!: string | null;
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
+  isAddProductBtnLoading: boolean = false;
   isFromPurchaseRequisition = false;
   isImportAlreadyExists = false;
+  disablePrintButton: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<PurchaseQuotation>;
@@ -68,12 +73,15 @@ export class CreateComponent implements OnInit, OnDestroy {
   //AutoComplete Definitions
   purchaseRequisitionAutoCompleteDef!: AutoCompleteDef<PurchaseQuotation_SelectList>;
   companyMasterAutoCompleteDef!: AutoCompleteDef<Company_SelectList>;
-  productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
+  // productAutoCompleteDef!: AutoCompleteDef<Product_SelectList>;
+  productAutoCompleteDef: AutoCompleteDef<Product_SelectList>[] = [];
+
 
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: PurchaseQuotationService,
     private formService: FormService,
+        private currencyExchangeService: CurrencyExchangeService,
     private alertService: AlertNotificationService,
     private router: Router,
     private route: ActivatedRoute
@@ -85,19 +93,20 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form = this.formService.createFormGroup<PurchaseQuotation>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.purchaseRequisitionAutoCompleteDef = this.pageService.getPurchaseRequisitionAutoCompleteDef(this.formConfig, this.form);
-    this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
+    // this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%" },
+        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "20%", customTemplate: this.productAutoCompleteColTemplate },
         { data: "QuotedQty", label: "Quoted Qty", width: "10%", customTemplate: this.quotedQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
+        { data: "HSCode", label: "HS Code", width: "8%" },
         { data: "RatePerUnitBC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitFCColTemplate },
         { data: "QuotedTaxRate", label: "Quoted Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
-        { data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountBCColTemplate },
-        { data: "TaxAmountBC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountBCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
+        { data: "TaxableAmountBC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountFCColTemplate },
+        { data: "TaxAmountBC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountFCColTemplate },
+        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
@@ -121,6 +130,9 @@ export class CreateComponent implements OnInit, OnDestroy {
           return;
         }
 
+        if (this.productListArray.length === 0) {
+          this.AddProductRow();
+        }
         this.isEditMode = false;
       });
   }
@@ -201,24 +213,60 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.selectedVendorAddress = null;
+
+    if (basedOnValue === 2) {
+      this.AddProductRow();
+    }
   }
 
   get productListArray(): FormArray<FormGroup> {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
 
-  onClickRemoveProductItem(index: number): void {
-    this.alertService.showConfirmation({
-      text: 'Do you really want to remove this product item?',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.productListArray.removeAt(index);
-        this.tableDef.data = this.productListArray.value;
-        this.productCalculation();
+  OnClickRemoveProductItem(index: number): void {
+    if (this.productListArray.at(index).value.ProductName !== null) {
+      this.alertService.showConfirmation({
+        text: `Do you really want to remove <b>${this.productListArray.at(index).value.ProductName}<b>?`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.productListArray.removeAt(index);
+          this.productAutoCompleteDef.splice(index, 1);
+          this.tableDef.data = this.productListArray.value;
+          this.ProductCalculation();
+          if (this.productListArray.length == 0) {
+            this.AddProductRow();
+          }
+          return
+        }
+      });
+    }
+    else {
+      this.productListArray.removeAt(index);
+      this.productAutoCompleteDef.splice(index, 1);
+      this.tableDef.data = this.productListArray.value;
+      this.ProductCalculation();
+      if (this.productListArray.length == 0) {
+        this.AddProductRow();
       }
-    });
+    }
   }
 
+  OnCurrencyChange(): void {
+    const model: GetExchangeRateRequest = {
+      ToCurrencyCode: this.currencyExchangeService.BASE_CURRENCY_ISO,
+      CurrencyID: this.form.get('FCurrencyID')?.value
+    }
+    this.pageService.GetExchangeRate(model)
+      .pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            debugger;
+            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate });
+          }
+        },
+      });
+  }
   // loadPurchaseRequisition(event: string): void {
   //   try {
   //     const dto: PurchasesRequisitionRequest = {
@@ -309,7 +357,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.selectedVendorAddress = null;
   }
 
-  onSearch_Product(event: string): void {
+
+  OnSearch_Product(event: string, rowIndex: number): void {
     try {
       const dto: ProductRequest = {
         ProductName: event,
@@ -319,9 +368,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$)).subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.productAutoCompleteDef.options = response.Data.Items;
+              this.productAutoCompleteDef[rowIndex].options = response.Data.Items;
             } else {
-              this.productAutoCompleteDef.options = [];
+              this.productAutoCompleteDef[rowIndex].options = [];
             }
           },
         });
@@ -329,38 +378,52 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSelect_Product(event: Product_SelectList): void {
-    this.form.get('ProductID')?.patchValue(null);
-    this.form.get('ProductName')?.patchValue(null);
+  // onSelect_Product(event: Product_SelectList): void {
+  //   this.form.get('ProductID')?.patchValue(null);
+  //   this.form.get('ProductName')?.patchValue(null);
 
-    if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
-      this.alertService.showToast({
-        text: "Product already exists in the table"
-      });
+  //   if (this.tableDef.data.some(p => p.ProductID === event.ProductID)) {
+  //     this.alertService.showToast({
+  //       text: "Product already exists in the table"
+  //     });
 
-      return;
-    }
+  //     return;
+  //   }
 
+  //   const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+  //   productItemForm.patchValue({
+  //     ProductID: event.ProductID,
+  //     ProductName: event.ProductName,
+  //     UOM: event.UOM,
+  //     PurchaseTaxRate: event.PurTaxRate
+  //   });
+
+  //   // this.productListArray = [...this.productListArray, productItemForm];
+  //   this.productListArray.push(productItemForm);
+  //   this.tableDef.data = this.productListArray.value;
+
+  //   // const data: ExportOrder_ProductDetail = {
+  //   //   ProductID: event.ProductID, ProductName: event.ProductName, SalesQty: null, RatePerUnitBC: null, TaxRate: event.PurTaxRate
+  //   // }
+  //   // this.tableDef.data.push(data);
+  // }
+
+  AddProductRow(): void {
+    this.isAddProductBtnLoading = true;
     const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-    productItemForm.patchValue({
-      ProductID: event.ProductID,
-      ProductName: event.ProductName,
-      UOM: event.UOM,
-      PurchaseTaxRate: event.PurTaxRate
-    });
 
-    // this.productListArray = [...this.productListArray, productItemForm];
     this.productListArray.push(productItemForm);
+    const index = this.productListArray.length - 1;
+
+    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig.ProductList.items, productItemForm);
     this.tableDef.data = this.productListArray.value;
 
-    // const data: ExportOrder_ProductDetail = {
-    //   ProductID: event.ProductID, ProductName: event.ProductName, SalesQty: null, RatePerUnitBC: null, TaxRate: event.PurTaxRate
-    // }
-    // this.tableDef.data.push(data);
+    this.isAddProductBtnLoading = false;
   }
-
-  productCalculation(): void {
-    let netAmount = 0;
+  ProductCalculation(): void {
+    var subtotalAmount: number = 0;
+    var taxAmount: number = 0;
+    var netAmount: number = 0;
 
     this.productListArray.controls.forEach((group: FormGroup) => {
       const quantity = group.get('QuotedQty')?.value || 0;
@@ -451,9 +514,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
-        this.alertService.showValidationAlert();
-
-        this.logInvalidControls(this.form);
+        this.alertService.showValidationAlert(this.formService.getValidationMessages(this.formConfig));
         this.isSubmitted = false;
         return;
       }
@@ -545,60 +606,39 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDetails(): void {
+   GetDetails(): void {
     this.route.params.subscribe((params) => {
-      const PurchaseQuotationID = +params['id'];
-      if (PurchaseQuotationID) {
+      const salesQuotationID = +params['id'];
+      if (salesQuotationID) {
         this.isEditMode = true;
         try {
-          this.pageService.GetDetails(PurchaseQuotationID)
+          this.pageService.GetDetails(salesQuotationID)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
-                  const model: PurchaseQuotation_Detail = response.Data;
-
+                  this.selectedVendorAddress = response.Data.VendorAddress;
                   this.statusText = response.Data.StatusText;
                   this.statusHex = response.Data.StatusHex;
-                  this.selectedVendorAddress = model.VendorAddress;
-
-                  this.form.patchValue({
-                    PurchaseQuotationID: model.PurchaseQuotationID,
-                    PurchaseQuotationNo: model.PurchaseQuotationNo,
-                    VendorID: model.VendorID,
-                    BasedOn: model.BasedOn,
-                    VendorName: model.VendorName,
-                    FCurrencyID: model.FCurrencyID,
-                    IncotermID: model.IncotermID,
-                    PaymentTermID: model.PaymentTermID,
-                    ExchangeRateToBC: model.ExchangeRateToBC,
-                    Narration: model.Narration,
-                    IsRoundOff: model.IsRoundOff,
-                    SubtotalAmountFC: model.SubtotalAmountFC,
-                    TaxAmountFC: model.TaxAmountFC,
-                    NetAmountFC: model.NetAmountFC,
-                    ExchangeRateDate: response.Data.ValidityDate ? DateUtils.toDate(response.Data.ValidityDate) : null,
-                    ValidityDate: response.Data.ValidityDate ? DateUtils.toDate(response.Data.ValidityDate) : null
-                  });
-
-                  this.productListArray.clear();
+                  this.isImportAlreadyExists = response.Data.IsImportAlreadyExists;
                   response.Data.ProductList.Items.forEach(item => {
-                    const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-                    productForm.patchValue({
-                      ProductID: item.ProductID,
-                      ProductName: item.ProductName,
-                      QuotedQty: item.QuotedQty,
-                      UOM: item.UOM,
-                      RatePerUnitFC: item.RatePerUnitFC,
-                      TaxRate: item.TaxRate,
-                      TaxableAmountFC: item.TaxableAmountFC,
-                      TaxAmountFC: item.TaxAmountFC
-                    });
-                    this.productListArray.push(productForm);
+                    const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+                    productItemForm.patchValue(item);
+                    this.productListArray.push(productItemForm);
+                    const index = this.productListArray.length - 1;
+
+                    this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig.ProductList.items, productItemForm);
                   });
 
                   this.tableDef.data = this.productListArray.value;
-                  this.productCalculation();
+                  const { ProductList, ...formValues } = response.Data;
+                  const data = {
+                    ...formValues,
+                    SalesQuotationDate: DateUtils.toDate(response.Data.PurchaseQuotationDate!),
+                    ValidityDate: DateUtils.toDate(response.Data.ValidityDate!)
+                  }
+
+                  this.form.patchValue(data);
                 } else {
                   this.alertService.showServerResponseAlert(response);
                 }
@@ -637,7 +677,8 @@ export class CreateComponent implements OnInit, OnDestroy {
                 ProductID: item.ProductID,
                 ProductName: item.ProductName,
                 QuotedQty: item.QuotedQty,
-                UOM: item.UOM
+                UOM: item.UOM,
+                  HSCode: item.HSCode,
               });
               this.productListArray.push(productForm);
             });
@@ -670,7 +711,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.statusText = response.Data.StatusText;
             this.statusHex = response.Data.StatusHex;
             this.selectedVendorAddress = model.VendorAddress,
-            this.isImportAlreadyExists = response.Data.IsPurchaseAlreadyExists;
+            this.isImportAlreadyExists = response.Data.IsImportAlreadyExists;
 
             this.form.patchValue({
               PurchaseQuotationID: model.PurchaseQuotationID,
@@ -695,22 +736,16 @@ export class CreateComponent implements OnInit, OnDestroy {
 
             this.productListArray.clear();
             response.Data.ProductList.Items.forEach(item => {
-              const productForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
-              productForm.patchValue({
-                ProductID: item.ProductID,
-                ProductName: item.ProductName,
-                QuotedQty: item.QuotedQty,
-                UOM: item.UOM,
-                RatePerUnitFC: item.RatePerUnitFC,
-                TaxRate: item.TaxRate,
-                TaxableAmountFC: item.TaxableAmountFC,
-                TaxAmountFC: item.TaxAmountFC
-              });
-              this.productListArray.push(productForm);
+              const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
+              productItemForm.patchValue(item);
+              this.productListArray.push(productItemForm);
+              const index = this.productListArray.length - 1;
+
+              this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig.ProductList.items, productItemForm);
             });
 
             this.tableDef.data = this.productListArray.value;
-            this.productCalculation();
+            this.ProductCalculation();
           }
         });
     }
@@ -742,6 +777,54 @@ export class CreateComponent implements OnInit, OnDestroy {
       });
     })
   }
+
+  OnSelect_Product(event: Product_SelectList, index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+
+    // Duplicate check
+    if (this.productListArray.controls.some(
+      (ctrl, i) => i !== index && ctrl.value.ProductID === event.ProductID
+    )) {
+      this.alertService.showToast({
+        text: 'Product already exists in the table'
+      });
+
+      row.patchValue({ ProductName: null, ProductID: null });
+      return;
+    }
+
+    row.patchValue({
+      ProductID: event.ProductID,
+      ProductName: event.ProductName,
+      UOM: event.UOM
+    });
+
+    this.tableDef.data = this.productListArray.value
+  }
+
+  HandleComponentLoad(componentName: string) {
+    if (this.componentRef) {
+      this.destroyComponent();
+    }
+
+    switch (componentName) {
+      case 'VendorCreateComponent':
+        return this.createVendorComponent();
+      case 'CurrencyCreateComponent':
+        return this.createCurrencyComponent();
+      case 'ProductCreateComponent':
+        return this.createProductComponent();
+      default:
+        throw new Error(`Component ${componentName} not found`);
+    }
+  }
+  OnClear_Product(index: number): void {
+    const row = this.productListArray.at(index) as FormGroup;
+    row.patchValue({ ProductID: null, ProductName: null, UOM: null });
+
+    this.tableDef.data = this.productListArray.value;
+  }
+
 
   destroyComponent() {
     if (this.componentRef) {
@@ -786,4 +869,31 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
     });
   }
+  PrintPurchaseQuotation(): void {
+    this.disablePrintButton = true;
+    this.route.params.subscribe(params => {
+      const salesQuotationID = +params['id'];
+
+      if (!salesQuotationID) return;
+
+      this.isEditMode = true;
+      const model = {
+        SalesQuotationID: salesQuotationID
+      };
+      this.pageService.GeneratePdf(model).subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          window.open(url);
+        },
+        error: (err) => {
+          console.error('PDF generation failed', err);
+        },
+        complete: () => {
+          this.disablePrintButton = false;
+        }
+      });
+    });
+  }
 }
+
+
