@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="formConfig.ExchangeRateToBC.label"
-                  (onChange)="productCalculation()" [maxFractionDigits] = 8></z-inputnumber>
+                  (onChange)="ProductCalculation()" [maxFractionDigits] = 8></z-inputnumber>
                 </div>
 
                 <!-- Incoterm and Charges -->
@@ -89,11 +89,11 @@
                 <div class="col-xl-5"></div>
                 <div class="col-md-2 form-group px-2">
                   <z-inputnumber [group]="form" [control]="'FreightChargeFC'" [label]="formConfig.FreightChargeFC.label"
-                    (onChange)="productCalculation()"></z-inputnumber>
+                    (onChange)="ProductCalculation()"></z-inputnumber>
                 </div>
                 <div class="col-md-2 form-group px-2">
                   <z-inputnumber [group]="form" [control]="'BankChargesFC'" [label]="formConfig.BankChargesFC.label"
-                    (onChange)="productCalculation()"></z-inputnumber>
+                    (onChange)="ProductCalculation()"></z-inputnumber>
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-checkbox [group]="form" [control]="'IsDutyDrawable'"
@@ -105,7 +105,7 @@
                 <div class="col-xl-6"></div>
                 <div class="col-md-2 form-group px-2">
                   <z-inputnumber [group]="form" [control]="'InsuranceAmountFC'"
-                    [label]="formConfig.InsuranceAmountFC.label" (onChange)="productCalculation()"></z-inputnumber>
+                    [label]="formConfig.InsuranceAmountFC.label" (onChange)="ProductCalculation()"></z-inputnumber>
                 </div>
                 <!-- Product List -->
                 <div class="col-12 px-2 d-flex flex-column mb-2">
@@ -275,7 +275,7 @@
 <ng-template #salesQtyColTemplate let-row let-i="index">
   <z-inputnumber [group]="productListArray.at(i)" [control]="'SalesQty'"
     [label]="formConfig.ProductList.items.SalesQty.label"
-    [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" (onChange)="productCalculation()">
+    [validationMessage]="formConfig.ProductList.items.SalesQty.error?.[i]" (onChange)="ProductCalculation()">
   </z-inputnumber>
 </ng-template>
 
@@ -284,7 +284,7 @@
     <z-inputnumber [group]="productListArray.at(i)" [control]="'RatePerUnitFC'"
       [label]="formConfig.ProductList.items.RatePerUnitFC.label"
       [validationMessage]="formConfig.ProductList.items.RatePerUnitFC.error?.[i]" [styleClass]="'text-end'"
-      (onChange)="productCalculation()"></z-inputnumber>
+      (onChange)="ProductCalculation()"></z-inputnumber>
   </div>
 </ng-template>
 
@@ -292,7 +292,7 @@
   <z-select [group]="productListArray.at(i)" [control]="'SalesTaxRate'"
     [label]="formConfig.ProductList.items.SalesTaxRate.label"
     [validationMessage]="formConfig.ProductList.items.SalesTaxRate.error?.[i]" [options]="taxSlabList"
-    [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="productCalculation();">
+    [optionLabel]="'TaxSlabName'" [optionValue]="'TaxRate'" (onChange)="ProductCalculation();">
   </z-select>
 </ng-template>
 

@@ -26,11 +26,12 @@ import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
 import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
 import { NavContextService } from '../../../../../core/services/nav-context.service.service';
+import { PackingListComponent } from '../packing-list/packing-list.component';
 
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, ZMenuComponent, ButtonModule, FormsModule, CheckboxModule],
+  imports: [CommonModule, DataViewModule, ZDataviewComponent, PackingListComponent, ReactiveFormsModule, ZFormControlsModule, ZMenuComponent, ButtonModule, FormsModule, CheckboxModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -40,6 +41,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+  @ViewChild(PackingListComponent) createDialog?: PackingListComponent;
 
   componentRef?: ComponentRef<any>;
   dataViewDef!: DataViewDef<ExportOrder_IndexTableList>;
@@ -54,6 +56,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
   selectedExportOrders: ExportOrder_IndexTableList[] = [];
   selectAll = false;
+  showPackingListDialog = false;
 
   // menuItems: MenuItem[] = [
   //   {
@@ -137,7 +140,47 @@ export class DataviewComponent implements OnInit, OnDestroy {
   }
 
   onCloseSidebar(): void {
+    this.showPackingListDialog = false;
     this.loadData();
+  }
+  
+  onClickAddPackingDetails(exportOrderID: number, exportOrderPackingListID: number | null): void {
+    try {
+      if (exportOrderPackingListID) {
+        this.pageService
+          .GetPackingListDetails(exportOrderPackingListID)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.showPackingListDialog = true;
+                setTimeout(() => {
+                  this.createDialog?.openDialogBox({ isEditMode: true, packingList: response.Data, productList: null });
+                });
+              } else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
+      }
+      else if (exportOrderID) {
+        this.pageService
+          .GetExportOrderProductDetails(exportOrderID)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              if (response.IsSuccess) {
+                this.showPackingListDialog = true;
+                setTimeout(() => {
+                  this.createDialog?.openDialogBox({ isEditMode: false, packingList: null, productList: response.Data });
+                });
+              } else {
+                this.alertService.showServerResponseAlert(response);
+              }
+            },
+          });
+      }
+    } catch (error) { }
   }
 
   onIndexDataViewLazyLoad(event: DataViewLazyLoadEvent) {

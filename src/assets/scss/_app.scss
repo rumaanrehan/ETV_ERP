@@ -113,7 +113,7 @@ footer {
 }
 
 .swal2-container {
-  z-index: 1101;
+  z-index: 12000 !important;  //changed for alert to show above the app-form-dialog (reusable component)
 }
 
 .w-30rem {
