@@ -51,19 +51,22 @@ export class EmployeeRegistrationService {
   }
 
   GetMasterDropdownLists(): Observable<{
-    stateList: ApiListResponse<State_SelectList>;
+    // stateList: ApiListResponse<State_SelectList>;
     countryList: ApiListResponse<CountryMaster>;
     employeeTypeList: ApiListResponse<EmployeeType_SelectList>;
     departmentList: ApiListResponse<Department_SelectList>;
     designationList: ApiListResponse<Designation_SelectList>;
   }> {
     return forkJoin({
-      stateList: this.stateService.PopulateList({ PopulateType: 'SelectList' } as StateRequest),
+      // stateList: this.stateService.PopulateList({ PopulateType: 'SelectList' } as StateRequest),
       countryList: this.countryService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),
       employeeTypeList: this.employeeTypeService.PopulateList({ PopulateType: 'SelectList' } as EmployeeTypeRequest),
       departmentList: this.departmentService.PopulateList({ PopulateType: "SelectList" } as DepartmentRequest),
       designationList: this.designationService.PopulateList({ PopulateType: 'SelectList' } as EmployeeTypeRequest),
     });
+  }
+ loadState(model:StateRequest) :Observable<ApiListResponse<State_SelectList>> {
+    return this.stateService.PopulateList(model);
   }
 
   PopulateList(model: EmployeeRegistrationRequest): Observable<ApiListResponse<EmployeeRegistration_SelectList>> {
