@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -28,6 +28,9 @@ export class SalesEnquiryIndexComponent implements OnInit, OnDestroy, AfterViewI
     @ViewChild(GridviewComponent) gridview?: GridviewComponent;
 
     @ViewChild('pageHeaderActionTemplate') pageHeaderActionTemplate!: TemplateRef<any>;
+    @ViewChild('selectionBar') selectionBar?: ElementRef<HTMLElement>;
+
+    private selectionBarResizeObserver?: ResizeObserver;
 
     viewType = signal<'card' | 'table'>('card');
     selectedSalesEnquiries: SalesEnquiry_IndexTableList[] = [];
@@ -42,7 +45,8 @@ export class SalesEnquiryIndexComponent implements OnInit, OnDestroy, AfterViewI
         private formService: FormService,
         private alertService: AlertNotificationService,
         private navContextService: NavContextService,
-        private router: Router
+        private router: Router,
+        private hostElement: ElementRef<HTMLElement>
     ) { }
 
     ngOnInit(): void {
@@ -82,12 +86,16 @@ export class SalesEnquiryIndexComponent implements OnInit, OnDestroy, AfterViewI
 
     ngAfterViewInit(): void {
         this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
+        this.scheduleSelectionBarHeightUpdate();
     }
 
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
         this.pageHeaderService.setTemplate(null);
+        this.selectionBarResizeObserver?.disconnect();
+        this.selectionBarResizeObserver = undefined;
+        this.hostElement.nativeElement.style.removeProperty('--sales-enquiry-selection-bar-height');
     }
 
     toggleView(type: 'card' | 'table') {
@@ -95,6 +103,7 @@ export class SalesEnquiryIndexComponent implements OnInit, OnDestroy, AfterViewI
         localStorage.setItem('salesEnquiryViewType', type);
         this.selectedSalesEnquiries = [];
         this.selectAll = false;
+        this.scheduleSelectionBarHeightUpdate();
     }
 
     onClickPageHeaderAddButton() {
@@ -104,6 +113,7 @@ export class SalesEnquiryIndexComponent implements OnInit, OnDestroy, AfterViewI
 
     onSelectionChange(selectedItems: SalesEnquiry_IndexTableList[]) {
         this.selectedSalesEnquiries = selectedItems;
+        this.scheduleSelectionBarHeightUpdate();
     }
 
     toggleSelectAll(event: any) {
@@ -113,6 +123,24 @@ export class SalesEnquiryIndexComponent implements OnInit, OnDestroy, AfterViewI
         } else {
             this.gridview?.toggleSelectAll(this.selectAll);
         }
+        this.scheduleSelectionBarHeightUpdate();
+    }
+
+    private scheduleSelectionBarHeightUpdate(): void {
+        requestAnimationFrame(() => {
+            const height = this.selectionBar?.nativeElement?.offsetHeight ?? 0;
+            this.hostElement.nativeElement.style.setProperty('--sales-enquiry-selection-bar-height', `${height}px`);
+
+            if (this.selectionBar?.nativeElement) {
+                if (!this.selectionBarResizeObserver) {
+                    this.selectionBarResizeObserver = new ResizeObserver(() => this.scheduleSelectionBarHeightUpdate());
+                }
+                this.selectionBarResizeObserver.disconnect();
+                this.selectionBarResizeObserver.observe(this.selectionBar.nativeElement);
+            } else {
+                this.selectionBarResizeObserver?.disconnect();
+            }
+        });
     }
 
     bulkChangeStatus(statusID: number) {

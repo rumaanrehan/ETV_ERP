@@ -16,6 +16,7 @@ export class ZTextareaComponent {
   @Input() group!: FormGroup;
   @Input() control: string = '';
   @Input() label: string = '';
+  @Input() placeholder: string = '';
   @Input() validationMessage: string | undefined = '';
   @Input() rows: number = 2;
 }

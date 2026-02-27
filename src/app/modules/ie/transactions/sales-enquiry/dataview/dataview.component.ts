@@ -94,7 +94,7 @@ export class DataviewComponent implements OnInit, OnDestroy, OnChanges {
         filters: this.filterForm.value,
         sortings: this.sortingForm.value,
       };
-      this.pageService.PopulateGrid(this.formService.transformFormData(model))
+      this.pageService.PopulateGridOrMock(this.formService.transformFormData(model))
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {

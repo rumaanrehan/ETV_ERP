@@ -16,7 +16,7 @@
 }
 
 .btn-page-header {
-  padding: 0.125rem 1rem;
+  padding: 0 1rem;
   gap: 0.25rem;
   text-wrap: nowrap;
 }
@@ -86,10 +86,10 @@
 
 /* Footer Start*/
 app-footer {
-  position: fixed;
-  bottom: 0;
   width: 100%;
-  z-index: 999;
+  flex: 0 0 auto;
+  margin-top: auto;
+  z-index: 1000;
 }
 
 footer {
@@ -766,7 +766,7 @@ span {
 // Dataview
 
 .p-dataview-content {
-  height: calc(100vh - 257px);
+  height: calc(100vh);
   overflow-y: scroll;
 }
 
@@ -942,10 +942,40 @@ z-select-button .p-selectbutton {
 }
 
 .dataview-item {
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  border-radius: 0.75rem;
-  border: 1px solid var(--default-border);
+  background: #ffffff;
 
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 0.4rem;
+
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.045);
+
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+
+  &:hover {
+    background-color: #fafafa;
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  /* Remove Bootstrap layout weirdness */
+  .col-7 {
+    width: 100%;
+    max-width: 100%;
+    flex: 1;
+  }
+
+  .badge,
+  .badge.bg-outline-primary {
+    background: #f3f4f6;
+    color: #4b5563;
+
+    font-size: 0.68rem;
+    font-weight: 500;
+
+    padding: 0.2rem 0.45rem;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
 }
 
 .dataview-item-status {
@@ -1034,13 +1064,31 @@ z-menu .p-button-icon {
 }
 
 .dataview-info-item span:first-child {
-  min-width: 115px;
-  /* adjust as needed */
+  color: #9ca3af;
+  font-weight: 400;
 }
 
 .dataview-info-item {
   display: flex;
-  gap: 1rem;
+  gap: 0.35rem;
+
+  font-size: 0.5rem;
+  line-height: 1.5;
+  color: #6b7280; /* calm gray */
+}
+
+/* Bootstrap `fs-*` / `text-*` utilities override our styles */
+.dataview-info-item .fs-6 {
+  font-size: 0.78rem !important;
+}
+
+.dataview-info-item .text-secondary {
+  color: inherit !important;
+}
+
+.dataview-info-item span:last-child {
+  color: #374151;
+  font-weight: 400;
 }
 
 body.swal2-toast-shown .swal2-container {
@@ -1108,6 +1156,23 @@ div:where(.swal2-container) .swal2-html-container {
 
 .dataview-record-title {
   cursor: pointer;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+    
+    &:hover h5 {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
+.dataview-record-title h5 {
+  font-size: 1rem;
+  font-weight: 500; /* NOT bold */
+  color: #5e6f86 !important; /* neutral slate (override .primary-color) */
+  margin-bottom: 0.35rem;
 }
 
 .index-action-bar {

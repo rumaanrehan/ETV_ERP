@@ -184,9 +184,9 @@
 
 // classic start
 [data-page-style="classic"] {
-  --default-border: #e1e9e8;
-  --header-border-color: #e1e9e8;
-  --menu-border-color: #e1e9e8;
+  --default-border: #E2E8F0; /* Grey 300 */
+  --header-border-color: #EEF2F7; /* Grey 200 */
+  --menu-border-color: #EEF2F7; /* Grey 200 */
 
   &[data-theme-mode="dark"] {
     --default-border: rgba(255, 255, 255, 0.1);
@@ -195,7 +195,7 @@
   }
 
   body {
-    background-color: $custom-white;
+    background-color: var(--default-body-bg-color);
   }
 
   .card.custom-card {
@@ -222,21 +222,21 @@
 // page styles modern start
 [data-page-style="modern"] {
   --light-rgb: 255, 255, 255;
-  --custom-white: rgb(243, 246, 248);
-  --default-border: #e6ebf1;
-  --input-border: rgba(0, 0, 0, 0.1);
+  --custom-white: #F8FAFC; /* Grey 100 */
+  --default-border: #E2E8F0; /* Grey 300 */
+  --input-border: #E2E8F0; /* Grey 300 */
 
   .dropdown-menu {
     background-color: rgb(255, 255, 255);
   }
 
   body {
-    background-color: #fff;
+    background-color: var(--default-body-bg-color);
   }
 
   .card.custom-card {
     box-shadow: none;
-    background-color: rgb(243, 246, 248);
+    background-color: #F4F7FB; /* Cool Surface */
   }
 
   &[data-theme-mode="dark"] {

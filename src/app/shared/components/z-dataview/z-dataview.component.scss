@@ -1,10 +1,15 @@
-.z-dataview-viewport {
-    max-height: calc(100vh - var(--z-dataview-viewport-offset, 90px));
-    max-height: calc(100dvh - var(--z-dataview-viewport-offset, 90px));
-    padding-bottom: var(--z-dataview-viewport-padding-bottom, 0rem);
+:host {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     min-height: 0;
+}
+
+.z-dataview-viewport {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -39,6 +44,8 @@
 }
 
 .index-table-action-bar {
+    --z-action-btn-height: 34px;
+    --z-action-btn-pad-x: 0.85rem;
 
     .action-item-wrapper {
         position: relative;
@@ -48,21 +55,26 @@
     .refresh-filter,
     .filter-toggle {
         cursor: pointer;
-        padding: 0.0rem 0.6rem;
+        height: var(--z-action-btn-height);
+        padding: 0 var(--z-action-btn-pad-x);
         margin: 5px 0.2rem;
         margin-left: 10px;
         color: #23272b;
-        background-color: #f8f9fa;
-        border-radius: 10%;
+        background-color: transparent;
+        border-radius: 0.5rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding-left: 20px;
-        padding-right: 20px;
+        transition: background-color 0.15s ease, color 0.15s ease;
 
         i {
             font-size: 14px;
             background-color: transparent;
+        }
+
+        &:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.18);
         }
 
         &:hover,

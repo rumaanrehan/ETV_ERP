@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
-import { FormArray, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject, takeUntil } from "rxjs";
 import { AutoCompleteDef } from "../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete";
@@ -44,6 +44,73 @@ export class CreateComponent implements OnInit, OnDestroy {
   isSubmitted: boolean = false;
   isQuotationAlreadyExists: boolean = false;
   disablePrintButton: boolean = false;
+
+  statusForm = new FormGroup({
+    StatusText: new FormControl<string | null>(null),
+  });
+
+  statusOptions: Array<{ Text: string; Value: string }> = [
+    { Text: 'Received', Value: 'Received' },
+    { Text: 'Under Review', Value: 'Under Review' },
+    { Text: 'Quotation Received', Value: 'Quotation Received' },
+    { Text: 'Deal', Value: 'Deal' },
+  ];
+
+  onStatusChange(value: string | null): void {
+    this.statusText = value ?? null;
+  }
+
+  private ensureStatusOption(statusText: string | null | undefined): void {
+    const status = (statusText ?? '').trim();
+    if (!status) return;
+    if (this.statusOptions.some((o) => o.Value === status)) return;
+    this.statusOptions = [{ Text: status, Value: status }, ...this.statusOptions];
+  }
+
+  getStatusPillBackground(): string {
+    const normalized = this.normalizeHexColor(this.statusHex);
+    return normalized ?? 'var(--primary-color)';
+  }
+
+  getStatusPillTextColor(): string {
+    const bg = this.normalizeHexColor(this.statusHex);
+    if (!bg) return '#ffffff';
+
+    const rgb = this.hexToRgb(bg);
+    if (!rgb) return '#ffffff';
+
+    const relativeLuminance = this.getRelativeLuminance(rgb.r, rgb.g, rgb.b);
+    return relativeLuminance > 0.6 ? '#0f172a' : '#ffffff';
+  }
+
+  private normalizeHexColor(hex: string | null | undefined): string | null {
+    const value = (hex ?? '').trim();
+    if (!value) return null;
+
+    const withoutHash = value.startsWith('#') ? value.slice(1) : value;
+    if (!/^[0-9a-fA-F]{6}$/.test(withoutHash)) return null;
+
+    return `#${withoutHash.toUpperCase()}`;
+  }
+
+  private hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+    const match = /^#([0-9A-Fa-f]{6})$/.exec(hex);
+    if (!match) return null;
+    const n = parseInt(match[1], 16);
+    return {
+      r: (n >> 16) & 255,
+      g: (n >> 8) & 255,
+      b: n & 255
+    };
+  }
+
+  private getRelativeLuminance(r: number, g: number, b: number): number {
+    const srgb = [r, g, b].map((v) => {
+      const x = v / 255;
+      return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+  }
 
   form!: FormGroup;
   formConfig!: FormConfigType<SalesEnquiry>;
@@ -354,6 +421,8 @@ export class CreateComponent implements OnInit, OnDestroy {
                   this.statusText = response.Data.StatusText;
                   this.statusHex = response.Data.StatusHex;
                   this.isQuotationAlreadyExists = response.Data.IsQuotationAlreadyExists;
+                  this.ensureStatusOption(this.statusText);
+                  this.statusForm.patchValue({ StatusText: this.statusText }, { emitEvent: false });
                   response.Data.ProductList.Items.forEach(item => {
                     const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
                     productItemForm.patchValue(item);

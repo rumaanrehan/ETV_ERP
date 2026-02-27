@@ -91,7 +91,7 @@ export class GridviewComponent implements OnInit, OnDestroy {
         sortings: this.tableDef.sortingForm?.value
       };
 
-      this.pageService.PopulateGrid(this.formService.transformFormData(model))
+      this.pageService.PopulateGridOrMock(this.formService.transformFormData(model))
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {

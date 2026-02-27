@@ -1,11 +1,28 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
 .index-page-content {
     padding: 0.0rem 0.0rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .index-action-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
     padding: 0.05rem 0.75rem;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
@@ -48,7 +65,7 @@
             border: none;
             background: transparent;
             width: 28px;
-            height: 28px;
+            height: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -133,6 +150,29 @@
             font-size: 0.8rem;
         }
     }
+}
+
+/* Tinted primary button for header actions */
+:host ::ng-deep .btn-add-sales-enquiry.btn.btn-primary {
+    background: rgba(var(--primary-rgb), 0.20) !important;
+    border-color: rgba(var(--primary-rgb), 0.25) !important;
+    color: var(--primary-color) !important;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep .btn-add-sales-enquiry.btn.btn-primary i {
+    color: var(--primary-color) !important;
+}
+
+:host ::ng-deep .btn-add-sales-enquiry.btn.btn-primary:hover,
+:host ::ng-deep .btn-add-sales-enquiry.btn.btn-primary:focus {
+    background: rgba(var(--primary-rgb), 0.28) !important;
+    border-color: rgba(var(--primary-rgb), 0.35) !important;
+    color: var(--primary-color) !important;
+}
+
+:host ::ng-deep .btn-add-sales-enquiry.btn.btn-primary:active {
+    background: rgba(var(--primary-rgb), 0.32) !important;
 }
 
 @keyframes fadeIn {
@@ -256,11 +296,13 @@
 
 /* Enhanced Add Button */
 .btn-page-header.btn-md {
-    padding: 0.35rem 1rem;
+    height: 25px;
+    padding: 0rem 1rem;
     font-weight: 500;
     font-size: 0.8rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
+    color: rgba(var(--primary-rgb), 0.2);
 
     &:hover {
         transform: translateY(-1px);
@@ -297,4 +339,12 @@
             transform: translateY(0);
         }
     }
+}
+
+app-dataview,
+app-gridview {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }

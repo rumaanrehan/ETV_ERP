@@ -1,0 +1,18 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+z-dataview {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+:host ::ng-deep .p-dataview-content {
+    height: calc(68vh - var(--sales-enquiry-selection-bar-height, 0px));
+    overflow-y: auto;
+}

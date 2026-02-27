@@ -1,4 +1,5 @@
-<div style="height: calc(100vh - var(--z-dataview-viewport-offset, 90px)); padding-bottom: 0rem;">
+<!-- <div style="height: calc(100vh - var(--z-dataview-viewport-offset)); padding-bottom: 0rem;"> -->
+    <div>
     <p-dataView *ngIf="dataViewDef" #dv [value]="dataViewDef.data" [rows]="5" [totalRecords]="dataViewDef.totalRecords"
         [paginator]="true" [lazy]="true" (onLazyLoad)="loadData($event)" [layout]="'list'">
         <ng-template pTemplate="header">
@@ -41,9 +42,11 @@
                     </ng-container>
                 </div>
 
-                <span class="refresh-filter" (click)="refreshData();" title="Refresh">
-                    <i class="pi pi-refresh"></i>
-                </span>
+                <div class="action-item-wrapper">
+                    <span class="refresh-filter" (click)="refreshData();" title="Refresh">
+                        <i class="pi pi-refresh"></i>
+                    </span>
+                </div>
 
                 <div class="action-item-wrapper">
                     <span class="filter-toggle" [class.active-toggle]="isFilterPanelVisible"

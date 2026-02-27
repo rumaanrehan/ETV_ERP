@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
@@ -25,6 +25,8 @@ import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-t
 })
 export class SalesEnquiryService {
   private endpoint = 'IE/SalesEnquiry';
+  private readonly populateGridMockStorageKey = 'mockData:IE:SalesEnquiry:PopulateGrid';
+  private readonly populateGridMockAssetUrl = 'assets/mock-data/ie/sales-enquiry/populate-grid.json';
 
   constructor(
     private apiService: ApiService,
@@ -47,6 +49,72 @@ export class SalesEnquiryService {
 
   PopulateGrid(model: DataTableParams<SalesEnquiry_IndexTableFilter>): Observable<ApiPagedListResponse<SalesEnquiry_IndexTableList>> {
     return this.apiService.post<ApiPagedListResponse<SalesEnquiry_IndexTableList>>(`${this.endpoint}/PopulateGrid`, model);
+  }
+
+  PopulateGridOrMock(model: DataTableParams<SalesEnquiry_IndexTableFilter>): Observable<ApiPagedListResponse<SalesEnquiry_IndexTableList>> {
+    return this.PopulateGrid(model).pipe(
+      map((response) => {
+        if (!response) {
+          throw new Error('PopulateGrid returned null/empty response');
+        }
+        if (response.IsSuccess && response.Data?.Items) {
+          this.persistPopulateGridMock(response);
+        }
+        return response;
+      }),
+      catchError(() => this.loadPopulateGridMock())
+    );
+  }
+
+  private persistPopulateGridMock(response: ApiPagedListResponse<SalesEnquiry_IndexTableList>): void {
+    try {
+      if (typeof localStorage === 'undefined') return;
+      localStorage.setItem(this.populateGridMockStorageKey, JSON.stringify(response));
+    } catch {
+      // ignore cache failures (private mode/quota/etc.)
+    }
+  }
+
+  private loadPopulateGridMock(): Observable<ApiPagedListResponse<SalesEnquiry_IndexTableList>> {
+    const cached = this.tryGetCachedPopulateGridMock();
+    if (cached) {
+      return of(cached);
+    }
+
+    return this.http.get<ApiPagedListResponse<SalesEnquiry_IndexTableList>>(this.populateGridMockAssetUrl).pipe(
+      map((asset) => {
+        if (!asset) {
+          return this.buildEmptyPopulateGridMock();
+        }
+        return asset;
+      }),
+      catchError(() => of(this.buildEmptyPopulateGridMock()))
+    );
+  }
+
+  private tryGetCachedPopulateGridMock(): ApiPagedListResponse<SalesEnquiry_IndexTableList> | null {
+    try {
+      if (typeof localStorage === 'undefined') return null;
+      const raw = localStorage.getItem(this.populateGridMockStorageKey);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as ApiPagedListResponse<SalesEnquiry_IndexTableList>;
+      if (!parsed?.Data?.Items || !Array.isArray(parsed.Data.Items)) return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  private buildEmptyPopulateGridMock(): ApiPagedListResponse<SalesEnquiry_IndexTableList> {
+    return {
+      IsSuccess: true,
+      Status: 'Mock',
+      Message: 'Using mock data (empty).',
+      Data: {
+        Items: [],
+        TotalRecords: 0
+      }
+    };
   }
 
   GetDetails(salesEnquiryID: number): Observable<ApiDataResponse<SalesEnquiry_Detail>> {
