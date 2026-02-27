@@ -3,46 +3,57 @@
 </z-dataview>
 
 <ng-template #customTemplate let-salesEnquiry>
-    <div class="d-flex align-items-center gap-3 mb-0" *ngFor="let item of salesEnquiry; let first = first">
-        <div class="d-flex align-items-center gap-2">
-            <!-- BULK SELECT -->
-            <p-checkbox binary="true" [(ngModel)]="item._selected" (onChange)="onSelectionChange(item)">
-            </p-checkbox>
-        </div>
-        <div class="w-100 p-3 dataview-item">
-            <div class="d-flex justify-content-between dataview-record-title">
-                <a (click)="onClickEditDetails(item.SalesEnquiryID)">
-                    <h5 class="primary-color mb-2">{{item.SalesEnquiryNo}} | {{item.CustomerName}}</h5>
-                </a>
-                <div class="text-end">
-                    <span class="badge bg-outline-primary">{{item.StatusText}}</span>
-                </div>
-            </div>
-            <div class="col-7">
-                <div class="d-flex flex-wrap justify-content-between">
-                    <div class="dataview-info-column">
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Enquiry Date:</span>
-                            <span class="fs-6 text-secondary"> {{formatDate(item.EnquiryDate)}} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Expected Delivery Date:</span>
-                            <span class="fs-6 text-secondary">{{formatDate(item.ExpectedDeliveryDate)}}</span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Contact Name:</span>
-                            <span class="fs-6 text-secondary">{{item.ContactName}}</span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Contact Email:</span>
-                            <span class="fs-6 text-secondary">{{item.ContactEmail}}</span>
-                        </div>
-                    </div>
-                    <div>
-                    </div>
-                </div>
-            </div>
+    <div class="se-cards-grid">
+        <div class="se-card" *ngFor="let item of salesEnquiry" [class.is-selected]="item._selected">
+            <div class="se-card__body">
+                <div class="se-card__top">
+                    <p-checkbox binary="true" [(ngModel)]="item._selected" (onChange)="onSelectionChange(item)">
+                    </p-checkbox>
 
+                    <div class="se-card__main">
+                        <div class="se-card__head">
+                            <div class="se-card__titles">
+                                <a class="se-card__title-link" (click)="onClickEditDetails(item.SalesEnquiryID)">
+                                    <h3 class="se-card__title">{{item.SalesEnquiryNo}}</h3>
+                                </a>
+                                <p class="se-card__subtitle">{{item.CustomerName}}</p>
+                            </div>
+                            <span class="se-badge" [ngClass]="getStatusBadgeClass(item.StatusText)">
+                                {{item.StatusText}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="se-info">
+                    <div class="se-info-row">
+                        <i class="pi pi-calendar se-info-icon" aria-hidden="true"></i>
+                        <div class="se-info-text">
+                            <p class="se-info-label">Enquiry Date</p>
+                            <p class="se-info-value">{{formatCardDate(item.EnquiryDate)}}</p>
+                        </div>
+                    </div>
+
+                    <div class="se-info-row">
+                        <i class="pi pi-clock se-info-icon" aria-hidden="true"></i>
+                        <div class="se-info-text">
+                            <p class="se-info-label">Expected Delivery</p>
+                            <p class="se-info-value">{{formatCardDate(item.ExpectedDeliveryDate)}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="se-contact">
+                    <div class="se-contact-row">
+                        <i class="pi pi-user se-info-icon" aria-hidden="true"></i>
+                        <p class="se-contact-name">{{item.ContactName}}</p>
+                    </div>
+                    <div class="se-contact-row">
+                        <i class="pi pi-envelope se-info-icon" aria-hidden="true"></i>
+                        <p class="se-contact-email">{{item.ContactEmail}}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </ng-template>

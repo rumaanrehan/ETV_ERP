@@ -163,9 +163,29 @@ export class DataviewComponent implements OnInit, OnDestroy, OnChanges {
     return DateUtils.formatDate(date);
   }
 
+  formatCardDate(date: Date | string | null | undefined): string {
+    if (!date) return '-';
+    const parsed = typeof date === 'string' ? new Date(date) : date;
+    if (Number.isNaN(parsed.getTime())) return '-';
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(parsed);
+  }
+
+  getStatusBadgeClass(statusText: string): string {
+    const status = (statusText ?? '').toLowerCase().trim();
+    if (status === 'received') return 'se-badge--received';
+    if (status.includes('review')) return 'se-badge--review';
+    return 'se-badge--default';
+  }
+
   onSelectionChange(item: SalesEnquiry_IndexTableList) {
     if (item._selected) {
-      this.selectedSalesEnquiries.push(item);
+      if (!this.selectedSalesEnquiries.some(x => x.SalesEnquiryID === item.SalesEnquiryID)) {
+        this.selectedSalesEnquiries.push(item);
+      }
     } else {
       this.selectedSalesEnquiries =
         this.selectedSalesEnquiries.filter(

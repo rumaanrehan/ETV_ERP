@@ -1,5 +1,5 @@
 <div class="z-datatable-viewport">
-  <p-table #dt [styleClass]="'p-paginator-striped z-datatable-root'" [tableStyleClass]="'table index-table'" [value]="tableDef.data"
+  <p-table #dt [styleClass]="'p-paginator-striped z-datatable-root'" [tableStyleClass]="'index-table zdt-table'" [value]="tableDef.data"
     [totalRecords]="tableDef.totalRecords" [rows]="25" [showCurrentPageReport]="true"
     [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'" [scrollable]="true"
     [scrollHeight]="'flex'" [(selection)]="selectedRow" [selectionMode]="'multiple'" [stateStorage]="'session'"
@@ -9,12 +9,14 @@
     [sortOrder]="tableDef.defaultSortColumn.sortOrder">
     <ng-template pTemplate="caption">
       <div class="index-table-action-bar">
-        <div class="d-flex justify-content-end align-items-center me-4">
+        
+        <div class="zdt-toolbar">
           <!-- Sorting Wrapper -->
           <div class="action-item-wrapper">
             <span class="refresh-filter" (click)="toggleSortPanel();" [ngClass]="{'active-toggle': isSortPanelVisible}"
               title="Sorting">
-              <i class="pi pi-sort-alt"></i>
+              <span class="sort-icon" aria-hidden="true"></span>
+              <span class="sort-label">Sort</span>
             </span>
             <ng-container *ngIf="tableDef.sortingForm && isSortPanelVisible">
               <div #sortingPanel class="index-sorting-panel card" [formGroup]="tableDef.sortingForm">
@@ -47,7 +49,8 @@
 
           <div class="action-item-wrapper">
             <span class="refresh-filter" (click)="refreshData();" title="Refresh">
-              <i class="pi pi-refresh"></i>
+              <span class="refresh-icon" aria-hidden="true"></span>
+              <span class="refresh-label">Refresh</span>
             </span>
           </div>
 
@@ -55,7 +58,8 @@
           <div class="action-item-wrapper">
             <span class="filter-toggle" (click)="toggleFilterPanel();" [ngClass]="{'active-toggle': showFilterPanel}"
               title="Filter">
-              <i class="pi pi-filter"></i>
+              <span class="filter-icon" aria-hidden="true"></span>
+              <span class="filter-label">Filter</span>
             </span>
             <ng-container *ngIf="tableDef.filterForm && showFilterPanel">
               <div #filterPanel class="index-filter-panel card" [formGroup]="tableDef.filterForm">
@@ -98,7 +102,8 @@
           <div class="action-item-wrapper">
             <span class="column-visibility-toggle" (click)="columnMenu.toggle($event)"
               [ngClass]="{'active-toggle': columnMenu.overlayVisible}">
-              <i class="pi pi-sliders-h"></i>
+              <span class="columns-icon" aria-hidden="true"></span>
+              <span class="columns-label">Columns</span>
             </span>
           </div>
           <p-overlayPanel #columnMenu>
@@ -147,7 +152,7 @@
             </ng-container>
             <ng-template #defaultTemplate>
               <!-- {{ rowData[col.data] | titlecase }} -->
-              {{ rowData[col.data] }}
+              {{ formatCellValue(col, rowData) }}
               <!-- <span *ngIf="typeof rowData[col.data] === 'string'; else nonString">
                   {{ rowData[col.data] | titlecase }}
                 </span>
@@ -157,6 +162,13 @@
             </ng-template>
           </td>
         </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="zdt-empty" [attr.colspan]="visibleColumnCount">
+          No records found.
+        </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="footer">

@@ -5,7 +5,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { DataTableDef, DataTableHeaderColDef, DataTableLazyLoadEvent } from './z-datatable';
+import { DataTableColumnDef, DataTableDef, DataTableHeaderColDef, DataTableLazyLoadEvent } from './z-datatable';
 import { first, last, Subject, takeUntil } from 'rxjs';
 import { DataTableFilterList, DataTableFilterListRequest, StaticList } from '../../models/select-list';
 import { SelectListService } from '../../services/select-list.service';
@@ -197,6 +197,9 @@ export class ZDataTable<T> {
       });
   }
 
+  private updateGlobalFilterFields(): void {
+  }
+
   loadStatusList(ColumnName: string) {
     try {
       this.selectListService.GetStatusList(`${this.tableName[0]}_${this.tableName[1]}`)
@@ -349,6 +352,7 @@ export class ZDataTable<T> {
         }
       });
     }
+
   }
 
   refreshData() {
@@ -356,4 +360,56 @@ export class ZDataTable<T> {
       this.lazyLoad.emit(this.tableLazyLoadEvent);
     }, 1);
   }
+
+  get visibleColumnCount(): number {
+    const count = (this.tableDef?.columnDef ?? []).filter(col => col.visible !== false).length;
+    return count > 0 ? count : 1;
+  }
+
+  formatCellValue(col: DataTableColumnDef, rowData: any): string {
+    const value = rowData?.[col.data];
+
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    if (value instanceof Date) {
+      return this.formatDate(value);
+    }
+
+    if (typeof value === 'string' && col.data.toLowerCase().includes('date')) {
+      const parsed = this.tryParseDate(value);
+      if (parsed) {
+        return this.formatDate(parsed);
+      }
+    }
+
+    return String(value);
+  }
+
+  private formatDate(date: Date): string {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  private tryParseDate(raw: string): Date | null {
+    const value = raw.trim();
+
+    if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
+      const [dd, mm, yyyy] = value.split('-').map(Number);
+      const date = new Date(yyyy, mm - 1, dd);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    return null;
+  }
+
 }

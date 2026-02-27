@@ -439,6 +439,44 @@
         border-radius: var(--se-field-radius);
     }
 
+    /* Customer autocomplete: clear (x) icon inside the input, no button chrome */
+    .customer-autocomplete {
+        .input-group {
+            position: relative;
+        }
+
+        .p-autocomplete-input,
+        input.p-autocomplete-input {
+            padding-right: 2.25rem !important;
+        }
+
+        .input-group-addon {
+            position: absolute;
+            right: 0.6rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+
+            height: auto !important;
+            width: auto !important;
+            padding: 0 !important;
+
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            line-height: 1;
+        }
+
+        .input-group-addon i {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .input-group-addon:hover i {
+            color: var(--heading-text-color);
+        }
+    }
+
     .p-inputtext,
     .p-dropdown,
     .p-calendar .p-inputtext,
@@ -577,7 +615,7 @@
 
         /* S No column (first column) */
         .page-table > tbody > tr > td:first-child {
-            font-size: 0.3rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             text-align: center;
             vertical-align: middle;

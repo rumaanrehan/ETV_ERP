@@ -3,6 +3,14 @@
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    --zdt-surface: var(--custom-white, #ffffff);
+    --zdt-border: var(--default-border, #e2e8f0);
+    --zdt-header-bg: rgba(248, 250, 252, 0.8);
+    --zdt-row-hover-bg: rgba(248, 250, 252, 0.6);
+    --zdt-selected-bg: #eff6ff;
+    --zdt-text: #334155;
+    --zdt-text-strong: #0f172a;
+    --zdt-muted: #64748b;
 }
 
 .z-datatable-viewport {
@@ -13,7 +21,7 @@
     overflow: hidden;
 }
 
-.z-datatable-viewport > p-table {
+.z-datatable-viewport>p-table {
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
@@ -24,6 +32,11 @@
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
+    background: var(--zdt-surface);
+    border: 1px solid var(--zdt-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
 }
 
 :host ::ng-deep .z-datatable-root .p-datatable-wrapper {
@@ -31,14 +44,94 @@
     min-height: 0;
 }
 
+:host ::ng-deep .z-datatable-root .p-datatable-header {
+    padding: 0.75rem 1rem;
+    background: var(--zdt-surface);
+    border: 0;
+    border-bottom: 1px solid var(--zdt-border);
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-thead>tr>th {
+    background: var(--zdt-header-bg);
+    color: var(--zdt-text);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-bottom: 1px solid var(--zdt-border);
+    vertical-align: middle;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody>tr>td {
+    color: var(--zdt-text);
+    font-weight: 400;
+    font-size: 0.8125rem;
+    padding: 0.85rem 1rem;
+    border: 0;
+    border-bottom: 1px solid var(--zdt-border);
+    vertical-align: middle;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody>tr>td:first-child {
+    color: var(--zdt-text-strong);
+    font-weight: 500;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody>tr:not(.p-highlight):hover>td {
+    background: var(--zdt-row-hover-bg);
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody>tr.p-highlight>td {
+    background: var(--zdt-selected-bg);
+}
+
+:host ::ng-deep .z-datatable-root .p-sortable-column-icon {
+    color: #94a3b8;
+}
+
+:host ::ng-deep .z-datatable-root .p-sortable-column:hover .p-sortable-column-icon {
+    color: var(--zdt-muted);
+}
+
 :host ::ng-deep .z-datatable-root .p-paginator-bottom {
     margin-bottom: 0;
     padding-bottom: 0;
+    border-top: 1px solid var(--zdt-border);
 }
 
 .index-table-action-bar {
     --z-action-btn-height: 34px;
     --z-action-btn-pad-x: 0.85rem;
+
+    .zdt-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .zdt-toolbar-left {
+        display: flex;
+        align-items: center;
+        min-width: 240px;
+        flex: 1 1 auto;
+    }
+
+    .zdt-toolbar-right {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.35rem;
+        flex: 0 0 auto;
+    }
+
+
 
     .action-item-wrapper {
         position: relative;
@@ -51,14 +144,14 @@
         cursor: pointer;
         height: var(--z-action-btn-height);
         padding: 0 var(--z-action-btn-pad-x);
-        margin: 5px 0.2rem;
-        margin-left: 10px;
+        margin: 0;
         color: #23272b;
         background-color: transparent;
         border-radius: 0.5rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 0.4rem;
         transition: background-color 0.15s ease, color 0.15s ease;
 
         i {
@@ -82,6 +175,70 @@
         }
     }
 
+    .filter-toggle .filter-icon {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        background-color: currentColor;
+        -webkit-mask: url('/assets/images/icons/filter-svgrepo-com.svg') no-repeat center / contain;
+        mask: url('/assets/images/icons/filter-svgrepo-com.svg') no-repeat center / contain;
+    }
+
+    .filter-toggle .filter-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .refresh-filter .sort-icon {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        background-color: currentColor;
+        -webkit-mask: url('/assets/images/icons/sort-from-bottom-to-top-svgrepo-com.svg') no-repeat center / contain;
+        mask: url('/assets/images/icons/sort-from-bottom-to-top-svgrepo-com.svg') no-repeat center / contain;
+    }
+
+    .refresh-filter .sort-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .refresh-filter .refresh-icon {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        background-color: currentColor;
+        -webkit-mask: url('/assets/images/icons/refresh-cw-alt-3-svgrepo-com.svg') no-repeat center / contain;
+        mask: url('/assets/images/icons/refresh-cw-alt-3-svgrepo-com.svg') no-repeat center / contain;
+    }
+
+    .refresh-filter .refresh-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .column-visibility-toggle .columns-icon {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        background-color: currentColor;
+        -webkit-mask: url('/assets/images/icons/filter-1-svgrepo-com.svg') no-repeat center / contain;
+        mask: url('/assets/images/icons/filter-1-svgrepo-com.svg') no-repeat center / contain;
+    }
+
+    .column-visibility-toggle .columns-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
     .index-filter-panel,
     .index-sorting-panel {
         position: absolute;
@@ -91,6 +248,7 @@
         z-index: 1000;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 0.5rem;
 
         .card-header {
             padding: 0.75rem 1rem;
@@ -110,7 +268,7 @@
                 display: flex;
                 align-items: center;
                 width: auto;
-                border-radius: 4px;
+                border-radius: 0.5rem;
             }
         }
 
@@ -135,6 +293,36 @@
                 }
             }
         }
+    }
+}
+
+.column-toggle-panel {
+    .btn {
+        border-radius: 0.5rem;
+    }
+}
+
+:host ::ng-deep .zdt-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--zdt-muted);
+    font-size: 0.85rem;
+}
+
+:host ::ng-deep .index-filter-panel,
+:host ::ng-deep .index-sorting-panel {
+
+    .p-inputtext,
+    .p-dropdown,
+    .p-calendar .p-inputtext,
+    .p-inputnumber-input,
+    textarea,
+    input {
+        border-radius: 0.5rem !important;
+    }
+
+    .p-selectbutton .p-button {
+        border-radius: 0.5rem !important;
     }
 }
 

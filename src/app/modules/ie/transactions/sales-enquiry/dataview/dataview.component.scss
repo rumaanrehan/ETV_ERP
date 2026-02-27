@@ -16,3 +16,199 @@ z-dataview {
     height: calc(68vh - var(--sales-enquiry-selection-bar-height, 0px));
     overflow-y: auto;
 }
+
+:host ::ng-deep .se-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    :host ::ng-deep .se-cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+:host ::ng-deep .se-card {
+    background: #ffffff;
+    border: 1px solid var(--default-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    transition: box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+:host ::ng-deep .se-card:hover {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+:host ::ng-deep .se-card.is-selected {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.18), 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+:host ::ng-deep .se-card__body {
+    padding: 1.1rem 1.15rem;
+}
+
+:host ::ng-deep .se-card__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.95rem;
+}
+
+:host ::ng-deep .se-card__main {
+    flex: 1;
+    min-width: 0;
+}
+
+:host ::ng-deep .se-card__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+:host ::ng-deep .se-card__title-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+:host ::ng-deep .se-card__title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--heading-text-color);
+    margin: 0;
+    line-height: 1.2;
+}
+
+:host ::ng-deep .se-card__subtitle {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 0.35rem 0 0 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+:host ::ng-deep .se-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--default-border);
+    padding: 0.3rem 0.65rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    white-space: nowrap;
+    background: var(--gray-2);
+    color: var(--default-text-color);
+}
+
+:host ::ng-deep .se-badge--received {
+    background: #EFF6FF;
+    border-color: rgba(var(--primary-rgb), 0.25);
+    color: #1E40AF;
+}
+
+:host ::ng-deep .se-badge--review {
+    background: rgba(var(--warning-rgb), 0.14);
+    border-color: rgba(var(--warning-rgb), 0.28);
+    color: #92400E;
+}
+
+:host ::ng-deep .se-badge--default {
+    background: var(--gray-2);
+    border-color: var(--default-border);
+    color: var(--default-text-color);
+}
+
+:host ::ng-deep .se-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+:host ::ng-deep .se-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+}
+
+:host ::ng-deep .se-info-icon {
+    width: 1.1rem;
+    flex: 0 0 1.1rem;
+    font-size: 1.05rem;
+    color: var(--gray-5);
+    margin-top: 0.15rem;
+}
+
+:host ::ng-deep .se-info-text {
+    min-width: 0;
+}
+
+:host ::ng-deep .se-info-label {
+    margin: 0;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    line-height: 1.2;
+}
+
+:host ::ng-deep .se-info-value {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.9rem;
+    color: var(--heading-text-color);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+:host ::ng-deep .se-contact {
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-3);
+}
+
+:host ::ng-deep .se-contact-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+:host ::ng-deep .se-contact-row + .se-contact-row {
+    margin-top: 0.5rem;
+}
+
+:host ::ng-deep .se-contact-name {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--heading-text-color);
+    font-weight: 500;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+:host ::ng-deep .se-contact-email {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* PrimeNG checkbox sizing to match design */
+:host ::ng-deep .se-card .p-checkbox {
+    margin-top: 0.1rem;
+}
+
+:host ::ng-deep .se-card .p-checkbox .p-checkbox-box {
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 4px;
+}
