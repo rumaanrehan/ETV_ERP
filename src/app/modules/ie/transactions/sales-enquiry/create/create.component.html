@@ -97,17 +97,11 @@
         </div>
       </div>
 
+      <div class="table-heading">Product List</div>
       <div class="simple-field simple-field-table">
         <div class="simple-control">
           <z-table [tableDef]="this.tableDef"></z-table>
         </div>
-      </div>
-
-      <div class="table-add-row">
-        <button type="button" class="simple-btn" (click)="addProductRow()">
-          <i class="pi pi-plus" aria-hidden="true"></i>
-          <span>Add line</span>
-        </button>
       </div>
 
       <div class="simple-field">
@@ -157,10 +151,17 @@
 
 <ng-template #actionColTemplate let-row let-rowIndex="index">
   <div class="col-12 tables-action-col">
-    <button type="button" class="simple-btn simple-btn-icon" title="Remove line"
-      (click)="onClickRemoveProductItem(rowIndex)">
-      <i class="pi pi-minus" aria-hidden="true"></i>
-    </button>
+    <div class="col-6 justify-item-center">
+      <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+        (click)="onClickRemoveProductItem(rowIndex)">
+        <i class="pi pi-minus-circle"></i></span>
+    </div>
+    <div class="col-6 justify-item-center">
+      <span *ngIf="rowIndex === this.productListArray.length - 1"
+        class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="addProductRow()">
+        <i class="pi pi-plus-circle"></i>
+      </span>
+    </div>
   </div>
 </ng-template>
 
