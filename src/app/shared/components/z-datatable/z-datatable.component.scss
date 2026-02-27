@@ -45,7 +45,7 @@
 }
 
 :host ::ng-deep .z-datatable-root .p-datatable-header {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 0rem;
     background: var(--zdt-surface);
     border: 0;
     border-bottom: 1px solid var(--zdt-border);

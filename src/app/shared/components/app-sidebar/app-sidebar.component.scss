@@ -4,7 +4,7 @@
     /* Styles for the sidebar container */
     width: 200px;
     /* Adjust width as needed */
-    background-color: #f0f0f0 !important;
+    background-color: #e8e8e8 !important;
     display: flex;
     /* Allow flexbox for horizontal layout */
     flex-direction: column;
@@ -74,7 +74,7 @@
      - Light mode: keep current white sidebar
      - Dark mode: revert to the old dark sidebar look */
   aside#sidebar.app-sidebar {
-    --sb-surface: #ffffff;
+    --sb-surface: #f2f2f3;
     --sb-border: var(--default-border);
     --sb-text: var(--default-text-color);
     --sb-muted: var(--text-muted);
@@ -310,11 +310,15 @@
       user-select: none;
       color: var(--sb-text) !important;
     }
-    
+
     .side-menu__item:hover,
     .side-menu__item.active {
-      background-color: transparent !important;
-      font-weight: 400 !important; /* avoid bold on active */
+      font-weight: 400 !important;
+      /* avoid bold on active */
+    }
+
+    .side-menu__item:hover {
+      background-color: rgba(0, 0, 0, 0.04) !important;
     }
 
     .side-menu__item:hover .side-menu__icon,
@@ -327,9 +331,9 @@
       fill: var(--sb-text) !important;
     }
 
-    /* Active item: very light backdrop, keep text color */
+    /* Active item: slightly darker backdrop */
     .side-menu__item.active {
-      background-color: var(--sb-active-bg) !important;
+      background-color: rgba(0, 0, 0, 0.08) !important;
     }
 
     /* Slide down animation for submenus */

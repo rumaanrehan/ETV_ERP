@@ -35,6 +35,7 @@ export class AppSidebarComponent {
 
   // Addding sticky-pin
   scrolled = false;
+  isDarkMode = localStorage.getItem('ynexdarktheme') === 'dark';
 
   get menuItems() {
     return this.menuService.menu();
@@ -212,6 +213,18 @@ export class AppSidebarComponent {
     if (window.innerWidth <= 992) {
       html?.setAttribute('data-toggled', html?.getAttribute('data-toggled') == 'open' ? 'close' : 'open');
     }
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    const mode = this.isDarkMode ? 'dark' : 'light';
+    const htmlElement = this.elementRef.nativeElement.ownerDocument.documentElement;
+    this.renderer.setAttribute(htmlElement, 'data-theme-mode', mode);
+    this.renderer.setAttribute(htmlElement, 'data-header-styles', mode);
+    this.renderer.setAttribute(htmlElement, 'data-menu-styles', mode);
+    localStorage.setItem('ynexdarktheme', mode);
+    localStorage.setItem('ynexHeader', mode);
+    localStorage.setItem('ynexMenu', mode);
   }
 
   themeChange(type: string, type1: string) {
