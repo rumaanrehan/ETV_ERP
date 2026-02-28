@@ -52,7 +52,6 @@ export class ShowValidationTooltipDirective {
 
   private showTooltip() {
     if (!this.validationMessage) return;
-    console.log(this.validationMessage);
 
     const hostEl = this.el.nativeElement;
     const rect = hostEl.getBoundingClientRect();

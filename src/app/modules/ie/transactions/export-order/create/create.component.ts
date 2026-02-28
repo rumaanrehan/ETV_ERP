@@ -240,7 +240,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   get productListArray(): FormArray<FormGroup> {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
-
+  
 
   onClickRemoveProductItem(index: number): void {
     if (this.productListArray.at(index).value.ProductName !== null) {

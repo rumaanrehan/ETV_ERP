@@ -18,11 +18,11 @@ export interface ProductRequest {
 
 export interface Product_SelectList {
   ProductID: number | null;
-  ProductCode: number | null;
+  ProductCode?: string | null;
   ProductName: string | null;
-  UOM: string | null;
-  HSCode: string | null;
-  PurTaxRate: number | null;
+  UOM?: string | null;
+  HSCode?: string | null;
+  PurTaxRate?: number | null;
 }
 
 export interface Product_IndexTableFilter {
