@@ -1,3 +1,13 @@
+:host-context([data-theme-mode="dark"]) {
+    --zdt-surface: #1e293b;
+    --zdt-border: #334155;
+    --zdt-header-bg: #0f172a;
+    --zdt-row-hover-bg: #334155;
+    --zdt-selected-bg: #1e293b;
+    --zdt-text: #cbd5e1;
+    --zdt-text-strong: #f8fafc;
+    --zdt-muted: #94a3b8;
+}
 :host {
     display: flex;
     flex-direction: column;
