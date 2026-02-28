@@ -1,3 +1,12 @@
+// Remove bottom margin and padding from paginator and dataview content
+:host ::ng-deep .p-dataview-content {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+:host ::ng-deep .p-paginator-bottom {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
 :host-context([data-theme-mode="dark"]) {
     --zdt-surface: #1e293b;
     --zdt-border: #334155;
