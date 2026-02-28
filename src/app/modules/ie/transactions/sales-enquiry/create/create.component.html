@@ -52,8 +52,8 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
         <div class="simple-control has-action">
-          <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef" (onSearch)="loadCustomer($event)"
-            (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+          <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
+            (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
           </z-autocomplete>
           <button *ngIf="!isEditMode" type="button" class="simple-action-btn" title="Add New Company"
             (click)="handleComponentLoad('VendorCreateComponent')">
@@ -80,8 +80,7 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.EnquiryDate.label}}:</label>
         <div class="simple-control">
-          <z-datepicker [group]="form" [control]="'EnquiryDate'" [label]="''"
-            [placeholder]="'dd-mm-yyyy'"
+          <z-datepicker [group]="form" [control]="'EnquiryDate'" [label]="''" [placeholder]="'dd-mm-yyyy'"
             [validationMessage]="formConfig.EnquiryDate.error">
           </z-datepicker>
         </div>
@@ -90,8 +89,7 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.ExpectedDeliveryDate.label}}:</label>
         <div class="simple-control">
-          <z-datepicker [group]="form" [control]="'ExpectedDeliveryDate'" [label]="''"
-            [placeholder]="'dd-mm-yyyy'"
+          <z-datepicker [group]="form" [control]="'ExpectedDeliveryDate'" [label]="''" [placeholder]="'dd-mm-yyyy'"
             [validationMessage]="formConfig.ExpectedDeliveryDate.error">
           </z-datepicker>
         </div>
@@ -113,8 +111,7 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.Note.label}}:</label>
         <div class="simple-control">
-          <z-textarea [group]="form" [control]="'Note'" [label]="''"
-            [placeholder]="'Optional'"
+          <z-textarea [group]="form" [control]="'Note'" [label]="''" [placeholder]="'Optional'"
             [validationMessage]="formConfig.Note.error"></z-textarea>
         </div>
       </div>
