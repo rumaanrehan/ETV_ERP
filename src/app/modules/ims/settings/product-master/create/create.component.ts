@@ -2,10 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
-import { ItemCategory_SelectList } from '../../item-category-master/item-category-master';
-import { UOM_SelectList } from '../../uom-master/uom-master';
-import { ProductMasterService } from '../product-master.service';
-import { ProductMaster } from './../product-master';
 import { FormSidebarComponent } from '../../../../../shared/components/form-sidebar/form-sidebar.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
@@ -14,6 +10,10 @@ import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
+import { ItemCategory_SelectList } from '../../item-category-master/item-category-master';
+import { UOM_SelectList } from '../../uom-master/uom-master';
+import { ProductMasterService } from '../product-master.service';
+import { ProductMaster } from './../product-master';
 
 @Component({
   selector: 'app-create',
@@ -160,23 +160,25 @@ export class CreateComponent implements OnInit, OnDestroy {
     try {
       this.pageService.CreateRecord(model)
         .pipe(takeUntil(this.destroy$))
-        .subscribe((response) => {
-          if (response.IsSuccess) {
-            this.closeSidebar();
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000,
-            });
-          } else {
-            this.alertService.showServerResponseAlert(response);
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.closeSidebar();
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000,
+              });
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+          complete: () => {
+            this.isSubmitted = false;
           }
-          this.isSubmitted = false;
         });
     }
-    catch (error) {
-
-    }
+    catch (error) {}
   }
 
   updateRecord(model: ProductMaster): void {

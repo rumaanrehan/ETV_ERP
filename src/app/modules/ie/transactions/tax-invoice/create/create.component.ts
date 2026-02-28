@@ -3,30 +3,30 @@ import { Component, ComponentRef, inject, OnDestroy, OnInit, TemplateRef, ViewCh
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { TableDef } from '../../../../../shared/components/z-table/z-table';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
+import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
+import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
 import { FormService } from '../../../../../shared/services/form.service';
+import { LoaderService } from '../../../../../shared/services/loader.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
 import { Currency_SelectList, CurrencyMaster } from '../../../../admin/settings/currency-master/currency-master';
 import { TaxSlab_SelectList } from '../../../../admin/settings/tax-slab-master/tax-slab-master';
 import { Product_SelectList, ProductMaster, ProductRequest } from '../../../../ims/settings/product-master/product-master';
 import { Company_SelectList, CompanyMaster, CompanyRequest } from '../../../settings/company-master/company-master';
+import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
+import { Port_SelectList, PortMaster, PortRequest } from '../../../settings/port-master/port-master';
 import { ExportOrder_SelectList, ExportOrderRequest } from '../../export-order/export-order';
-import { ProformaInvoice_Detail, ProformaInvoice_SelectList, ProformaInvoiceRequest } from '../../proforma-invoice/proforma-invoice';
+import { ProformaInvoice_SelectList, ProformaInvoiceRequest } from '../../proforma-invoice/proforma-invoice';
 import { Document_SelectList, TaxInvoice, TaxInvoiceDetail } from '../tax-invoice';
 import { TaxInvoiceService } from '../tax-invoice.service';
-import { Port_SelectList, PortMaster, PortRequest } from '../../../settings/port-master/port-master';
-import { PaymentTerm_SelectList } from '../../../settings/payment-term-master/payment-term-master';
-import { LoaderService } from '../../../../../shared/services/loader.service';
-import { NavContextService } from '../../../../../core/services/nav-context.service.service';
-import { GetExchangeRateRequest } from '../../../../../shared/models/currency';
-import { CurrencyExchangeService } from '../../../../../shared/services/currency-exchange.service';
 
 @Component({
   selector: 'app-create',
@@ -41,12 +41,15 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('productAutoCompleteColTemplate', { static: true }) productAutoCompleteColTemplate!: TemplateRef<any>;
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('salesQtyColTemplate', { static: true }) salesQtyColTemplate!: TemplateRef<any>;
+  @ViewChild('hSCodeColTemplate', { static: true }) hSCodeColTemplate!: TemplateRef<any>;
   @ViewChild('ratePerUnitFCColTemplate', { static: true }) ratePerUnitFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxRateColTemplate', { static: true }) taxRateColTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+
+  todayDate: Date = new Date(new Date().setHours(23, 59, 59, 999));
 
   componentRef?: ComponentRef<any>;
   loaderService = inject(LoaderService);
@@ -98,6 +101,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.loadingPortAutoCompleteDef = this.pageService.getLoadingPortAutoCompleteDef(this.formConfig, this.form);
     this.dischargePortAutoCompleteDef = this.pageService.getDischargePortAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
+      tableHeader: "Product List",
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
@@ -108,38 +112,54 @@ export class CreateComponent implements OnInit, OnDestroy {
         { data: "TaxRate", label: "Tax Rate", width: "10%", customTemplate: this.taxRateColTemplate },
         { data: "TaxableAmountFC", label: "Taxable Amount", width: "10%", customTemplate: this.taxableAmountFCColTemplate },
         { data: "TaxAmountFC", label: "Tax Amount", width: "10%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "8%", customTemplate: this.actionColTemplate },
+        { data: "ActionCol", label: "", hideVisToggle: true, width: "8%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
-
+    this.updateActionColWidth(this.form.get('BasedOn')?.value);
     this.LoadDropdownList();
 
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
-      .subscribe(paramMap => {
-        const taxInvoiceID = Number(paramMap.get('id'));
-        if (taxInvoiceID) {
-          this.isEditMode = true;
-          this.GetDetails(taxInvoiceID);
-          return;
-        }
-        else if (this.navContextService.source) {
-          if (this.navContextService.source == 'export-order') {
-            this.GetExportOrder(this.navContextService.sourceId!);
+      .subscribe({
+        next: paramMap => {
+          const taxInvoiceID = Number(paramMap.get('id'));
+          if (taxInvoiceID) {
+            this.isEditMode = true;
+            this.GetDetails(taxInvoiceID);
             return;
           }
-          else if (this.navContextService.source == 'proforma-invoice') {
-            this.GetProformaInvoice(this.navContextService.sourceId!);
-            return;
+          else if (this.navContextService.source) {
+            if (this.navContextService.source == 'export-order') {
+              this.GetExportOrder(this.navContextService.sourceId!);
+              return;
+            }
+            else if (this.navContextService.source == 'proforma-invoice') {
+              this.GetProformaInvoice(this.navContextService.sourceId!);
+              return;
+            }
           }
-        }
 
-        this.isEditMode = false;
-        if (this.productListArray.length === 0) {
-          this.AddProductRow();
+          this.isEditMode = false;
+          if (this.productListArray.length === 0) {
+            this.AddProductRow();
+          }
+        },
+        complete: () => {
+          this.updateActionColWidth(this.form.get('BasedOn')?.value);
         }
       });
+  }
+
+  updateActionColWidth(value: number) {
+    this.tableDef = {
+      ...this.tableDef,
+      columnDef: this.tableDef.columnDef.map(col =>
+        col.data === 'ActionCol'
+          ? { ...col, width: value <= 2 ? '0%' : '7%' }
+          : col
+      )
+    };
   }
 
   ngOnDestroy(): void {
@@ -240,6 +260,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.updateActionColWidth(basedOnValue);
 
     if (basedOnValue === 3) {
       this.AddProductRow();
@@ -268,6 +289,9 @@ export class CreateComponent implements OnInit, OnDestroy {
                 );
               } else {
                 this.documentAutoCompleteDef.options = [];
+                if (response.Message != "Record not found.") {
+                  this.alertService.showServerResponseAlert(response);
+                }
               }
             },
           });
@@ -297,8 +321,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             },
           });
       }
-    } catch (error) {
-    }
+    } catch (error) { }
   }
 
   OnSelect_Document(event: Document_SelectList): void {
@@ -307,11 +330,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     const basedOn = this.form.get('BasedOn')?.value;
     if (event.DocumentID) {
       if (basedOn == 1) {
-        this.form.patchValue({ ProformInvoiceID: this.form.get('DocumentID')?.value });
+        // this.form.patchValue({ ProformInvoiceID: this.form.get('DocumentID')?.value });
         this.GetProformaInvoice(event.DocumentID);
       }
       else if (basedOn == 2) {
-        this.form.patchValue({ ExportOrderID: this.form.get('DocumentID')?.value });
+        // this.form.patchValue({ ExportOrderID: this.form.get('DocumentID')?.value });
         this.GetExportOrder(event.DocumentID);
       }
     }
@@ -320,10 +343,12 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   OnClear_Document(): void {
+    const basedOnValue = this.form.get('BasedOn')?.value;
     this.formService.resetFormValue<TaxInvoice>(this.formConfig, this.form);
     this.selectedCustomerAddress = '';
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.form.get('BasedOn')?.patchValue(basedOnValue);
   }
 
   LoadCustomer(event: string): void {
@@ -369,7 +394,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (response) => {
           if (response.IsSuccess) {
-            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate.toFixed(3) });
+            this.form.patchValue({ ExchangeRateToBC: response.Data.Conversion_Rate });
           }
         },
       });
@@ -499,7 +524,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     row.patchValue({
       ProductID: event.ProductID,
       ProductName: event.ProductName,
-      UOM: event.UOM
+      UOM: event.UOM,
+      HSCode: event.HSCode
     });
 
     this.tableDef.data = this.productListArray.value
@@ -538,34 +564,33 @@ export class CreateComponent implements OnInit, OnDestroy {
 
       const taxableAmountFC = Number((quantity * rate).toFixed(3));
       const taxAmountFC = Number(((taxableAmountFC * salesTaxRate) / 100).toFixed(3));
+      const salesAmountFC = Number((taxableAmountFC + taxAmountFC).toFixed(3));
 
       group.patchValue({
-        TaxableAmountFC: Number(taxableAmountFC.toFixed(3)),
-        TaxAmountFC: Number(taxAmountFC.toFixed(3)),
-        SalesAmountFC: Number((taxableAmountFC + taxAmountFC).toFixed(3))
-      }, { emitEvent: true });
+        TaxableAmountFC: taxableAmountFC,
+        TaxAmountFC: taxAmountFC,
+        SalesAmountFC: salesAmountFC
+      }, { emitEvent: false });
 
       subtotalAmount += taxableAmountFC;
       taxAmount += taxAmountFC;
-      netAmount += (taxableAmountFC + taxAmountFC);
+      netAmount += salesAmountFC;
     });
 
-    netAmount += (freightCharge + bankCharges);
+    netAmount += Number((freightCharge + bankCharges).toFixed(3));
 
-    this.form.patchValue({ NetAmountFC: netAmount, SubtotalAmountFC: subtotalAmount, TaxAmountFC: taxAmount }, { emitEvent: true });
+    this.form.patchValue({
+      SubtotalAmountFC: Number(subtotalAmount.toFixed(3)),
+      TaxAmountFC: Number(taxAmount.toFixed(3)),
+      NetAmountFC: Number(netAmount.toFixed(3))
+    }, { emitEvent: false });
   }
 
   ConvertAmountsToBC(): void {
+    // 1️⃣ Get Exchange Rate
     const exchangeRate = this.form.get('ExchangeRateToBC')?.value || 1;
 
-    this.form.patchValue({
-      SubtotalAmountBC: this.form.get('SubtotalAmountFC')?.value * exchangeRate,
-      TaxAmountBC: this.form.get('TaxAmountFC')?.value * exchangeRate,
-      InsuranceAmountBC: this.form.get('InsuranceAmountFC')?.value * exchangeRate,
-      BankChargesBC: this.form.get('BankChargesFC')?.value * exchangeRate,
-      NetAmountBC: this.form.get('NetAmountFC')?.value * exchangeRate
-    }, { emitEvent: true });
-
+    // 2️⃣ Convert Product List Items (FC → BC)
     this.productListArray.controls.forEach((group: FormGroup) => {
       const ratePerUnitFC = Number(((group.get('RatePerUnitFC')?.value) || 0).toFixed(3));
       const taxableAmountFC = Number(((group.get('TaxableAmountFC')?.value) || 0).toFixed(3));
@@ -573,42 +598,65 @@ export class CreateComponent implements OnInit, OnDestroy {
       const salesAmountFC = Number(((group.get('SalesAmountFC')?.value) || 0).toFixed(3));
 
       group.patchValue({
-        TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
         RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
         TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
+        TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
         SalesAmountBC: Number((salesAmountFC * exchangeRate).toFixed(3)),
-      }, { emitEvent: true });
+      }, { emitEvent: false });
     });
 
-    const subtotalAmountFC = this.GetproductTaxableAmountFC();
-    const taxAmountFC = this.GetproductTaxAmountFCSum();
-    const isRoundOff = this.form.get('IsRoundOff')?.value === true;
+    const subtotalAmountFC = this.form.get('SubtotalAmountFC')?.value || 0;
+    const taxAmountFC = this.form.get('TaxAmountFC')?.value || 0;
     const netAmountFC = this.form.get('NetAmountFC')?.value;
+    const isRoundOff = this.form.get('IsRoundOff')?.value === true;
 
+    // 4️⃣ Calculate BC Values and Coin Adjustment
+    const subtotalAmountBC = subtotalAmountFC * exchangeRate;
+    const taxAmountBC = taxAmountFC * exchangeRate;
+    const netAmountBC = netAmountFC * exchangeRate;
+
+    const roundedNetBC = Math.round(netAmountBC);
+    const coinAdjustment = isRoundOff ? Number((netAmountBC - roundedNetBC).toFixed(3)) : 0;
+
+    //Convert other charges to BC
+    const insuranceBC = ((this.form.get('InsuranceAmountFC')?.value || 0) * exchangeRate);
+    const freightBC = ((this.form.get('FreightChargeFC')?.value || 0) * exchangeRate);
+    const bankChargesBC = ((this.form.get('BankChargesFC')?.value || 0) * exchangeRate);
+
+    // 5️⃣ Patch All Summary Fields (Once)
     this.form.patchValue({
-      SubtotalAmountFC: Number(subtotalAmountFC.toFixed(3)),
-      SubtotalAmountBC: Number((subtotalAmountFC * exchangeRate).toFixed(3)),
-      FreightChargeBC: this.form.get('FreightChargeFC')?.value * exchangeRate,
-      TaxAmountFC: Number(taxAmountFC.toFixed(3)),
-      TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
-      NetAmountBC: isRoundOff ? Math.round(netAmountFC * exchangeRate) : (netAmountFC * exchangeRate),
-      CoinAdjustment: isRoundOff ? Number(((netAmountFC * exchangeRate)) - Math.round(netAmountFC * exchangeRate)).toFixed(3) : 0
-    });
+      SubtotalAmountBC: Number(subtotalAmountBC.toFixed(3)),
+      TaxAmountBC: Number(taxAmountBC.toFixed(3)),
+      InsuranceAmountBC: Number(insuranceBC * exchangeRate).toFixed(3),
+      FreightChargeBC: Number(freightBC * exchangeRate).toFixed(3),
+      bankChargesBC: Number(bankChargesBC * exchangeRate).toFixed(3),
+      NetAmountBC: isRoundOff ? roundedNetBC : Number(netAmountBC.toFixed(3)),
+      CoinAdjustment: coinAdjustment
+    }, { emitEvent: false });
+
+    // 6️⃣ Debug Log to Verify Calculations only for development, should be removed in production
+    if(this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
+      console.log(
+        "Discrepancy in SubtotalAmountBC Calculation!, Backend Should Verify This. Product List total:",
+        this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0),
+        " Patched SubtotalAmountBC:", this.form.get('SubtotalAmountBC')?.value
+      );
+    }
   }
 
-  GetproductTaxableAmountFC(): number {
-    return this.productListArray.controls.reduce((sum, group) => {
-      const value = group.get('TaxableAmountFC')?.value || 0;
-      return sum + value;
-    }, 0);
-  }
+  // GetproductTaxableAmountFC(): number {
+  //   return this.productListArray.controls.reduce((sum, group) => {
+  //     const value = group.get('TaxableAmountFC')?.value || 0;
+  //     return sum + value;
+  //   }, 0);
+  // }
 
-  GetproductTaxAmountFCSum(): number {
-    return this.productListArray.controls.reduce((sum, group) => {
-      const value = group.get('TaxAmountFC')?.value || 0;
-      return sum + value;
-    }, 0);
-  }
+  // GetproductTaxAmountFCSum(): number {
+  //   return this.productListArray.controls.reduce((sum, group) => {
+  //     const value = group.get('TaxAmountFC')?.value || 0;
+  //     return sum + value;
+  //   }, 0);
+  // }
 
   OnSubmit(): void {
     if (this.isSubmitted) return;
@@ -741,6 +789,7 @@ export class CreateComponent implements OnInit, OnDestroy {
               const { ProductList, ...formValues } = response.Data;
               const data = {
                 ...formValues,
+                DocumentID: response.Data.BasedOn === 1 ? response.Data.ProformaInvoiceID : response.Data.ExportOrderID,
                 DocumentNo: response.Data.BasedOn === 1 ? response.Data.ProformaInvoiceNo : response.Data.ExportOrderNo,
                 TaxInvoiceDate: DateUtils.toDate(response.Data.TaxInvoiceDate!),
                 ExchangeRateDate: DateUtils.toDate(response.Data.ExchangeRateDate!),
@@ -753,6 +802,9 @@ export class CreateComponent implements OnInit, OnDestroy {
               this.alertService.showServerResponseAlert(response);
             }
           },
+          complete: () => {
+            this.updateActionColWidth(this.form.get('BasedOn')?.value);
+          }
         });
     }
     catch (error) {
@@ -767,6 +819,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
+              console.log(response.Data);
               this.productListArray.clear();
               response.Data.ProductList.Items.forEach(item => {
                 const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
@@ -785,14 +838,16 @@ export class CreateComponent implements OnInit, OnDestroy {
               });
 
               this.tableDef.data = this.productListArray.value;
-              const { ProductList, BasedOn, IsRoundOff, ExchangeRateDate, ExchangeRateToBC, ...formValues } = response.Data;
+              const { ProductList, ExportOrderID, ExportOrderNo, BasedOn, IsRoundOff, ExchangeRateDate, ExchangeRateToBC, ...formValues } = response.Data;
               this.selectedCustomerAddress = response.Data.CustomerAddress ?? '';
               formValues.ReferenceDate = DateUtils.toDate(formValues.ReferenceDate)!
               this.form.patchValue({
                 ...formValues,
-                DocumentNo: formValues.ExportOrderNo,
+                DocumentID: response.Data.ProformaInvoiceID,
+                DocumentNo: formValues.ProformaInvoiceNo,
                 BasedOn: 1
               });
+              console.log(this.form.value);
 
               this.OnCurrencyChange();
               this.ProductCalculation();
@@ -835,9 +890,9 @@ export class CreateComponent implements OnInit, OnDestroy {
 
               // Create the document option for autocomplete
               const documentOption: Document_SelectList = {
+                DocumentID: response.Data.ExportOrderID, // Add other required fields
                 DocumentNo: response.Data.ExportOrderNo,
-                CustomerName: response.Data.CustomerName,
-                DocumentID: response.Data.ExportOrderID  // Add other required fields
+                CustomerName: response.Data.CustomerName
               };
 
               // Set the autocomplete options

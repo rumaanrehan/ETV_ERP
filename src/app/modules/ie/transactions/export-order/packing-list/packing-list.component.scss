@@ -1,0 +1,47 @@
+.order-info-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #fff;
+}
+
+:host ::ng-deep .packing-dialog .p-dialog-header {
+  padding: 0.5rem 0.75rem;
+}
+
+:host ::ng-deep .packing-dialog .p-dialog-content {
+  padding-top: 0rem;
+  padding-bottom: 0.5rem;
+
+}
+
+:host ::ng-deep .packing-dialog .p-dialog-footer {
+  padding: 0.5rem 0.75rem;
+}
+
+.compact-dialog-footer {
+  margin-top: 0 !important;
+}
+
+.box-card {
+  border: 1px solid #e5e7eb;
+}
+
+.box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+}
+
+.box-toggle {
+  border: 0;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}

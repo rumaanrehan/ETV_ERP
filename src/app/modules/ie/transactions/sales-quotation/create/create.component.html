@@ -64,8 +64,8 @@
                 </div>
                 <div class="col-xl-5"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
-                    [label]="formConfig.ExchangeRateToBC.label" (onChange)="ProductCalculation()"></z-inputnumber>
+                  <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="formConfig.ExchangeRateToBC.label"
+                  (onChange)="ProductCalculation()"  [maxFractionDigits]=8></z-inputnumber>
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-datepicker [group]="form" [control]="'ValidityDate'" [label]="formConfig.ValidityDate.label"
@@ -82,7 +82,6 @@
                 <div class="col-xl-8"></div>
                 <!-- Product List -->
                 <div class="col-12 px-2 d-flex flex-column mb-2">
-                  <h6 class="form-group">Product List</h6>
                   <z-table [tableDef]="this.tableDef">
                   </z-table>
                 </div>
@@ -142,7 +141,7 @@
       </div>
     </div>
     <div class="col-xl-4">
-      <div class="status-pill" [ngStyle]="{'background-color': '#'+statusHex}" *ngIf="isEditMode">
+      <div class="status-pill" [ngStyle]="{'background-color': statusHex}" *ngIf="isEditMode">
         <span>Status: {{statusText}}</span>
       </div>
     </div>

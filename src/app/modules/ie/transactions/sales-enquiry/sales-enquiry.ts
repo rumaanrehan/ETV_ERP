@@ -22,6 +22,7 @@ export interface SalesEnquiryDetail {
     ProductName: string | null;
     RequestedQty: number | null;
     UOM: string | null;
+    HSCode: string | null;
     Remarks: string | null;
 
     Product?: ProductMaster; // Ye hatega
@@ -91,6 +92,7 @@ export interface SalesEnquiryProduct_Detail {
     ProductName: string;
     UOM: string;
     RequestedQty: number;
+    HSCode: string | null;
     Remarks: string | null;
 }
 

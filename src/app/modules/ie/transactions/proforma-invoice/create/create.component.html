@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="col-xl-3 form-group px-2">
                                     <div class="action-input-group">
-                                        <z-autocomplete [controlDef]="companyMasterAutoCompleteDef"
+                                        <z-autocomplete [controlDef]="companyMasterAutoCompleteDef" [readonly]="form.get('BasedOn')?.value == 1"
                                             [isClearable]="form.get('BasedOn')?.value == 2"
                                             (onSearch)="LoadCustomer($event)" (onSelect)="OnSelect_Customer($event)"
                                             (onClear)="OnClear_Customer()">
@@ -46,9 +46,8 @@
                                 </div>
                                 <div class="col-xl-{{isBasedOnExportOrder ? 3 : 5}}"></div>
                                 <div class="col-xl-2 form-group px-2">
-                                    <z-datepicker [group]="form" [control]="'ReferenceDate'"
-                                        [label]="formConfig.ReferenceDate.label"
-                                        [validationMessage]="formConfig.ReferenceDate.error"></z-datepicker>
+                                    <z-datepicker [group]="form" [control]="'ReferenceDate'" [label]="formConfig.ReferenceDate.label"
+                                        [validationMessage]="formConfig.ReferenceDate.error" [maxDate]="todayDate"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
                                     <z-inputtext [group]="form" [control]="'ReferenceNo'"
@@ -67,20 +66,18 @@
                                             [optionValue]="'CurrencyID'" [readonly]="isBasedOnExportOrder"
                                             [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
                                         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button"
-                                            title="Add New Currency"
-                                            (click)="HandleComponentLoad('CurrencyCreateComponent')"></i>
+                                            title="Add New Currency" (click)="HandleComponentLoad('CurrencyCreateComponent')"
+                                            *ngIf="!(isBasedOnExportOrder && isEditMode)"></i>
                                     </div>
                                 </div>
                                 <div class=" col-xl-5"></div>
                                 <div class="col-xl-2 form-group px-2">
-                                    <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
-                                        [label]="formConfig.ExchangeRateDate.label"
-                                        [readonly]="isBasedOnExportOrder"></z-datepicker>
+                                    <z-datepicker [group]="form" [control]="'ExchangeRateDate'" [maxDate]="todayDate"
+                                        [label]="formConfig.ExchangeRateDate.label" [readonly]="isBasedOnExportOrder"></z-datepicker>
                                 </div>
                                 <div class="col-xl-2 form-group px-2">
-                                    <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
-                                        [label]="formConfig.ExchangeRateToBC.label"
-                                        (onChange)="ProductCalculation()"></z-inputnumber>
+                                    <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="formConfig.ExchangeRateToBC.label"
+                                        (onChange)="ProductCalculation()" [maxFractionDigits] = 8></z-inputnumber>
                                 </div>
 
                                 <div class="col-md-2 form-group px-2">
@@ -92,16 +89,15 @@
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'FreightChargeFC'"
                                         [label]="formConfig.FreightChargeFC.label"
-                                        [readonly]="isBasedOnExportOrder"></z-inputnumber>
+                                        [readonly]="isBasedOnExportOrder" (onChange)="ProductCalculation()"></z-inputnumber>
                                 </div>
                                 <div class="col-md-2 form-group px-2">
                                     <z-inputnumber [group]="form" [control]="'BankChargesFC'"
                                         [label]="formConfig.BankChargesFC.label"
-                                        [readonly]="isBasedOnExportOrder"></z-inputnumber>
+                                        [readonly]="isBasedOnExportOrder" (onChange)="ProductCalculation()"></z-inputnumber>
                                 </div>
                                 <div class="col-xl-6"></div>
                                 <div class="col-12 px-2">
-                                    <h6 class="form-group">Product List</h6>
                                     <z-table [tableDef]="tableDef">
                                     </z-table>
                                 </div>
@@ -203,7 +199,7 @@
                     (click)="OnClickNavigateToTaxInvoice(this.form.get('ProformaInvoiceID')?.value || null)"> Add Tax
                     Invoice </button>
             </div>
-            <div class="col-xl-4 px-1" *ngIf="isEditMode">
+            <div class="col-xl-5 px-1" *ngIf="isEditMode">
                 <!-- <button type="submit" class="btn btn-md btn-primary w-100" (click)="printInvoice()"> Print
                     Proforma </button> -->
                 <z-button [label]="'Print Proforma Invoice'" (clicked)="PrintInvoice()"
@@ -211,7 +207,7 @@
             </div>
         </div>
         <div class="col-xl-4">
-            <div class="status-pill" [ngStyle]="{'background-color': '#'+statusHex}" *ngIf="isEditMode">
+            <div class="status-pill" [ngStyle]="{'background-color': statusHex}" *ngIf="isEditMode">
                 <span>Status: {{statusText}}</span>
             </div>
         </div>
@@ -240,11 +236,11 @@
         <div class="col-11">
             <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]"
                 (onSearch)="OnSearch_Product($event, rowIndex)" (onSelect)="OnSelect_Product($event, rowIndex)"
-                (onClear)="OnClear_Product(rowIndex)">
+                (onClear)="OnClear_Product(rowIndex)" [isClearable]="!isBasedOnExportOrder">
             </z-autocomplete>
         </div>
         <i class="bi bi-plus-circle fs-5 z-text-primary" role="button" title="Add New Product"
-            *ngIf="rowIndex === this.productListArray.length - 1"
+            *ngIf="rowIndex === this.productListArray.length - 1 && !isBasedOnExportOrder"
             (click)="HandleComponentLoad('ProductCreateComponent')"></i>
     </div>
 </ng-template>

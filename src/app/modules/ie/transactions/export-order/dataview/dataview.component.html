@@ -47,7 +47,7 @@
                     <h5 class="primary-color mb-2">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
                 </a>
                 <div class="text-end d-flex align-items-center justify-content-end gap-2">
-                    <span class="badge bg-outline-primary">{{item.StatusText}}</span>
+                    <span class="badge bg-outline-primary" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
                     <z-menu [menus]="getMenuOptions(item)" [styleClass]="'dataview-action-menu'">
                     </z-menu>
                 </div>
@@ -89,6 +89,10 @@
                                 number:'1.2-2' }}
                             </span>
                         </div>
+                    </div><div class="col-md-3 pe-1">
+                        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)">
+                            {{item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details'}}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -97,3 +101,5 @@
 </ng-template>
 
 <ng-template #container></ng-template>
+
+<app-packing-list *ngIf="showPackingListDialog" (closeDialogBoxEvent)="onCloseSidebar()"></app-packing-list>
