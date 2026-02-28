@@ -2,6 +2,7 @@
 :host ::ng-deep .p-dataview-content {
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
+    height: calc(100vh - 172px);
 }
 :host ::ng-deep .p-paginator-bottom {
     margin-bottom: 0 !important;
