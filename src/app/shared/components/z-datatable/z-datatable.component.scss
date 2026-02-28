@@ -246,36 +246,34 @@
         right: 0;
         width: 300px;
         z-index: 1000;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: var(--zdt-surface);
+        border: 1px solid var(--zdt-border);
+        color: var(--zdt-text);
         border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
 
         .card-header {
+            background-color: var(--zdt-header-bg);
+            border-bottom: 1px solid var(--zdt-border);
             padding: 0.75rem 1rem;
-            background: var(--background-tertiary);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
             h6 {
                 margin: 0;
+                font-size: 0.875rem;
                 font-weight: 600;
-                font-size: 0.9rem;
+                color: var(--zdt-text-strong);
             }
 
             .btn {
-                padding: 0.25rem 0.75rem;
+                padding: 0.25rem 0.5rem;
                 font-size: 0.75rem;
-                height: 24px;
-                display: flex;
-                align-items: center;
-                width: auto;
-                border-radius: 0.5rem;
             }
         }
 
         .card-body {
             padding: 1rem;
-            max-height: 400px;
-            overflow-y: auto;
+            background-color: var(--zdt-surface);
 
             .field {
                 margin-bottom: 1rem;
@@ -286,10 +284,24 @@
 
                 label {
                     display: block;
-                    margin-bottom: 0.4rem;
-                    font-size: 0.8rem;
+                    margin-bottom: 0.35rem;
+                    font-size: 0.8125rem;
                     font-weight: 500;
-                    color: var(--default-text-color);
+                    color: var(--zdt-text-strong);
+                }
+
+                ::ng-deep .p-dropdown {
+                    width: 100%;
+                }
+
+                ::ng-deep .p-inputtext,
+                ::ng-deep .p-inputnumber-input {
+                    width: 100%;
+                    padding: 0.4rem 0.5rem;
+                    font-size: 0.8125rem;
+                    background: var(--zdt-surface);
+                    color: var(--zdt-text);
+                    border: 1px solid var(--zdt-border);
                 }
             }
         }

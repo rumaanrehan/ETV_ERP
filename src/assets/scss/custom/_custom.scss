@@ -61,7 +61,8 @@ button {
   .app-content {
     min-height: calc(100vh - 7rem);
     margin-block-end: 0;
-    margin-block-start: 3.75rem;
+    margin-block-start: 0;
+    /* Removed 3.75rem top space since header is hidden */
     margin-inline-start: 15rem;
     transition: all 0.05s ease;
   }

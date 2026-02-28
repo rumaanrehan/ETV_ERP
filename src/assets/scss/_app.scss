@@ -8,7 +8,7 @@
 /*Page Header Start*/
 .page-header-breadcrumb {
   z-index: 1;
-  padding: 0.1875rem 0.5rem;
+  padding: 0 0.5rem;
   background: var(--background-tertiary);
   position: sticky;
   top: 3.125rem;
@@ -46,11 +46,11 @@
 
 /*Page Content Start*/
 .page-content {
-  padding: 0.75rem 0 0.75rem 0.75rem;
+  padding: 0 0 0.75rem 0.75rem;
 }
 
 .index-page-content {
-  padding: .75rem .75rem 0 .75rem;
+  padding: 0 0.75rem 0 0.75rem;
   background-color: var(--custom-white);
 }
 
@@ -1074,7 +1074,8 @@ z-menu .p-button-icon {
 
   font-size: 0.5rem;
   line-height: 1.5;
-  color: #6b7280; /* calm gray */
+  color: #6b7280;
+  /* calm gray */
 }
 
 /* Bootstrap `fs-*` / `text-*` utilities override our styles */
@@ -1160,7 +1161,7 @@ div:where(.swal2-container) .swal2-html-container {
   a {
     text-decoration: none;
     color: inherit;
-    
+
     &:hover h5 {
       text-decoration: underline;
       text-underline-offset: 3px;
@@ -1170,8 +1171,10 @@ div:where(.swal2-container) .swal2-html-container {
 
 .dataview-record-title h5 {
   font-size: 1rem;
-  font-weight: 500; /* NOT bold */
-  color: #5e6f86 !important; /* neutral slate (override .primary-color) */
+  font-weight: 500;
+  /* NOT bold */
+  color: #5e6f86 !important;
+  /* neutral slate (override .primary-color) */
   margin-bottom: 0.35rem;
 }
 

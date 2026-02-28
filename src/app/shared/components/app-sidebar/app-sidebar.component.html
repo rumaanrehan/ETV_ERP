@@ -3,13 +3,19 @@
     [showCloseIcon]="false" [closeOnEscape]="false" [blockScroll]="true" [modal]="false">
     <div class="sidebar-header mx-4">
       <a [routerLink]="['/home']" class="sidebar-header-logo">
-        <h5 class="sidebar-header-title m-0">IEMS</h5>
+        <h4 class="sidebar-header-title m-0">IEMS</h4>
       </a>
       <a aria-label="Hide Sidebar" (click)="togglesidebar()"
         class="sidebar-sidemenu-toggle sidemenu-toggle header-link p-0" data-bs-toggle="sidebar"
         href="javascript:void(0);">
         <i class="bx bx-menu fs-24"></i>
       </a>
+    </div>
+
+    <div class="sidebar-avatar-collapsed mx-auto">
+      <span class="avatar avatar-s avatar-rounded">
+        <img src="./assets/images/faces/profile-avatar.png" alt="Profile">
+      </span>
     </div>
 
     <div class="sidebar-profile d-flex gap-3 py-2 px-2 mx-4" role="button" tabindex="0"
