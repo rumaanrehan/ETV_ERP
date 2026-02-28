@@ -1,3 +1,19 @@
+// Dark mode overrides
+[data-theme-mode="dark"] {
+  .breadcrumb {
+    .breadcrumb-item {
+      a {
+        color: $primary !important;
+      }
+      &.active {
+        color: #f8fafc !important;
+      }
+    }
+  }
+  .breadcrumb-item+.breadcrumb-item::before {
+    color: #94a3b8 !important;
+  }
+}
 /* Start:: Breadcrumb Styles */
 
 .page-header-breadcrumb {

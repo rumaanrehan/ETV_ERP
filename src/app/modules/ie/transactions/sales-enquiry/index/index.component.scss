@@ -1,3 +1,56 @@
+:host-context([data-theme-mode="dark"]) .text-muted {
+    color: #f3f4f6 !important;
+}
+:host-context([data-theme-mode="dark"]) .index-action-bar {
+    background: rgba(35, 39, 43, 0.92) !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.18) !important;
+}
+
+:host-context([data-theme-mode="dark"]) .index-action-bar.selection-active {
+    background: #23272b !important;
+    border-color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-group {
+    background: rgba(35, 39, 43, 0.98) !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18) !important;
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-btn {
+    color: #94a3b8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-btn.active {
+    background: #38bdf8 !important;
+    color: #23272b !important;
+    box-shadow: 0 2px 6px rgba(56,189,248,0.25) !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-page-header.btn-md,
+:host-context([data-theme-mode="dark"]) .btn-add-sales-enquiry.btn.btn-primary {
+    background: rgba(56,189,248, 0.18) !important;
+    border-color: #38bdf8 !important;
+    color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-page-header.btn-md:hover,
+:host-context([data-theme-mode="dark"]) .btn-add-sales-enquiry.btn.btn-primary:hover {
+    background: rgba(56,189,248, 0.28) !important;
+    border-color: #38bdf8 !important;
+    color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-danger {
+    background: rgba(239,68,68,0.18) !important;
+    color: #ef4444 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-danger:hover {
+    background: rgba(239,68,68,0.28) !important;
+    color: #ef4444 !important;
+}
 :host {
     display: flex;
     flex-direction: column;
@@ -65,7 +118,7 @@
             border: none;
             background: transparent;
             width: 28px;
-            height: 25px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -221,7 +274,7 @@
         color: #8898aa;
         font-weight: 400;
         font-size: 0.75rem;
-        padding: 0.25rem 1rem;
+        padding: 0.5rem 1rem;
         border-radius: 0;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
@@ -296,13 +349,16 @@
 
 /* Enhanced Add Button */
 .btn-page-header.btn-md {
-    height: 25px;
-    padding: 0rem 1rem;
+    height: 30px;
+    padding: 1rem 1rem;
     font-weight: 500;
     font-size: 0.8rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     color: rgba(var(--primary-rgb), 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
         transform: translateY(-1px);

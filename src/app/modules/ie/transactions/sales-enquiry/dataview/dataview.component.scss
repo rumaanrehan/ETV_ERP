@@ -1,3 +1,49 @@
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-card {
+    background: #23272b !important;
+    border-color: #334155 !important;
+    color: #e5e7eb !important;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-card__title,
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-card__subtitle,
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-info-label,
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-info-value,
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-contact-name,
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-contact-email {
+    color: #e5e7eb !important;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-info-icon {
+    color: #94a3b8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-contact {
+    border-top: 1px solid #334155 !important;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-badge {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-badge--received {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-badge--review {
+    background: #3b2f0b !important;
+    border-color: #a16207 !important;
+    color: #fde68a !important;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .se-badge--default {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e5e7eb !important;
+}
 :host {
     display: flex;
     flex-direction: column;
