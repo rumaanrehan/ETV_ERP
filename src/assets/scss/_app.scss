@@ -1,3 +1,10 @@
+// Remove bottom margin from paginator and dataview content
+.p-dataview-content {
+  margin-bottom: 0 !important;
+}
+.p-paginator-bottom {
+  margin-bottom: 0 !important;
+}
 // Override margin-block-start for .app-content globally
 .app-content {
   margin-block-start: 0.7rem !important;
