@@ -116,6 +116,24 @@ export class PackingListComponent implements OnInit, OnDestroy {
     return this.boxListArray.at(boxIndex).get('ProductList') as FormArray<FormGroup>;
   }
 
+  getAvailableProducts(boxIndex: number, rowIndex: number): ProductList[] {
+    const currentProductId = this.getProductList(boxIndex).at(rowIndex).get('ProductID')?.value as number | null;
+    const usedQty = new Map<number, number>();
+
+    this.boxListArray.controls.forEach((box, b) =>
+      ((box.get('ProductList') as FormArray<FormGroup>).controls).forEach((row, r) => {
+        if (b === boxIndex && r === rowIndex) return;
+        const productId = row.get('ProductID')?.value as number | null;
+        if (!productId) return;
+        usedQty.set(productId, (usedQty.get(productId) || 0) + (Number(row.get('PackedQty')?.value) || 0));
+      })
+    );
+
+    return this.productList.filter(p =>
+      p.ProductID === currentProductId || (Number(p.ProuductCount) || 0) - (usedQty.get(p.ProductID) || 0) > 0
+    );
+  }
+
   createProductTableDef(boxIndex: number): TableDef<ExportOrderPackingListBoxDetail> {
     const dataWithContext = this.getProductList(boxIndex).value.map((item) => ({ ...item, __boxIndex: boxIndex })) as ExportOrderPackingListBoxDetail[];
     return {
