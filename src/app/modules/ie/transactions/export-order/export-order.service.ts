@@ -1,17 +1,27 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { Environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { TableDef } from '../../../../shared/components/z-table/z-table';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { DataTableFilterList, DataTableFilterListRequest, StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
 import { SelectListService } from '../../../../shared/services/select-list.service';
+import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
+import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
+import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
+import { NonZero } from '../../../../shared/validators/non-zero.validator';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
 import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
 import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
@@ -56,7 +66,8 @@ export class ExportOrderService {
     private employeeRegistrationService: EmployeeRegistrationService,
     private portService: PortMasterService,
     private selectListService: SelectListService,
-    private currencyExchangeService: CurrencyExchangeService
+    private currencyExchangeService: CurrencyExchangeService,
+    private http: HttpClient
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -167,6 +178,10 @@ export class ExportOrderService {
 
   CancelOrder(model: ExportOrderCancelRequest): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  UploadPODocument(formData: FormData): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${Environment.apiBaseUrl}/${this.endpoint}/POUpload`, formData);
   }
 
   BulkChangeStatus(model: ExportOrderBulkUpdateRequest): Observable<ApiResponse> {
@@ -714,7 +729,7 @@ export class ExportOrderService {
         label: 'Packing List No',
         defaultValue: "NEW"
       },
-      ExportOrderID: {  
+      ExportOrderID: {
         label: 'Order No',
         defaultValue: null
       },
@@ -722,7 +737,7 @@ export class ExportOrderService {
         label: 'Export Order No',
         defaultValue: null
       },
-      CustomerName: { 
+      CustomerName: {
         label: 'Company Name',
         defaultValue: null
       },
@@ -738,7 +753,7 @@ export class ExportOrderService {
       PackingIdentityID: {
         label: 'Packing Identity',
         defaultValue: null,
-        validators: [Validators.required],  
+        validators: [Validators.required],
         validationMessages: {
           required: "Packing Identity is required."
         },
@@ -799,7 +814,7 @@ export class ExportOrderService {
             },
             type: 'control'
           },
-          BoxWeight: {  
+          BoxWeight: {
             label: 'Weight',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],

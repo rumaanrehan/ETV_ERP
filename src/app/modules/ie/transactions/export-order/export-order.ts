@@ -226,6 +226,7 @@ export interface ExportOrder_Detail {
     StatusText: string;
     StatusHex: string;
     IsDocumentAlreadyExists: boolean;
+    IsPOUploaded: boolean;
     ProductList: TList<ExportOrderProductDetail>;
 }
 

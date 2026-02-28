@@ -71,6 +71,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
     this.companyMasterAutoCompleteDef = this.pageService.getCompanyMasterAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
+      tableHeader: "Product List",
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
         { data: "ProductName", label: "Product", width: "25%", customTemplate: this.productAutoCompleteColTemplate },
@@ -212,7 +213,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     row.patchValue({
       ProductID: event.ProductID,
       ProductName: event.ProductName,
-      UOM: event.UOM
+      UOM: event.UOM,
+      HSCode: event.HSCode
     });
 
     this.tableDef.data = this.productListArray.value

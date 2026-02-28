@@ -136,10 +136,13 @@ export class ProductMasterService {
       HSCode: {
         label: 'HS Code',
         defaultValue: '',
-        validators: [Validators.pattern(/^\d{4,8}$/)],
+        validators: [Validators.minLength(2), Validators.maxLength(8), Validators.pattern(/^\d{2,8}$/)],
         validationMessages: {
-          pattern: 'HS Code must be 4 to 8 digits.'
-        }
+          minlength: "HS Code must be at least 2 digits.",
+          maxlength: "HS Code cannot exceed 8 digits.",
+          pattern: "HS Code must contain only digits."
+        },
+        type: 'control'
       },
       TaxSlabID: {
         label: 'Tax Slab',

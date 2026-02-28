@@ -2,6 +2,7 @@ import { TemplateRef } from "@angular/core";
 
 export interface TableDef<T> {
   columnDef: TableColumnDef[];
+  tableHeader?: string;
   data: T[];
 }
 
