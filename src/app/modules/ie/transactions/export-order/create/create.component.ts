@@ -244,7 +244,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   get productListArray(): FormArray<FormGroup> {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
-  
+
 
   onClickRemoveProductItem(index: number): void {
     if (this.productListArray.at(index).value.ProductName !== null) {
@@ -637,7 +637,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }, { emitEvent: false });
 
     // 6️⃣ Debug Log to Verify Calculations only for development, should be removed in production
-    if(this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
+    if (this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
       console.log(
         "Discrepancy in SubtotalAmountBC Calculation!, Backend Should Verify This. Product List total:",
         this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0),
@@ -889,22 +889,22 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.uploadingInvoice = true;
     try {
       this.pageService.UploadPODocument(formData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000
-            });
-            this.ngOnInit();
-          } else {
-            this.alertService.showServerResponseAlert(response);
-            this.uploadingInvoice = false;
-          }
-        },
-      });
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000
+              });
+              this.ngOnInit();
+            } else {
+              this.alertService.showServerResponseAlert(response);
+              this.uploadingInvoice = false;
+            }
+          },
+        });
     }
     catch (error) {
       this.uploadingInvoice = false;

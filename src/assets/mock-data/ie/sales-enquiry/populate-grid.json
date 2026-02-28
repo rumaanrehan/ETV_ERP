@@ -1,0 +1,22 @@
+{
+  "IsSuccess": true,
+  "Status": "Mock",
+  "Message": "Mock fallback data for IE/SalesEnquiry/PopulateGrid",
+  "Data": {
+    "Items": [
+      {
+        "SalesEnquiryID": 1,
+        "SalesEnquiryNo": "SE-0001",
+        "CustomerName": "Mock Customer",
+        "ContactName": "John Doe",
+        "ContactEmail": "john.doe@example.com",
+        "EnquiryDate": "2026-02-20T00:00:00Z",
+        "ExpectedDeliveryDate": "2026-02-28T00:00:00Z",
+        "ProductCount": 2,
+        "StatusText": "Received",
+        "StatusHex": "0078D4"
+      }
+    ],
+    "TotalRecords": 1
+  }
+}

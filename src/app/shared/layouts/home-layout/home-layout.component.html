@@ -1,12 +1,14 @@
 <div class="page">
-  <app-header></app-header>
+  <!-- <app-header></app-header> -->
   <!-- Start::app-content -->
   <div class="main-content app-content" (click)="clickOnBody()">
     <div class="container-fluid home-container">
       <!-- Page Header -->
       <app-page-header></app-page-header>
       <!-- Page Header Close -->
-      <router-outlet></router-outlet>
+      <div class="router-container">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </div>
   <app-footer></app-footer>

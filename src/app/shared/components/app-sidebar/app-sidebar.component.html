@@ -1,16 +1,57 @@
 <aside class="app-sidebar sticky" id="sidebar" [ngClass]="{ 'sticky-pin': scrolled }">
   <p-sidebar id="sidebar-scroll" styleClass="main-sidebar mt-0 w-100" [visible]="true" position="right"
     [showCloseIcon]="false" [closeOnEscape]="false" [blockScroll]="true" [modal]="false">
-    <div class="sidebar-profile d-flex gap-3 py-2 mx-4">
+    <div class="sidebar-header mx-4">
+      <a [routerLink]="['/home']" class="sidebar-header-logo">
+        <h4 class="sidebar-header-title m-0">IEMS</h4>
+      </a>
+      <a aria-label="Hide Sidebar" (click)="togglesidebar()"
+        class="sidebar-sidemenu-toggle sidemenu-toggle header-link p-0" data-bs-toggle="sidebar"
+        href="javascript:void(0);">
+        <i class="bx bx-menu fs-24"></i>
+      </a>
+    </div>
+
+    <div class="sidebar-avatar-collapsed mx-auto">
+      <span class="avatar avatar-s avatar-rounded">
+        <img src="./assets/images/faces/profile-avatar.png" alt="Profile">
+      </span>
+    </div>
+
+    <div class="sidebar-profile gap-3 py-2 px-2 mx-4" role="button" tabindex="0" [class.is-open]="isProfileActionsOpen"
+      (click)="toggleProfileActions()" (keydown.enter)="toggleProfileActions()"
+      (keydown.space)="toggleProfileActions()">
       <span class="avatar avatar-s avatar-rounded">
         <img src="./assets/images/faces/profile-avatar.png" alt="./assets/images/faces/profile-avatar.png">
       </span>
-      <div class="m-0">
-        <h6 class="mb-1 profile-name text-nowrap text-truncate text-white fw-bold">{{user?.UserFullName}}</h6>
-        <p class="m-0 small profile-name text-nowrap text-white text-truncate">{{user?.UserDesignation}}</p>
+      <div class="m-0 sidebar-profile-meta">
+        <h6 class="mb-1 profile-name text-nowrap text-truncate fw-bold">{{user?.UserFullName}}</h6>
+        <p class="m-0 small profile-name text-nowrap text-truncate">{{user?.UserDesignation}}</p>
       </div>
     </div>
-    <hr style="margin: 0 10px; border-color: var(--default-border);" />
+
+    <div class="sidebar-profile-actions mx-4 pb-2" [class.is-open]="isProfileActionsOpen"
+      (click)="$event.stopPropagation()">
+      <a class="sidebar-profile-action" [routerLink]="['/profile']">
+        <i class="ti ti-user"></i>
+        <span>Profile</span>
+      </a>
+      <a class="sidebar-profile-action" [routerLink]="['/organisation-setting']">
+        <i class="ti ti-settings"></i>
+        <span>Organization setting</span>
+      </a>
+      <button type="button" class="sidebar-profile-action sidebar-profile-action-btn" (click)="logout()">
+        <i class="ti ti-logout"></i>
+        <span>Log Out</span>
+      </button>
+
+      <button type="button" class="sidebar-profile-action sidebar-profile-action-btn" (click)="toggleDarkMode()">
+        <i [class]="isDarkMode ? 'ti ti-sun' : 'ti ti-moon'"></i>
+        <span>{{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}</span>
+      </button>
+    </div>
+
+    <hr class="sidebar-divider" />
     <nav class="main-menu-container nav nav-pills flex-column sub-open">
       <div class="slide-left" id="slide-left" (click)="leftArrowFn()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24" viewBox="0 0 24 24">
@@ -18,9 +59,9 @@
         </svg>
       </div>
 
-      <ul class="main-menu" [ngStyle]="{ display: 'block' }">
+      <ul class="main-menu">
         @for (menuItem of menuItems; track menuItem) {
-        @if (menuItem.MenuType === 'sub') {
+        <!-- @if (menuItem.MenuType === 'sub') {
         <li #activeMenuItems [ngClass]="{
                             'slide__category':menuItem.Title,
                             'open': menuItem.Active,
@@ -28,7 +69,7 @@
                         }">
           <span class="category-name">{{ menuItem.Title }}</span>
         </li>
-        }
+        } -->
 
         <li class="slide" #activeMenuItems [ngClass]="{
                         'slide has-sub':menuItem.MenuType === 'sub',
@@ -61,8 +102,7 @@
 
           <!-- Recursive Children -->
           @if (menuItem.Children?.length) {
-          <ul class="slide-menu child1" [ngClass]="{'active': menuItem.Active}"
-            [ngStyle]="{ display: menuItem.Active ? 'block' : 'none' }">
+          <ul class="slide-menu child1" [ngClass]="{'is-open': menuItem.Active}">
             @for (child of menuItem.Children; track child) {
             <li class="slide" [ngClass]="{'active': child.Selected, 'has-sub': child.MenuType === 'sub'}">
 
@@ -84,7 +124,7 @@
 
               <!-- Recursive Children (3rd Level) -->
               @if (child.Children?.length) {
-              <ul class="slide-menu child2" [ngStyle]="{ display: child.Active ? 'block' : 'none' }">
+              <ul class="slide-menu child2" [ngClass]="{'is-open': child.Active}">
                 @for (subChild of child.Children; track subChild) {
                 <li class="slide" [ngClass]="{ 'open': subChild.Active }">
                   @if (subChild.MenuType === 'link') {

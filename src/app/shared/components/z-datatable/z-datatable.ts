@@ -1,12 +1,16 @@
 import { TemplateRef } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { DataTableFilterList } from "../../models/select-list";
+import { DataViewFieldDef, DataViewSortRow } from "../z-dataview/z-dataview";
 
 export interface DataTableDef<T> {
     tableKey: string;
     columnDef: DataTableColumnDef[];
     defaultSortColumn: DataTableDefaultSort;
     filterForm?: FormGroup;
+    sortingForm?: FormGroup;
+    sortFields?: DataViewSortRow[];
+    filterFields?: DataViewFieldDef[];
     data: T[];
     totalRecords: number;
     loading: boolean;

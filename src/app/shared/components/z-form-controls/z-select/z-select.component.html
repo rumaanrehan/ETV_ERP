@@ -44,7 +44,7 @@
                 [appShowValidationTooltip]="validationMessage" [options]="options" [optionLabel]="optionLabel"
                 [optionValue]="optionValue" [filter]="filterEnabled" [filterBy]="optionLabel"
                 [showClear]="!!group.get(control)?.value" [selectionLimit]="maxSelectionLimit"
-                [selectedItemsLabel]="'{0} options selected'" [readonly]="readonly"
+                [selectedItemsLabel]="'{0} options selected'" [readonly]="readonly" [appendTo]="appendTo"
                 (onChange)="onValueChange($event.value)">
             </p-multiSelect>
             <label>{{ label }}</label>
@@ -58,7 +58,8 @@
                     <p-dropdown #dropdown [styleClass]="styleClass" [formControlName]="control" [options]="options"
                         [optionLabel]="optionLabel" [optionValue]="optionValue"
                         [appShowValidationTooltip]="validationMessage" [filter]="filterEnabled" [filterBy]="optionLabel"
-                        [readonly]="readonly" [showClear]="false" (onChange)="onValueChange($event.value)">
+                        [readonly]="readonly" [showClear]="false" [appendTo]="appendTo"
+                        (onChange)="onValueChange($event.value)">
                     </p-dropdown>
                     <label>{{ label }}</label>
                 </p-floatLabel>
@@ -73,7 +74,8 @@
                 <p-dropdown #dropdown [styleClass]="styleClass" [formControlName]="control" [options]="options"
                     [optionLabel]="optionLabel" [optionValue]="optionValue"
                     [appShowValidationTooltip]="validationMessage" [filter]="filterEnabled" [filterBy]="optionLabel"
-                    [readonly]="readonly" [showClear]="false" (onChange)="onValueChange($event.value)">
+                    [readonly]="readonly" [showClear]="false" [appendTo]="appendTo"
+                    (onChange)="onValueChange($event.value)">
                 </p-dropdown>
                 <label>{{ label }}</label>
             </p-floatLabel>

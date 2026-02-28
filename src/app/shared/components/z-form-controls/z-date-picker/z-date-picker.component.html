@@ -2,7 +2,8 @@
   <p-floatLabel>
     <p-calendar [styleClass]="styleClass" [formControlName]="control" [appShowValidationTooltip]="validationMessage"
       [dateFormat]="'dd-mm-yy'" [showIcon]="true" [iconDisplay]="'input'" [minDate]="minDate" [maxDate]="maxDate"
-      [readonlyInput]="readonly" (onSelect)="onDateSelect($event)"></p-calendar>
+      [readonlyInput]="readonly" [placeholder]="placeholder" [appendTo]="'body'" [autoZIndex]="true" [baseZIndex]="2000"
+      (onSelect)="onDateSelect($event)"></p-calendar>
     <label>{{ label }}</label>
   </p-floatLabel>
 </div>

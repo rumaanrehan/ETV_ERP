@@ -5,7 +5,7 @@ import { Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/
   standalone: true
 })
 export class ShowValidationTooltipDirective {
-  @Input('appShowValidationTooltip') validationMessage: string | undefined = '';
+  @Input('appShowValidationTooltip') validationMessage: unknown = '';
   private focusableElement: HTMLElement | null = null;
 
   constructor(
@@ -51,7 +51,8 @@ export class ShowValidationTooltipDirective {
   // }
 
   private showTooltip() {
-    if (!this.validationMessage) return;
+    const message = this.normalizeMessage(this.validationMessage);
+    if (!message) return;
 
     const hostEl = this.el.nativeElement;
     const rect = hostEl.getBoundingClientRect();
@@ -72,12 +73,26 @@ export class ShowValidationTooltipDirective {
     const tooltip = this.renderer.createElement('span');
     this.renderer.addClass(tooltip, 'validation-tooltip');
 
-    const text = this.renderer.createText(this.validationMessage);
+    const text = this.renderer.createText(message);
     this.renderer.appendChild(tooltip, text);
     this.renderer.appendChild(tooltipContainer, tooltip);
 
     // APPEND TO BODY (not parent!)
     this.renderer.appendChild(document.body, tooltipContainer);
+  }
+
+  private normalizeMessage(value: unknown): string | null {
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      return trimmed.length ? trimmed : null;
+    }
+
+    if (Array.isArray(value)) {
+      const firstString = value.find(v => typeof v === 'string' && v.trim().length);
+      return typeof firstString === 'string' ? firstString.trim() : null;
+    }
+
+    return null;
   }
 
 

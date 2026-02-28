@@ -51,7 +51,7 @@ export interface DataViewDef<T> {
 }
 
 export interface DataViewLazyLoadEvent {
-    first?: number;
+    first: number;
     rows?: number;
     sortField?: string | string[] | null | undefined;
     sortOrder?: number | undefined | null;
