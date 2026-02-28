@@ -1,3 +1,7 @@
+:host-context([data-theme-mode="dark"]) ::ng-deep .z-datatable-root .p-datatable-tbody>tr>td,
+:host-context([data-theme-mode="dark"]) ::ng-deep .z-datatable-root .p-datatable-thead>tr>th {
+    color: #fff !important;
+}
 :host {
     display: flex;
     flex-direction: column;
