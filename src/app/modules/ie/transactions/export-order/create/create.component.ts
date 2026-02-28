@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 import { AutoCompleteDef } from '../../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { ZFileUploadComponent } from "../../../../../shared/components/z-form-controls/z-file-upload/z-file-upload.component";
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
 import { TableDef } from '../../../../../shared/components/z-table/z-table';
 import { ZTableComponent } from '../../../../../shared/components/z-table/z-table.component';
@@ -32,7 +33,7 @@ import { ExportOrderService } from '../export-order.service';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZTableComponent],
+  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZTableComponent, ZFileUploadComponent],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
@@ -73,8 +74,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   isLoadPaymentVisible: boolean = true;
   isFromSalesQuotation = false;
   IsDocumentAlreadyExists = false;
+  IsPOUploaded = false;
   isAddProductBtnLoading: boolean = false;
   disablePrintButton: boolean = false;
+  uploadingInvoice = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrder>;
@@ -121,6 +124,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.exportOrderDocumentTableDef = this.pageService.getExportOrderDocumentTableDef({ SerialNoTemplate: this.serialNoColTemplate, IsVerfiedTemplate: this.isDocumentVerifiedTemplate, UpdateDateTemplate: this.documentUploadDateTemplate, ActionTemplate: this.documentActionColTemplate } as ExportOrderDocumentTemplate);
     this.exportOrderPaymentTableDef = this.pageService.getExportOrderPaymentTableDef({ SerialNoTemplate: this.serialNoColTemplate, PaymentDateTemplate: this.paymentDateTemplate, ActionTemplate: this.paymentActionColTemplate } as ExportOrderPaymentTemplate);
     this.tableDef = {
+      tableHeader: "Product List",
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "20%", customTemplate: this.productAutoCompleteColTemplate },
@@ -521,6 +525,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       ProductID: event.ProductID,
       ProductName: event.ProductName,
       UOM: event.UOM,
+      HSCode: event.HSCode,
       SalesTaxRate: event.PurTaxRate
     });
 
@@ -799,6 +804,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.statusText = response.Data.StatusText!;
             this.statusHex = response.Data.StatusHex!;
             this.IsDocumentAlreadyExists = response.Data.IsDocumentAlreadyExists!;
+            this.IsPOUploaded = response.Data.IsPOUploaded!;
             response.Data.ProductList.Items.forEach(item => {
               const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
               productItemForm.patchValue(item);
@@ -867,6 +873,44 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
+  // uploadInvoiceDocument(exportOrderID: number): void {
+  //   this.navContextService.set('export-order-document-upload', exportOrderID);
+  //   this.router.navigate([`/ie/export-order/upload-document`]);
+  // }
+
+  uploadPO(event: File | File[]): void {
+    const file = Array.isArray(event) ? event[0] : event;
+    if (!file || this.uploadingInvoice || !this.isEditMode) return;
+
+    const formData = new FormData();
+    formData.append('DocumentFile', file);
+    formData.append('ExportOrderID', this.form.get("ExportOrderID")?.value);
+    console.log("FormData prepared for upload:", formData);
+    this.uploadingInvoice = true;
+    try {
+      this.pageService.UploadPODocument(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.alertService.showAlert({
+              type: 'success',
+              text: response.Message,
+              timer: 5000
+            });
+            this.ngOnInit();
+          } else {
+            this.alertService.showServerResponseAlert(response);
+            this.uploadingInvoice = false;
+          }
+        },
+      });
+    }
+    catch (error) {
+      this.uploadingInvoice = false;
+    }
+  }
+
   onClickLoadDocuments(): void {
     this.route.params.subscribe((params) => {
       const exportOrderID = +params['id'];
@@ -877,9 +921,11 @@ export class CreateComponent implements OnInit, OnDestroy {
             .subscribe({
               next: (response) => {
                 if (response.IsSuccess) {
-                  this.exportOrderDocumentTableDef.data = response.Data.Items;
+                  this.exportOrderDocumentTableDef.data = [];
+                  this.exportOrderDocumentTableDef.data = response.Data.Items ?? [];
                   this.isLoadDocumentVisible = false
                 } else {
+                  this.exportOrderDocumentTableDef.data = [];
                   this.alertService.showServerResponseAlert(response);
                 }
               },

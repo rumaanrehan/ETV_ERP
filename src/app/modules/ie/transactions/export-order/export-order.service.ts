@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { Environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
 import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
@@ -56,7 +58,8 @@ export class ExportOrderService {
     private employeeRegistrationService: EmployeeRegistrationService,
     private portService: PortMasterService,
     private selectListService: SelectListService,
-    private currencyExchangeService: CurrencyExchangeService
+    private currencyExchangeService: CurrencyExchangeService,
+    private http: HttpClient
   ) { }
 
   GetMasterDropdownLists(): Observable<{
@@ -167,6 +170,10 @@ export class ExportOrderService {
 
   CancelOrder(model: ExportOrderCancelRequest): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  UploadPODocument(formData: FormData): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${Environment.apiBaseUrl}/${this.endpoint}/POUpload`, formData);
   }
 
   BulkChangeStatus(model: ExportOrderBulkUpdateRequest): Observable<ApiResponse> {
@@ -714,7 +721,7 @@ export class ExportOrderService {
         label: 'Packing List No',
         defaultValue: "NEW"
       },
-      ExportOrderID: {  
+      ExportOrderID: {
         label: 'Order No',
         defaultValue: null
       },
@@ -722,7 +729,7 @@ export class ExportOrderService {
         label: 'Export Order No',
         defaultValue: null
       },
-      CustomerName: { 
+      CustomerName: {
         label: 'Company Name',
         defaultValue: null
       },
@@ -738,7 +745,7 @@ export class ExportOrderService {
       PackingIdentityID: {
         label: 'Packing Identity',
         defaultValue: null,
-        validators: [Validators.required],  
+        validators: [Validators.required],
         validationMessages: {
           required: "Packing Identity is required."
         },
@@ -799,7 +806,7 @@ export class ExportOrderService {
             },
             type: 'control'
           },
-          BoxWeight: {  
+          BoxWeight: {
             label: 'Weight',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
