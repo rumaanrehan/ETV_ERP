@@ -1,3 +1,7 @@
+// Override margin-block-start for .app-content globally
+.app-content {
+  margin-block-start: 0.7rem !important;
+}
 /*Main Sidebar Start*/
 .main-sidebar {
   padding-block-end: 1.875rem;
@@ -13,6 +17,10 @@
   position: sticky;
   top: 3.125rem;
   // box-shadow: 0 2px 5px rgba(40, 90, 185, .1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+ padding-bottom: 0.5rem;
 }
 
 .btn-page-header {
