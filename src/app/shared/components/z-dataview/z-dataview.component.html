@@ -1,6 +1,6 @@
 <!-- <div style="height: calc(100vh - var(--z-dataview-viewport-offset)); padding-bottom: 0rem;"> -->
 <div>
-    <p-dataView *ngIf="dataViewDef" #dv [value]="dataViewDef.data" [rows]="6" [totalRecords]="dataViewDef.totalRecords"
+    <p-dataView *ngIf="dataViewDef" #dv [value]="dataViewDef.data" [rows]="10" [totalRecords]="dataViewDef.totalRecords"
         [paginator]="true" [lazy]="true" (onLazyLoad)="loadData($event)" [layout]="'list'">
         <ng-template pTemplate="header">
             <div class="index-table-action-bar">
