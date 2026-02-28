@@ -289,12 +289,17 @@
 
 .simple-field.simple-field-table {
     gap: 0;
-    width: min(100%, 72rem);
-    margin-inline: auto;
-    margin-top: 3%;
+    width: 100% !important;
+    margin-inline: 0 !important;
+    margin-top: 0;
 
     .simple-control {
-        width: 100%;
+        width: 100% !important;
+    }
+    z-table {
+        width: 100% !important;
+        padding-inline: 0 !important;
+        box-sizing: border-box;
     }
 }
 
