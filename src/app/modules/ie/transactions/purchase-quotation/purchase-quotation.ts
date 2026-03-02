@@ -25,9 +25,6 @@ export interface PurchaseQuotation {
     NetAmountBC: number | null;
     IsRoundOff: boolean | null;
     CoinAdjustment: number | null;
-
-    //AutoComplete releted fields
-    // ProductName: string | null;
 }
 
 export interface PurchaseQuotationDetail {
@@ -66,7 +63,6 @@ export interface PurchaseQuotation_IndexTableList {
     PurchaseQuotationID: number;
     PurchaseQuotationNo: string;
     PurchaseQuotationDate: string;
-    BasedOn: string;
     VendorName: string;
     NoOfProducts: number;
     ValidityDate: Date | null;

@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
+import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
+import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
+import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
-import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
-import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
-import { PurchaseQuotation_IndexTableList, PurchaseQuotation_IndexTableFilter, PurchaseQuotation_IndexTableSort, PurchaseQuotation } from '../purchase-quotation';
+import { PurchaseQuotation_IndexTableFilter, PurchaseQuotation_IndexTableList, PurchaseQuotation_IndexTableSort } from '../purchase-quotation';
 import { PurchaseQuotationService } from '../purchase-quotation.service';
 
 @Component({
@@ -28,7 +28,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
-  componentRef?: ComponentRef<any>;
+  // componentRef?: ComponentRef<any>;
 
   dataViewDef!: DataViewDef<PurchaseQuotation_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
@@ -75,15 +75,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
       { fieldName: 'BasedOn', targetList: 'basedOnList' }
 
     ]);
-    // this.pageService.GetMasterDropdownLists()
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe({
-    //     next: (data) => {
-    //       this.paymentTermList = data.paymentTermList.Data.Items;
-    //       this.taxSlabList = data.taxSlabList.Data.Items;
-    //       this.currencyList = data.currencyList.Data.Items;
-    //     },
-    //   });
   }
 
   loadStaticLists(listConfigs: { fieldName: string; targetList: keyof DataviewComponent }[]): void {
@@ -162,13 +153,13 @@ export class DataviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(PurchaseQuotationID: number) {
-    if (PurchaseQuotationID) {
-      this.router.navigate([`ie/purchase-quotation/edit/${PurchaseQuotationID}`]);
+  onClickEditDetails(purchaseQuotationID: number) {
+    if (purchaseQuotationID) {
+      this.router.navigate([`ie/purchase-quotation/edit/${purchaseQuotationID}`]);
     }
   }
 
-  onClickCancel(PurchaseQuotationID: number) {
+  onClickCancel(purchaseQuotationID: number) {
     this.alertService
       .showConfirmationWithInput({
         text: 'Do you want to cancel?',
@@ -176,7 +167,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          this.pageService.CancelQuotation(PurchaseQuotationID, result.value)
+          this.pageService.CancelQuotation(purchaseQuotationID, result.value)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
@@ -197,6 +188,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
   }
 
   formatDate(date: Date) {
-    return DateUtils.formatDate(date);
+    return DateUtils.toDate(date);
   }
 }

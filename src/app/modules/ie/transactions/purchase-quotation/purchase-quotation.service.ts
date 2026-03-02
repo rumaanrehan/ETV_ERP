@@ -178,17 +178,17 @@ export class PurchaseQuotationService {
         }
       },
       PurchaseQuotationDate: {
-              label: 'Quotation Date',
-              defaultValue: new Date(),
-              validators: [Validators.required, LessThanOrEqual("ValidityDate")],
-              validationMessages: {
-                required: "Quotation Date is required.",
-                lessThanOrEqual: "Quotation Date should be less than Validity Date."
-              },
-              type: 'control'
-            },
+        label: 'Quotation Date',
+        defaultValue: new Date(),
+        validators: [Validators.required, LessThanOrEqual("ValidityDate")],
+        validationMessages: {
+          required: "Quotation Date is required.",
+          lessThanOrEqual: "Quotation Date should be less than Validity Date."
+        },
+        type: 'control'
+      },
       VendorID: {
-        label: 'Vendor ID',
+        label: 'Vendor',
         defaultValue: null,
         validators: [Validators.required],
         validationMessages: {
@@ -213,15 +213,15 @@ export class PurchaseQuotationService {
         label: 'Purchase Requisition No',
         defaultValue: null
       },
-            ValidityDate: {
-              label: 'Validity Date',
-              defaultValue: null,
-              validators: [GreaterThanOrEqual('PurchaseQuotationDate')],
-              validationMessages: {
-                greaterThanOrEqual: "Validity Date should be greater than Quotation Date."
-              },
-              type: 'control'
-            },
+      ValidityDate: {
+        label: 'Validity Date',
+        defaultValue: null,
+        validators: [GreaterThanOrEqual('PurchaseQuotationDate')],
+        validationMessages: {
+          greaterThanOrEqual: "Validity Date should be greater than Quotation Date."
+        },
+        type: 'control'
+      },
       FCurrencyID: {
         label: 'Foreign Currency',
         defaultValue: null,
@@ -256,7 +256,6 @@ export class PurchaseQuotationService {
           required: "Incoterm id Required"
         }
       },
-
       ProductList: {
         type: 'array',
         items: {
@@ -278,15 +277,6 @@ export class PurchaseQuotationService {
             },
             type: 'control'
           },
-          // ProductName: {
-          //   label: '',
-          //   defaultValue: null,
-          //   validators: [Validators.required],
-          //   validationMessages: {
-          //     required: "Product name is required"
-          //   },
-          //   type: 'control'
-          // },
           UOM: {
             label: 'Measurement Unit',
             defaultValue: null
@@ -302,18 +292,18 @@ export class PurchaseQuotationService {
             // },
             // type: 'control'
           },
-                    QuotedQty: {
-                      label: '',
-                      defaultValue: null,
-                      validators: [Validators.required, Validators.min(1), Validators.max(99999), noFractionValidator()],
-                      validationMessages: {
-                        required: "Quoted quantity is required.",
-                        min: "Requested Qty must be at least 1.",
-                        max: "Requested Qty cannot exceed 99999.",
-                        noFraction: "Quoted quantity cannot have fractions."
-                      },
-                      type: 'control'
-                    },
+          QuotedQty: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1), Validators.max(99999), noFractionValidator()],
+            validationMessages: {
+              required: "Quoted quantity is required.",
+              min: "Requested Qty must be at least 1.",
+              max: "Requested Qty cannot exceed 99999.",
+              noFraction: "Quoted quantity cannot have fractions."
+            },
+            type: 'control'
+          },
           TaxRate: {
             label: '',
             defaultValue: null,
@@ -322,17 +312,17 @@ export class PurchaseQuotationService {
               required: "Tax rate is required"
             }
           },
-                    RatePerUnitFC: {
-                      label: '',
-                      defaultValue: null,
-                      validators: [Validators.required, NonZero(), Validators.max(10000000)],
-                      validationMessages: {
-                        required: "Rate in foreign currency is required.",
-                        nonZero: "Rate per unit cannot be 0.",
-                        max: "Maximum Rate Per Unit allowed is 10,000,000."
-                      },
-                      type: 'control'
-                    },
+          RatePerUnitFC: {
+            label: '',
+            defaultValue: null,
+            validators: [Validators.required, NonZero(), Validators.max(10000000)],
+            validationMessages: {
+              required: "Rate in foreign currency is required.",
+              nonZero: "Rate per unit cannot be 0.",
+              max: "Maximum Rate Per Unit allowed is 10,000,000."
+            },
+            type: 'control'
+          },
           RatePerUnitBC: {
             label: '',
             defaultValue: null,
@@ -452,38 +442,24 @@ export class PurchaseQuotationService {
         },
         type: 'control'
       },
-          NetAmountBC: {
-            label: '',
-            defaultValue: null,
-            validators: [Validators.required, NonZero()],
-            validationMessages: {
-              required: "Amounts are not converted into base currency.",
-              nonZero: "Net Amount cannot be 0."
-            },
-            type: 'control'
-          },
-        
+      NetAmountBC: {
+        label: '',
+        defaultValue: null,
+        validators: [Validators.required, NonZero()],
+        validationMessages: {
+          required: "Amounts are not converted into base currency.",
+          nonZero: "Net Amount cannot be 0."
+        },
+        type: 'control'
+      },        
       IsRoundOff: {
         label: 'Round Off',
         defaultValue: true
       },
-                CoinAdjustment: {
+      CoinAdjustment: {
         label: 'Round Off',
         defaultValue: null
-      },
-      // ProductID: {
-      //   label: '',
-      //   defaultValue: null
-      // },
-      //     ProductName: {
-      //       label: '',
-      //       defaultValue: null,
-      //       validators: [Validators.required],
-      //       validationMessages: {
-      //         required: "Product name is required."
-      //       },
-      //       type: 'control'
-      //     },      
+      },    
     };
   }
 
@@ -502,23 +478,6 @@ export class PurchaseQuotationService {
       ],
     }
   }
-
-  // getCompanyMasterAutoCompleteDef(formConfig: FormConfigType<PurchaseQuotation>, form: FormGroup): AutoCompleteDef<Company_SelectList> {
-  //   return {
-  //     type: 'formControl',
-  //     group: form,
-  //     control: 'VendorName',
-  //     label: formConfig.VendorName.label,
-  //     validationMessage: formConfig.VendorName.error,
-  //     placeholder: 'Search Vendor',
-  //     options: [],
-  //     optionLabel: 'CompanyName',
-  //     columns: [
-  //       { data: 'CompanyCode', label: 'Code', width: '150px' },
-  //       { data: 'CompanyName', label: 'Name', width: '150px' }
-  //     ],
-  //   }
-  // }
 
   getCompanyMasterAutoCompleteDef(formConfig: FormConfigType<PurchaseQuotation>, form: FormGroup): AutoCompleteDef<Company_SelectList> {
     return {

@@ -13,8 +13,7 @@
               <div class="row">
                 <!-- Order Details -->
                 <div class="col-xl-2 form-group px-2">
-                  <z-span [text]="form.get('PurchaseQuotationNo')?.value"
-                    [label]="formConfig.PurchaseQuotationNo.label"></z-span>
+                  <z-span [text]="form.get('PurchaseQuotationNo')?.value" [label]="formConfig.PurchaseQuotationNo.label"></z-span>
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
@@ -23,8 +22,7 @@
                 </div>
                 <div class="col-xl-6"></div>
                 <div class="col-xl-2 form-group px-2">
-                  <z-datepicker [group]="form" [control]="'PurchaseQuotationDate'"
-                    [label]="formConfig.PurchaseQuotationDate.label"
+                  <z-datepicker [group]="form" [control]="'PurchaseQuotationDate'" [label]="formConfig.PurchaseQuotationDate.label"
                     [validationMessage]="formConfig.PurchaseQuotationDate.error"></z-datepicker>
                 </div>
 
@@ -64,7 +62,6 @@
                 <div class="col-xl-2 form-group px-2">
                   <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'"
                     [label]="formConfig.ExchangeRateToBC.label"(onChange)="ProductCalculation()"  [maxFractionDigits]=8></z-inputnumber>
-
                 </div>
                 <div class="col-xl-2 form-group px-2">
                   <z-datepicker [group]="form" [control]="'ValidityDate'" [label]="formConfig.ValidityDate.label"
@@ -86,8 +83,7 @@
                 <!-- Payment & Shipment -->
                 <div class="col-xl-2 form-group px-2">
                   <z-select [group]="form" [control]="'PaymentTermID'" [label]="formConfig.PaymentTermID.label"
-                    [options]="paymentTermList" [optionLabel]="'PaymentTermName'"
-                    [optionValue]="'PaymentTermID'"></z-select>
+                    [options]="paymentTermList" [optionLabel]="'PaymentTermName'" [optionValue]="'PaymentTermID'"></z-select>
                 </div>
                 <div class="col-md-6 form-group px-3">
                   <z-textarea [group]="form" [control]="'Narration'" [label]="formConfig.Narration.label"></z-textarea>
@@ -104,7 +100,7 @@
       </form>
       <div class="col-12 d-flex justify-content-end">
           <div class="card pt-2 pb-2 mb-2 col-auto">
-              <div class="px-2 d-flex flex-column gap-2">
+            <div class="px-2 d-flex flex-column gap-2">
               <div class="d-flex justify-content-between align-items-center">
                   <p class="mb-0">Subtotal Amount: </p>
                   <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'" [label]="formConfig.SubtotalAmountFC.label"
@@ -120,7 +116,7 @@
                   <z-inputnumber [group]="form" [control]="'NetAmountFC'" [label]="formConfig.NetAmountFC.label"
                   [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
               </div>
-              </div>
+            </div>
           </div>
       </div>
     </div>
