@@ -64,7 +64,7 @@ z-dataview {
 }
 
 :host ::ng-deep .p-dataview-content {
-    height: calc(68vh - var(--sales-enquiry-selection-bar-height, 0px));
+    // height: calc(68vh - var(--sales-enquiry-selection-bar-height, 0px));
     overflow-y: auto;
 }
 
