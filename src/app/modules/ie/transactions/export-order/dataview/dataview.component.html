@@ -97,3 +97,5 @@
 </ng-template>
 
 <ng-template #container></ng-template>
+
+<app-packing-list *ngIf="showPackingListDialog" (closeDialogBoxEvent)="onCloseSidebar()"></app-packing-list>

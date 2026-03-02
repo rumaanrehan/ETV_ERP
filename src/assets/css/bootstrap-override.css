@@ -1,5 +1,15 @@
 :root{
-    --bs-primary-rgb: 0, 120, 212;
+    --bs-primary-rgb: var(--primary-rgb);
+    --bs-success-rgb: var(--success-rgb);
+    --bs-info-rgb: var(--info-rgb);
+    --bs-warning-rgb: var(--warning-rgb);
+    --bs-danger-rgb: var(--danger-rgb);
+
+    --bs-body-bg: var(--default-background);
+    --bs-body-color: var(--default-text-color);
+    --bs-secondary-color: var(--text-muted);
+    --bs-border-color: var(--default-border);
+
     --bs-border-radius: var(--default-radius);
 }
 

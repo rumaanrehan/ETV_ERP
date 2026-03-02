@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DataViewLazyLoadEvent, DataViewModule } from 'primeng/dataview';
 import { SelectButtonModule } from "primeng/selectbutton";
@@ -71,16 +71,19 @@ export class ZDataviewComponent<T> {
     return field.includes('Date') ? 'Newest first' : 'Z to A';
   }
 
-  // @HostListener('document:click', ['$event'])
-  // onDocumentClick(event: MouseEvent): void {
-  //   if (
-  //     this.isSortPanelVisible &&
-  //     this.sortingPanel &&
-  //     !this.sortingPanel.nativeElement.contains(event.target)
-  //   ) {
-  //     this.isSortPanelVisible = false;
-  //   }
-  // }
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const isClickInsideSort = this.sortingPanel?.nativeElement.contains(target);
+    const isClickInsideFilter = this.filterPanel?.nativeElement.contains(target);
+    const isClickOnToggle = target.closest('.refresh-filter') || target.closest('.filter-toggle');
+    const isClickInsideOverlay = target.closest('.p-dropdown-panel') || target.closest('.p-multiselect-panel') || target.closest('.p-datepicker') || target.closest('.p-overlay');
+
+    if (!isClickInsideSort && !isClickInsideFilter && !isClickOnToggle && !isClickInsideOverlay) {
+      this.isSortPanelVisible = false;
+      this.isFilterPanelVisible = false;
+    }
+  }
 
   loadData(event: DataViewLazyLoadEvent) {
     this.dataViewLazyLoadEvent = {
@@ -124,6 +127,15 @@ export class ZDataviewComponent<T> {
   }
 
   refreshData() {
+    if (!this.dataViewLazyLoadEvent) {
+      this.dataViewLazyLoadEvent = {
+        first: 1,
+        rows: 25,
+        sortField: null,
+        sortOrder: null
+      } as any;
+    }
+    this.dataViewDef.loading = true;
     setTimeout(() => {
       this.lazyLoad.emit(this.dataViewLazyLoadEvent);
     }, 1);

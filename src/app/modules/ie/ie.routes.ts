@@ -37,7 +37,7 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: 'index',
-                loadComponent: () => import('./transactions/sales-enquiry/dataview/dataview.component').then((m) => m.DataviewComponent),
+                loadComponent: () => import('./transactions/sales-enquiry/index/index.component').then((m) => m.SalesEnquiryIndexComponent),
                 data: {
                   permission: 'CanRead',
                   menu: 'IE/SalesEnquiry',

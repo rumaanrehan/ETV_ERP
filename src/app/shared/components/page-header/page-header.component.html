@@ -1,11 +1,7 @@
 <!-- page header Start -->
 <div class="d-flex d-block align-items-center justify-content-between page-header-breadcrumb">
-  <div>
-    <ng-container *ngIf="pageHeaderActionTemplate">
-      <ng-container *ngTemplateOutlet="pageHeaderActionTemplate"></ng-container>
-    </ng-container>
-  </div>
-  <nav>
+  <nav class="ms-3">
+
     <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item d-flex align-items-center">
         <a routerLink="/home">Home</a>
@@ -19,4 +15,9 @@
       </li>
     </ol>
   </nav>
+  <div>
+    <ng-container *ngIf="pageHeaderActionTemplate">
+      <ng-container *ngTemplateOutlet="pageHeaderActionTemplate"></ng-container>
+    </ng-container>
+  </div>
 </div>
