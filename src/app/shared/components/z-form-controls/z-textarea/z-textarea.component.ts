@@ -13,6 +13,7 @@ import { ShowValidationTooltipDirective } from '../../../layouts/directives/show
 })
 export class ZTextareaComponent {
   @Input() styleClass: string = '';
+  @Input() autoResize: boolean = false;
   @Input() group!: FormGroup;
   @Input() control: string = '';
   @Input() label: string = '';

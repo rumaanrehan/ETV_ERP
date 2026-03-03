@@ -18,6 +18,13 @@
     --zdt-text-strong: #f8fafc;
     --zdt-muted: #94a3b8;
 }
+
+.z-dataview-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
 :host {
     display: flex;
     flex-direction: column;

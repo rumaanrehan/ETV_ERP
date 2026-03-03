@@ -99,14 +99,14 @@
 
 /* Base pill button */
 .toolbar-btn {
-    height: 25px;
+    height: 30px;
     padding: 0 1rem;
     border-radius: 5px;
     border: 1px solid var(--default-border);
     background: var(--background-tertiary);
     color: var(--default-text-color);
-    font-size: 0.78rem;
-    font-weight: 450;
+    font-size: 0.8rem;
+    font-weight: 500;
     line-height: 1;
     cursor: pointer;
     display: inline-flex;
@@ -166,7 +166,7 @@
 /* Back button: rounded-square, subtle surface */
 .toolbar-btn.back-btn {
     width: 27px;
-    height: 25px;
+    height: 30px;
     border-radius: 5px;
     border: 1px solid var(--default-border);
     background: var(--background-tertiary);
@@ -488,7 +488,6 @@
     .p-inputtext,
     .p-dropdown,
     .p-calendar .p-inputtext,
-    textarea,
     input {
         height: var(--se-field-height);
         border-radius: var(--se-field-radius);
@@ -517,7 +516,11 @@
 
     textarea {
         min-height: var(--se-field-height);
+        height: auto;
         resize: none;
+        overflow: hidden;
+        padding: 0.45rem 0.75rem;
+        line-height: 1.25rem;
     }
 
     .simple-static {
@@ -602,6 +605,42 @@
             width: 100%;
         }
 
+        /* Make autocomplete clear (x) icon appear inside the input */
+        .page-table .action-input-group z-autocomplete .input-group {
+            position: relative;
+        }
+
+        .page-table .action-input-group z-autocomplete .p-autocomplete-input,
+        .page-table .action-input-group z-autocomplete input.p-autocomplete-input {
+            padding-right: 2.25rem !important;
+        }
+
+        .page-table .action-input-group z-autocomplete .input-group-addon {
+            position: absolute;
+            right: 0.6rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+
+            height: auto !important;
+            width: auto !important;
+            padding: 0 !important;
+
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            line-height: 1;
+        }
+
+        .page-table .action-input-group z-autocomplete .input-group-addon i {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .page-table .action-input-group z-autocomplete .input-group-addon:hover i {
+            color: var(--heading-text-color);
+        }
+
         .page-table .action-input-group > .col-11 {
             flex: 1 1 auto;
             min-width: 0;
@@ -648,11 +687,11 @@
 }
 
 .table-add-row {
-    width: min(100%, 72rem);
+    width: 100%;
     margin-inline: auto;
     padding: 0 0.75rem 1rem;
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex-end;
 }
 
 .table-add-row .simple-btn {

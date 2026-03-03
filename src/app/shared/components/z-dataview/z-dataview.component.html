@@ -102,7 +102,9 @@
         </ng-template>
 
         <ng-template let-products pTemplate="list">
-            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: products }"></ng-container>
+            <div class="z-dataview-list">
+                <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: products }"></ng-container>
+            </div>
         </ng-template>
 
 

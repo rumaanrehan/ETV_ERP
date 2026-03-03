@@ -1,0 +1,63 @@
+:host-context([data-theme-mode="dark"]) .btn-page-header.btn-md,
+:host-context([data-theme-mode="dark"]) .btn-add-proforma-invoice.btn.btn-primary {
+    background: rgba(56, 189, 248, 0.18) !important;
+    border-color: #38bdf8 !important;
+    color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-page-header.btn-md:hover,
+:host-context([data-theme-mode="dark"]) .btn-add-proforma-invoice.btn.btn-primary:hover {
+    background: rgba(56, 189, 248, 0.28) !important;
+    border-color: #38bdf8 !important;
+    color: #38bdf8 !important;
+}
+
+:host ::ng-deep .btn-add-proforma-invoice.btn.btn-primary {
+    background: rgba(var(--primary-rgb), 0.20) !important;
+    border-color: rgba(var(--primary-rgb), 0.25) !important;
+    color: var(--primary-color) !important;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep .btn-add-proforma-invoice.btn.btn-primary i {
+    color: var(--primary-color) !important;
+}
+
+:host ::ng-deep .btn-add-proforma-invoice.btn.btn-primary:hover,
+:host ::ng-deep .btn-add-proforma-invoice.btn.btn-primary:focus {
+    background: rgba(var(--primary-rgb), 0.28) !important;
+    border-color: rgba(var(--primary-rgb), 0.35) !important;
+    color: var(--primary-color) !important;
+}
+
+:host ::ng-deep .btn-add-proforma-invoice.btn.btn-primary:active {
+    background: rgba(var(--primary-rgb), 0.32) !important;
+}
+
+/* Match Sales Enquiry index "Create" button sizing */
+.btn-page-header.btn-md {
+    height: 30px;
+    padding: 1rem 1rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    color: rgba(var(--primary-rgb), 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.25) !important;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    i {
+        font-size: 0.75rem;
+        transition: none;
+    }
+}
