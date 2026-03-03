@@ -111,7 +111,7 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.Note.label}}:</label>
         <div class="simple-control">
-          <z-textarea [group]="form" [control]="'Note'" [label]="''" [placeholder]="'Optional'"
+          <z-textarea [group]="form" [control]="'Note'" [autoResize]="true" [label]="''" [placeholder]="'Optional'"
             [validationMessage]="formConfig.Note.error"></z-textarea>
         </div>
       </div>
