@@ -2,7 +2,6 @@
 :host ::ng-deep .p-dataview-content {
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
-    height: calc(100vh - 174px - var(--sales-enquiry-selection-bar-height, 48px));
 }
 :host ::ng-deep .p-paginator-bottom {
     margin-bottom: 0 !important;

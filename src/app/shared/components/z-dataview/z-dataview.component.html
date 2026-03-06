@@ -1,7 +1,10 @@
 <!-- <div style="height: calc(100vh - var(--z-dataview-viewport-offset)); padding-bottom: 0rem;"> -->
-<div>
-    <p-dataView *ngIf="dataViewDef" #dv [value]="dataViewDef.data" [rows]="10" [totalRecords]="dataViewDef.totalRecords"
-        [paginator]="true" [lazy]="true" (onLazyLoad)="loadData($event)" [layout]="'list'">
+<div class="z-dataview-viewport">
+    <p-dataView *ngIf="dataViewDef" #dv [value]="dataViewDef.data" [first]="first" [rows]="rows"
+        [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="dataViewDef.totalRecords" [showCurrentPageReport]="true"
+        [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'" [showJumpToPageDropdown]="true"
+        [paginator]="true" [lazy]="true" [loading]="dataViewDef.loading" (onLazyLoad)="loadData($event)"
+        (onPage)="onPage($event)" [layout]="'list'" [styleClass]="'z-dataview-root'">
         <ng-template pTemplate="header">
             <div class="index-table-action-bar">
                 <div class="zdt-toolbar">

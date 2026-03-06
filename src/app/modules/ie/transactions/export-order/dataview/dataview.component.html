@@ -5,6 +5,7 @@
 </ng-template>
 
 <div class="col-xl-12 index-page-content">
+    @if (selectedExportOrders.length > 0) {
     <div class="index-action-bar">
         <div class="d-flex align-items-center gap-3">
             <!-- SELECT ALL -->
@@ -16,85 +17,99 @@
             </span>
         </div>
         <div class="col-6 index-action-bar-actions">
-            <button class="btn btn-primary" [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(1)">
+            <!-- BULK ACTIONS -->
+            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(1)">
+                <i class="pi pi-check-circle"></i>
                 Revert to Draft
             </button>
 
-            <button class="btn btn-primary" [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(5)">
+            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(5)">
+                <i class="pi pi-send"></i>
                 Mark as Dispatched
             </button>
 
-            <button class="btn btn-primary" [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(9)">
+            <button class="btn btn-danger d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(9)">
+                <i class="pi pi-ban m-0"></i>
                 Cancel
             </button>
         </div>
     </div>
+    }
     <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
         (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
     </z-dataview>
 </div>
 
 <ng-template #customTemplate let-exportOrders>
-    <div class="d-flex align-items-center gap-3" *ngFor="let item of exportOrders; let first = first">
-        <div class="d-flex align-items-center gap-2">
-            <!-- BULK SELECT -->
-            <p-checkbox binary="true" [(ngModel)]="item._selected" (onChange)="onSelectionChange(item)">
-            </p-checkbox>
-        </div>
-        <div class="w-100 p-3 dataview-item mb-3">
-            <div class="d-flex justify-content-between dataview-record-title">
-                <a (click)="onClickEditDetails(item.ExportOrderID)">
-                    <h5 class="primary-color mb-2">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
-                </a>
-                <div class="text-end d-flex align-items-center justify-content-end gap-2">
-                    <span class="badge bg-outline-primary" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
-                    <z-menu [menus]="getMenuOptions(item)" [styleClass]="'dataview-action-menu'">
-                    </z-menu>
+    <div class="eo-card" *ngFor="let item of exportOrders; let first = first">
+        <div class="dataview-item eo-card__body">
+            <div class="eo-card__top">
+                <!-- BULK SELECT -->
+                <p-checkbox class="eo-card__checkbox" binary="true" [(ngModel)]="item._selected"
+                    (onChange)="onSelectionChange(item)">
+                </p-checkbox>
+
+                <div class="eo-card__main">
+                    <div class="eo-card__head">
+                        <a class="eo-card__title-link" (click)="onClickEditDetails(item.ExportOrderID)">
+                            <h5 class="eo-card__title">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
+                        </a>
+                        <z-menu class="eo-card__menu" [menus]="getMenuOptions(item)" [styleClass]="'dataview-action-menu'">
+                        </z-menu>
+                    </div>
+
+                    <div class="eo-card__status">
+                        <span class="eo-card__badge" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
+                    </div>
                 </div>
             </div>
-            <div class="col-7">
-                <div class="d-flex flex-wrap justify-content-between">
-                    <div class="dataview-info-column">
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Order Date:</span>
-                            <span class="fs-6 text-secondary"> {{formatDate(item.ExportOrderDate)}} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Reference No:</span>
-                            <span class="fs-6 text-secondary"> {{item.ReferenceNo}} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Reference Date:</span>
-                            <span class="fs-6 text-secondary"> {{formatDate(item.ReferenceDate)}} </span>
-                        </div>
+
+            <div class="eo-card__grid">
+                <div class="eo-col">
+                    <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">Order Date</span>
+                        <span class="eo-field__value">{{formatDate(item.ExportOrderDate)}}</span>
                     </div>
-                    <div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Destination:</span>
-                            <span class="fs-6 text-secondary"> {{item.FinalDestination}} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Loading Port:</span>
-                            <span class="fs-6 text-secondary"> {{item.LoadingPortName}} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Final Destination:</span>
-                            <span class="fs-6 text-secondary"> {{item.FinalDestination}} </span>
-                        </div>
+                    <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">Reference No</span>
+                        <span class="eo-field__value">{{item.ReferenceNo}}</span>
                     </div>
-                    <div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Order Total:</span>
-                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }}{{ item.NetAmountFC |
-                                number:'1.2-2' }}
-                            </span>
-                        </div>
-                    </div><div class="col-md-3 pe-1">
-                        <button type="button" class="btn btn-md btn-primary w-100" (click)="onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)">
-                            {{item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details'}}
-                        </button>
+                    <div class="dataview-info-item eo-field eo-field--ref-date">
+                        <span class="eo-field__label">Reference Date</span>
+                        <span class="eo-field__value">{{formatDate(item.ReferenceDate)}}</span>
+                    </div>
+                    <div class="dataview-info-item eo-field eo-field--destination">
+                        <span class="eo-field__label">Destination</span>
+                        <span class="eo-field__value">{{item.FinalDestination}}</span>
                     </div>
                 </div>
+
+                <div class="eo-col">
+                    <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">Loading Port</span>
+                        <span class="eo-field__value">{{item.LoadingPortName}}</span>
+                    </div>
+                    <div class="dataview-info-item eo-field eo-field--final-destination">
+                        <span class="eo-field__label">Final Destination</span>
+                        <span class="eo-field__value">{{item.FinalDestination}}</span>
+                    </div>
+                    <div class="dataview-info-item eo-field eo-field--order-total">
+                        <span class="eo-field__label">Order Total</span>
+                        <span class="eo-field__value">
+                            {{ item.CurrencySymbol }}{{ item.NetAmountFC | number:'1.2-2' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="eo-card__footer">
+                <button type="button" class="btn btn-primary eo-card__cta"
+                    (click)="onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)">
+                    {{item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details'}}
+                </button>
             </div>
         </div>
     </div>
