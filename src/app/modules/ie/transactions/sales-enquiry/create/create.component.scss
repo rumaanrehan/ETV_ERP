@@ -99,8 +99,8 @@
 
 /* Base pill button */
 .toolbar-btn {
-    height: 30px;
-    padding: 0 1rem;
+    height: 36px;
+    padding: 0 1.15rem;
     border-radius: 5px;
     border: 1px solid var(--default-border);
     background: var(--background-tertiary);
@@ -153,8 +153,8 @@
 
 /* Icon-only buttons */
 .toolbar-btn.icon-btn {
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     justify-content: center;
 
@@ -165,8 +165,8 @@
 
 /* Back button: rounded-square, subtle surface */
 .toolbar-btn.back-btn {
-    width: 27px;
-    height: 30px;
+    width: 33px;
+    height: 36px;
     border-radius: 5px;
     border: 1px solid var(--default-border);
     background: var(--background-tertiary);

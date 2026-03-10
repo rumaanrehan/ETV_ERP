@@ -6,7 +6,7 @@
 
 <div class="col-xl-12 index-page-content">
     @if (selectedExportOrders.length > 0) {
-    <div class="index-action-bar">
+    <div class="index-action-bar selection-active">
         <div class="d-flex align-items-center gap-3">
             <!-- SELECT ALL -->
             <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
