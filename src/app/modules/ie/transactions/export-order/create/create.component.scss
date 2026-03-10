@@ -90,9 +90,10 @@
     box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.15);
 }
 
+/* Base pill button */
 .toolbar-btn {
-    height: 30px;
-    padding: 0 1rem;
+    height: 36px;
+    padding: 0 1.15rem;
     border-radius: 5px;
     border: 1px solid var(--default-border);
     background: var(--background-tertiary);
@@ -124,35 +125,29 @@
     }
 }
 
+/* Active / selected button */
 .toolbar-btn.is-active {
-    background: rgba(var(--primary-rgb), 0.92);
-    color: #ffffff !important;
-    border-color: rgba(var(--primary-rgb), 1);
-    box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.25);
-    font-weight: 600;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
-
-    &,
-    span,
-    i {
-        color: #ffffff !important;
-    }
+    background: rgba(var(--primary-rgb), 0.2);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: none;
 
     &:hover {
-        background: rgba(var(--primary-rgb), 1);
-        color: #ffffff !important;
-        filter: none;
+        background: rgba(var(--primary-rgb), 0.3);
+        color: #ffffff;
+        filter: brightness(1.05);
     }
 
     &:hover span,
     &:hover i {
-        color: #ffffff !important;
+        color: #0e0e0e;
     }
 }
 
+/* Icon-only buttons */
 .toolbar-btn.icon-btn {
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     justify-content: center;
 
@@ -161,20 +156,29 @@
     }
 }
 
+/* Back button: rounded-square, subtle surface */
 .toolbar-btn.back-btn {
-    width: 27px;
-    height: 30px;
+    width: 33px;
+    height: 36px;
     border-radius: 5px;
     border: 1px solid var(--default-border);
     background: var(--background-tertiary);
     color: var(--default-text-color);
 
+    // &:hover {
+    //     background: #e2e8f0;
+        // box-shadow: 0 6px 16px rgba(2, 6, 23, 0.08);
+    //     transform: none;
+    // }
+
     &:active {
         background: var(--list-hover-focus-bg);
+        // box-shadow: 0 3px 10px rgba(2, 6, 23, 0.08);
         transform: none;
     }
 }
 
+/* Disabled state */
 .toolbar-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;

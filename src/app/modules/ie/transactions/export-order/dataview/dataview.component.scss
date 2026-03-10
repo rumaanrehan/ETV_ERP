@@ -338,40 +338,30 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-field {
-    display: grid;
-    grid-template-columns: 1.1rem minmax(0, 1fr);
-    column-gap: 0.5rem;
-    row-gap: 0.15rem;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    align-items: flex-start;
     min-width: 0;
 }
 
 :host ::ng-deep .eo-field::before {
-    content: "";
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    width: 1.1rem;
-    height: 1.1rem;
-    margin-top: 0.05rem;
+    content: none !important;
+    display: none !important;
 }
 
 :host ::ng-deep .eo-field--destination::before,
 :host ::ng-deep .eo-field--final-destination::before {
-    content: "\e968"; /* pi-map-marker */
-    font-family: 'primeicons' !important;
-    font-size: 0.95rem;
-    color: #9ca3af;
+    content: none !important;
+    display: none !important;
 }
 
 :host ::ng-deep .eo-field--order-total::before {
-    content: "\e96b"; /* pi-dollar */
-    font-family: 'primeicons' !important;
-    font-size: 0.95rem;
-    color: #9ca3af;
+    content: none !important;
+    display: none !important;
 }
 
 :host ::ng-deep .eo-field__label {
-    grid-column: 2;
     font-size: 0.75rem; /* text-xs */
     color: #6b7280;
     margin: 0;
@@ -380,7 +370,6 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-field__value {
-    grid-column: 2;
     font-size: 0.875rem; /* text-sm */
     color: #111827;
     margin: 0;
@@ -389,10 +378,6 @@ z-dataview {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-:host ::ng-deep .eo-field--ref-date {
-    display: none;
 }
 
 :host ::ng-deep .eo-card__footer {

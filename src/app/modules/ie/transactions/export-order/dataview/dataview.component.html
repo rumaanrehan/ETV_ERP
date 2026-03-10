@@ -70,6 +70,10 @@
             <div class="eo-card__grid">
                 <div class="eo-col">
                     <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">Reference Date</span>
+                        <span class="eo-field__value">{{formatDate(item.ReferenceDate)}}</span>
+                    </div>
+                    <div class="dataview-info-item eo-field">
                         <span class="eo-field__label">Order Date</span>
                         <span class="eo-field__value">{{formatDate(item.ExportOrderDate)}}</span>
                     </div>
@@ -77,25 +81,21 @@
                         <span class="eo-field__label">Reference No</span>
                         <span class="eo-field__value">{{item.ReferenceNo}}</span>
                     </div>
-                    <div class="dataview-info-item eo-field eo-field--ref-date">
-                        <span class="eo-field__label">Reference Date</span>
-                        <span class="eo-field__value">{{formatDate(item.ReferenceDate)}}</span>
-                    </div>
-                    <div class="dataview-info-item eo-field eo-field--destination">
-                        <span class="eo-field__label">Destination</span>
-                        <span class="eo-field__value">{{item.FinalDestination}}</span>
-                    </div>
                 </div>
 
                 <div class="eo-col">
                     <div class="dataview-info-item eo-field">
                         <span class="eo-field__label">Loading Port</span>
-                        <span class="eo-field__value">{{item.LoadingPortName}}</span>
+                        <span class="eo-field__value">{{item.LoadingPortName || '-'}}</span>
                     </div>
-                    <div class="dataview-info-item eo-field eo-field--final-destination">
-                        <span class="eo-field__label">Final Destination</span>
+                    <div class="dataview-info-item eo-field eo-field--destination">
+                        <span class="eo-field__label">Destination</span>
                         <span class="eo-field__value">{{item.FinalDestination}}</span>
                     </div>
+                    <!-- <div class="dataview-info-item eo-field eo-field--final-destination">
+                        <span class="eo-field__label">Final Destination</span>
+                        <span class="eo-field__value">{{item.FinalDestination}}</span>
+                    </div> -->
                     <div class="dataview-info-item eo-field eo-field--order-total">
                         <span class="eo-field__label">Order Total</span>
                         <span class="eo-field__value">
