@@ -2,7 +2,7 @@
 <div class="z-dataview-viewport">
     <p-dataView *ngIf="dataViewDef" #dv [value]="dataViewDef.data" [first]="first" [rows]="rows"
         [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="dataViewDef.totalRecords" [showCurrentPageReport]="true"
-        [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'" [showJumpToPageDropdown]="true"
+        [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'"
         [paginator]="true" [lazy]="true" [loading]="dataViewDef.loading" (onLazyLoad)="loadData($event)"
         (onPage)="onPage($event)" [layout]="'list'" [styleClass]="'z-dataview-root'">
         <ng-template pTemplate="header">

@@ -1,3 +1,12 @@
+<div class="mobile-sidebar-topbar">
+  <a [routerLink]="['/home']" class="mobile-sidebar-topbar-logo">
+    <h4 class="mobile-sidebar-topbar-title m-0">IEMS</h4>
+  </a>
+  <button type="button" class="mobile-sidebar-topbar-toggle" aria-label="Toggle Sidebar" (click)="togglesidebar()">
+    <i class="bx bx-menu fs-24"></i>
+  </button>
+</div>
+
 <aside class="app-sidebar sticky" id="sidebar" [ngClass]="{ 'sticky-pin': scrolled }">
   <p-sidebar id="sidebar-scroll" styleClass="main-sidebar mt-0 w-100" [visible]="true" position="right"
     [showCloseIcon]="false" [closeOnEscape]="false" [blockScroll]="true" [modal]="false">
@@ -80,7 +89,7 @@
           <!-- Link Type -->
           @if (menuItem.MenuType === 'link') {
           <a class="side-menu__item" [routerLink]="[menuItem.Path]" routerLinkActive="active"
-            (click)="setNavActive($event, menuItem.Path ?? '')">
+            (click)="onMenuLinkClick($event, menuItem.Path ?? '')">
             <!-- @if (menuItem.Icon) {
                             <i class="side-menu__icon bx bx-{{ menuItem.Icon }}"></i>
                         } -->
@@ -109,7 +118,7 @@
               <!-- Link -->
               @if (child.MenuType === 'link') {
               <a class="side-menu__item" [routerLink]="[child.Path]" routerLinkActive="active"
-                (click)="setNavActive($event, child.Path ?? '')">
+                (click)="onMenuLinkClick($event, child.Path ?? '')">
                 {{ child.Title }}
               </a>
               }
@@ -128,7 +137,8 @@
                 @for (subChild of child.Children; track subChild) {
                 <li class="slide" [ngClass]="{ 'open': subChild.Active }">
                   @if (subChild.MenuType === 'link') {
-                  <a class="side-menu__item" [routerLink]="[subChild.Path]" routerLinkActive="active">
+                  <a class="side-menu__item" [routerLink]="[subChild.Path]" routerLinkActive="active"
+                    (click)="onMenuLinkClick($event, subChild.Path ?? '')">
                     {{ subChild.Title }}
                   </a>
                   }

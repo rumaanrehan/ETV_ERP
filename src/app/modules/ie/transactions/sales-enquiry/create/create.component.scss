@@ -366,12 +366,17 @@
 @media (max-width: 576px) {
     .simple-field {
         flex-direction: column;
+        align-items: stretch;
         gap: 0.25rem;
     }
 
     .simple-label {
         flex-basis: auto;
         line-height: 1.2;
+    }
+
+    .simple-control {
+        width: 100%;
     }
 }
 

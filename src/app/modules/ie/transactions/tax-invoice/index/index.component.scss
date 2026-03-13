@@ -1,3 +1,27 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.index-page-content {
+    padding: 0.0rem 0.0rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+z-datatable {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
 :host-context([data-theme-mode="dark"]) .btn-page-header.btn-md,
 :host-context([data-theme-mode="dark"]) .btn-add-tax-invoice.btn.btn-primary {
     background: rgba(56, 189, 248, 0.18) !important;
@@ -61,3 +85,4 @@
         transition: none;
     }
 }
+

@@ -1,5 +1,6 @@
-<div>
-  <p-table [value]="tableDef.data" [styleClass]="'p-paginator-striped'" [tableStyleClass]="'table page-table'"
+<div class="z-table-viewport">
+  <p-table [value]="tableDef.data" [styleClass]="'p-paginator-striped z-table-root'"
+    [tableStyleClass]="'table page-table z-table-table'"
     [scrollable]="false" [scrollHeight]="'flex'">
     <ng-template pTemplate="caption">
       <div class="index-table-action-bar">

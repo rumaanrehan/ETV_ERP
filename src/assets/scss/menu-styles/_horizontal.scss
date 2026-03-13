@@ -1,5 +1,5 @@
 [data-nav-layout="horizontal"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .sidemenu-layout-styles {
             display: none;
         }
@@ -57,7 +57,7 @@
         .horizontal-logo {
             padding: 0.85rem 0;
             display: block;
-            @media (min-width: 992px) {
+            @media (min-width: 768px) {
                 .header-logo {
                     img {
                         height: 2rem;

@@ -3,7 +3,7 @@
     @extend .icon-click;
 }
 .icon-click {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .app-sidebar {
             width: 5rem;
 
@@ -132,7 +132,7 @@
     }
 }
 [data-nav-layout="vertical"][data-nav-style="icon-click"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         &[data-toggled="icon-click-closed"] {
             .app-sidebar .main-menu{
                 >.slide {
