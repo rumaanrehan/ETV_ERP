@@ -159,6 +159,12 @@ export class AppSidebarComponent {
 
   togglesidebar() {
     let html = this.elementRef.nativeElement.ownerDocument.documentElement;
+
+    if (window.innerWidth < 768) {
+      html?.setAttribute('data-toggled', html?.getAttribute('data-toggled') === 'open' ? 'close' : 'open');
+      return;
+    }
+
     if (localStorage.getItem('data-toggled') == 'true') {
       document.querySelector('html')?.getAttribute('data-toggled') == 'icon-overlay-close';
     } else if (html?.getAttribute('data-vertical-style') == 'overlay') {
@@ -208,10 +214,6 @@ export class AppSidebarComponent {
         'data-toggled',
         html?.getAttribute('data-toggled') == 'icon-hover-closed' ? '' : 'icon-hover-closed'
       );
-    }
-
-    if (window.innerWidth <= 992) {
-      html?.setAttribute('data-toggled', html?.getAttribute('data-toggled') == 'open' ? 'close' : 'open');
     }
   }
 
@@ -307,6 +309,15 @@ export class AppSidebarComponent {
   }
 
   // Start of Set menu Active event
+  onMenuLinkClick(event: MouseEvent, currentPath: string) {
+    this.setNavActive(event, currentPath);
+
+    if (window.innerWidth <= 768) {
+      const html = this.elementRef.nativeElement.ownerDocument.documentElement;
+      html?.setAttribute('data-toggled', 'close');
+    }
+  }
+
   setNavActive(event: any, currentPath: string, menuData = this.menuItems) {
     if (event && event?.ctrlKey) {
       return;

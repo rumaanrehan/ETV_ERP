@@ -1,5 +1,5 @@
 [data-vertical-style="icontext"][data-toggled="icon-text-close"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         &:not([data-icon-text="open"]) {
             .app-sidebar {
                 position: absolute;
