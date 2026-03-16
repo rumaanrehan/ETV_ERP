@@ -598,20 +598,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  // GetproductTaxableAmountFC(): number {
-  //   return this.productListArray.controls.reduce((sum, group) => {
-  //     const value = group.get('TaxableAmountFC')?.value || 0;
-  //     return sum + value;
-  //   }, 0);
-  // }
-
-  // GetproductTaxAmountFCSum(): number {
-  //   return this.productListArray.controls.reduce((sum, group) => {
-  //     const value = group.get('TaxAmountFC')?.value || 0;
-  //     return sum + value;
-  //   }, 0);
-  // }
-
   OnSubmit(): void {
     if (this.isSubmitted) return;
 
@@ -629,7 +615,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
 
       const rawData = this.formService.transformFormData(this.form.value);
-      const { ProformaInvoiceNo, ExportOrderNo, CustomerName, ProductList, LoadingPortName, DischargePortName, ...cleanModel } = rawData;
+      const { ProformaInvoiceNo, ExportOrderNo, CustomerName, LoadingPortName, DischargePortName, ...cleanModel } = rawData;
       const model: ProformaInvoice = { ...cleanModel };
 
       if (this.form.invalid) {
