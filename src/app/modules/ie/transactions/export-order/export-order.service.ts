@@ -807,7 +807,7 @@ export class ExportOrderService {
             type: 'control'
           },
           BoxWeight: {
-            label: 'Weight',
+            label: 'Weight (Kg)',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
             validationMessages: {
@@ -817,7 +817,7 @@ export class ExportOrderService {
             type: 'control'
           },
           BoxGrossWeight: {
-            label: 'Gross Weight',
+            label: 'Gross Weight (Kg)',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
             validationMessages: {

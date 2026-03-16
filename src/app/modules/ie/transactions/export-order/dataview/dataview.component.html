@@ -57,7 +57,8 @@
                         <a class="eo-card__title-link" (click)="onClickEditDetails(item.ExportOrderID)">
                             <h5 class="eo-card__title">{{item.ExportOrderNo}} | {{item.CompanyName}}</h5>
                         </a>
-                        <z-menu class="eo-card__menu" [menus]="getMenuOptions(item)" [styleClass]="'dataview-action-menu'">
+                        <z-menu class="eo-card__menu" [menus]="getMenuOptions(item)"
+                            [styleClass]="'dataview-action-menu'">
                         </z-menu>
                     </div>
 

@@ -29,6 +29,9 @@ export class UserRolePermissionsService {
   async authorize(menu: string, action: 'CanCreate' | 'CanRead' | 'CanUpdate' | 'CanDelete'): Promise<'authorized' | 'unauthorized' | 'not_found'> {
     await this.waitForPermissions();
     const perms = this.permissions()[menu];
+    console.log(menu);
+    console.log(action);
+    console.log(perms);
     if(!perms){
       return 'not_found';
     }

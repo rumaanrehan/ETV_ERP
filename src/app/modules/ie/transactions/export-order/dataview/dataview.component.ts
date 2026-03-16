@@ -476,6 +476,11 @@ export class DataviewComponent implements OnInit, OnDestroy {
         label: 'Letter of Credit',
         icon: 'pi pi-envelope',
         command: () => this.handleComponentLoad('LetterOfCreditCreateComponent', item)
+      },
+      {
+        label: item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details',
+        icon: 'pi pi-box',
+        command: () => this.onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)
       }
     )
 

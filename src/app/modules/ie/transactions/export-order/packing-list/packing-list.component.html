@@ -1,10 +1,15 @@
 <app-form-dialog
   [visible]="isFormDialogVisible"
-  [title]="'Packing List'"
   [width]="'75%'">
 
-  <div formDialogHeader>
-    <h4 class="m-0">Packing List</h4>
+  <div formDialogHeader class="packing-dialog-header w-100 d-flex align-items-center justify-content-between pe-2">
+    <h4 class="m-1">Packing List</h4>
+
+    <div>              
+      <button type="button" class="btn btn-sm btn-primary w-100" (click)="addBox()">
+        Add Box
+      </button>
+    </div>
   </div>
 
   <div formDialogContent>
@@ -13,75 +18,64 @@
         <div class="card-body py-2">
           <div class="row align-items-end">
 
-            <div class="col-xl-2 form-group px-2">
+            <div class="col-xl-2 form-group px-2 m-0">
               <z-span [text]="form.get('ExportOrderPackingListNo')?.value" [label]="formConfig.ExportOrderPackingListNo.label"></z-span>
             </div>
 
-            <div class="col-xl-2 form-group px-2">
+            <div class="col-xl-2 form-group px-2 m-0">
               <z-span [text]="form.get('ExportOrderNo')?.value" [label]="formConfig.ExportOrderNo.label"></z-span>
             </div>
             
-            <div class="col-xl-3 form-group px-2">
+            <div class="col-xl-3 form-group px-2 m-0">
               <z-span [text]="form.get('CustomerName')?.value" [label]="formConfig.CustomerName.label"></z-span>
             </div>
             <div class="col-xl-1"></div>
 
-            <div class="col-xl-2 form-group px-2">
+            <div class="col-xl-2 form-group px-2 m-0">
               <z-select [group]="form" [control]="'PackingIdentityID'" [label]="formConfig.PackingIdentityID.label"
                 [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="packingIdentityList"></z-select>
             </div>
             <div class="col-xl-1"></div>
 
-            <div class="col-xl-1 form-group px-2">
+            <div class="col-xl-1 form-group px-2 m-0">
               <z-span [text]="form.get('NoOfBox')?.value" [label]="formConfig.NoOfBox.label"></z-span>
             </div>
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-body">
-          <div formArrayName="BoxList">
-            <div class="box-card card mb-3" *ngFor="let box of boxListArray.controls; let i = index" [formGroupName]="i">
-              <div class="box-header card-header">
+      <div formArrayName="BoxList">
+        <div class="box-card card mb-3" *ngFor="let box of boxListArray.controls; let i = index" [formGroupName]="i">
+          <div class="box-header card-header">
 
-                <button type="button" class="box-toggle" (click)="toggleBox(i)">
-                  <strong>Box {{ i + 1 }}</strong>
-                  <i class="pi"
-                    [ngClass]="boxCollapsed[i] ? 'pi-chevron-down' : 'pi-chevron-up'">
-                  </i>
-                </button>
+            <button type="button" class="box-toggle" (click)="toggleBox(i)">
+              <strong>Box {{ i + 1 }}</strong>
+              <i class="pi"
+                [ngClass]="boxCollapsed[i] ? 'pi-chevron-down' : 'pi-chevron-up'">
+              </i>
+            </button>
 
-                <div class="col-2 tables-action-col">
-                  <div class="col-6 justify-item-center">
-                    <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-                      (click)="removeBox(i)">
-                      <i class="pi pi-minus-circle"></i>
-                    </span>
-                  </div>
-                  <div class="col-6 justify-item-center">
-                    <span *ngIf="i === boxListArray.length - 1"
-                      class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="addBox()">
-                      <i class="pi pi-plus-circle"></i>
-                    </span>
-                  </div>
-                </div>
+            <div class="box-header-actions ps-2">
+              <button type="button" class="btn btn-sm btn-danger" (click)="removeBox(i)">
+                Remove Box
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body" *ngIf="!boxCollapsed[i]">
+            <div class="row mt-2">
+              <div class="col-md-2 form-group px-2">
+                <z-span [text]="box.get('NoOfProduct')?.value" [label]="formConfig.BoxList.items.NoOfProduct.label"></z-span>
               </div>
 
-              <div class="card-body" *ngIf="!boxCollapsed[i]">
-                <div class="row mt-2">
-                  <div class="col-md-2 form-group px-2">
-                    <z-span [text]="box.get('NoOfProduct')?.value" [label]="formConfig.BoxList.items.NoOfProduct.label"></z-span>
-                  </div>
+              <div class="col-md-2 form-group px-2">
+                <z-inputnumber [group]="box" [control]="'BoxLength'" [label]="formConfig.BoxList.items.BoxLength.label"
+                [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+              </div>
 
-                  <div class="col-md-2 form-group px-2">
-                    <z-inputnumber [group]="box" [control]="'BoxLength'" [label]="formConfig.BoxList.items.BoxLength.label"
-                    [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
-                  </div>
-
-                  <div class="col-md-2 form-group px-2">
-                    <z-inputnumber [group]="box" [control]="'BoxWidth'" [label]="formConfig.BoxList.items.BoxWidth.label"
-                    [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"> </z-inputnumber>
-                  </div>
+              <div class="col-md-2 form-group px-2">
+                <z-inputnumber [group]="box" [control]="'BoxWidth'" [label]="formConfig.BoxList.items.BoxWidth.label"
+                [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"> </z-inputnumber>
+              </div>
 
                   <div class="col-md-2 form-group px-2">
                     <z-inputnumber [group]="box" [control]="'BoxHeight'" [label]="formConfig.BoxList.items.BoxHeight.label"
@@ -113,18 +107,15 @@
                     [validationMessage]="formConfig.BoxList.items.PackedDateTime.error" [optionLabel]="'EmployeeName'" [optionValue]="'EmployeeID'" [options]="employeeList"></z-select>
                   </div>
                   
-                  <div class="col-md-2 form-group px-2">
-                    <z-datepicker [group]="box" [control]="'InspectedDateTime'" [label]="formConfig.BoxList.items.InspectedDateTime.label"
-                      [validationMessage]="formConfig.BoxList.items.InspectedDateTime.error"></z-datepicker>
-                  </div>
-                </div>
-
-                <!-- Product Table -->
-                <div class="col-12 px-2 d-flex flex-column mb-2">
-                    <z-table [tableDef]="productTableDefs[i]">
-                    </z-table>
-                </div>
+              <div class="col-md-2 form-group px-2">
+                <z-datepicker [group]="box" [control]="'InspectedDateTime'" [label]="formConfig.BoxList.items.InspectedDateTime.label"
+                  [validationMessage]="formConfig.BoxList.items.InspectedDateTime.error"></z-datepicker>
               </div>
+            </div>
+
+            <!-- Product Table -->
+            <div class="col-12 px-2 d-flex flex-column mb-2">
+                <z-table [tableDef]="productTableDefs[i]"></z-table>
             </div>
           </div>
         </div>
@@ -155,7 +146,7 @@
 <ng-template #productSelectColTemplate let-row let-rowIndex="index">
   <z-select [group]="getProductList(row.__boxIndex).at(rowIndex)" [control]="'ProductID'" [label]="formConfig.BoxList.items.ProductList.items.ProductName.label"
     [validationMessage]="formConfig.BoxList.items.ProductList.items.ProductName.error" (onChange)="onChange_Product($event, row.__boxIndex, rowIndex)"
-    [options]="productList" [optionLabel]="'ProductName'" [optionValue]="'ProductID'">
+    [options]="getAvailableProducts(row.__boxIndex, rowIndex)" [optionLabel]="'ProductName'" [optionValue]="'ProductID'">
   </z-select>
 </ng-template>
 

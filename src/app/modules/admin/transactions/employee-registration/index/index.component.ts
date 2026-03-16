@@ -11,14 +11,15 @@ import { PageHeaderService } from '../../../../../shared/services/page-header.se
 import { EmployeeRegistration_IndexTableFilter, EmployeeRegistration_IndexTableList } from '../employee-registration';
 import { EmployeeRegistrationService } from '../employee-registration.service';
 import { TableLazyLoadEvent } from 'primeng/table';
+import { CreateComponent } from "../create/create.component";
 
 @Component({
   selector: 'app-index',
   standalone: true,
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  imports: [ZDataTable, CommonModule, RouterLink],
-  providers: []
+  imports: [ZDataTable, CommonModule, RouterLink, CreateComponent],
+  providers: [FormValidationService]
 })
 
 export class IndexComponent {
@@ -65,6 +66,9 @@ export class IndexComponent {
     ];
   }
 
+  onCloseSidebar(): void {
+    this.loadData();
+  }
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

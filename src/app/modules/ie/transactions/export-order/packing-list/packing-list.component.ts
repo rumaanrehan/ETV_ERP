@@ -116,6 +116,24 @@ export class PackingListComponent implements OnInit, OnDestroy {
     return this.boxListArray.at(boxIndex).get('ProductList') as FormArray<FormGroup>;
   }
 
+  getAvailableProducts(boxIndex: number, rowIndex: number): ProductList[] {
+    const currentProductId = this.getProductList(boxIndex).at(rowIndex).get('ProductID')?.value as number | null;
+    const usedQty = new Map<number, number>();
+
+    this.boxListArray.controls.forEach((box, b) =>
+      ((box.get('ProductList') as FormArray<FormGroup>).controls).forEach((row, r) => {
+        if (b === boxIndex && r === rowIndex) return;
+        const productId = row.get('ProductID')?.value as number | null;
+        if (!productId) return;
+        usedQty.set(productId, (usedQty.get(productId) || 0) + (Number(row.get('PackedQty')?.value) || 0));
+      })
+    );
+
+    return this.productList.filter(p =>
+      p.ProductID === currentProductId || (Number(p.ProuductCount) || 0) - (usedQty.get(p.ProductID) || 0) > 0
+    );
+  }
+
   createProductTableDef(boxIndex: number): TableDef<ExportOrderPackingListBoxDetail> {
     const dataWithContext = this.getProductList(boxIndex).value.map((item) => ({ ...item, __boxIndex: boxIndex })) as ExportOrderPackingListBoxDetail[];
     return {
@@ -123,7 +141,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "45%", customTemplate: this.productSelectColTemplate },
         { data: "PackedQty", label: "Packed Qty", width: "20%", customTemplate: this.packedQtyColTemplate },
-        { data: "WeightPerUnit", label: "Weight Per Unit", width: "20%", customTemplate: this.weightPerUnitColTemplate },
+        { data: "WeightPerUnit", label: "Weight Per Unit (Kg)", width: "20%", customTemplate: this.weightPerUnitColTemplate },
         { data: "", label: "", hideVisToggle: true, width: "8%", customTemplate: this.productActionColTemplate },
       ],
       data: dataWithContext
@@ -199,23 +217,26 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   removeBox(index: number): void {
-    // this.alertService.showConfirmation({text: 'Remove this box?'})
-    //   .then(result => {
-    //     if (!result.isConfirmed) return;
+    const boxControl = this.boxListArray.at(index);
+    const BoxNo = boxControl.get('ExportOrderPackingListBoxNo')?.value;
 
-    this.boxListArray.removeAt(index);
-    this.productTableDefs.splice(index, 1);
-    this.boxCollapsed.splice(index, 1);
+    this.alertService.showConfirmation({text: `Do you really want to remove  <b>Box ${BoxNo}<b>?`})
+      .then(result => {
+        if (!result.isConfirmed) return;
 
-    if (this.boxListArray.length === 0) {
-      this.addBox();
-      return;
-    }
+        this.boxListArray.removeAt(index);
+        this.productTableDefs.splice(index, 1);
+        this.boxCollapsed.splice(index, 1);
 
-    this.rebuildProductTableDefs();
-    this.updateBoxNumbers();
-    this.updateBoxCount();
-      // });
+        if (this.boxListArray.length === 0) {
+          this.addBox();
+          return;
+        }
+
+        this.rebuildProductTableDefs();
+        this.updateBoxNumbers();
+        this.updateBoxCount();
+      });
   }
 
   rebuildProductTableDefs(): void {
@@ -261,18 +282,27 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   removeProductRow(boxIndex: number, productIndex: number): void {
-    this.getProductList(boxIndex).removeAt(productIndex);
+    const boxControl = this.boxListArray.at(boxIndex);
+    const BoxNo = boxControl.get('ExportOrderPackingListBoxNo')?.value;
+    const productForm = this.getProductList(boxIndex).at(productIndex) as FormGroup;
+    const productName = productForm.get("ProductName")?.value;
 
-    if (this.getProductList(boxIndex).length === 0) {
-      this.addProductRow(boxIndex);
-      return;
-    }
+    this.alertService.showConfirmation({text: `Do you really want to remove  <b>Product ${productName} from Box ${BoxNo}<b>?`})
+      .then(result => {
+        if (!result.isConfirmed) return;
 
-    this.updateProductCount(boxIndex);
 
-    this.productTableDefs[boxIndex] = this.createProductTableDef(boxIndex);
+        this.getProductList(boxIndex).removeAt(productIndex);
 
-    this.refreshTable();
+        if (this.getProductList(boxIndex).length === 0) {
+          this.addProductRow(boxIndex);
+          return;
+        }
+
+        this.updateProductCount(boxIndex);
+        this.productTableDefs[boxIndex] = this.createProductTableDef(boxIndex);
+        this.refreshTable();
+      });
   }
 
   onClickRemoveProductItem(boxIndex: number, productIndex: number): void {
