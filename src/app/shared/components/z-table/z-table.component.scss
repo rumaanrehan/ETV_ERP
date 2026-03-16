@@ -2,6 +2,7 @@
   display: block;
   width: 100%;
   min-width: 0;
+  --z-table-field-radius: var(--se-field-radius, var(--default-radius-sm, 0.5rem));
 }
 
 .z-table-viewport {
@@ -22,4 +23,25 @@
     width: max-content;
     min-width: 100%;
   }
+}
+
+:host ::ng-deep .z-table-root .page-table .p-inputtext,
+:host ::ng-deep .z-table-root .page-table .p-autocomplete,
+:host ::ng-deep .z-table-root .page-table .p-autocomplete-input,
+:host ::ng-deep .z-table-root .page-table .p-inputnumber,
+:host ::ng-deep .z-table-root .page-table .p-inputnumber-input,
+:host ::ng-deep .z-table-root .page-table .p-dropdown,
+:host ::ng-deep .z-table-root .page-table .p-datepicker .p-inputtext {
+  border-radius: var(--z-table-field-radius) !important;
+}
+
+:host ::ng-deep .z-table-root .page-table .p-dropdown .p-dropdown-trigger {
+  border-top-right-radius: var(--z-table-field-radius) !important;
+  border-bottom-right-radius: var(--z-table-field-radius) !important;
+}
+
+:host ::ng-deep .z-table-root .page-table .input-group > :first-child:last-child,
+:host ::ng-deep .z-table-root .page-table .input-group > :first-child:last-child * {
+  border-top-right-radius: var(--z-table-field-radius) !important;
+  border-bottom-right-radius: var(--z-table-field-radius) !important;
 }

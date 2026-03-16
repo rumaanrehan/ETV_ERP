@@ -21,6 +21,10 @@
 
 :host ::ng-deep .input-group .p-autocomplete-input {
   padding-inline-end: 2rem !important;
+  border-top-right-radius: var(--se-field-radius, var(--default-radius-sm)) !important;
+  border-bottom-right-radius: var(--se-field-radius, var(--default-radius-sm)) !important;
+  border-inline-end-width: 1px !important;
+  border-inline-end-style: solid !important;
 }
 
 .input-group-addon {

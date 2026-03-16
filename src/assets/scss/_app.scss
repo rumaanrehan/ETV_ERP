@@ -442,7 +442,7 @@ span.input-group-text .pi {
   color: #fff;
 }
 
-.input-group>:first-child {
+.input-group>:first-child:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: none;
