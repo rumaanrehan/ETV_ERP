@@ -1,24 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
-import { FormDialogComponent } from "../../../../../shared/components/form-dialog/form-dialog.component";
-import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
-import { TableDef } from '../../../../../shared/components/z-table/z-table';
-import { FormConfigType } from '../../../../../shared/models/form.model';
-import { StaticList } from '../../../../../shared/models/select-list';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { FormService } from '../../../../../shared/services/form.service';
-import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { ExportOrderPackingList, ExportOrderPackingListBox, ExportOrderPackingListBoxDetail, OpenPackingDialogParams, ProductList } from '../export-order';
-import { ExportOrderService } from '../export-order.service';
-import { ApiListResponse } from '../../../../../shared/models/api-response';
-import { EmployeeRegistration_SelectList } from '../../../../admin/transactions/employee-registration/employee-registration';
-
+import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
+import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
+import { TableDef } from '../../../../shared/components/z-table/z-table';
+import { ApiListResponse } from '../../../../shared/models/api-response';
+import { FormConfigType } from '../../../../shared/models/form.model';
+import { StaticList } from '../../../../shared/models/select-list';
+import { AlertNotificationService } from '../../../../shared/services/alert-notification.service';
+import { FormService } from '../../../../shared/services/form.service';
+import { DateUtils } from '../../../../shared/utility/date-utils';
+import { EmployeeRegistration_SelectList } from '../../../admin/transactions/employee-registration/employee-registration';
+import { ExportOrder_SelectList, ExportOrderPackingList, ExportOrderPackingListBox, ExportOrderPackingListBoxDetail, ExportOrderRequest, OpenPackingDialogParams, ProductList } from '../export-order/export-order';
+import { ExportOrderService } from '../export-order/export-order.service';
 @Component({
   selector: 'app-packing-list',
   standalone: true,
-  imports: [CommonModule, FormDialogComponent, FormDialogComponent, ReactiveFormsModule, ZFormControlsModule],
+  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule],
   templateUrl: './packing-list.component.html',
   styleUrl: './packing-list.component.scss'
 })
@@ -35,6 +35,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   isEditMode: boolean = false;
   isSubmitted: boolean = false;
   boxCollapsed: boolean[] = [];
+  disablePrintButton = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrderPackingList>;
@@ -44,6 +45,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   productList: ProductList[] = [];
   packingIdentityList: StaticList[] = [];
   employeeList: EmployeeRegistration_SelectList[] = [];
+  exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
 
   // Autocomplete replaced with z-select dropdown in product table.
   // productAutoCompleteDef: AutoCompleteDef<Product_SelectList>[][] = [];
@@ -51,17 +53,20 @@ export class PackingListComponent implements OnInit, OnDestroy {
   constructor(
     private pageService: ExportOrderService,
     private formService: FormService,
-    private alertService: AlertNotificationService
+    private alertService: AlertNotificationService,
+    private route: ActivatedRoute
   ) { }
   
   ngOnInit(): void {
     this.formConfig = this.pageService.getPackingListFormConfig();
     this.form = this.formService.createFormGroup<ExportOrderPackingList>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.exportOrderAutoCompleteDef = this.pageService.getPackingListExportOrderAutoCompleteDef(this.formConfig, this.form);
 
     // this.productTableDefs = [];
     this.addBox();
     this.loadDropdownList();
+    // this.openDialogFromRoute();
   }/*  */
 
   ngOnDestroy(): void {
@@ -80,6 +85,124 @@ export class PackingListComponent implements OnInit, OnDestroy {
           this.employeeList = data.employeeList.Data?.Items ?? [];
         },
       });
+  }
+
+  // private openDialogFromRoute(): void {
+  //   const packingListId = Number(this.route.snapshot.queryParamMap.get('exportOrderPackingListID') || 0);
+  //   const exportOrderId = Number(this.route.snapshot.queryParamMap.get('exportOrderID') || 0);
+
+  //   if (packingListId > 0) {
+  //     this.pageService
+  //       .GetPackingListDetails(packingListId)
+  //       .pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (response) => {
+  //           if (response.IsSuccess) {
+  //             this.openDialogBox({ isEditMode: true, packingList: response.Data, productList: null });
+  //           } else {
+  //             this.alertService.showServerResponseAlert(response);
+  //             this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
+  //           }
+  //         },
+  //         error: () => {
+  //           this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
+  //         }
+  //       });
+  //     return;
+  //   }
+
+  //   if (exportOrderId > 0) {
+  //     this.pageService
+  //       .GetExportOrderProductDetails(exportOrderId)
+  //       .pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (response) => {
+  //           if (response.IsSuccess) {
+  //             this.openDialogBox({ isEditMode: false, packingList: null, productList: response.Data });
+  //           } else {
+  //             this.alertService.showServerResponseAlert(response);
+  //             this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
+  //           }
+  //         },
+  //         error: () => {
+  //           this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
+  //         }
+  //       });
+  //     return;
+  //   }
+
+  //   this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
+  // }
+
+  loadExportOrder(event: string): void {
+    const dto: ExportOrderRequest = {
+      ExportOrderNo: event,
+      PopulateType: 'AutoSuggest'
+    };
+    this.pageService
+      .PopulateList(dto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.exportOrderAutoCompleteDef.options = response.Data.Items;
+          } else {
+            this.exportOrderAutoCompleteDef.options = [];
+            if (response.Message !== 'Record not found.') {
+              this.alertService.showServerResponseAlert(response);
+            }
+          }
+        },
+      });
+  }
+
+  onSelect_ExportOrder(event: ExportOrder_SelectList): void {
+    if (!event?.ExportOrderID) return;
+
+    if (event.ExportOrderPackingListID) {
+      this.loadPackingList(event.ExportOrderPackingListID);
+      // this.pageService
+      //   .GetPackingListDetails(event.ExportOrderPackingListID)
+      //   .pipe(takeUntil(this.destroy$))
+      //   .subscribe({
+      //     next: (response) => {
+      //       if (response.IsSuccess) {
+      //         setTimeout(() => {
+      //           this.openDialogBox({ isEditMode: true, packingList: response.Data, productList: null });
+      //         });
+      //       } else {
+      //         this.alertService.showServerResponseAlert(response);
+      //       }
+      //     },
+      //   });
+    }
+    else if (event.ExportOrderID) {
+      this.loadExportOrderProducts(event.ExportOrderID);
+      // this.pageService
+      //   .GetExportOrderProductDetails(event.ExportOrderID)
+      //   .pipe(takeUntil(this.destroy$))
+      //   .subscribe({
+      //     next: (response) => {
+      //       if (response.IsSuccess) {
+      //         setTimeout(() => {
+      //           this.openDialogBox({ isEditMode: false, packingList: null, productList: response.Data });
+      //         });
+      //       } else {
+      //         this.alertService.showServerResponseAlert(response);
+      //       }
+      //     },
+      //   });
+    }
+  }
+
+  onClear_ExportOrder(): void {
+    this.form.patchValue({
+      ExportOrderID: null,
+      ExportOrderNo: null,
+      CustomerName: null,
+      PackingIdentityID: null,
+    });
+    this.productList = [];
   }
 
   loadStaticLists(listConfigs: { fieldName: string; targetList: keyof PackingListComponent }[]): void {
@@ -147,11 +270,6 @@ export class PackingListComponent implements OnInit, OnDestroy {
       data: dataWithContext
     };
   }
-
-  // Autocomplete handlers are kept commented as requested.
-  // onSearch_Product(event: string, boxIndex: number, rowIndex: number): void {}
-  // onSelect_Product(event: Product_SelectList, boxIndex: number, rowIndex: number): void {}
-  // onClear_Product(boxIndex: number, rowIndex: number): void {}
 
   onChange_Product(productId: number | null, boxIndex: number, rowIndex: number): void {
     const row = this.getProductList(boxIndex).at(rowIndex) as FormGroup;
@@ -455,6 +573,116 @@ export class PackingListComponent implements OnInit, OnDestroy {
     this.formService.resetFormValue<ExportOrderPackingList>(this.formConfig, this.form);
 
     setTimeout(() => this.closeDialogBoxEvent.emit(), 1);
+  }
+
+  private loadPackingList(packingListID: number): void {
+    this.pageService
+      .GetPackingListDetails(packingListID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response.IsSuccess) {
+            this.alertService.showServerResponseAlert(response);
+            return;
+          }
+
+          this.isEditMode = true;
+          const { BoxList = [], ...packingListDetail } = response.Data;
+
+          this.form.patchValue(packingListDetail);
+
+          const boxArray = this.form.get('BoxList') as FormArray<FormGroup>;
+          boxArray.clear();
+
+          const productQtyMap = new Map<number, ProductList>();
+
+          BoxList.forEach((box) => {
+
+            const boxForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items);
+
+            boxForm.patchValue({
+              ...box,
+              PackedDateTime: this.formatDate(box.PackedDateTime!),
+              InspectedDateTime: this.formatDate(box.InspectedDateTime!),
+              NoOfProduct: box.NoOfProduct
+            });
+
+            const productArray = boxForm.get('ProductList') as FormArray<FormGroup>;
+            productArray.clear();
+
+            (box.ProductList ?? []).forEach(product => {
+
+              const productForm = this.formService.createFormArrayItem(
+                this.formConfig.BoxList.items.ProductList.items
+              );
+
+              productForm.patchValue(product);
+              productArray.push(productForm);
+
+              if (product.ProductID == null || !product.ProductName) return;
+
+              const packedQty = Number(product.PackedQty) || 0;
+              const existing = productQtyMap.get(product.ProductID);
+
+              if (existing) {
+                existing.ProuductCount += packedQty;
+              } else {
+                productQtyMap.set(product.ProductID, {
+                  ProductID: product.ProductID,
+                  ProductCode: product.ProductCode!,
+                  ProductName: product.ProductName,
+                  ProuductCount: packedQty
+                });
+              }
+            });
+
+            boxArray.push(boxForm);
+          });
+
+          this.productList = Array.from(productQtyMap.values());
+          
+          // Wait for form array to build
+          setTimeout(() => {
+            this.rebuildProductTableDefs();
+            this.syncBoxCollapseState();
+            this.updateBoxNumbers();
+            this.refreshTable();
+            this.updateBoxCount();
+          });
+        }
+      });
+  }
+
+  private loadExportOrderProducts(exportOrderID: number): void {
+    this.pageService
+      .GetExportOrderProductDetails(exportOrderID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response.IsSuccess) {
+            this.alertService.showServerResponseAlert(response);
+            return;
+          }
+          this.form.patchValue(response.Data);
+
+          this.productList = response.Data.ProductList?.Items?.map(e => ({
+              ProductID: e.ProductID,
+              ProductCode: e.ProductCode,
+              ProductName: e.ProductName,
+              ProuductCount: e.SalesQty
+            })) ?? [];
+            
+
+          // Wait for form array to build
+          setTimeout(() => {
+            this.rebuildProductTableDefs();
+            this.syncBoxCollapseState();
+            this.updateBoxNumbers();
+            this.refreshTable();
+            this.updateBoxCount();
+          });
+        }
+      });
   }
   
   onSubmit(): void {

@@ -1,41 +1,56 @@
-<app-form-dialog
+<!-- <app-form-dialog
   [visible]="isFormDialogVisible"
-  [width]="'75%'">
+  [width]="'75%'"> -->
 
-  <div formDialogHeader class="packing-dialog-header w-100 d-flex align-items-center justify-content-between pe-2">
-    <h4 class="m-1">Packing List</h4>
-
-    <div>              
-      <button type="button" class="btn btn-sm btn-primary w-100" (click)="addBox()">
+  <div formDialogHeader class="packing-dialog-header w-100 pe-2">
+    <div class="packing-header-title-row">
+      <h4 class="m-0">Packing List</h4>
+    </div>
+    <div class="packing-header-action-row">
+      <div class="packing-header-action-spacer"></div>
+      <div class="packing-header-center">
+        <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"
+          [allowEmptySearch]="true"
+          [readonly]="isEditMode"
+          [isClearable]="!isEditMode"
+          (onSearch)="loadExportOrder($event)"
+          (onSelect)="onSelect_ExportOrder($event)"
+          (onClear)="onClear_ExportOrder()">
+        </z-autocomplete>
+      </div>
+      <div class="packing-header-right" *ngIf="form.get('ExportOrderID')?.value">
+        <button type="button" class="btn btn-sm btn-primary w-100" (click)="addBox()">
+          Add Box
+        </button>
+      </div>
+    </div>
+  </div>
+<!-- <div formDialogHeader class="packing-dialog-header w-100 d-flex align-items-center justify-content-between pe-2">
+    <h4 class="m-1">Packing List</h4
+  <div>              
+      <button type="button" class="btn btn-sm btn-primary w-10" (click)="addBox()">
         Add Box
       </button>
     </div>
-  </div>
-
-  <div formDialogContent>
+  </div> -->
+  <div formDialogContent *ngIf="form.get('ExportOrderID')?.value">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="card mb-3 order-info-sticky top-border-0">
         <div class="card-body py-2">
-          <div class="row align-items-end">
+          <div class="row align-items-end justify-content-left">
 
             <div class="col-xl-2 form-group px-2 m-0">
               <z-span [text]="form.get('ExportOrderPackingListNo')?.value" [label]="formConfig.ExportOrderPackingListNo.label"></z-span>
             </div>
 
-            <div class="col-xl-2 form-group px-2 m-0">
-              <z-span [text]="form.get('ExportOrderNo')?.value" [label]="formConfig.ExportOrderNo.label"></z-span>
-            </div>
-            
-            <div class="col-xl-3 form-group px-2 m-0">
+            <div class="col-xl-5 form-group px-2 m-0">
               <z-span [text]="form.get('CustomerName')?.value" [label]="formConfig.CustomerName.label"></z-span>
             </div>
-            <div class="col-xl-1"></div>
 
             <div class="col-xl-2 form-group px-2 m-0">
               <z-select [group]="form" [control]="'PackingIdentityID'" [label]="formConfig.PackingIdentityID.label"
                 [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="packingIdentityList"></z-select>
             </div>
-            <div class="col-xl-1"></div>
 
             <div class="col-xl-1 form-group px-2 m-0">
               <z-span [text]="form.get('NoOfBox')?.value" [label]="formConfig.NoOfBox.label"></z-span>
@@ -123,19 +138,20 @@
     </form>
   </div>
   
-  <div formDialogFooter>
-      <div class="col-xl-12 d-grid d-flex justify-content-end gap-2 compact-dialog-footer">
-      <div class="col-md-2 pe-1">
+  <div formDialogFooter *ngIf="form.get('ExportOrderID')?.value">
+
+      <div class="col-xl-12 d-flex justify-content-end gap-2 compact-dialog-footer">
+      <div class="footer-btn">
           <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted" (click)="onSubmit()">
           {{ isEditMode ? "Update" : "Save" }}
           </button>
       </div>
-      <div class="col-md-2 ps-1">
+      <div class="footer-btn">
           <button type="button" class="btn btn-md btn-light w-100" (click)="closeDialogBox()">Cancel</button>
       </div>
       </div>
   </div>
-</app-form-dialog>
+<!-- </app-form-dialog> -->
 
 
 <!-- Packing List Box Related Templates Start -->
@@ -172,6 +188,12 @@
         (click)="removeProductRow(row.__boxIndex, rowIndex)">
         <i class="pi pi-minus-circle"></i></span>
     </div>
+            <div class="col-xl-4 px-1" *ngIf="isEditMode">
+                <!-- <button type="submit" class="btn btn-md btn-primary w-100" (click)="printTaxInvoice()"> Print
+                    Tax Invoice </button> -->
+                <!-- <z-button [label]="'Print Packing Order'" (clicked)="PrintPackingList()"
+                    [loading]="disablePrintButton"></z-button> -->
+            </div>
     <div class="col-6 justify-item-center">
       <span *ngIf="rowIndex === this.getProductList(row.__boxIndex).length - 1"
         class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="addProductRow(row.__boxIndex)">

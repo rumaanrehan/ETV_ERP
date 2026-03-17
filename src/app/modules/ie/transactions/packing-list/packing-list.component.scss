@@ -27,8 +27,37 @@
 
 .packing-dialog-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.packing-header-title-row {
+  width: 100%;
+}
+
+.packing-header-action-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  gap: 0.75rem;
+}
+
+.packing-header-action-spacer {
+  width: 100%;
+}
+
+.packing-header-center {
+  width: min(420px, 100vw - 240px);
+}
+
+.packing-header-right {
+  width: 140px;
+  justify-self: end;
+}
+
+.footer-btn {
+  width: 170px;
 }
 
 .box-card {

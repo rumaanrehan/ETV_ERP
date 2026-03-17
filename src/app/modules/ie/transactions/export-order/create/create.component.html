@@ -164,15 +164,15 @@
               </div>
               <div class="row">
                 <!-- PO Upload -->
-                <div class="col-8 d-flex gap-2" *ngIf="isEditMode && !IsPOUploaded">
+                <!-- <div class="col-8 d-flex gap-2" *ngIf="isEditMode && !IsPOUploaded">
                   <div class="card px-2">
                     <z-file-upload [group]="form" [control]="'DocumentFile'" [label]="'Upload Document'"
                       [accept]="'.pdf'" [maxFileSize]="2 * 1024 * 1024" fieldLabel="image"
                       (fileSelected)="uploadPO($event)">
                     </z-file-upload>
                   </div>
-                </div>
-                <div class="col-8 d-flex gap-2" *ngIf="!isEditMode && IsPOUploaded"></div>
+                </div> -->
+                <!-- <div class="col-8 d-flex gap-2" *ngIf="!isEditMode && IsPOUploaded"></div> -->
                 <div class="col-4 d-flex justify-content-end gap-2" *ngIf="isEditMode">
                   <!-- Amount Summary -->
                   <div class="card pt-2 pb-2 mb-2 col-auto">
@@ -246,6 +246,14 @@
         <button type="submit" class="btn btn-md btn-primary w-100"
           (click)="onClickNavigateToTaxInvoice(this.form.get('ExportOrderID')?.value || null)"> Add Tax Invoice
         </button>
+      </div>
+      <div class="col-xl-4 px-1" *ngIf="isEditMode">
+          <z-button [label]="'Print Export Order'" (clicked)="PrintExportOrder()"
+              [loading]="disablePrintButton"></z-button>
+      </div>
+      <div class="col-xl-4 px-1" *ngIf="isEditMode && isPackingListAvailable">
+          <z-button [label]="'Print Packing List'" (clicked)="PrintPackingList()"
+              [loading]="disablePrintButton"></z-button>
       </div>
     </div>
     <div class="col-xl-4">
