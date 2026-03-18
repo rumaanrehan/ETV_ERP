@@ -21,43 +21,42 @@
   padding: 0.5rem 0.75rem;
 }
 
-.compact-dialog-footer {
-  margin-top: 0 !important;
+.packing-layout-shell {
+  padding: 0;
 }
 
-.packing-dialog-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.packing-layout-scroll {
+  max-height: min(70vh, 900px);
+  padding-right: 0.125rem;
 }
 
-.packing-header-title-row {
+.packing-header-card {
+  margin-bottom: 0 !important;
+}
+
+.packing-page-title h4 {
+  font-weight: 600;
+}
+
+.packing-page-title p {
+  font-size: 0.85rem;
+}
+
+.packing-dialog-content {
+  padding-top: 0.25rem;
+}
+
+.packing-dialog-footer {
   width: 100%;
 }
 
-.packing-header-action-row {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+.packing-action-panel {
+  padding: 0;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.packing-header-action-spacer {
-  width: 100%;
-}
-
-.packing-header-center {
-  width: min(420px, 100vw - 240px);
-}
-
-.packing-header-right {
-  width: 140px;
-  justify-self: end;
 }
 
 .footer-btn {
-  width: 170px;
+  min-width: 170px;
 }
 
 .box-card {
@@ -84,7 +83,31 @@
   cursor: pointer;
 }
 
+.box-toggle-title {
+  font-weight: 600;
+}
+
 .box-header-actions {
   display: flex;
   align-items: center;
+}
+
+@media (max-width: 991.98px) {
+  .packing-layout-scroll {
+    max-height: none;
+  }
+
+  .packing-action-panel {
+    display: block;
+  }
+
+  .packing-action-panel > div:last-child {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .footer-btn {
+    min-width: 140px;
+  }
 }

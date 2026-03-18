@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { ZFormControlsModule } from '../../../../shared/components/z-form-controls/z-form-controls.module';
@@ -13,8 +12,17 @@ import { AlertNotificationService } from '../../../../shared/services/alert-noti
 import { FormService } from '../../../../shared/services/form.service';
 import { DateUtils } from '../../../../shared/utility/date-utils';
 import { EmployeeRegistration_SelectList } from '../../../admin/transactions/employee-registration/employee-registration';
-import { ExportOrder_SelectList, ExportOrderPackingList, ExportOrderPackingListBox, ExportOrderPackingListBoxDetail, ExportOrderRequest, OpenPackingDialogParams, ProductList } from '../export-order/export-order';
+import {
+  ExportOrder_SelectList,
+  ExportOrderPackingList,
+  ExportOrderPackingListBox,
+  ExportOrderPackingListBoxDetail,
+  OpenPackingDialogParams,
+  ExportOrderRequest,
+  ProductList
+} from '../export-order/export-order';
 import { ExportOrderService } from '../export-order/export-order.service';
+
 @Component({
   selector: 'app-packing-list',
   standalone: true,
@@ -24,6 +32,7 @@ import { ExportOrderService } from '../export-order/export-order.service';
 })
 export class PackingListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+
   @Output() closeDialogBoxEvent: EventEmitter<void> = new EventEmitter();
   @ViewChild('serialNoColTemplate', { static: true }) serialNoColTemplate!: TemplateRef<any>;
   @ViewChild('productSelectColTemplate', { static: true }) productSelectColTemplate!: TemplateRef<any>;
@@ -31,15 +40,12 @@ export class PackingListComponent implements OnInit, OnDestroy {
   @ViewChild('weightPerUnitColTemplate', { static: true }) weightPerUnitColTemplate!: TemplateRef<any>;
   @ViewChild('productActionColTemplate', { static: true }) productActionColTemplate!: TemplateRef<any>;
 
-  isFormDialogVisible: boolean = false;
-  isEditMode: boolean = false;
-  isSubmitted: boolean = false;
+  isEditMode = false;
+  isSubmitted = false;
   boxCollapsed: boolean[] = [];
-  disablePrintButton = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrderPackingList>;
-  tableDef!: TableDef<ExportOrderPackingListBox>;
   productTableDefs: TableDef<ExportOrderPackingListBoxDetail>[] = [];
 
   productList: ProductList[] = [];
@@ -47,37 +53,40 @@ export class PackingListComponent implements OnInit, OnDestroy {
   employeeList: EmployeeRegistration_SelectList[] = [];
   exportOrderAutoCompleteDef!: AutoCompleteDef<ExportOrder_SelectList>;
 
-  // Autocomplete replaced with z-select dropdown in product table.
-  // productAutoCompleteDef: AutoCompleteDef<Product_SelectList>[][] = [];
-  
   constructor(
     private pageService: ExportOrderService,
     private formService: FormService,
-    private alertService: AlertNotificationService,
-    private route: ActivatedRoute
+    private alertService: AlertNotificationService
   ) { }
-  
-  ngOnInit(): void {
-    this.formConfig = this.pageService.getPackingListFormConfig();
-    this.form = this.formService.createFormGroup<ExportOrderPackingList>(this.formConfig);
-    this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.exportOrderAutoCompleteDef = this.pageService.getPackingListExportOrderAutoCompleteDef(this.formConfig, this.form);
 
-    // this.productTableDefs = [];
-    this.addBox();
+  ngOnInit(): void {
+    this.initializeForm();
     this.loadDropdownList();
-    // this.openDialogFromRoute();
-  }/*  */
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
+
+  initializeForm(): void {
+    this.formConfig = this.pageService.getPackingListFormConfig();
+    this.form = this.formService.createFormGroup<ExportOrderPackingList>(this.formConfig);
+    this.formService.initializeFormValidationMessage(this.formConfig, this.form);
+    this.exportOrderAutoCompleteDef = this.pageService.getPackingListExportOrderAutoCompleteDef(this.formConfig, this.form);
+    this.productList = [];
+    this.productTableDefs = [];
+    this.boxCollapsed = [];
+    this.isEditMode = false;
+    this.isSubmitted = false;
+    this.addBox();
+  }
+
   loadDropdownList(): void {
     this.loadStaticLists([
       { fieldName: 'PackingIdentity', targetList: 'packingIdentityList' }
     ]);
+
     this.pageService.GetMasterDropdownLists()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -87,60 +96,47 @@ export class PackingListComponent implements OnInit, OnDestroy {
       });
   }
 
-  // private openDialogFromRoute(): void {
-  //   const packingListId = Number(this.route.snapshot.queryParamMap.get('exportOrderPackingListID') || 0);
-  //   const exportOrderId = Number(this.route.snapshot.queryParamMap.get('exportOrderID') || 0);
+  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof PackingListComponent }[]): void {
+    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
 
-  //   if (packingListId > 0) {
-  //     this.pageService
-  //       .GetPackingListDetails(packingListId)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe({
-  //         next: (response) => {
-  //           if (response.IsSuccess) {
-  //             this.openDialogBox({ isEditMode: true, packingList: response.Data, productList: null });
-  //           } else {
-  //             this.alertService.showServerResponseAlert(response);
-  //             this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
-  //           }
-  //         },
-  //         error: () => {
-  //           this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
-  //         }
-  //       });
-  //     return;
-  //   }
+    listConfigs.forEach(({ fieldName, targetList }) => {
+      sources[targetList] = this.pageService.GetStaticList({
+        AreaName: 'IE',
+        ControllerName: 'ExportOrder',
+        FieldName: fieldName,
+      });
+    });
 
-  //   if (exportOrderId > 0) {
-  //     this.pageService
-  //       .GetExportOrderProductDetails(exportOrderId)
-  //       .pipe(takeUntil(this.destroy$))
-  //       .subscribe({
-  //         next: (response) => {
-  //           if (response.IsSuccess) {
-  //             this.openDialogBox({ isEditMode: false, packingList: null, productList: response.Data });
-  //           } else {
-  //             this.alertService.showServerResponseAlert(response);
-  //             this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
-  //           }
-  //         },
-  //         error: () => {
-  //           this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
-  //         }
-  //       });
-  //     return;
-  //   }
+    forkJoin(sources)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          listConfigs.forEach(({ targetList }) => {
+            if (response[targetList]?.IsSuccess) {
+              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
+            } else {
+              (this[targetList] as StaticList[]) = [];
+            }
+          });
+        },
+      });
+  }
 
-  //   this.openDialogBox({ isEditMode: false, packingList: null, productList: null });
-  // }
+  get boxListArray(): FormArray<FormGroup> {
+    return this.form.get('BoxList') as FormArray<FormGroup>;
+  }
+
+  getProductList(boxIndex: number): FormArray<FormGroup> {
+    return this.boxListArray.at(boxIndex).get('ProductList') as FormArray<FormGroup>;
+  }
 
   loadExportOrder(event: string): void {
     const dto: ExportOrderRequest = {
       ExportOrderNo: event,
       PopulateType: 'AutoSuggest'
     };
-    this.pageService
-      .PopulateList(dto)
+
+    this.pageService.PopulateList(dto)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -161,114 +157,127 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
     if (event.ExportOrderPackingListID) {
       this.loadPackingList(event.ExportOrderPackingListID);
-      // this.pageService
-      //   .GetPackingListDetails(event.ExportOrderPackingListID)
-      //   .pipe(takeUntil(this.destroy$))
-      //   .subscribe({
-      //     next: (response) => {
-      //       if (response.IsSuccess) {
-      //         setTimeout(() => {
-      //           this.openDialogBox({ isEditMode: true, packingList: response.Data, productList: null });
-      //         });
-      //       } else {
-      //         this.alertService.showServerResponseAlert(response);
-      //       }
-      //     },
-      //   });
+      return;
     }
-    else if (event.ExportOrderID) {
-      this.loadExportOrderProducts(event.ExportOrderID);
-      // this.pageService
-      //   .GetExportOrderProductDetails(event.ExportOrderID)
-      //   .pipe(takeUntil(this.destroy$))
-      //   .subscribe({
-      //     next: (response) => {
-      //       if (response.IsSuccess) {
-      //         setTimeout(() => {
-      //           this.openDialogBox({ isEditMode: false, packingList: null, productList: response.Data });
-      //         });
-      //       } else {
-      //         this.alertService.showServerResponseAlert(response);
-      //       }
-      //     },
-      //   });
-    }
+
+    this.loadExportOrderProducts(event.ExportOrderID);
   }
 
   onClear_ExportOrder(): void {
-    this.form.patchValue({
-      ExportOrderID: null,
-      ExportOrderNo: null,
-      CustomerName: null,
-      PackingIdentityID: null,
-    });
-    this.productList = [];
-  }
-
-  loadStaticLists(listConfigs: { fieldName: string; targetList: keyof PackingListComponent }[]): void {
-    const sources: Record<string, Observable<ApiListResponse<StaticList>>> = {};
-
-    listConfigs.forEach(({ fieldName, targetList }) => {
-      sources[targetList] = this.pageService.GetStaticList({
-        AreaName: 'IE',
-        ControllerName: 'ExportOrder',
-        FieldName: fieldName,
-      });
-    });
-    forkJoin(sources)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          listConfigs.forEach(({ targetList }) => {
-            const targetResponse = response?.[targetList];
-            if (response[targetList]?.IsSuccess) {
-              (this[targetList] as StaticList[]) = response[targetList].Data.Items || [];
-            } else {
-              (this[targetList] as StaticList[]) = [];
-            }
-          });
-        },
-      });
-  }
-  
-  get boxListArray(): FormArray<FormGroup> {
-    return this.form.get('BoxList') as FormArray<FormGroup>;
-  }
-
-  getProductList(boxIndex: number): FormArray<FormGroup> {
-    return this.boxListArray.at(boxIndex).get('ProductList') as FormArray<FormGroup>;
+    this.resetPackingForm();
   }
 
   getAvailableProducts(boxIndex: number, rowIndex: number): ProductList[] {
     const currentProductId = this.getProductList(boxIndex).at(rowIndex).get('ProductID')?.value as number | null;
     const usedQty = new Map<number, number>();
 
-    this.boxListArray.controls.forEach((box, b) =>
-      ((box.get('ProductList') as FormArray<FormGroup>).controls).forEach((row, r) => {
-        if (b === boxIndex && r === rowIndex) return;
-        const productId = row.get('ProductID')?.value as number | null;
-        if (!productId) return;
-        usedQty.set(productId, (usedQty.get(productId) || 0) + (Number(row.get('PackedQty')?.value) || 0));
-      })
-    );
+    this.boxListArray.controls.forEach((boxControl, currentBoxIndex) => {
+      const productRows = boxControl.get('ProductList') as FormArray<FormGroup>;
 
-    return this.productList.filter(p =>
-      p.ProductID === currentProductId || (Number(p.ProuductCount) || 0) - (usedQty.get(p.ProductID) || 0) > 0
+      productRows.controls.forEach((rowControl, currentRowIndex) => {
+        if (currentBoxIndex === boxIndex && currentRowIndex === rowIndex) return;
+
+        const productId = rowControl.get('ProductID')?.value as number | null;
+        if (!productId) return;
+
+        usedQty.set(productId, (usedQty.get(productId) || 0) + (Number(rowControl.get('PackedQty')?.value) || 0));
+      });
+    });
+
+    return this.productList.filter(product =>
+      product.ProductID === currentProductId ||
+      (Number(product.ProuductCount) || 0) - (usedQty.get(product.ProductID) || 0) > 0
     );
   }
 
   createProductTableDef(boxIndex: number): TableDef<ExportOrderPackingListBoxDetail> {
-    const dataWithContext = this.getProductList(boxIndex).value.map((item) => ({ ...item, __boxIndex: boxIndex })) as ExportOrderPackingListBoxDetail[];
+    const dataWithContext = this.getProductList(boxIndex).value.map(item => ({
+      ...item,
+      __boxIndex: boxIndex
+    })) as ExportOrderPackingListBoxDetail[];
+
     return {
       columnDef: [
-        { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "45%", customTemplate: this.productSelectColTemplate },
-        { data: "PackedQty", label: "Packed Qty", width: "20%", customTemplate: this.packedQtyColTemplate },
-        { data: "WeightPerUnit", label: "Weight Per Unit (Kg)", width: "20%", customTemplate: this.weightPerUnitColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "8%", customTemplate: this.productActionColTemplate },
+        { data: '', label: 'S No', hideVisToggle: true, width: '5%', customTemplate: this.serialNoColTemplate },
+        { data: 'ProductName', hideVisToggle: true, label: 'Product Name', width: '45%', customTemplate: this.productSelectColTemplate },
+        { data: 'PackedQty', label: 'Packed Qty', width: '15%', customTemplate: this.packedQtyColTemplate },
+        { data: 'WeightPerUnit', label: 'Weight Per Unit (Kg)', width: '18%', customTemplate: this.weightPerUnitColTemplate },
+        { data: '', label: '', hideVisToggle: true, width: '7%', customTemplate: this.productActionColTemplate },
       ],
       data: dataWithContext
     };
+  }
+
+  addBox(): void {
+    const boxForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items);
+    const boxIndex = this.boxListArray.length;
+    const firstProductForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items.ProductList.items);
+
+    boxForm.patchValue({
+      ExportOrderPackingListBoxNo: (boxIndex + 1).toString()
+    });
+
+    this.boxListArray.push(boxForm);
+    this.getProductList(boxIndex).push(firstProductForm);
+    this.boxCollapsed[boxIndex] = false;
+
+    this.updateProductCount(boxIndex);
+    this.syncBoxMetadata();
+    this.syncProductTables();
+  }
+
+  removeBox(index: number): void {
+    const boxNo = this.boxListArray.at(index).get('ExportOrderPackingListBoxNo')?.value;
+
+    this.alertService.showConfirmation({
+      text: `Do you really want to remove  <b>Box ${boxNo}<b>?`
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.boxListArray.removeAt(index);
+      this.boxCollapsed.splice(index, 1);
+
+      if (this.boxListArray.length === 0) {
+        this.addBox();
+        return;
+      }
+
+      this.syncBoxMetadata();
+      this.syncProductTables();
+    });
+  }
+
+  toggleBox(boxIndex: number): void {
+    this.boxCollapsed[boxIndex] = !this.boxCollapsed[boxIndex];
+  }
+
+  addProductRow(boxIndex: number): void {
+    const productForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items.ProductList.items);
+
+    this.getProductList(boxIndex).push(productForm);
+    this.updateProductCount(boxIndex);
+    this.syncProductTable(boxIndex);
+  }
+
+  removeProductRow(boxIndex: number, productIndex: number): void {
+    const boxNo = this.boxListArray.at(boxIndex).get('ExportOrderPackingListBoxNo')?.value;
+    const productName = this.getProductList(boxIndex).at(productIndex).get('ProductName')?.value;
+
+    this.alertService.showConfirmation({
+      text: `Do you really want to remove  <b>Product ${productName} from Box ${boxNo}<b>?`
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.getProductList(boxIndex).removeAt(productIndex);
+
+      if (this.getProductList(boxIndex).length === 0) {
+        this.addProductRow(boxIndex);
+        return;
+      }
+
+      this.updateProductCount(boxIndex);
+      this.syncProductTable(boxIndex);
+    });
   }
 
   onChange_Product(productId: number | null, boxIndex: number, rowIndex: number): void {
@@ -276,107 +285,61 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
     if (!productId) {
       row.patchValue({ ProductID: null, ProductName: null, PackedQty: null });
-      this.refreshTable();
+      this.syncProductTables();
       return;
     }
 
-    // Duplicate check (only inside current box)
     if (this.isProductDuplicateInBox(productId, boxIndex, rowIndex)) {
-      this.alertService.showToast({text: 'Product already exists'});
-
+      this.alertService.showToast({ text: 'Product already exists' });
       row.patchValue({ ProductID: null, ProductName: null, PackedQty: null });
+      this.syncProductTables();
       return;
     }
 
-    const selectedProduct = this.productList.find(p => p.ProductID === productId);
+    const selectedProduct = this.productList.find(product => product.ProductID === productId);
     const availableQty = selectedProduct?.ProuductCount ?? 0;
-    const usedQtyInOtherRows = this.boxListArray.controls.reduce((total, boxControl, bIndex) => {
-      const productRows = boxControl.get('ProductList') as FormArray;
-      return total + productRows.controls.reduce((boxTotal, rowControl, rIndex) => {
-        if (bIndex === boxIndex && rIndex === rowIndex) return boxTotal;
-        return boxTotal + (rowControl.get('ProductID')?.value === productId ? (Number(rowControl.get('PackedQty')?.value) || 0) : 0);
-      }, 0);
-    }, 0);
+    const usedQtyInOtherRows = this.getUsedQtyForProduct(productId, boxIndex, rowIndex);
     const remainingQty = Math.max(availableQty - usedQtyInOtherRows, 0);
 
     row.patchValue({
       ProductID: productId,
-      ProductName: selectedProduct!.ProductName,
+      ProductName: selectedProduct?.ProductName ?? null,
       PackedQty: remainingQty
     });
 
-    this.refreshTable();
+    this.syncProductTables();
   }
 
-  addBox(): void {
-    const boxForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items);
-    boxForm.patchValue({ExportOrderPackingListBoxNo: (this.boxListArray.length + 1).toString()});
+  onChange_PackedQty(boxIndex: number, rowIndex: number): void {
+    const currentRow = this.getProductList(boxIndex).at(rowIndex) as FormGroup;
+    const productId = currentRow.get('ProductID')?.value as number | null;
 
-    //Push the new box form to the FormArray
-    this.boxListArray.push(boxForm);
+    if (!productId) return;
 
-    const boxIndex = this.boxListArray.length - 1;
-    this.boxCollapsed[boxIndex] = false;
+    const qtyInOtherRows = this.getUsedQtyForProduct(productId, boxIndex, rowIndex);
+    const currentQty = Number(currentRow.get('PackedQty')?.value) || 0;
+    const availableQty = this.productList.find(product => product.ProductID === productId)?.ProuductCount ?? 0;
+    const totalQty = qtyInOtherRows + currentQty;
 
-    // Initialize the product AutoCompleteDef array for the new box
-    this.productTableDefs[boxIndex] = this.createProductTableDef(boxIndex);
+    if (totalQty > availableQty) {
+      currentRow.patchValue({ PackedQty: availableQty }, { emitEvent: false });
+      this.syncProductTables();
 
-    const firstProductForm = this.formService.createFormArrayItem( this.formConfig.BoxList.items.ProductList.items);
-
-    this.getProductList(boxIndex).push(firstProductForm);
-
-    this.updateProductCount(boxIndex);
-
-    this.productTableDefs[boxIndex] = this.createProductTableDef(boxIndex);
-
-    this.updateBoxNumbers();
-    this.updateBoxCount();
-    this.refreshTable();
-  }
-
-  removeBox(index: number): void {
-    const boxControl = this.boxListArray.at(index);
-    const BoxNo = boxControl.get('ExportOrderPackingListBoxNo')?.value;
-
-    this.alertService.showConfirmation({text: `Do you really want to remove  <b>Box ${BoxNo}<b>?`})
-      .then(result => {
-        if (!result.isConfirmed) return;
-
-        this.boxListArray.removeAt(index);
-        this.productTableDefs.splice(index, 1);
-        this.boxCollapsed.splice(index, 1);
-
-        if (this.boxListArray.length === 0) {
-          this.addBox();
-          return;
-        }
-
-        this.rebuildProductTableDefs();
-        this.updateBoxNumbers();
-        this.updateBoxCount();
+      this.alertService.showAlert({
+        type: 'warning',
+        title: 'Quantity Exceeded',
+        text: `Total packed quantity (${totalQty}) exceeds available quantity (${availableQty})`
       });
+      return;
+    }
+
+    this.syncProductTables();
   }
 
-  rebuildProductTableDefs(): void {
-    this.productTableDefs = this.boxListArray.controls.map(
-      (_, i) => this.createProductTableDef(i)
-    );
-    this.syncBoxCollapseState();
-  }
-
-  // Autocomplete rebuilt logic is commented because product selection now uses z-select.
-  // rebuildProductAutoCompleteDefs(): void {}
-
-  syncBoxCollapseState(): void {
-    this.boxCollapsed = this.boxListArray.controls.map((_, i) => this.boxCollapsed[i] ?? false);
-  }
-
-  toggleBox(boxIndex: number): void {
-    this.boxCollapsed[boxIndex] = !this.boxCollapsed[boxIndex];
-  }
-
-  updateBoxCount(): void {
-    this.form.patchValue({NoOfBox: this.boxListArray.length});
+  updateProductCount(boxIndex: number): void {
+    this.boxListArray.at(boxIndex).patchValue({
+      NoOfProduct: this.getProductList(boxIndex).length
+    });
   }
 
   updateBoxNumbers(): void {
@@ -387,343 +350,52 @@ export class PackingListComponent implements OnInit, OnDestroy {
     });
   }
 
-  addProductRow(boxIndex: number): void {
-    const productForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items.ProductList.items);
-
-    this.getProductList(boxIndex).push(productForm);
-
-    this.updateProductCount(boxIndex);
-
-    this.productTableDefs[boxIndex] = this.createProductTableDef(boxIndex);
-
-    this.refreshTable();
+  updateBoxCount(): void {
+    this.form.patchValue({
+      NoOfBox: this.boxListArray.length
+    }, { emitEvent: false });
   }
 
-  removeProductRow(boxIndex: number, productIndex: number): void {
-    const boxControl = this.boxListArray.at(boxIndex);
-    const BoxNo = boxControl.get('ExportOrderPackingListBoxNo')?.value;
-    const productForm = this.getProductList(boxIndex).at(productIndex) as FormGroup;
-    const productName = productForm.get("ProductName")?.value;
-
-    this.alertService.showConfirmation({text: `Do you really want to remove  <b>Product ${productName} from Box ${BoxNo}<b>?`})
-      .then(result => {
-        if (!result.isConfirmed) return;
-
-
-        this.getProductList(boxIndex).removeAt(productIndex);
-
-        if (this.getProductList(boxIndex).length === 0) {
-          this.addProductRow(boxIndex);
-          return;
-        }
-
-        this.updateProductCount(boxIndex);
-        this.productTableDefs[boxIndex] = this.createProductTableDef(boxIndex);
-        this.refreshTable();
-      });
-  }
-
-  onClickRemoveProductItem(boxIndex: number, productIndex: number): void {
-    const row = this.getProductList(boxIndex).at(productIndex) as FormGroup;
-    const productName = row.get("ProductName")?.value
-    if (productName !== null) {
-      this.alertService.showConfirmation({
-        text: `Do you really want to remove <b>${productName}<b>?`,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.removeProductRow(boxIndex, productIndex);
-        }
-      });
-    }
-    else {this.removeProductRow(boxIndex, productIndex)
-    }
-  }
-
-  updateProductCount(boxIndex: number): void {
-    const count = this.getProductList(boxIndex).length;
-
-    this.boxListArray.at(boxIndex).patchValue({
-      NoOfProduct: count
-    });
-  }
-
-  onChange_PackedQty(boxIndex: number, rowIndex: number): void {
-    const boxes = this.form.get('BoxList') as FormArray;
-
-    const currentRow = ((boxes.at(boxIndex) as FormGroup).get('ProductList') as FormArray).at(rowIndex) as FormGroup;
-
-    const productId = currentRow.get('ProductID')?.value;
-
-    if (!productId) return;
-    const qtyInOtherRows = boxes.controls.reduce((total, boxControl, bIndex) => {
-      const boxRows = boxControl.get('ProductList') as FormArray;
-      return total + boxRows.controls.reduce((boxTotal, rowControl, rIndex) => {
-        if (bIndex === boxIndex && rIndex === rowIndex) return boxTotal;
-        return boxTotal + (rowControl.get('ProductID')?.value === productId ? (Number(rowControl.get('PackedQty')?.value) || 0) : 0);
-      }, 0);
-    }, 0);
-    const currentQty = Number(currentRow.get('PackedQty')?.value) || 0;
-    const totalQty = qtyInOtherRows + currentQty;
-
-    const product = this.productList.find(p => p.ProductID === productId);
-
-    const availableQty = product?.ProuductCount ?? 0;
-
-    if (totalQty > availableQty) {
-      currentRow.patchValue({PackedQty: availableQty}, { emitEvent: false });
-      this.refreshTable();
-
-      this.alertService.showAlert({
-        type: "warning",
-        title: 'Quantity Exceeded',
-        text: `Total packed quantity (${totalQty}) exceeds available quantity (${availableQty})`
-      });
-    }
-  }
-
-  isProductDuplicateInBox(productId: number, boxIndex: number, currentRow: number): boolean {
-    const products = this.getProductList(boxIndex);
-
-    return products.controls.some((prod, pIndex) => {
-      if (pIndex === currentRow) {
-        return false;
-      }
-
-      return prod.value.ProductID === productId;
-    });
-  }
-
-  refreshTable(): void {
-    this.tableDef = {...this.tableDef, data: this.boxListArray.value};
-  }
-
-  openDialogBox(params: OpenPackingDialogParams): void {
-    const { isEditMode, productList, packingList } = params;
-    this.isEditMode = isEditMode;
-
-    if (productList) {
-      this.form.patchValue(productList);
-      this.productList = productList.ProductList?.Items?.map(e => ({
-        ProductID: e.ProductID,
-        ProductCode: e.ProductCode,
-        ProductName: e.ProductName,
-        ProuductCount: e.SalesQty
-      })) ?? [];
-    } else if (packingList) {
-      const { BoxList = [], ...packingListDetail } = packingList;
-      this.form.patchValue(packingListDetail);
-
-      const boxArray = this.form.get('BoxList') as FormArray<FormGroup>;
-      boxArray.clear();
-
-      const productQtyMap = new Map<number, ProductList>();
-      BoxList.forEach((box) => {
-        const boxForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items);
-        boxForm.patchValue({...box, PackedDateTime: this.formatDate(box.PackedDateTime!), InspectedDateTime: this.formatDate(box.InspectedDateTime!), NoOfProduct: box.NoOfProduct});
-
-        const productArray = boxForm.get('ProductList') as FormArray<FormGroup>;
-        productArray.clear();
-
-        (box.ProductList ?? []).forEach((product) => {
-          const productForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items.ProductList.items);
-          productForm.patchValue(product);
-          productArray.push(productForm);
-
-          if (product.ProductID == null || !product.ProductName) return;
-          const packedQty = Number(product.PackedQty) || 0;
-          const existing = productQtyMap.get(product.ProductID);
-          if (existing) {
-            existing.ProuductCount += packedQty;
-          } else {
-            productQtyMap.set(product.ProductID, {
-              ProductID: product.ProductID,
-              ProductCode:  product.ProductCode!,
-              ProductName: product.ProductName,
-              ProuductCount: packedQty
-            });
-          }
-        });
-
-        boxArray.push(boxForm);
-      });
-
-      this.productList = Array.from(productQtyMap.values());
-      this.productTableDefs = this.boxListArray.controls.map((_, index) => this.createProductTableDef(index));
-      this.updateBoxCount();
-    }
-
-    this.isFormDialogVisible = true;
-
-    // Wait for form array to build
-    setTimeout(() => {
-      this.rebuildProductTableDefs();
-      this.syncBoxCollapseState();
-      this.updateBoxNumbers();
-      this.refreshTable();
-      this.updateBoxCount();
-    });
-  }
-
-  closeDialogBox(): void {
-    this.isFormDialogVisible = false;
-    this.isEditMode = false;
-    (this.form.get('Boxes') as FormArray)?.controls.forEach(b => (b.get('ProductList') as FormArray)?.clear());
-    (this.form.get('Boxes') as FormArray)?.clear();
-    this.form.reset();
-    this.formService.resetFormValue<ExportOrderPackingList>(this.formConfig, this.form);
-
-    setTimeout(() => this.closeDialogBoxEvent.emit(), 1);
-  }
-
-  private loadPackingList(packingListID: number): void {
-    this.pageService
-      .GetPackingListDetails(packingListID)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (!response.IsSuccess) {
-            this.alertService.showServerResponseAlert(response);
-            return;
-          }
-
-          this.isEditMode = true;
-          const { BoxList = [], ...packingListDetail } = response.Data;
-
-          this.form.patchValue(packingListDetail);
-
-          const boxArray = this.form.get('BoxList') as FormArray<FormGroup>;
-          boxArray.clear();
-
-          const productQtyMap = new Map<number, ProductList>();
-
-          BoxList.forEach((box) => {
-
-            const boxForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items);
-
-            boxForm.patchValue({
-              ...box,
-              PackedDateTime: this.formatDate(box.PackedDateTime!),
-              InspectedDateTime: this.formatDate(box.InspectedDateTime!),
-              NoOfProduct: box.NoOfProduct
-            });
-
-            const productArray = boxForm.get('ProductList') as FormArray<FormGroup>;
-            productArray.clear();
-
-            (box.ProductList ?? []).forEach(product => {
-
-              const productForm = this.formService.createFormArrayItem(
-                this.formConfig.BoxList.items.ProductList.items
-              );
-
-              productForm.patchValue(product);
-              productArray.push(productForm);
-
-              if (product.ProductID == null || !product.ProductName) return;
-
-              const packedQty = Number(product.PackedQty) || 0;
-              const existing = productQtyMap.get(product.ProductID);
-
-              if (existing) {
-                existing.ProuductCount += packedQty;
-              } else {
-                productQtyMap.set(product.ProductID, {
-                  ProductID: product.ProductID,
-                  ProductCode: product.ProductCode!,
-                  ProductName: product.ProductName,
-                  ProuductCount: packedQty
-                });
-              }
-            });
-
-            boxArray.push(boxForm);
-          });
-
-          this.productList = Array.from(productQtyMap.values());
-          
-          // Wait for form array to build
-          setTimeout(() => {
-            this.rebuildProductTableDefs();
-            this.syncBoxCollapseState();
-            this.updateBoxNumbers();
-            this.refreshTable();
-            this.updateBoxCount();
-          });
-        }
-      });
-  }
-
-  private loadExportOrderProducts(exportOrderID: number): void {
-    this.pageService
-      .GetExportOrderProductDetails(exportOrderID)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (!response.IsSuccess) {
-            this.alertService.showServerResponseAlert(response);
-            return;
-          }
-          this.form.patchValue(response.Data);
-
-          this.productList = response.Data.ProductList?.Items?.map(e => ({
-              ProductID: e.ProductID,
-              ProductCode: e.ProductCode,
-              ProductName: e.ProductName,
-              ProuductCount: e.SalesQty
-            })) ?? [];
-            
-
-          // Wait for form array to build
-          setTimeout(() => {
-            this.rebuildProductTableDefs();
-            this.syncBoxCollapseState();
-            this.updateBoxNumbers();
-            this.refreshTable();
-            this.updateBoxCount();
-          });
-        }
-      });
-  }
-  
   onSubmit(): void {
     if (this.isSubmitted) return;
 
     this.isSubmitted = true;
+
     try {
       if (this.form.invalid) {
         this.form.markAllAsTouched();
         this.formService.validateFormFields(this.formConfig, this.form);
-        this.alertService.showValidationAlert();        
-        this.logInvalidControls(this.form);
+        this.alertService.showValidationAlert();
         this.isSubmitted = false;
         return;
       }
+
       if (!this.validatePackedProductCount()) {
         this.isSubmitted = false;
         return;
       }
+
       if (this.isEditMode) {
         this.alertService.showConfirmationWithInput({
           text: 'Do you really want to Update?',
-        }).then(result => {
+        }).then((result) => {
           if (result.isConfirmed) {
             const model: ExportOrderPackingList = {
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
             };
             this.updateRecord(this.formService.transformFormData(model));
-          }
-          else {
+          } else {
             this.isSubmitted = false;
           }
         });
+        return;
       }
-      else {
-        this.createRecord(this.formService.transformFormData(this.form.value));
-      }
+
+      this.createRecord(this.formService.transformFormData(this.form.value));
     }
     catch (error) {
-
+      this.isSubmitted = false;
     }
   }
 
@@ -734,17 +406,13 @@ export class PackingListComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.closeDialogBox();
               this.alertService.showAlert({
-                type: "success",
+                type: 'success',
                 text: response.Message,
                 timer: 5000
               });
-              setTimeout(() => {
-                this.ngOnInit();
-              }, 2000);
-            }
-            else {
+              this.closeDialogBox();
+            } else {
               this.alertService.showServerResponseAlert(response);
             }
           },
@@ -754,7 +422,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
         });
     }
     catch (error) {
-
+      this.isSubmitted = false;
     }
   }
 
@@ -765,14 +433,13 @@ export class PackingListComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.closeDialogBox();
               this.alertService.showAlert({
-                type: "success",
+                type: 'success',
                 text: response.Message,
                 timer: 5000
               });
-            }
-            else {
+              this.closeDialogBox();
+            } else {
               this.alertService.showServerResponseAlert(response);
             }
           },
@@ -782,18 +449,52 @@ export class PackingListComponent implements OnInit, OnDestroy {
         });
     }
     catch (error) {
+      this.isSubmitted = false;
+    }
+  }
 
+  closeDialogBox(): void {
+    this.resetPackingForm();
+    setTimeout(() => this.closeDialogBoxEvent.emit(), 1);
+  }
+
+  openDialogBox(params: OpenPackingDialogParams): void {
+    this.resetPackingForm();
+    this.isEditMode = params.isEditMode;
+
+    if (params.productList) {
+      this.form.patchValue(params.productList);
+      this.productList = params.productList.ProductList?.Items?.map(item => ({
+        ProductID: item.ProductID,
+        ProductCode: item.ProductCode,
+        ProductName: item.ProductName,
+        ProuductCount: item.SalesQty
+      })) ?? [];
+      this.syncBoxMetadata();
+      this.syncProductTables();
+      return;
+    }
+
+    if (params.packingList) {
+      this.form.patchValue(this.mapPackingListHeader(params.packingList));
+      this.buildBoxes(params.packingList.BoxList ?? []);
+      this.productList = this.buildPackedProductList(params.packingList.BoxList ?? []);
+      this.syncBoxMetadata();
+      this.syncProductTables();
     }
   }
 
   validatePackedProductCount(): boolean {
     const expectedProductQty = new Map<number, number>();
-    this.productList.forEach(product => {expectedProductQty.set(product.ProductID, Number(product.ProuductCount) || 0);});
+    this.productList.forEach(product => {
+      expectedProductQty.set(product.ProductID, Number(product.ProuductCount) || 0);
+    });
 
     const packedProductQty = new Map<number, number>();
     this.boxListArray.controls.forEach((boxControl) => {
-      const rows = boxControl.get('ProductList') as FormArray<FormGroup>;
-      rows.controls.forEach((rowControl) => {
+      const productRows = boxControl.get('ProductList') as FormArray<FormGroup>;
+
+      productRows.controls.forEach((rowControl) => {
         const productId = rowControl.get('ProductID')?.value as number | null;
         if (!productId) return;
 
@@ -806,15 +507,15 @@ export class PackingListComponent implements OnInit, OnDestroy {
     expectedProductQty.forEach((expectedQty, productId) => {
       const packedQty = packedProductQty.get(productId) || 0;
       if (packedQty !== expectedQty) {
-        const productName = this.productList.find(p => p.ProductID === productId)!.ProductName;
-        mismatchProducts.push(`${productName}: packed ${packedQty}, expected ${expectedQty} \n`);
+        const productName = this.productList.find(product => product.ProductID === productId)?.ProductName ?? `Product ID ${productId}`;
+        mismatchProducts.push(`${productName}: packed ${packedQty}, expected ${expectedQty}`);
       }
     });
 
     const unexpectedProducts: string[] = [];
     packedProductQty.forEach((_, productId) => {
       if (!expectedProductQty.has(productId)) {
-        const productName = this.productList.find(p => p.ProductID === productId)?.ProductName ?? `Product ID ${productId}`;
+        const productName = this.productList.find(product => product.ProductID === productId)?.ProductName ?? `Product ID ${productId}`;
         unexpectedProducts.push(productName);
       }
     });
@@ -826,7 +527,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
       ].filter(Boolean).join(' | ');
 
       this.alertService.showAlert({
-        type: "warning",
+        type: 'warning',
         title: 'Packing Validation Failed',
         text: detailText || 'All records in box list must exactly match product counts.'
       });
@@ -836,27 +537,172 @@ export class PackingListComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  formatDate(date: Date) {
-    return DateUtils.toDate(date);
+  private loadPackingList(packingListID: number): void {
+    this.pageService.GetPackingListDetails(packingListID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response.IsSuccess) {
+            this.alertService.showServerResponseAlert(response);
+            return;
+          }
+
+          this.isEditMode = true;
+          this.form.patchValue(this.mapPackingListHeader(response.Data));
+          this.buildBoxes(response.Data.BoxList ?? []);
+          this.productList = this.buildPackedProductList(response.Data.BoxList ?? []);
+          this.syncBoxMetadata();
+          this.syncProductTables();
+        }
+      });
   }
 
-  private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {
-    Object.keys(form.controls).forEach(key => {
-      const control = form.get(key);
-      const controlPath = parentKey ? `${parentKey}.${key}` : key;
+  private loadExportOrderProducts(exportOrderID: number): void {
+    this.pageService.GetExportOrderProductDetails(exportOrderID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response.IsSuccess) {
+            this.alertService.showServerResponseAlert(response);
+            return;
+          }
 
-      if (control instanceof FormGroup || control instanceof FormArray) {
-        this.logInvalidControls(control, controlPath);
-      } else if (control && control.invalid) {
-        console.warn(
-          `❌ Invalid Control: ${controlPath}`,
-          control.errors
-        );
+          this.isEditMode = false;
+          this.form.patchValue(response.Data);
+          this.productList = response.Data.ProductList?.Items?.map(item => ({
+            ProductID: item.ProductID,
+            ProductCode: item.ProductCode,
+            ProductName: item.ProductName,
+            ProuductCount: item.SalesQty
+          })) ?? [];
+
+          this.syncBoxMetadata();
+          this.syncProductTables();
+        }
+      });
+  }
+
+  private mapPackingListHeader(packingList: ExportOrderPackingList): Partial<ExportOrderPackingList> {
+    const { BoxList, ...packingListHeader } = packingList;
+    return packingListHeader;
+  }
+
+  private buildBoxes(boxes: ExportOrderPackingListBox[]): void {
+    this.boxListArray.clear();
+    this.boxCollapsed = [];
+
+    boxes.forEach((box, index) => {
+      const boxForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items);
+      const productArray = boxForm.get('ProductList') as FormArray<FormGroup>;
+
+      boxForm.patchValue({
+        ...box,
+        PackedDateTime: this.toDate(box.PackedDateTime),
+        InspectedDateTime: this.toDate(box.InspectedDateTime),
+        NoOfProduct: box.NoOfProduct
+      });
+
+      productArray.clear();
+      (box.ProductList ?? []).forEach((product) => {
+        const productForm = this.formService.createFormArrayItem(this.formConfig.BoxList.items.ProductList.items);
+        productForm.patchValue(product);
+        productArray.push(productForm);
+      });
+
+      if (productArray.length === 0) {
+        productArray.push(this.formService.createFormArrayItem(this.formConfig.BoxList.items.ProductList.items));
       }
-    });
-  }
+
+      this.boxListArray.push(boxForm);
+      this.boxCollapsed[index] = false;
+    });
+
+    if (this.boxListArray.length === 0) {
+      this.addBox();
+    }
+  }
+
+  private buildPackedProductList(boxes: ExportOrderPackingListBox[]): ProductList[] {
+    const productQtyMap = new Map<number, ProductList>();
+
+    boxes.forEach((box) => {
+      (box.ProductList ?? []).forEach((product) => {
+        if (product.ProductID == null || !product.ProductName) return;
+
+        const packedQty = Number(product.PackedQty) || 0;
+        const existingProduct = productQtyMap.get(product.ProductID);
+
+        if (existingProduct) {
+          existingProduct.ProuductCount += packedQty;
+          return;
+        }
+
+        productQtyMap.set(product.ProductID, {
+          ProductID: product.ProductID,
+          ProductCode: product.ProductCode!,
+          ProductName: product.ProductName,
+          ProuductCount: packedQty
+        });
+      });
+    });
+
+    return Array.from(productQtyMap.values());
+  }
+
+  private getUsedQtyForProduct(productId: number, boxIndex: number, rowIndex: number): number {
+    return this.boxListArray.controls.reduce((total, boxControl, currentBoxIndex) => {
+      const productRows = boxControl.get('ProductList') as FormArray<FormGroup>;
+
+      return total + productRows.controls.reduce((boxTotal, rowControl, currentRowIndex) => {
+        if (currentBoxIndex === boxIndex && currentRowIndex === rowIndex) return boxTotal;
+
+        return boxTotal + (
+          rowControl.get('ProductID')?.value === productId
+            ? (Number(rowControl.get('PackedQty')?.value) || 0)
+            : 0
+        );
+      }, 0);
+    }, 0);
+  }
+
+  private isProductDuplicateInBox(productId: number, boxIndex: number, currentRow: number): boolean {
+    return this.getProductList(boxIndex).controls.some((productControl, productIndex) => {
+      if (productIndex === currentRow) return false;
+      return productControl.get('ProductID')?.value === productId;
+    });
+  }
+
+  private syncBoxMetadata(): void {
+    this.updateBoxNumbers();
+    this.updateBoxCount();
+
+    this.boxListArray.controls.forEach((_, index) => {
+      this.updateProductCount(index);
+    });
+  }
+
+  private syncProductTable(boxIndex: number): void {
+    this.productTableDefs[boxIndex] = this.createProductTableDef(boxIndex);
+  }
+
+  private syncProductTables(): void {
+    this.productTableDefs = this.boxListArray.controls.map((_, index) => this.createProductTableDef(index));
+    this.boxCollapsed = this.boxListArray.controls.map((_, index) => this.boxCollapsed[index] ?? false);
+  }
+
+  private resetPackingForm(): void {
+    this.formService.resetFormValue<ExportOrderPackingList>(this.formConfig, this.form);
+    this.boxListArray.clear();
+    this.productList = [];
+    this.productTableDefs = [];
+    this.boxCollapsed = [];
+    this.isEditMode = false;
+    this.isSubmitted = false;
+    this.exportOrderAutoCompleteDef.options = [];
+    this.addBox();
+  }
+
+  private toDate(value: Date | string | null | undefined): Date | null {
+    return value ? DateUtils.toDate(value as Date) : null;
+  }
 }
-
-
-
-
