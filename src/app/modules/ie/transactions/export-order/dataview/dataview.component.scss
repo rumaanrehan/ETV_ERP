@@ -218,6 +218,7 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-card__top {
+    --eo-topline-height: 2rem;
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
@@ -227,62 +228,61 @@ z-dataview {
 
 :host ::ng-deep .eo-card__checkbox {
     flex: 0 0 auto;
-    margin-top: 0.05rem;
+    height: var(--eo-topline-height);
+    display: inline-flex;
+    align-items: center;
 }
 
 :host ::ng-deep .eo-card__main {
     flex: 1;
     min-width: 0;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-}
-
-:host ::ng-deep .eo-card__identity {
-    flex: 1 1 auto;
-    min-width: 0;
-    display: flex;
     flex-direction: column;
+    gap: 0.08rem;
 }
 
-:host ::ng-deep .eo-card__actions {
-    display: inline-flex;
-    align-items: center;
+:host ::ng-deep .eo-card__line {
+    display: flex;
+    align-items: stretch;
+    min-height: var(--eo-topline-height);
     gap: 0.35rem;
-    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
 }
 
 :host ::ng-deep .eo-card__title-link {
     text-decoration: none;
     color: inherit;
     cursor: pointer;
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--eo-topline-height);
 }
 
 :host ::ng-deep .eo-card__title {
-    font-size: 0.875rem; /* text-sm */
+    font-size: 1rem; /* text-sm */
     font-weight: 600;
     color: #111827;
     margin: 0;
-    line-height: 1.25;
+    line-height: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 :host ::ng-deep .eo-card__status {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0;
     margin: 0;
     flex: 0 0 auto;
+    height: var(--eo-topline-height);
 }
 
 :host ::ng-deep .eo-card__company {
-    margin-top: 0.08rem;
+    margin-top: 0.14rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -291,10 +291,12 @@ z-dataview {
 :host ::ng-deep .eo-card__badge {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.25rem;
     font-size: 0.62rem;
     font-weight: 500;
-    padding: 0.14rem 0.42rem;
+    height: 80%;
+    padding: 0 0.32rem;
     border-radius: 5px;
     border: 1px solid rgba(226, 232, 240, 1);
     background: rgba(241, 245, 249, 1);
@@ -308,7 +310,7 @@ z-dataview {
 @media (max-width: 991.98px) {
     :host ::ng-deep .eo-card__badge {
         font-size: 0.56rem;
-        padding: 0.1rem 0.34rem;
+        padding: 0 0.34rem;
         border-radius: 4px;
     }
 }
@@ -322,6 +324,9 @@ z-dataview {
 
 :host ::ng-deep .eo-card__menu {
     flex: 0 0 auto;
+    height: var(--eo-topline-height);
+    display: inline-flex;
+    align-items: center;
 }
 
 :host ::ng-deep .eo-card__menu button {
@@ -329,8 +334,8 @@ z-dataview {
     border: 0 !important;
     box-shadow: none !important;
     padding: 0.25rem !important; /* p-1 */
-    width: 2rem;
-    height: 2rem;
+    width: var(--eo-topline-height);
+    height: var(--eo-topline-height);
     border-radius: 0.5rem;
     color: #9ca3af !important;
 }

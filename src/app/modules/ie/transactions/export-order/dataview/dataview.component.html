@@ -53,13 +53,10 @@
                 </p-checkbox>
 
                 <div class="eo-card__main">
-                    <div class="eo-card__identity">
+                    <div class="eo-card__line">
                         <a class="eo-card__title-link" (click)="onClickEditDetails(item.ExportOrderID)">
                             <h5 class="eo-card__title">{{item.ExportOrderNo}}</h5>
                         </a>
-                        <h5 class="eo-card__title eo-card__company">{{item.CompanyName}}</h5>
-                    </div>
-                    <div class="eo-card__actions">
                         <div class="eo-card__status">
                             <span class="eo-card__badge" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
                         </div>
@@ -67,6 +64,7 @@
                             [styleClass]="'dataview-action-menu'">
                         </z-menu>
                     </div>
+                    <h5 class="eo-card__title eo-card__company">{{item.CompanyName}}</h5>
                 </div>
             </div>
 
