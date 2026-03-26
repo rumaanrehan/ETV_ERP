@@ -261,6 +261,12 @@
     margin-bottom: 3%;
 }
 
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 .simple-field {
     display: flex;
     flex-direction: row;
@@ -736,4 +742,35 @@
 
 .table-add-row .simple-btn {
     height: calc(var(--se-field-height) * 0.8);
+}
+
+@media (min-width: 2000px) {
+    .simple-form {
+        display: grid;
+        grid-template-columns: minmax(0, 100%) minmax(0, 100%);
+        column-gap: 1.5rem;
+        row-gap: 0.75rem;
+        align-items: start;
+        justify-content: start;
+    }
+
+    .simple-form > .form-fields--pre-table {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .simple-form > .form-fields--post-table {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .simple-form > .simple-field.simple-field-table {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .simple-form > .table-add-row {
+        grid-column: 1 / -1;
+        grid-row: 3;
+    }
 }

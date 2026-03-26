@@ -45,6 +45,7 @@
 
   <form class="create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
     <div class="simple-form">
+      <div class="form-fields form-fields--pre-table">
       <div class="simple-field">
         <label class="simple-label">{{formConfig.ExportOrderNo.label}}:</label>
         <div class="simple-control">
@@ -190,6 +191,8 @@
         </div>
       </div>
 
+      </div>
+
       <div class="simple-field simple-field-table">
         <div class="simple-control">
           <z-table [tableDef]="this.tableDef"></z-table>
@@ -204,6 +207,7 @@
         </button>
       </div>
 
+      <div class="form-fields form-fields--post-table">
       <div class="simple-field">
         <label class="simple-label">{{formConfig.PaymentTermID.label}}:</label>
         <div class="simple-control">
@@ -307,6 +311,7 @@
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </form>
