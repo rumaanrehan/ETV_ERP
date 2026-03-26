@@ -422,6 +422,7 @@
 .amount-summary-wrap {
     display: flex;
     justify-content: flex-end;
+    margin: 0.5rem 0.75rem 0.25rem;
 }
 
 .amount-summary-card {
@@ -449,9 +450,14 @@
     }
 
     z-inputnumber {
-        flex: 1 1 auto;
-        min-width: 0;
+        flex: 0 0 11rem;
+        min-width: 11rem;
+        max-width: 11rem;
     }
+}
+
+:host ::ng-deep .amount-summary-row .p-float-label > label {
+    display: none !important;
 }
 
 .create-section-card {
@@ -919,13 +925,15 @@
 
 /* Customer field: exact Sales-Enquiry-like structure and behavior */
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field,
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field {
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field,
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field {
     width: min(100%, 40rem) !important;
     max-width: 40rem !important;
 }
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control.has-action,
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action {
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action,
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .simple-control.has-action {
     width: 436px;
     min-width: 436px;
     max-width: 436px;
@@ -935,24 +943,28 @@
 }
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control.has-action > .simple-action-btn,
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action > .simple-action-btn {
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action > .simple-action-btn,
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .simple-control.has-action > .simple-action-btn {
     right: 0;
 }
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .p-float-label,
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label {
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label,
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .p-float-label {
     display: block;
     width: 100%;
     max-width: none;
 }
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .p-float-label > label,
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label > label {
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label > label,
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .p-float-label > label {
     display: none !important;
 }
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .p-float-label > :not(label),
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label > :not(label) {
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label > :not(label),
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .p-float-label > :not(label) {
     width: 100% !important;
     min-width: 0 !important;
     max-width: none !important;
@@ -968,6 +980,39 @@
     align-items: flex-start;
     gap: 0.75rem;
     width: 100%;
+}
+
+.proforma-invoice-create .horizontal-form .proforma-port-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: min(100%, 40rem);
+    max-width: 40rem;
+}
+
+.proforma-invoice-create .horizontal-form .proforma-port-stack > .proforma-port-field {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.proforma-invoice-create .horizontal-form .proforma-roundoff-field {
+    width: min(100%, 40rem) !important;
+    max-width: 40rem !important;
+}
+
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-roundoff-field .proforma-roundoff-control {
+    width: 436px;
+    min-width: 436px;
+    max-width: 436px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+}
+
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-roundoff-field z-checkbox {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
 }
 
 .proforma-invoice-create .horizontal-form .proforma-fields-group > [class*="col-"] {

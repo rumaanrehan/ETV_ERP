@@ -15,6 +15,9 @@ import { AutoCompleteDef } from './z-autocomplete';
   styleUrl: './z-autocomplete.component.scss'
 })
 export class ZAutoCompleteComponent<T> {
+  private static nextAutoCompleteId = 0;
+  private readonly controlInstanceId = ++ZAutoCompleteComponent.nextAutoCompleteId;
+
   @Input() controlDef!: AutoCompleteDef<T>;
   @Input() isClearable: boolean = true;
   @Input() readonly: boolean = false;
@@ -28,6 +31,18 @@ export class ZAutoCompleteComponent<T> {
 
   get isValueSelected(): boolean {
     return !!(this.controlDef.type === 'formControl' && !!this.controlDef.group.get(this.controlDef.control)?.value);
+  }
+
+  get resolvedInputId(): string {
+    if (this.controlDef?.inputId) {
+      return this.controlDef.inputId;
+    }
+
+    if (this.controlDef?.type === 'formControl') {
+      return `z-autocomplete-${this.controlDef.control}-${this.controlInstanceId}`;
+    }
+
+    return `z-autocomplete-suggestions-${this.controlInstanceId}`;
   }
 
   searchHandler(event: AutoCompleteCompleteEvent): void {

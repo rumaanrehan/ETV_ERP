@@ -159,10 +159,13 @@
                                         [readonly]="isBasedOnExportOrder && this.form.get('PaymentTermID')?.value != null"
                                         [optionValue]="'PaymentTermID'"></z-select>
                                 </div>
-                                <div class="col-xl-1 pe-2 form-group ms-auto">
-                                    <z-checkbox [group]="form" [control]="'IsRoundOff'"
-                                        [label]="formConfig.IsRoundOff.label">
-                                    </z-checkbox>
+                                <div class="col-xl-2 form-group px-2 simple-field proforma-roundoff-field">
+                                    <label class="simple-label"></label>
+                                    <div class="simple-control checkbox-control proforma-roundoff-control">
+                                        <z-checkbox [group]="form" [control]="'IsRoundOff'"
+                                            [label]="formConfig.IsRoundOff.label">
+                                        </z-checkbox>
+                                    </div>
                                 </div>
                                 <!-- Shipment -->
                                 <h6 class="form-group px-2">Shipment</h6>
@@ -172,30 +175,33 @@
                                         [options]=" shipmentModeList" [optionLabel]="'Text'" [optionValue]="'iValue'"
                                         (onChange)="onChangeShipmentMode()"></z-select>
                                 </div>
-                                <div class="col-xl-1"></div>
-                                <div class="col-xl-3 form-group px-2">
-                                    <div class="simple-control has-action">
-                                        <z-autocomplete [controlDef]="loadingPortAutoCompleteDef"
-                                            (onSearch)="LoadLoadingPort($event)"
-                                            (onSelect)="OnLoadingPortSelect($event)" (onClear)="OnClear_LoadingPort()"
-                                            [readonly]="isBasedOnExportOrder"></z-autocomplete>
-                                        <button type="button" class="simple-action-btn" title="Add New Port"
-                                            (click)="HandleComponentLoad('PortCreateComponent')">
-                                            <i class="pi pi-plus" aria-hidden="true"></i>
-                                        </button>
+                                <div class="proforma-port-stack">
+                                    <div class="col-xl-3 form-group px-2 simple-field proforma-port-field">
+                                        <label class="simple-label">Loading Port:</label>
+                                        <div class="simple-control has-action">
+                                            <z-autocomplete class="customer-autocomplete" [controlDef]="loadingPortAutoCompleteDef"
+                                                (onSearch)="LoadLoadingPort($event)"
+                                                (onSelect)="OnLoadingPortSelect($event)" (onClear)="OnClear_LoadingPort()"
+                                                [readonly]="isBasedOnExportOrder"></z-autocomplete>
+                                            <button type="button" class="simple-action-btn" title="Add New Port"
+                                                (click)="HandleComponentLoad('PortCreateComponent')">
+                                                <i class="pi pi-plus" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xl-3 form-group px-2">
-                                    <div class="simple-control has-action">
-                                        <z-autocomplete [controlDef]="dischargePortAutoCompleteDef"
-                                            (onSearch)="LoadDischargePort($event)"
-                                            (onSelect)="OnDischargePortSelect($event)"
-                                            (onClear)="OnClear_DischargePort()"
-                                            [readonly]="isBasedOnExportOrder"></z-autocomplete>
-                                        <button type="button" class="simple-action-btn" title="Add New Port"
-                                            (click)="HandleComponentLoad('PortCreateComponent')">
-                                            <i class="pi pi-plus" aria-hidden="true"></i>
-                                        </button>
+                                    <div class="col-xl-3 form-group px-2 simple-field proforma-port-field">
+                                        <label class="simple-label">Discharge Port:</label>
+                                        <div class="simple-control has-action">
+                                            <z-autocomplete class="customer-autocomplete" [controlDef]="dischargePortAutoCompleteDef"
+                                                (onSearch)="LoadDischargePort($event)"
+                                                (onSelect)="OnDischargePortSelect($event)"
+                                                (onClear)="OnClear_DischargePort()"
+                                                [readonly]="isBasedOnExportOrder"></z-autocomplete>
+                                            <button type="button" class="simple-action-btn" title="Add New Port"
+                                                (click)="HandleComponentLoad('PortCreateComponent')">
+                                                <i class="pi pi-plus" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 form-group px-2">
@@ -213,68 +219,28 @@
                             </div>
                         </div>
                         <!-- Amount Summary -->
-                        <div class="col-12 d-flex justify-content-end">
-                            <div class="card pt-2 pb-2 mb-2 col-auto">
-                                <div class="px-2 d-flex flex-column gap-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="mb-0">Subtotal Amount: </p>&nbsp; &nbsp; &nbsp;
-                                        <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'"
-                                            [label]="formConfig.SubtotalAmountFC.label"
-                                            [validationMessage]="formConfig.SubtotalAmountFC.error"
-                                            [readonly]="true"></z-inputnumber>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="mb-0">Tax Amount: </p>&nbsp; &nbsp; &nbsp;
-                                        <z-inputnumber [group]="form" [control]="'TaxAmountFC'"
-                                            [label]="formConfig.TaxAmountFC.label"
-                                            [validationMessage]="formConfig.TaxAmountFC.error"
-                                            [readonly]="true"></z-inputnumber>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="mb-0">Net Amount: </p>&nbsp; &nbsp; &nbsp;
-                                        <z-inputnumber [group]="form" [control]="'NetAmountFC'"
-                                            [label]="formConfig.NetAmountFC.label"
-                                            [validationMessage]="formConfig.NetAmountFC.error"
-                                            [readonly]="true"></z-inputnumber>
-                                    </div>
+                        <div class="amount-summary-wrap">
+                            <div class="amount-summary-card">
+                                <div class="amount-summary-row">
+                                    <span>Subtotal Amount:</span>
+                                    <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'" [label]="''"
+                                        [readonly]="true"></z-inputnumber>
+                                </div>
+                                <div class="amount-summary-row">
+                                    <span>Tax Amount:</span>
+                                    <z-inputnumber [group]="form" [control]="'TaxAmountFC'" [label]="''"
+                                        [readonly]="true"></z-inputnumber>
+                                </div>
+                                <div class="amount-summary-row">
+                                    <span>Net Amount:</span>
+                                    <z-inputnumber [group]="form" [control]="'NetAmountFC'" [label]="''"
+                                        [readonly]="true"></z-inputnumber>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
-    <div class="page-action-panel">
-        <div class="col-xl-4">
-            <div class="col-xl-4 px-1" *ngIf="isEditMode && !isTaxAlreadyExists">
-                <button type="submit" class="btn btn-md btn-primary w-100"
-                    (click)="OnClickNavigateToTaxInvoice(this.form.get('ProformaInvoiceID')?.value || null)"> Add Tax
-                    Invoice </button>
-            </div>
-            <div class="col-xl-5 px-1" *ngIf="isEditMode">
-                <!-- <button type="submit" class="btn btn-md btn-primary w-100" (click)="printInvoice()"> Print
-                    Proforma </button> -->
-                <z-button [label]="'Print Proforma Invoice'" (clicked)="PrintInvoice()"
-                    [loading]="disablePrintButton"></z-button>
-            </div>
-        </div>
-        <div class="col-xl-4">
-            <div class="status-pill" [ngStyle]="{'background-color': statusHex}" *ngIf="isEditMode">
-                <span>Status: {{statusText}}</span>
-            </div>
-        </div>
-        <div class="col-xl-4">
-            <div class="col-xl-3 px-1">
-                <button type="submit" class="btn btn-md btn-primary w-100"
-                    [disabled]="(statusText === 'Ready To Dispatch' || statusText === 'Dispatched' || statusText === 'Completed') && isEditMode"
-                    (click)="OnSubmit()"> {{ isEditMode ? "Update" : "Save" }}
-                </button>
-            </div>
-            <div class="col-xl-3 px-1">
-                <button type="submit" class="btn btn-md btn-primary w-100"
-                    [disabled]="(form.get('BasedOn')?.value == 1 && isEditMode)" (click)=" ResetForm()">Reset</button>
-            </div>
         </div>
     </div>
 </div>
