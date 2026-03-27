@@ -421,43 +421,100 @@
 
 .amount-summary-wrap {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    width: calc(100% - 1.5rem);
+    box-sizing: border-box;
     margin: 0.5rem 0.75rem 0.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--default-border);
 }
 
 .amount-summary-card {
-    min-width: min(100%, 28rem);
-    max-width: 28rem;
-    border: 1px solid var(--default-border);
-    border-radius: 8px;
-    background: var(--background-secondary);
-    padding: 0.75rem;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    flex-wrap: nowrap;
+    gap: 1rem;
 }
 
 .amount-summary-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 0.75rem;
+    flex: 0 0 auto;
+    min-width: 0;
 
     span {
-        min-width: 8.5rem;
-        font-size: 0.78rem;
-        color: var(--text-muted);
+        flex: 0 0 12rem;
+        min-width: 12rem;
+        max-width: 12rem;
+        font-size: 1rem;
+        font-weight: 400;
+        color: rgba(var(--heading-text-color, 80%));
+        line-height: var(--se-field-height, 2.25rem);
     }
 
     z-inputnumber {
-        flex: 0 0 11rem;
-        min-width: 11rem;
-        max-width: 11rem;
+        flex: 0 0 436px;
+        width: 436px;
+        min-width: 0;
+        max-width: 436px;
     }
 }
 
 :host ::ng-deep .amount-summary-row .p-float-label > label {
     display: none !important;
+}
+
+@media (min-width: 2000px) {
+    .amount-summary-wrap {
+        justify-content: flex-start;
+        margin: 0.75rem 0.75rem 0.5rem;
+    }
+
+    .amount-summary-card {
+        min-width: 0;
+        max-width: 100%;
+        padding: 0;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 0.9rem;
+    }
+
+    .amount-summary-row {
+        gap: 0.75rem;
+        min-height: 2.8rem;
+    }
+
+    .amount-summary-row span {
+        flex: 0 0 12rem;
+        min-width: 12rem;
+        max-width: 12rem;
+        font-size: 1rem;
+        font-weight: 400;
+        color: rgba(var(--heading-text-color, 80%));
+    }
+
+    .amount-summary-row z-inputnumber {
+        flex: 0 0 436px;
+        width: 436px;
+        min-width: 0;
+        max-width: 436px;
+    }
+
+    :host ::ng-deep .amount-summary-row .p-inputnumber,
+    :host ::ng-deep .amount-summary-row .p-inputnumber-input,
+    :host ::ng-deep .amount-summary-row .p-inputtext {
+        height: 2.65rem !important;
+        font-size: 0.9rem;
+    }
 }
 
 .create-section-card {
@@ -1089,5 +1146,216 @@
         flex: 0 0 100%;
         width: 100% !important;
         max-width: 100% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .create-shell {
+        max-width: 100%;
+    }
+
+    .create-header {
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.45rem 0.6rem;
+        flex-wrap: wrap;
+    }
+
+    .create-header-left,
+    .create-header-right {
+        width: 100%;
+    }
+
+    .create-title-main {
+        font-size: 0.95rem;
+    }
+
+    .create-title-eyebrow {
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
+    }
+
+    .toolbar {
+        max-width: 100%;
+        justify-content: flex-start;
+        padding: 0.2rem 0;
+        gap: 0.3rem;
+    }
+
+    .toolbar-btn {
+        height: 32px;
+        font-size: 0.72rem;
+        padding: 0 0.75rem;
+    }
+
+    .toolbar-btn.icon-btn,
+    .toolbar-btn.back-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .proforma-invoice-create .horizontal-form .row {
+        margin-left: 0;
+        margin-right: 0;
+        gap: 0.6rem;
+    }
+
+    .proforma-invoice-create .horizontal-form .row > [class*="col-"],
+    .proforma-invoice-create .horizontal-form .proforma-fields-group > [class*="col-"],
+    .proforma-invoice-create .horizontal-form .proforma-fields-group,
+    .proforma-invoice-create .horizontal-form .proforma-port-stack,
+    .proforma-invoice-create .horizontal-form .proforma-port-stack > .proforma-port-field,
+    .proforma-invoice-create .horizontal-form .proforma-roundoff-field,
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field,
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field,
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+
+    .simple-field {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.3rem;
+    }
+
+    .simple-label {
+        flex: 0 0 auto;
+        width: 100%;
+        font-size: 0.88rem;
+        line-height: 1.2;
+    }
+
+    .table-heading,
+    .proforma-invoice-create .horizontal-form h6.form-group {
+        font-size: 0.82rem;
+        margin: 1rem 0 0.5rem;
+    }
+
+    .simple-control,
+    .simple-control.has-action {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .simple-control.has-action {
+        padding-right: 3rem;
+    }
+
+    .simple-action-btn {
+        right: 0;
+    }
+
+    .table-add-row {
+        padding: 0 0.25rem 0.75rem;
+        justify-content: flex-start;
+    }
+
+    .amount-summary-wrap {
+        width: calc(100% - 1.5rem);
+        margin: 0.5rem 0.75rem 0.25rem;
+        padding-top: 0.65rem;
+        box-sizing: border-box;
+    }
+
+    .amount-summary-card {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        gap: 0.75rem;
+    }
+
+    .amount-summary-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+    }
+
+    .amount-summary-row span {
+        flex: 0 0 auto;
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+        font-size: 0.88rem;
+        line-height: 1.2;
+    }
+
+    .amount-summary-row z-inputnumber {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .simple-field.simple-field-table .simple-control {
+        overflow-x: auto;
+    }
+
+    :host ::ng-deep .proforma-invoice-create .create-form {
+        --se-field-height: 2rem;
+        --se-field-radius: 7px;
+
+        .p-inputtext,
+        .p-dropdown,
+        .p-calendar .p-inputtext,
+        input {
+            font-size: 0.82rem;
+        }
+
+        textarea {
+            font-size: 0.82rem;
+            line-height: 1.2rem;
+            padding: 0.4rem 0.65rem;
+        }
+
+        .page-table > thead > tr > th,
+        .page-table > tbody > tr > td {
+            padding: 0.55rem 0.5rem;
+            font-size: 0.74rem;
+        }
+    }
+
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .form-group .p-float-label {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.3rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .form-group .p-float-label > label {
+        position: static !important;
+        inset: auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        order: -1;
+        line-height: 1.2;
+        font-size: 0.88rem;
+        white-space: normal;
+    }
+
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .form-group .p-float-label > :not(label),
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .form-group .simple-control.has-action,
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control.has-action,
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action,
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .simple-control.has-action,
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-roundoff-field .proforma-roundoff-control {
+        order: 1;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        height: var(--se-field-height) !important;
+    }
+
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .p-float-label > :not(label),
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label > :not(label),
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .p-float-label > :not(label) {
+        height: var(--se-field-height) !important;
     }
 }
