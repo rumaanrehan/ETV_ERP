@@ -43,6 +43,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   isEditMode = false;
   isSubmitted = false;
   boxCollapsed: boolean[] = [];
+  isProformaGenerated: boolean = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrderPackingList>;
@@ -153,6 +154,18 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   onSelect_ExportOrder(event: ExportOrder_SelectList): void {
+    if (!event.isProformaGenerated){
+      this.resetPackingForm();
+      
+      this.alertService.showAlert({
+        type: 'warning',
+        title: 'Proforma Invoice Not Generated',
+        text: `Packing list can only be created for export orders with generated proforma invoice.`
+      });
+
+      return;
+    }
+
     if (!event?.ExportOrderID) return;
 
     if (event.ExportOrderPackingListID) {

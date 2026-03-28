@@ -118,6 +118,7 @@ export interface ExportOrder_SelectList {
     ExportOrderNo: string;
     CustomerName: string;
     ExportOrderPackingListID: number | null;
+    isProformaGenerated: boolean;
 }
 
 export interface ExportOrderDetail {
