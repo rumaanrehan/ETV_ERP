@@ -730,6 +730,14 @@
             position: relative;
         }
 
+        .page-table .action-input-group z-autocomplete .p-float-label > label {
+            display: none !important;
+        }
+
+        .page-table .action-input-group z-autocomplete .p-float-label > :not(label) {
+            width: 100% !important;
+        }
+
         .page-table .action-input-group z-autocomplete .p-autocomplete-input,
         .page-table .action-input-group z-autocomplete input.p-autocomplete-input {
             padding-right: 2.25rem !important;
@@ -762,9 +770,22 @@
         }
 
         .page-table .action-input-group > .col-11 {
-            flex: 1 1 auto;
+            flex: 1 1 0;
             min-width: 0;
+            width: auto;
+            max-width: none;
             padding: 0;
+        }
+
+        .page-table .action-input-group > .col-11 > z-autocomplete {
+            display: block;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .page-table .action-input-group > .col-11 > z-autocomplete .input-group {
+            width: 100%;
+            min-width: 0;
         }
 
         .page-table .action-input-group .inline-add-btn {

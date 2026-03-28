@@ -86,3 +86,30 @@ z-datatable {
     }
 }
 
+.inline-add-btn {
+    height: var(--se-field-height, 2.25rem);
+    padding: 0 0.75rem;
+    border-radius: var(--se-field-radius, 8px);
+    border: 1px solid var(--default-border);
+    background: var(--background-tertiary);
+    color: var(--default-text-color);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.inline-add-btn:hover,
+.inline-add-btn:active {
+    background: var(--list-hover-focus-bg);
+}
+
+.inline-add-btn-icon {
+    width: var(--se-field-height, 2.25rem);
+    padding: 0;
+    justify-content: center;
+}
+
