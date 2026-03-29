@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DataViewModule } from 'primeng/dataview';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
@@ -23,10 +24,9 @@ import { ExportOrderPayment } from '../../export-order-payment/export-payment';
 import { ExportOrderShipping } from '../../export-order-shipping/export-order-shipping';
 import { ExportOrderTracking } from '../../export-order-tracking/export-order-tracking';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest } from '../export-order';
+import { PackingListComponent } from '../../packing-list/packing-list.component';
+import { ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
-import { NavContextService } from '../../../../../core/services/nav-context.service.service';
-import { PackingListComponent } from '../packing-list/packing-list.component';
 
 @Component({
   selector: 'app-dataview',
@@ -57,18 +57,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
   selectedExportOrders: ExportOrder_IndexTableList[] = [];
   selectAll = false;
   showPackingListDialog = false;
-
-  // menuItems: MenuItem[] = [
-  //   {
-  //     label: 'Options:',
-  //     items: [{ label: 'Shipping Detail', icon: 'pi pi-plus', command: (row: any) => this.handleComponentLoad('ShippingCreateComponent', row) },
-  //     { label: 'Bill Regulation', icon: 'pi pi-money-bill', command: (row: any) => this.handleComponentLoad('BillCreateComponent', row), disabled:  },
-  //     { label: 'Document', icon: 'pi pi-file-pdf', command: (row: any) => this.handleComponentLoad('DocumentCreateComponent', row) },
-  //     { label: 'Payment', icon: 'pi pi-dollar', command: (row: any) => this.handleComponentLoad('PaymentCreateComponent', row) },
-  //     { label: 'Tracking', icon: 'pi pi-at', command: (row: any) => this.handleComponentLoad('TrackingCreateComponent', row) },
-  //     { label: 'Letter of Credit', icon: 'pi pi-envelope', command: (row: any) => this.handleComponentLoad('LetterOfCreditCreateComponent', row) }]
-  //   }
-  // ];
 
   basedOnList: DataTableFilterList[] = []
   incotermList: DataTableFilterList[] = []

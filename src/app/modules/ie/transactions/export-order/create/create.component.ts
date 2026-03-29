@@ -75,9 +75,12 @@ export class CreateComponent implements OnInit, OnDestroy {
   isFromSalesQuotation = false;
   IsDocumentAlreadyExists = false;
   IsPOUploaded = false;
+  isPackingListAvailable = false;
   isAddProductBtnLoading: boolean = false;
-  disablePrintButton: boolean = false;
+  isExportOrderPrintLoading = false;
+  isPackingListPrintLoading = false;
   uploadingInvoice = false;
+  disablePrintButton = false;
 
   form!: FormGroup;
   formConfig!: FormConfigType<ExportOrder>;
@@ -245,6 +248,61 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.form.get('ProductList') as FormArray<FormGroup>;
   }
 
+  PrintExportOrder(): void {
+    try {
+      const exportOrderID = Number(this.route.snapshot.paramMap.get('id'));
+      if (!exportOrderID) return;
+
+      this.isExportOrderPrintLoading = true;
+      this.isEditMode = true;
+      this.pageService.GeneratePdf({ exportOrderID }).subscribe({
+        next: (blob) => {
+          window.open(window.URL.createObjectURL(blob));
+        },
+        error: (err) => {
+          this.alertService.showAlert({
+            type: 'error',
+            text: `'PDF generation failed' + ${err}`,
+            timer: 3000
+          })
+        },
+        complete: () => {
+          this.isExportOrderPrintLoading = false;
+        }
+      });
+    }
+    catch (ex) {
+      this.isExportOrderPrintLoading = false;
+    }
+  }
+
+  PrintPackingList(): void {
+    try {
+      const exportOrderID = Number(this.route.snapshot.paramMap.get('id'));
+      if (!exportOrderID) return;
+
+      this.isPackingListPrintLoading = true;
+      this.isEditMode = true;
+      this.pageService.GeneratePackingListPdf({ exportOrderID }).subscribe({
+        next: (blob) => {
+          window.open(window.URL.createObjectURL(blob));
+        },
+        error: (err) => {
+          this.alertService.showAlert({
+            type: 'error',
+            text: `'PDF generation failed' + ${err}`,
+            timer: 3000
+          })
+        },
+        complete: () => {
+          this.isPackingListPrintLoading = false;
+        }
+      });
+    }
+    catch (ex) {
+      this.isPackingListPrintLoading = false;
+    }
+  }
 
   onClickRemoveProductItem(index: number): void {
     if (this.productListArray.at(index).value.ProductName !== null) {
@@ -646,20 +704,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  // getproductTaxableAmountFC(): number {
-  //   return this.productListArray.controls.reduce((sum, group) => {
-  //     const value = group.get('TaxableAmountFC')?.value || 0;
-  //     return sum + value;
-  //   }, 0);
-  // }
-
-  // getproductTaxAmountFCSum(): number {
-  //   return this.productListArray.controls.reduce((sum, group) => {
-  //     const value = group.get('TaxAmountFC')?.value || 0;
-  //     return sum + value;
-  //   }, 0);
-  // }
-
   onSelect_Customer(event: Company_SelectList): void {
     this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName });
     this.selectedCustomerAddress = event?.BillingAddress || '';
@@ -805,6 +849,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             this.statusHex = response.Data.StatusHex!;
             this.IsDocumentAlreadyExists = response.Data.IsDocumentAlreadyExists!;
             this.IsPOUploaded = response.Data.IsPOUploaded!;
+            this.isPackingListAvailable = response.Data.IsPackingListAvailable;
             response.Data.ProductList.Items.forEach(item => {
               const productItemForm = this.formService.createFormArrayItem(this.formConfig.ProductList.items);
               productItemForm.patchValue(item);

@@ -1,0 +1,200 @@
+<div formDialogHeader class="col-xl-12 px-0">
+  <div class="col-xl-12 page-content packing-layout-shell">
+    <div class="col-xl-12 card m-auto mb-2 packing-header-card">
+      <div class="card-body">
+        <div class="horizontal-form">
+          <div class="row align-items-end">
+            <div class="col-xl-3 col-lg-4 col-md-12 form-group px-2">
+              <div class="packing-page-title">
+                <h4 class="mb-1">Packing List</h4>
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-5 col-md-8 form-group px-2">
+              <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"
+                [allowEmptySearch]="form.get('ExportOrderID')?.value ? false : true"
+                [readonly]="isEditMode"
+                (onSearch)="loadExportOrder($event)"
+                (onSelect)="onSelect_ExportOrder($event)"
+                (onClear)="onClear_ExportOrder()">
+              </z-autocomplete>
+            </div>
+            <div class="col-xl-3 d-flex justify-content-end">
+              <div class="box-header-actions" *ngIf="form.get('ExportOrderID')?.value">
+                <button type="button" class="btn btn-sm btn-primary" (click)="addBox()">
+                  <i class="pi pi-plus-circle"></i>&nbsp;Add Box
+                </button>
+                <!-- <button type="button" class="btn btn-primary btn-page-header w-100" (click)="addBox()">
+                  <i class="pi pi-plus-circle"></i>&nbsp;Add Box
+                </button> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div formDialogContent class="packing-dialog-content" *ngIf="form.get('ExportOrderID')?.value">
+  <div class="col-xl-12 page-content packing-layout-shell">
+    <div class="col-xl-12 page-content-scrollable packing-layout-scroll">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="col-xl-12 card m-auto mb-2 order-info-sticky top-border-0">
+          <div class="card-body">
+            <div class="horizontal-form">
+              <div class="row align-items-end">
+                <div class="col-xl-2 form-group px-2">
+                  <z-span [text]="form.get('ExportOrderPackingListNo')?.value"
+                    [label]="formConfig.ExportOrderPackingListNo.label"></z-span>
+                </div>
+                <div class="col-xl-5 form-group px-2">
+                  <z-span [text]="form.get('CustomerName')?.value"
+                    [label]="formConfig.CustomerName.label"></z-span>
+                </div>
+                <div class="col-xl-3 form-group px-2">
+                  <z-select [group]="form" [control]="'PackingIdentityID'" [label]="formConfig.PackingIdentityID.label"
+                    [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="packingIdentityList"></z-select>
+                </div>
+                <div class="col-xl-2 form-group px-2">
+                  <z-span [text]="form.get('NoOfBox')?.value" [label]="formConfig.NoOfBox.label"></z-span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div formArrayName="BoxList">
+          <div class="col-xl-12 card m-auto mb-2 box-card"
+            *ngFor="let box of boxListArray.controls; let i = index"
+            [formGroupName]="i">
+            <div class="card-header box-header">
+              <button type="button" class="box-toggle" (click)="toggleBox(i)">
+                <span class="box-toggle-title">Box {{ i + 1 }}</span>
+                <i class="pi" [ngClass]="boxCollapsed[i] ? 'pi-chevron-down' : 'pi-chevron-up'"></i>
+              </button>
+              <div class="box-header-actions">
+                <button type="button" class="btn btn-sm btn-danger" (click)="removeBox(i)">
+                  Remove Box
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body" *ngIf="!boxCollapsed[i]">
+              <div class="horizontal-form">
+                <div class="row">
+                  <div class="col-md-2 form-group px-2">
+                    <z-span [text]="box.get('NoOfProduct')?.value"
+                      [label]="formConfig.BoxList.items.NoOfProduct.label"></z-span>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-inputnumber [group]="box" [control]="'BoxLength'" [label]="formConfig.BoxList.items.BoxLength.label"
+                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-inputnumber [group]="box" [control]="'BoxWidth'" [label]="formConfig.BoxList.items.BoxWidth.label"
+                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-inputnumber [group]="box" [control]="'BoxHeight'" [label]="formConfig.BoxList.items.BoxHeight.label"
+                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-inputnumber [group]="box" [control]="'BoxWeight'" [label]="formConfig.BoxList.items.BoxWeight.label"
+                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-inputnumber [group]="box" [control]="'BoxGrossWeight'" [label]="formConfig.BoxList.items.BoxGrossWeight.label"
+                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-select [group]="box" [control]="'PackedBy'" [label]="formConfig.BoxList.items.PackedBy.label"
+                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error" [optionLabel]="'EmployeeName'"
+                      [optionValue]="'EmployeeID'" [options]="employeeList"></z-select>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-datepicker [group]="box" [control]="'PackedDateTime'" [label]="formConfig.BoxList.items.PackedDateTime.label"
+                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-datepicker>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-select [group]="box" [control]="'InspectedBy'" [label]="formConfig.BoxList.items.InspectedBy.label"
+                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error" [optionLabel]="'EmployeeName'"
+                      [optionValue]="'EmployeeID'" [options]="employeeList"></z-select>
+                  </div>
+                  <div class="col-md-2 form-group px-2">
+                    <z-datepicker [group]="box" [control]="'InspectedDateTime'" [label]="formConfig.BoxList.items.InspectedDateTime.label"
+                      [validationMessage]="formConfig.BoxList.items.InspectedDateTime.error"></z-datepicker>
+                  </div>
+                  <div class="col-12 px-2 d-flex flex-column mb-2">
+                    <z-table [tableDef]="productTableDefs[i]"></z-table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div formDialogFooter *ngIf="form.get('ExportOrderID')?.value" class="packing-dialog-footer">
+  <div class="page-action-panel packing-action-panel">
+    <div class="col-xl-4"></div>
+    <div class="col-xl-4"></div>
+    <div class="col-xl-4 d-flex justify-content-end">
+      <div class="col-xl-3 px-1 footer-btn">
+        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted" (click)="onSubmit()">
+          {{ isEditMode ? "Update" : "Save" }}
+        </button>
+      </div>
+      <div class="col-xl-3 px-1 footer-btn">
+        <button type="button" class="btn btn-md btn-light w-100" (click)="closeDialogBox()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Packing List Box Related Templates Start -->
+<ng-template #serialNoColTemplate let-row let-rowIndex="index">
+  {{rowIndex + 1}}
+</ng-template>
+
+<ng-template #productSelectColTemplate let-row let-rowIndex="index">
+  <z-select [group]="getProductList(row.__boxIndex).at(rowIndex)" [control]="'ProductID'" [label]="formConfig.BoxList.items.ProductList.items.ProductName.label"
+    [validationMessage]="formConfig.BoxList.items.ProductList.items.ProductName.error" (onChange)="onChange_Product($event, row.__boxIndex, rowIndex)"
+    [options]="getAvailableProducts(row.__boxIndex, rowIndex)" [optionLabel]="'ProductName'" [optionValue]="'ProductID'">
+  </z-select>
+</ng-template>
+
+<ng-template #packedQtyColTemplate let-row let-rowIndex="index">
+  <z-inputnumber [group]="getProductList(row.__boxIndex).at(rowIndex)" (onChange)="onChange_PackedQty(row.__boxIndex, rowIndex)"
+    [control]="'PackedQty'" [label]="formConfig.BoxList.items.ProductList.items.PackedQty.label"
+    [validationMessage]="formConfig.BoxList.items.ProductList.items.PackedQty.error">
+  </z-inputnumber>
+</ng-template>
+
+<ng-template #weightPerUnitColTemplate let-row let-rowIndex="index">
+  <z-inputnumber [group]="getProductList(row.__boxIndex).at(rowIndex)" [control]="'WeightPerUnit'"
+    [label]="formConfig.BoxList.items.ProductList.items.WeightPerUnit.label"
+    [validationMessage]="formConfig.BoxList.items.ProductList.items.WeightPerUnit.error">
+  </z-inputnumber>
+</ng-template>
+
+
+<ng-template #productActionColTemplate let-row let-rowIndex="index">
+  <div class="col-12 tables-action-col">
+    <div class="col-6 justify-item-center">
+      <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+        (click)="removeProductRow(row.__boxIndex, rowIndex)">
+        <i class="pi pi-minus-circle"></i></span>
+    </div>
+    <div class="col-6 justify-item-center">
+      <span *ngIf="rowIndex === this.getProductList(row.__boxIndex).length - 1"
+        class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate" (click)="addProductRow(row.__boxIndex)">
+        <i class="pi pi-plus-circle"></i>
+      </span>
+    </div>
+  </div>
+</ng-template>
+<!-- Packing List Box Related Templates End-->

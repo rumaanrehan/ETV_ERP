@@ -117,6 +117,8 @@ export interface ExportOrder_SelectList {
     ExportOrderID: number;
     ExportOrderNo: string;
     CustomerName: string;
+    ExportOrderPackingListID: number | null;
+    isProformaGenerated: boolean;
 }
 
 export interface ExportOrderDetail {
@@ -226,6 +228,7 @@ export interface ExportOrder_Detail {
     StatusText: string;
     StatusHex: string;
     IsDocumentAlreadyExists: boolean;
+    IsPackingListAvailable: boolean;
     IsPOUploaded: boolean;
     ProductList: TList<ExportOrderProductDetail>;
 }
