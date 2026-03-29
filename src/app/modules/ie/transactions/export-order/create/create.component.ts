@@ -33,7 +33,7 @@ import { ExportOrderService } from '../export-order.service';
 @Component({
   selector: 'app-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZTableComponent],
+  imports: [CommonModule, ReactiveFormsModule, ZFormControlsModule, ZTableComponent, ZFileUploadComponent],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
 })
