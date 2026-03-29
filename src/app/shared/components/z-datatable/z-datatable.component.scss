@@ -105,8 +105,12 @@
 
 :host ::ng-deep .z-datatable-root .p-paginator-bottom {
     margin-bottom: 0;
-    padding-bottom: 0;
+    padding-bottom: 4px;
     border-top: 1px solid var(--zdt-border);
+}
+
+:host ::ng-deep .z-datatable-root .p-paginator-bottom .p-paginator-content {
+    padding-bottom: 2px;
 }
 
 .index-table-action-bar {

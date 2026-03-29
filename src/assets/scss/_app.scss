@@ -442,7 +442,7 @@ span.input-group-text .pi {
   color: #fff;
 }
 
-.input-group>:first-child {
+.input-group>:first-child:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: none;
@@ -1252,4 +1252,132 @@ div:where(.swal2-container) .swal2-html-container {
     height: 1.9rem !important;
     padding: 0 !important;
   }
+}
+
+/* Shared create-page field styling (simple-form based pages) */
+.create-form {
+  --se-field-height: 36px;
+  --se-field-radius: 8px;
+  --se-field-width: 436px;
+}
+
+.create-form .simple-form .p-float-label > label {
+  display: none !important;
+}
+
+.create-form .simple-form .p-inputtext::placeholder,
+.create-form .simple-form .p-autocomplete-input::placeholder,
+.create-form .simple-form textarea::placeholder,
+.create-form .simple-form input::placeholder {
+  opacity: 1 !important;
+  color: var(--text-muted) !important;
+}
+
+.create-form .simple-form z-autocomplete,
+.create-form .simple-form z-datepicker,
+.create-form .simple-form z-textarea,
+.create-form .simple-form z-span,
+.create-form .simple-form z-select,
+.create-form .simple-form z-inputnumber,
+.create-form .simple-form z-inputtext,
+.create-form .simple-form z-file-upload {
+  display: block;
+  width: 100%;
+}
+
+.create-form .simple-form .input-group-addon {
+  height: var(--se-field-height);
+  border-radius: var(--se-field-radius);
+}
+
+.create-form .simple-form .customer-autocomplete .input-group {
+  position: relative;
+}
+
+.create-form .simple-form .customer-autocomplete .p-autocomplete-input,
+.create-form .simple-form .customer-autocomplete input.p-autocomplete-input {
+  padding-right: 2.25rem !important;
+}
+
+.create-form .simple-form .customer-autocomplete .input-group-addon {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  height: auto !important;
+  width: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  line-height: 1;
+}
+
+.create-form .simple-form .customer-autocomplete .input-group-addon i {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.create-form .simple-form .customer-autocomplete .input-group-addon:hover i {
+  color: var(--heading-text-color);
+}
+
+.create-form .simple-form .p-inputtext,
+.create-form .simple-form .p-dropdown,
+.create-form .simple-form .p-calendar .p-inputtext,
+.create-form .simple-form input {
+  height: var(--se-field-height);
+  border-radius: var(--se-field-radius);
+  border-color: var(--default-border);
+  background: var(--custom-white);
+  width: 100%;
+  box-shadow: none;
+  transition: none;
+  max-width: var(--se-field-width);
+}
+
+.create-form .simple-form .p-autocomplete,
+.create-form .simple-form .p-dropdown,
+.create-form .simple-form .p-calendar {
+  border-radius: var(--se-field-radius);
+  max-width: var(--se-field-width);
+}
+
+.create-form .simple-form z-autocomplete,
+.create-form .simple-form z-datepicker,
+.create-form .simple-form z-textarea,
+.create-form .simple-form z-span,
+.create-form .simple-form z-select,
+.create-form .simple-form z-inputnumber,
+.create-form .simple-form z-inputtext,
+.create-form .simple-form z-file-upload {
+  max-width: var(--se-field-width);
+}
+
+.create-form .simple-form textarea {
+  min-height: var(--se-field-height);
+  height: auto;
+  resize: none;
+  overflow: hidden;
+  padding: 0.45rem 0.75rem;
+  line-height: 1.25rem;
+}
+
+.create-form .simple-form .simple-static {
+  min-height: var(--se-field-height);
+  display: flex;
+  align-items: center;
+  padding-block: 0;
+  border-radius: var(--se-field-radius);
+}
+
+.create-form .simple-form .p-inputtext:enabled:focus,
+.create-form .simple-form .p-dropdown.p-focus,
+.create-form .simple-form .p-calendar .p-inputtext:enabled:focus,
+.create-form .simple-form textarea:focus,
+.create-form .simple-form input:focus {
+  border-color: rgb(var(--primary-rgb));
+  box-shadow: none;
+  outline: none;
 }

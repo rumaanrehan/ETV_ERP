@@ -5,6 +5,7 @@ export type AutoCompleteDef<T> =
         type: 'formControl';
         group: FormGroup;
         control: string;
+        inputId?: string;
         label?: string | undefined;
         validationMessage?: string | undefined;
         placeholder: string;
@@ -17,6 +18,7 @@ export type AutoCompleteDef<T> =
     | {
         type: 'suggestions';
         value: T;
+        inputId?: string;
         label?: string | undefined;
         placeholder: string;
         options: T[];

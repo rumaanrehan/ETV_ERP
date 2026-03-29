@@ -5,7 +5,7 @@
         <p-autoComplete [formControlName]="controlDef.control" [appShowValidationTooltip]="controlDef.validationMessage"
           [placeholder]="controlDef.placeholder" [suggestions]="controlDef.options"
           [optionLabel]="controlDef.optionLabel" [readonly]="isValueSelected || readonly" [forceSelection]="true"
-          [minLength]="2" [completeOnFocus]="allowEmptySearch" [delay]="500" [autoHighlight]="true"
+          [inputId]="resolvedInputId" [minLength]="2" [completeOnFocus]="allowEmptySearch" [delay]="500" [autoHighlight]="true"
           [autoOptionFocus]="true" (completeMethod)="searchHandler($event)" (onSelect)="selectHandler($event)">
 
           <!-- Header template -->
@@ -34,7 +34,7 @@
             </table>
           </ng-template>
         </p-autoComplete>
-        <label>{{ controlDef.label }}</label>
+        <label [attr.for]="resolvedInputId">{{ controlDef.label }}</label>
       </p-floatLabel>
       <button *ngIf="isValueSelected && isClearable" class="input-group-addon" type="button" (click)="clearHandler()"
         tabindex="-1">
@@ -45,7 +45,7 @@
 </ng-container>
 <ng-container *ngIf="controlDef.type === 'suggestions'">
   <p-floatLabel>
-    <p-autoComplete [ngModel]="controlDef.value" [placeholder]="controlDef.placeholder"
+    <p-autoComplete [ngModel]="controlDef.value" [placeholder]="controlDef.placeholder" [inputId]="resolvedInputId"
       [suggestions]="controlDef.options" [optionLabel]="controlDef.optionLabel" [forceSelection]="true" [minLength]="2"
       [delay]="500" [autoHighlight]="true" [autoOptionFocus]="true" (completeMethod)="searchHandler($event)"
       (onSelect)="selectHandler($event)">
@@ -74,7 +74,7 @@
         </table>
       </ng-template>
     </p-autoComplete>
-    <label>{{ controlDef.label }}</label>
+    <label [attr.for]="resolvedInputId">{{ controlDef.label }}</label>
   </p-floatLabel>
 </ng-container>
 

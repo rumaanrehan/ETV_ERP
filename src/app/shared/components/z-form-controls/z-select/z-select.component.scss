@@ -16,10 +16,43 @@
 
 :host ::ng-deep .input-group .p-dropdown {
   width: 100%;
+  border-top-right-radius: var(--se-field-radius, var(--default-radius-sm)) !important;
+  border-bottom-right-radius: var(--se-field-radius, var(--default-radius-sm)) !important;
+  border-inline-end-width: 1px !important;
+  border-inline-end-style: solid !important;
 }
 
 :host ::ng-deep .input-group .p-dropdown .p-dropdown-label {
   padding-inline-end: 3.2rem !important;
+}
+
+:host ::ng-deep .p-dropdown,
+:host ::ng-deep .p-multiselect {
+  position: relative;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .p-dropdown.p-focus,
+:host ::ng-deep .p-dropdown:not(.p-disabled):hover,
+:host ::ng-deep .p-inputwrapper-filled .p-dropdown,
+:host ::ng-deep .p-inputwrapper-focus .p-dropdown,
+:host ::ng-deep .p-multiselect.p-focus,
+:host ::ng-deep .p-multiselect:not(.p-disabled):hover,
+:host ::ng-deep .p-inputwrapper-filled .p-multiselect,
+:host ::ng-deep .p-inputwrapper-focus .p-multiselect {
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .p-dropdown::after,
+:host ::ng-deep .p-multiselect::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--default-border);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .input-group-addon {

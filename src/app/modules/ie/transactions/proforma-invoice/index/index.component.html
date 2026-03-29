@@ -43,7 +43,9 @@
 
 <ng-template #actionColTemplate let-row>
     <div class="d-flex justify-content-end" *ngIf="row.StatusText == 'Draft'">
-        <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-            (click)="onClickDeleteReactivate(row)"><i class="pi pi-times-circle"></i></span>
+        <button type="button" class="inline-add-btn inline-add-btn-icon" title="Delete"
+            (click)="onClickDeleteReactivate(row)">
+            <i class="pi pi-times-circle" aria-hidden="true"></i>
+        </button>
     </div>
 </ng-template>
