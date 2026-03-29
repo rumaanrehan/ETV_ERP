@@ -1,6 +1,6 @@
 [data-nav-style="menu-click"][data-nav-layout="horizontal"] {
     @extend .menu-click;
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .app-sidebar {
             .side-menu__item {
                 display: flex !important;
@@ -39,7 +39,7 @@
     }
 }
 [data-nav-style="menu-click"][data-nav-layout="vertical"][data-toggled="menu-click-closed"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .app-sidebar {
             // position: absolute;
             .side-menu__item {
@@ -70,7 +70,7 @@
 }
 
 .menu-click {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .app-sidebar {
             width: 9.5rem;
             .main-sidebar {

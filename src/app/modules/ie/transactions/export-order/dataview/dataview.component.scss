@@ -1,3 +1,417 @@
 .export-order-card {
     font-family: 'Inter Tight', sans-serif;
 }
+
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.index-page-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+z-dataview {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-page-header.btn-md,
+:host-context([data-theme-mode="dark"]) .btn-add-export-order.btn.btn-primary {
+    background: rgba(56, 189, 248, 0.18) !important;
+    border-color: #38bdf8 !important;
+    color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-page-header.btn-md:hover,
+:host-context([data-theme-mode="dark"]) .btn-add-export-order.btn.btn-primary:hover {
+    background: rgba(56, 189, 248, 0.28) !important;
+    border-color: #38bdf8 !important;
+    color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .text-muted {
+    color: #f3f4f6 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .index-action-bar {
+    background: rgba(35, 39, 43, 0.92) !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important;
+}
+
+:host-context([data-theme-mode="dark"]) .index-action-bar.selection-active {
+    background: #23272b !important;
+    border-color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-danger {
+    background: rgba(239, 68, 68, 0.18) !important;
+    color: #ef4444 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-danger:hover {
+    background: rgba(239, 68, 68, 0.28) !important;
+    color: #ef4444 !important;
+}
+
+:host ::ng-deep .btn-add-export-order.btn.btn-primary {
+    background: rgba(var(--primary-rgb), 0.20) !important;
+    border-color: rgba(var(--primary-rgb), 0.25) !important;
+    color: var(--primary-color) !important;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep .btn-add-export-order.btn.btn-primary i {
+    color: var(--primary-color) !important;
+}
+
+:host ::ng-deep .btn-add-export-order.btn.btn-primary:hover,
+:host ::ng-deep .btn-add-export-order.btn.btn-primary:focus {
+    background: rgba(var(--primary-rgb), 0.28) !important;
+    border-color: rgba(var(--primary-rgb), 0.35) !important;
+    color: var(--primary-color) !important;
+}
+
+:host ::ng-deep .btn-add-export-order.btn.btn-primary:active {
+    background: rgba(var(--primary-rgb), 0.32) !important;
+}
+
+/* Match Sales Enquiry index "Create" button sizing */
+.btn-page-header.btn-md {
+    height: 30px;
+    padding: 1rem 1rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    color: rgba(var(--primary-rgb), 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.25) !important;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    i {
+        font-size: 0.75rem;
+        transition: none;
+    }
+}
+
+/* =========================
+   Selection bar (same pattern used in index pages)
+   ========================= */
+
+:host ::ng-deep .index-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 0.05rem 0.75rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    min-height: 40px;
+}
+
+:host ::ng-deep .index-action-bar.selection-active {
+    background: var(--primary-01);
+    border-color: var(--primary-color);
+}
+
+:host ::ng-deep .index-action-bar-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+:host ::ng-deep .index-action-bar-actions .btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 0;
+
+    &:hover {
+        filter: brightness(115%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   Export Order cards (ported from dataview.tsx Tailwind)
+   ========================= */
+
+:host ::ng-deep .z-dataview-list {
+    display: grid !important; /* override shared z-dataview flex layout */
+    flex-direction: initial !important;
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    :host ::ng-deep .z-dataview-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (min-width: 1440px) {
+    :host ::ng-deep .z-dataview-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (min-width: 2000px) {
+    :host ::ng-deep .z-dataview-list {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+}
+
+:host ::ng-deep .eo-card {
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 1);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    min-width: 0;
+    overflow: hidden;
+}
+
+:host ::ng-deep .eo-card:hover {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+:host ::ng-deep .eo-card:has(.p-checkbox.p-checkbox-checked) {
+    border-color: rgba(var(--primary-rgb), 0.65);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.18), 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+:host ::ng-deep .eo-card__body.dataview-item {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 1.1rem !important; /* p-5 (slightly tighter) */
+}
+
+:host ::ng-deep .eo-card__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+:host ::ng-deep .eo-card__checkbox {
+    flex: 0 0 auto;
+    margin-top: 0.125rem;
+}
+
+:host ::ng-deep .eo-card__main {
+    flex: 1;
+    min-width: 0;
+}
+
+:host ::ng-deep .eo-card__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+:host ::ng-deep .eo-card__title-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+}
+
+:host ::ng-deep .eo-card__title {
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host ::ng-deep .eo-card__status {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+:host ::ng-deep .eo-card__status::before {
+    content: "\e90a"; /* pi-check-circle */
+    font-family: 'primeicons' !important;
+    font-size: 1.05rem;
+    line-height: 1;
+    color: #111827;
+}
+
+:host ::ng-deep .eo-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 500;
+    padding: 0.25rem 0.65rem; /* px-2.5 py-1 */
+    border-radius: 8px;
+    border: 1px solid rgba(226, 232, 240, 1);
+    background: rgba(241, 245, 249, 1);
+    color: #0f172a;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@supports (background: color-mix(in srgb, red 10%, white)) {
+    :host ::ng-deep .eo-card__badge {
+        background: color-mix(in srgb, currentColor 18%, #ffffff) !important;
+        border-color: color-mix(in srgb, currentColor 32%, transparent) !important;
+    }
+}
+
+:host ::ng-deep .eo-card__menu {
+    flex: 0 0 auto;
+}
+
+:host ::ng-deep .eo-card__menu button {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0.25rem !important; /* p-1 */
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    color: #9ca3af !important;
+}
+
+:host ::ng-deep .eo-card__menu button:hover {
+    background: #f3f4f6 !important;
+    color: #4b5563 !important;
+}
+
+:host ::ng-deep .eo-card__menu button .p-button-icon {
+    color: currentColor !important;
+    font-size: 0.95rem;
+}
+
+:host ::ng-deep .eo-card__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+:host ::ng-deep .eo-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+:host ::ng-deep .eo-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+:host ::ng-deep .eo-field::before {
+    content: none !important;
+    display: none !important;
+}
+
+:host ::ng-deep .eo-field--destination::before,
+:host ::ng-deep .eo-field--final-destination::before {
+    content: none !important;
+    display: none !important;
+}
+
+:host ::ng-deep .eo-field--order-total::before {
+    content: none !important;
+    display: none !important;
+}
+
+:host ::ng-deep .eo-field__label {
+    font-size: 0.75rem; /* text-xs */
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.2;
+    display: block;
+}
+
+:host ::ng-deep .eo-field__value {
+    font-size: 0.875rem; /* text-sm */
+    color: #111827;
+    margin: 0;
+    line-height: 1.25;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host ::ng-deep .eo-card__footer {
+    padding-top: 1rem; /* pt-4 */
+    border-top: 1px solid rgba(243, 244, 246, 1);
+}
+
+:host ::ng-deep .eo-card__cta.btn {
+    width: 100%;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .eo-card {
+    background: #0b1220;
+    border-color: rgba(51, 65, 85, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .eo-card__title {
+    color: #e5e7eb;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .eo-field__label {
+    color: #94a3b8;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .eo-field__value {
+    color: #f8fafc;
+}
+
+:host-context([data-theme-mode="dark"]) ::ng-deep .eo-card__footer {
+    border-top-color: rgba(148, 163, 184, 0.14);
+}

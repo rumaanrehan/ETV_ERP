@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.z-table-viewport {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 991.97px) {
+  .z-table-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  :host ::ng-deep .z-table-root .p-datatable-table {
+    width: max-content;
+    min-width: 100%;
+  }
+}

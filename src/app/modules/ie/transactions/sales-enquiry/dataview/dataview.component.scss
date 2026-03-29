@@ -1,3 +1,13 @@
+@media (min-width: 1440px) {
+    :host ::ng-deep .se-cards-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}
+@media (min-width: 2000px) {
+    :host ::ng-deep .se-cards-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+}
 :host-context([data-theme-mode="dark"]) ::ng-deep .se-card {
     background: #23272b !important;
     border-color: #334155 !important;
@@ -59,7 +69,7 @@ z-dataview {
 }
 
 :host ::ng-deep .p-dataview-content {
-    height: calc(68vh - var(--sales-enquiry-selection-bar-height, 0px));
+    // height: calc(68vh - var(--sales-enquiry-selection-bar-height, 0px));
     overflow-y: auto;
 }
 

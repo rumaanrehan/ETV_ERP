@@ -17,6 +17,13 @@
     --zdt-text-strong: #f8fafc;
     --zdt-muted: #94a3b8;
 }
+
+.z-dataview-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
 :host {
     display: flex;
     flex-direction: column;
@@ -93,6 +100,8 @@
         justify-content: flex-end;
         align-items: center;
         gap: 0.75rem;
+        // margin-top: 3px;
+        // margin-right: 3px;
     }
 
     .action-item-wrapper {

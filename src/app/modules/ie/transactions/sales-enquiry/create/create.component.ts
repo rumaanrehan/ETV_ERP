@@ -192,6 +192,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           if (this.productListArray.length == 0) {
             this.addProductRow();
           }
+          this.form.markAsDirty();
           return
         }
       });
@@ -203,6 +204,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       if (this.productListArray.length == 0) {
         this.addProductRow();
       }
+      this.form.markAsDirty();
     }
   }
 
@@ -231,6 +233,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   onSelect_Customer(event: Company_SelectList): void {
     this.form.patchValue({ CustomerID: event.CompanyID, CustomerName: event.CompanyName, ContactName: event.CompanyContactName, ContactPhone: event.CompanyPhoneNo, ContactEmail: event.CompanyEmailID });
     this.selectedCustomerAddress = event?.BillingAddress || '';
+    this.form.markAsDirty();
   }
 
   onClear_Customer(): void {
@@ -240,6 +243,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.get('ContactEmail')?.patchValue(null);
     this.form.get('ContactPhone')?.patchValue(null);
     this.selectedCustomerAddress = null;
+    this.form.markAsDirty();
   }
 
   onSearch_Product(event: string, rowIndex: number): void {
@@ -285,6 +289,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
 
     this.tableDef.data = this.productListArray.value
+    this.form.markAsDirty();
   }
 
   OnClear_Product(index: number): void {
@@ -292,6 +297,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     row.patchValue({ ProductID: null, ProductName: null, UOM: null });
 
     this.tableDef.data = this.productListArray.value;
+    this.form.markAsDirty();
   }
 
   addProductRow(): void {
@@ -301,6 +307,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productAutoCompleteDef[index] = this.pageService.getProductAutoCompleteDef(this.formConfig.ProductList.items, productItemForm);
     this.tableDef.data = this.productListArray.value;
+    this.form.markAsDirty();
   }
 
   onSubmit(): void {

@@ -1,4 +1,4 @@
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   [data-nav-style="menu-click"][data-nav-layout="horizontal"] {
     &[data-theme-mode="dark"] {
       .landing-body
@@ -201,7 +201,7 @@
     inset-block-start: 12px !important;
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
     .app-sidebar {
       inset-block-start: 0;
       padding: 0.5rem 0;
@@ -567,7 +567,7 @@
 
 [data-theme-mode="dark"] {
   .landing-body {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
       .main-menu-container {
         .landing-logo-container {
           .horizontal-logo .header-logo {

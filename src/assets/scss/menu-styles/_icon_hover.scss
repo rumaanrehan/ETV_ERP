@@ -3,7 +3,7 @@
     @extend .icon-hover;
 }
 .icon-hover {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .app-sidebar {
             width: 5rem;
             .main-sidebar {
@@ -125,7 +125,7 @@
     }
 }
 [data-nav-layout="vertical"][data-nav-style="icon-hover"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         &[data-toggled="icon-hover-closed"] {
             .app-sidebar .main-menu{
                 >.slide {
