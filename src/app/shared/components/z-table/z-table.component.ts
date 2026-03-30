@@ -19,19 +19,38 @@ export class ZTableComponent<T> {
 
   tableHeaderDef: TableHeaderColDef[] = [];
   tableSubHeaderDef?: TableHeaderColDef[];
+  private defaultColumnVisibility: Map<string, boolean> = new Map<string, boolean>();
 
   constructor() { }
 
   ngOnInit() {
+    this.applyDefaultColumnVisibility();
     this.generateHeaderStructure();
   }
 
-  generateHeaderStructure() {
+  private applyDefaultColumnVisibility(): void {
+    this.defaultColumnVisibility.clear();
+
     this.tableDef.columnDef.forEach((col) => {
-      if (col.visible === false) {
-        return;
+      if (col.visible === undefined && this.isDefaultHiddenColumn(col.data, col.label)) {
+        col.visible = false;
       }
 
+      this.defaultColumnVisibility.set(col.data, col.visible ?? true);
+    });
+  }
+
+  private isDefaultHiddenColumn(data: string, label: string): boolean {
+    const normalizedData = (data ?? '').replace(/\s+/g, '').toLowerCase();
+    const normalizedLabel = (label ?? '').replace(/\s+/g, '').toLowerCase();
+    return normalizedData === 'uom' || normalizedData === 'hscode' || normalizedLabel === 'uom' || normalizedLabel === 'hscode';
+  }
+
+  generateHeaderStructure() {
+    this.tableHeaderDef = [];
+    this.tableSubHeaderDef = undefined;
+
+    this.tableDef.columnDef.forEach((col) => {
       if (col.groupLabel) {
         const existingGroup = this.tableHeaderDef.find(
           (header) => header.label === col.groupLabel
@@ -96,11 +115,17 @@ export class ZTableComponent<T> {
 
   resetColumnVisibility(): void {
     this.tableDef.columnDef.forEach(col => {
-      col.visible = true;
+      col.visible = this.defaultColumnVisibility.get(col.data) ?? true;
     });
 
     this.tableHeaderDef.forEach(header => {
-      header.visible = true;
+      if (header.hasSubHeader) {
+        const groupColumnKeys = header.data.split(',').map((item: string) => item.trim());
+        header.visible = groupColumnKeys.some((columnKey: string) => (this.defaultColumnVisibility.get(columnKey) ?? true) !== false);
+      }
+      else {
+        header.visible = this.defaultColumnVisibility.get(header.data) ?? true;
+      }
     });
   }
 }
