@@ -1175,6 +1175,15 @@
     }
 }
 
+:host ::ng-deep .sales-quotation-create.is-edit-mode .proforma-customer-field .customer-autocomplete .input-group-addon {
+    display: none !important;
+}
+
+:host ::ng-deep .sales-quotation-create.is-edit-mode .proforma-customer-field .customer-autocomplete .p-autocomplete-input,
+:host ::ng-deep .sales-quotation-create.is-edit-mode .proforma-customer-field .customer-autocomplete input.p-autocomplete-input {
+    padding-right: 0.75rem !important;
+}
+
 @media (max-width: 768px) {
     .create-shell {
         max-width: 100%;

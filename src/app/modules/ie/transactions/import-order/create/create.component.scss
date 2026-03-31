@@ -1,0 +1,11 @@
+@use "../../tax-invoice/create/create.component.scss" as *;
+
+.table-add-row--autocomplete {
+    justify-content: flex-start;
+}
+
+.table-add-row--autocomplete .table-add-autocomplete {
+    width: min(100%, 40rem);
+    max-width: 40rem;
+    padding: 0 0.75rem;
+}

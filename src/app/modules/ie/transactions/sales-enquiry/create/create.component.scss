@@ -702,3 +702,12 @@
 .table-add-row .simple-btn {
     height: calc(var(--se-field-height) * 0.8);
 }
+
+:host ::ng-deep .sales-enquiry-create.is-edit-mode .customer-autocomplete .input-group-addon {
+    display: none !important;
+}
+
+:host ::ng-deep .sales-enquiry-create.is-edit-mode .customer-autocomplete .p-autocomplete-input,
+:host ::ng-deep .sales-enquiry-create.is-edit-mode .customer-autocomplete input.p-autocomplete-input {
+    padding-right: 0.75rem !important;
+}

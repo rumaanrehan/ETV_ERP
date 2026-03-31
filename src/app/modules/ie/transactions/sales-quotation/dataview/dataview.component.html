@@ -1,38 +1,4 @@
-<!--Page Header Action Button Template-->
-<ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header btn-md shadow-sm btn-add-sales-quotation"
-        (click)="onClickPageHeaderAddButton()"> <i class="pi pi-plus"></i>&nbsp;Add Quotation</button>
-</ng-template>
-
 <div class="col-xl-12 index-page-content">
-    @if (selectedSalesQuotations.length > 0) {
-    <div class="index-action-bar selection-active">
-        <div class="d-flex align-items-center gap-3">
-            <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)"></p-checkbox>
-            <span class="text-muted"><b>{{ selectedSalesQuotations.length }} selected</b></span>
-        </div>
-        <div class="col-6 index-action-bar-actions">
-            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
-                [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(1)">
-                <i class="pi pi-check-circle"></i>
-                Revert to Draft
-            </button>
-
-            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
-                [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(2)">
-                <i class="pi pi-send"></i>
-                Mark as Sent
-            </button>
-
-            <button class="btn btn-danger d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
-                [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(4)">
-                <i class="pi pi-ban m-0"></i>
-                Cancel
-            </button>
-        </div>
-    </div>
-    }
-
     <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
         (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
     </z-dataview>
@@ -91,6 +57,15 @@
             </div>
         </div>
     </div>
+</ng-template>
+
+<ng-template #selectionColTemplate let-row>
+    <p-checkbox binary="true" [(ngModel)]="row._selected" (onChange)="onSelectionChange(row)">
+    </p-checkbox>
+</ng-template>
+
+<ng-template #salesQuotationCodeTemplate let-row>
+    <span class="table-action-link" (click)="onClickEditDetails(row.SalesQuotationID)" style="cursor: pointer;">{{ row.SalesQuotationNo }}</span>
 </ng-template>
 
 <ng-template #container></ng-template>

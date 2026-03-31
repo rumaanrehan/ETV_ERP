@@ -1,0 +1,63 @@
+<!--Page Header Action Button Template-->
+<ng-template #pageHeaderActionTemplate>
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-primary btn-page-header btn-md shadow-sm btn-add-sales-quotation" (click)="onClickPageHeaderAddButton()">
+            <i class="pi pi-plus"></i>&nbsp; Add Sales Quotation</button>
+
+        <!-- VIEW SWITCHER -->
+        <div class="btn-group view-switcher-group" role="group">
+            <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'card'"
+                (click)="toggleView('card')">
+                <i class="pi pi-th-large"></i> Card
+            </button>
+            <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'table'"
+                (click)="toggleView('table')">
+                <i class="pi pi-list"></i> Table
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<div class="col-xl-12 index-page-content">
+    @if (selectedSalesQuotations.length > 0) {
+    <div #selectionBar class="index-action-bar">
+        <div class="d-flex align-items-center gap-3">
+            <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
+            </p-checkbox>
+
+            <span class="text-muted">
+                <b>{{ selectedSalesQuotations.length }} selected</b>
+            </span>
+        </div>
+
+        <div class="col-6 index-action-bar-actions">
+            <!-- BULK ACTIONS -->
+            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(1)">
+                <i class="pi pi-check-circle"></i>
+                Revert to Draft
+            </button>
+
+            <button class="btn btn-primary bg-primary  d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(5)">
+                <i class="pi pi-send"></i>
+                Mark as Confirmed
+            </button>
+
+            <button class="btn btn-danger  d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(9)">
+                <i class="pi pi-ban m-0"></i>
+                Cancel
+            </button>
+        </div>
+    </div>
+    }
+
+    @if (viewType() === 'card') {
+    <app-dataview [filterForm]="filterForm" [sortingForm]="sortingForm"
+        (selectionChange)="onSelectionChange($event)"></app-dataview>
+    } @else {
+    <app-gridview [filterForm]="filterForm" [sortingForm]="sortingForm"
+        (selectionChange)="onSelectionChange($event)"></app-gridview>
+    }
+</div>

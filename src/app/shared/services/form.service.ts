@@ -6,6 +6,8 @@ import { FormConfig, FormConfigType, FormErrors, FormValidationMessages } from '
   providedIn: 'root'
 })
 export class FormService {
+  private highlightedInvalidElement?: HTMLElement;
+  private highlightResetTimer?: ReturnType<typeof setTimeout>;
 
   constructor(private formBuilder: FormBuilder) { }
 
@@ -170,6 +172,7 @@ export class FormService {
 
   validateFormFields<T>(formConfig: FormConfigType<T>, form: FormGroup) {
     this.setFieldValidationErrors(null, formConfig as FormConfig, form);
+    this.focusAndHighlightFirstInvalidField();
   }
 
   private setFieldValidationErrors(data: any, formConfig: FormConfig, form: FormGroup | FormArray): void {
@@ -258,7 +261,95 @@ export class FormService {
     return messages;
   }
 
+  private focusAndHighlightFirstInvalidField(): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
 
+    const invalidSelector = [
+      'input.ng-invalid',
+      'textarea.ng-invalid',
+      '.p-inputtext.ng-invalid',
+      '.p-element.ng-invalid .p-inputtext',
+      '.p-element.ng-invalid .p-dropdown',
+      '.p-element.ng-invalid .p-multiselect',
+      '.p-element.ng-invalid .p-calendar input',
+      '.p-element.ng-invalid .p-autocomplete input',
+      '.p-element.ng-invalid .p-inputnumber input',
+      '.p-element.ng-invalid .p-checkbox-box',
+      '.p-element.ng-invalid .p-radiobutton-box',
+      '.p-element.ng-invalid .p-inputswitch-slider'
+    ].join(', ');
+
+    const invalidElement = Array
+      .from(document.querySelectorAll(invalidSelector))
+      .find((element) => this.isVisibleElement(element as HTMLElement)) as HTMLElement | undefined;
+
+    if (!invalidElement) {
+      this.clearInvalidFieldHighlight();
+      return;
+    }
+
+    const highlightTarget = this.resolveInvalidHighlightTarget(invalidElement);
+    const focusTarget = this.resolveInvalidFocusTarget(invalidElement, highlightTarget);
+
+    this.clearInvalidFieldHighlight();
+    highlightTarget.classList.add('invalid-field-highlight');
+    this.highlightedInvalidElement = highlightTarget;
+
+    highlightTarget.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest'
+    });
+
+    focusTarget?.focus({ preventScroll: true });
+
+    this.highlightResetTimer = setTimeout(() => {
+      this.clearInvalidFieldHighlight();
+    }, 8000);
+  }
+
+  private resolveInvalidHighlightTarget(sourceElement: HTMLElement): HTMLElement {
+    return sourceElement.closest(
+      '.p-float-label, .input-group, .p-inputwrapper, .p-dropdown, .p-multiselect, .p-calendar, .p-autocomplete, .p-inputnumber, .p-checkbox, .p-radiobutton, .p-inputswitch'
+    ) as HTMLElement ?? sourceElement;
+  }
+
+  private resolveInvalidFocusTarget(sourceElement: HTMLElement, highlightTarget: HTMLElement): HTMLElement | null {
+    if (this.isFocusableElement(sourceElement)) {
+      return sourceElement;
+    }
+
+    return (highlightTarget.querySelector(
+      'input, textarea, select, button, [tabindex]:not([tabindex="-1"])'
+    ) as HTMLElement | null);
+  }
+
+  private isFocusableElement(element: HTMLElement): boolean {
+    return element.matches('input, textarea, select, button, [tabindex]:not([tabindex="-1"])');
+  }
+
+  private isVisibleElement(element: HTMLElement): boolean {
+    const computedStyle = window.getComputedStyle(element);
+    if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden') {
+      return false;
+    }
+
+    return element.offsetWidth > 0 || element.offsetHeight > 0 || element.getClientRects().length > 0;
+  }
+
+  private clearInvalidFieldHighlight(): void {
+    if (this.highlightedInvalidElement) {
+      this.highlightedInvalidElement.classList.remove('invalid-field-highlight');
+      this.highlightedInvalidElement = undefined;
+    }
+
+    if (this.highlightResetTimer) {
+      clearTimeout(this.highlightResetTimer);
+      this.highlightResetTimer = undefined;
+    }
+  }
 
   // private setFieldValidationErrors(data: any, formConfig: FormConfig, form: FormGroup): void {
   //   if (!form) {

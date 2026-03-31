@@ -236,9 +236,70 @@ export class AlertNotificationService {
       text: html
     }).then(result => {
       setTimeout(() => {
-        (document.querySelector('input.ng-invalid, textarea.ng-invalid, .p-element.ng-invalid .p-element') as HTMLElement)?.focus();
+        this.focusAndHighlightFirstInvalidElement();
       }, 300);
     });;
+  }
+
+  private focusAndHighlightFirstInvalidElement(): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const invalidSelector = [
+      'input.ng-invalid',
+      'textarea.ng-invalid',
+      '.p-element.ng-invalid .p-inputtext',
+      '.p-element.ng-invalid .p-dropdown',
+      '.p-element.ng-invalid .p-multiselect',
+      '.p-element.ng-invalid .p-calendar input',
+      '.p-element.ng-invalid .p-autocomplete input',
+      '.p-element.ng-invalid .p-inputnumber input',
+      '.p-element.ng-invalid .p-checkbox-box',
+      '.p-element.ng-invalid .p-radiobutton-box',
+      '.p-element.ng-invalid .p-inputswitch-slider'
+    ].join(', ');
+
+    const invalidElement = Array
+      .from(document.querySelectorAll(invalidSelector))
+      .find((element) => this.isVisibleElement(element as HTMLElement)) as HTMLElement | undefined;
+
+    if (!invalidElement) {
+      return;
+    }
+
+    const highlightTarget = invalidElement.closest(
+      '.p-float-label, .input-group, .p-inputwrapper, .p-dropdown, .p-multiselect, .p-calendar, .p-autocomplete, .p-inputnumber, .p-checkbox, .p-radiobutton, .p-inputswitch'
+    ) as HTMLElement ?? invalidElement;
+
+    document.querySelectorAll('.invalid-field-highlight').forEach((el) => {
+      el.classList.remove('invalid-field-highlight');
+    });
+
+    highlightTarget.classList.add('invalid-field-highlight');
+
+    highlightTarget.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest'
+    });
+
+    if (invalidElement.matches('input, textarea, select, button, [tabindex]:not([tabindex="-1"])')) {
+      invalidElement.focus({ preventScroll: true });
+      return;
+    }
+
+    (highlightTarget.querySelector('input, textarea, select, button, [tabindex]:not([tabindex="-1"])') as HTMLElement | null)
+      ?.focus({ preventScroll: true });
+  }
+
+  private isVisibleElement(element: HTMLElement): boolean {
+    const computedStyle = window.getComputedStyle(element);
+    if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden') {
+      return false;
+    }
+
+    return element.offsetWidth > 0 || element.offsetHeight > 0 || element.getClientRects().length > 0;
   }
 }
 

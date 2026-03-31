@@ -39,7 +39,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   @ViewChild('taxRateColTemplate', { static: true }) taxRateColTemplate!: TemplateRef<any>;
   @ViewChild('taxableAmountFCColTemplate', { static: true }) taxableAmountFCColTemplate!: TemplateRef<any>;
   @ViewChild('taxAmountFCColTemplate', { static: true }) taxAmountFCColTemplate!: TemplateRef<any>;
-  @ViewChild('removeProductItemColTemplate', { static: true }) removeProductItemColTemplate!: TemplateRef<any>;
+  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
   //
   selectedVendorAddress!: string | null;
@@ -92,19 +92,21 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.dischargePortAutoCompleteDef = this.pageService.getDischargePortAutoCompleteDef(this.formConfig, this.form);
     this.productAutoCompleteDef = this.pageService.getProductMasterAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
+      tableHeader: "Product List",
       columnDef: [
-        { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
-        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "25%" },
+        { data: "", label: "S No", hideVisToggle: true, width: "4%", customTemplate: this.serialNoColTemplate },
+        { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "22%" },
         { data: "PurchaseQty", label: "Purchase Qty", width: "10%", customTemplate: this.purchaseQtyColTemplate },
         { data: "UOM", label: "UOM", width: "7%" },
         { data: "RatePerUnitFC", label: "Rate", width: "10%", customTemplate: this.ratePerUnitColTemplate },
-        { data: "PurchaseTaxRate", label: "Tax Rate", width: "15%", customTemplate: this.taxRateColTemplate },
-        { data: "TaxableAmountFC", label: "Taxable Amount", width: "15%", customTemplate: this.taxableAmountFCColTemplate },
-        { data: "TaxAmountFC", label: "Tax Amount", width: "15%", customTemplate: this.taxAmountFCColTemplate },
-        { data: "", label: "", hideVisToggle: true, width: "5%", customTemplate: this.removeProductItemColTemplate },
+        { data: "PurchaseTaxRate", label: "Tax Rate", width: "12%", customTemplate: this.taxRateColTemplate },
+        { data: "TaxableAmountFC", label: "Taxable Amount", width: "14%", customTemplate: this.taxableAmountFCColTemplate },
+        { data: "TaxAmountFC", label: "Tax Amount", width: "14%", customTemplate: this.taxAmountFCColTemplate },
+        { data: "ActionCol", label: "", hideVisToggle: true, width: "7%", customTemplate: this.actionColTemplate },
       ],
       data: this.productListArray.value
     }
+    this.updateActionColumnState();
 
     this.loadDropdownList();
     this.getDetails();
@@ -215,6 +217,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     this.productListArray.clear();
     this.tableDef.data = [];
+    this.updateActionColumnState();
   }
   
   loadPurchaseQuotation(event: string): void {
@@ -268,7 +271,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   getAmount(index: number): number[] {
     const group = this.productListArray.at(index);
     const quantity = group.get('PurchaseQty')?.value || 0;
-    const rate = group.get('RatePerUnitBC')?.value || 0;
+    const rate = group.get('RatePerUnitFC')?.value || 0;
     const purchaseTaxRate = group.get('PurchaseTaxRate')?.value || 0;
 
     return [quantity * rate, quantity * rate * (purchaseTaxRate / 100)];
@@ -442,8 +445,8 @@ export class CreateComponent implements OnInit, OnDestroy {
 
       group.patchValue({
         TaxableAmountFC: taxableAmountFC,
-        TaxAmountBC: taxAmountFC,
-        SalesAmountFC: taxableAmountFC + taxAmountFC
+        TaxAmountFC: taxAmountFC,
+        TotalAmountFC: taxableAmountFC + taxAmountFC
       }, { emitEvent: true });
 
       subtotalAmount += taxableAmountFC;
@@ -488,18 +491,13 @@ export class CreateComponent implements OnInit, OnDestroy {
       const ratePerUnitFC = Number(((group.get('RatePerUnitFC')?.value) || 0).toFixed(3));
       const taxableAmountFC = Number(((group.get('TaxableAmountFC')?.value) || 0).toFixed(3));
       const taxAmountFC = Number(((group.get('TaxAmountFC')?.value) || 0).toFixed(3));
-      const purchaseAmountFC = Number(((group.get('PurchaseAmountFC')?.value) || 0).toFixed(3));
-      console.log("Rate Per Unit:", ratePerUnitFC,
-        "Taxable amount:", taxableAmountFC,
-        "Tax Amount", taxAmountFC,
-        "Purchase Amount", purchaseAmountFC
-      )
+      const totalAmountFC = Number(((group.get('TotalAmountFC')?.value) || 0).toFixed(3));
 
       group.patchValue({
         TaxAmountBC: Number((taxAmountFC * exchangeRate).toFixed(3)),
         RatePerUnitBC: Number((ratePerUnitFC * exchangeRate).toFixed(3)),
         TaxableAmountBC: Number((taxableAmountFC * exchangeRate).toFixed(3)),
-        PurchaseAmountBC: Number((purchaseAmountFC * exchangeRate).toFixed(3))
+        TotalAmountBC: Number((totalAmountFC * exchangeRate).toFixed(3))
       }, { emitEvent: true });
     });
 
@@ -720,6 +718,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
                 // this.loadPortList();
                 this.form.patchValue(data);
+                this.updateActionColumnState();
 
                 // if (response.IsSuccess) {
                 //   this.GetOrderItemDetails(response.Data)
@@ -833,6 +832,18 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
+  }
+
+  private updateActionColumnState(): void {
+    const showActionColumn = !this.isBasedOnPurchaseQuotation;
+    this.tableDef = {
+      ...this.tableDef,
+      columnDef: this.tableDef.columnDef.map((col) =>
+        col.data === 'ActionCol'
+          ? { ...col, visible: showActionColumn, width: showActionColumn ? '7%' : '0%' }
+          : col
+      )
+    };
   }
 
   private logInvalidControls(form: FormGroup | FormArray, parentKey: string = ''): void {

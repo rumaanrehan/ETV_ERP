@@ -1,7 +1,7 @@
 <ng-template #pageHeaderActionTemplate>
 </ng-template>
 
-<div class="col-xl-12 proforma-invoice-create sales-quotation-create">
+<div class="col-xl-12 proforma-invoice-create sales-quotation-create" [class.is-edit-mode]="isEditMode">
   <div class="create-header">
     <div class="create-header-left">
       <button class="toolbar-btn icon-btn back-btn" type="button" (click)="OnClickPageHeaderBackButton()"
@@ -77,7 +77,7 @@
 
                   <div class="col-xl-3 form-group px-2 simple-field proforma-customer-field">
                     <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
-                    <div class="simple-control has-action">
+                    <div class="simple-control" [class.has-action]="!isBasedOnSalesEnquiry">
                       <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
                         (onSearch)="LoadCustomer($event)" (onSelect)="OnSelect_Customer($event)" (onClear)="OnClear_Customer()"
                         [isClearable]="!isBasedOnSalesEnquiry" [readonly]="isBasedOnSalesEnquiry">

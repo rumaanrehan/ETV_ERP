@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
@@ -18,7 +18,7 @@ import { CreateComponent } from "../create/create.component";
   standalone: true,
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  imports: [ZDataTable, CommonModule, RouterLink, CreateComponent],
+  imports: [ZDataTable, CommonModule, CreateComponent],
   providers: [FormValidationService]
 })
 

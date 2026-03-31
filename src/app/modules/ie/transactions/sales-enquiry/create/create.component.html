@@ -1,7 +1,7 @@
 <ng-template #pageHeaderActionTemplate>
 </ng-template>
 
-<div class="sales-enquiry-create">
+<div class="sales-enquiry-create" [class.is-edit-mode]="isEditMode">
   <div class="create-header">
     <div class="create-header-left">
       <button class="toolbar-btn icon-btn back-btn" type="button" (click)="onClickPageHeaderBackButton()"
@@ -51,9 +51,10 @@
     <div class="simple-form">
       <div class="simple-field">
         <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
-        <div class="simple-control has-action">
+        <div class="simple-control" [class.has-action]="!isEditMode">
           <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
-            (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+            [isClearable]="!isEditMode" (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)"
+            (onClear)="onClear_Customer()">
           </z-autocomplete>
           <button *ngIf="!isEditMode" type="button" class="simple-action-btn" title="Add New Company"
             (click)="handleComponentLoad('VendorCreateComponent')">

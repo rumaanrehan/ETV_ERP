@@ -1,0 +1,221 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  --primary-color: #0d6efd;
+  --primary-01: rgba(13, 110, 253, 0.1);
+  --primary-rgb: 13, 110, 253;
+  --bs-danger: #dc3545;
+}
+
+:host-context([data-theme-mode="dark"]) {
+  --primary-color: #4a9eff;
+  --primary-01: rgba(74, 158, 255, 0.1);
+  --primary-rgb: 74, 158, 255;
+  --bs-danger: #ff6b6b;
+}
+
+.index-page-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 0;
+  position: relative;
+  padding-top: calc(var(--sales-quotation-selection-bar-height, 0px) + 0.5rem);
+}
+
+.view-switcher-group {
+  display: flex;
+  gap: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  padding: 2px;
+
+  :host-context([data-theme-mode="dark"]) & {
+    background-color: #2d3748;
+  }
+}
+
+.view-switcher-btn {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: transparent;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(var(--primary-rgb), 0.05);
+    color: var(--primary-color);
+  }
+
+  &.active {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.3);
+  }
+
+  :host-context([data-theme-mode="dark"]) & {
+    color: #adb5bd;
+
+    &:hover {
+      background-color: rgba(var(--primary-rgb), 0.1);
+      color: var(--primary-color);
+    }
+
+    &.active {
+      background-color: var(--primary-color);
+      color: #1a202c;
+    }
+  }
+}
+
+.btn-add-sales-quotation {
+  background: linear-gradient(135deg, var(--primary-color) 0%, rgba(var(--primary-rgb), 0.8) 100%);
+  border: 1px solid var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.4);
+  }
+
+  :host-context([data-theme-mode="dark"]) & {
+    background: linear-gradient(135deg, var(--primary-color) 0%, rgba(var(--primary-rgb), 0.6) 100%);
+    border-color: var(--primary-color);
+  }
+}
+
+.index-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid #e9ecef;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  border-radius: 12px 12px 0 0;
+  animation: slideInUp 0.3s ease-out;
+
+  :host-context([data-theme-mode="dark"]) & {
+    background: rgba(45, 55, 72, 0.95);
+    border-color: #4a5568;
+  }
+
+  &.selection-active {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+}
+
+.index-action-bar-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+
+  .btn {
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+
+    &:hover:not(:disabled) {
+      background-color: rgba(var(--primary-rgb), 0.9);
+      border-color: rgba(var(--primary-rgb), 0.9);
+    }
+
+    :host-context([data-theme-mode="dark"]) & {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+
+      &:hover:not(:disabled) {
+        background-color: rgba(var(--primary-rgb), 0.8);
+      }
+    }
+  }
+
+  .btn-danger {
+    background-color: var(--bs-danger);
+    border-color: var(--bs-danger);
+
+    &:hover:not(:disabled) {
+      background-color: rgba(220, 53, 69, 0.9);
+      border-color: rgba(220, 53, 69, 0.9);
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+p-checkbox {
+  ::ng-deep {
+    .p-checkbox {
+      display: flex;
+      align-items: center;
+
+      .p-checkbox-box {
+        border-color: var(--primary-color);
+        transition: all 0.2s ease;
+
+        &.p-highlight {
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
+        }
+      }
+    }
+  }
+}
+
+app-dataview,
+app-gridview {
+  flex: 1 1 auto;
+}

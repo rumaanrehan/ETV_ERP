@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
@@ -8,9 +8,8 @@ import { FormConfigType } from '../../../../../shared/models/form.model';
 import { StaticList } from '../../../../../shared/models/select-list';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { DateUtils } from '../../../../../shared/utility/date-utils';
-import { SalesQuotation, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_IndexTableSort, SalesQuotationBulkUpdateRequest } from '../sales-quotation';
+import { SalesQuotation, SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableList, SalesQuotation_IndexTableSort } from '../sales-quotation';
 import { SalesQuotationService } from '../sales-quotation.service';
 import { ApiListResponse } from '../../../../../shared/models/api-response';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
@@ -27,18 +26,15 @@ import { NavContextService } from '../../../../../core/services/nav-context.serv
 })
 export class DataviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @Input() filterForm!: FormGroup;
+  @Input() sortingForm!: FormGroup;
+  @Output() selectionChange = new EventEmitter<SalesQuotation_IndexTableList[]>();
   @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
 
   componentRef?: ComponentRef<any>;
 
   dataViewDef!: DataViewDef<SalesQuotation_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
-
-  filterForm!: FormGroup;
-  filterFormConfig!: FormConfigType<SalesQuotation_IndexTableFilter>
-  sortingForm!: FormGroup;
-  sortingFormConfig!: FormConfigType<SalesQuotation_IndexTableSort>
 
   selectedSalesQuotations: SalesQuotation_IndexTableList[] = [];
   selectAll = false;
@@ -53,7 +49,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ]
 
   constructor(
-    private pageHeaderService: PageHeaderService,
     private pageService: SalesQuotationService,
     private formService: FormService,
     private alertService: AlertNotificationService,
@@ -62,14 +57,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-    this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
-    this.filterForm = this.formService.createFormGroup<SalesQuotation_IndexTableFilter>(this.filterFormConfig);
-    this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
-    this.sortingForm = this.formService.createFormGroup<SalesQuotation_IndexTableSort>(this.sortingFormConfig);
     this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
-
-    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -124,16 +112,13 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  onClickPageHeaderAddButton() {
-    this.navContextService.clear();
-    this.router.navigate(['ie/sales-quotation/create']);
-  }
-
   onResetForm(formGroup: FormGroup): void {
     if (formGroup === this.filterForm) {
-      this.formService.resetFormValue<SalesQuotation_IndexTableFilter>(this.filterFormConfig, formGroup);
+      const filterConfig = this.pageService.getFormConfig_DataTableFilter();
+      this.formService.resetFormValue<SalesQuotation_IndexTableFilter>(filterConfig, formGroup);
     } else if (formGroup === this.sortingForm) {
-      this.formService.resetFormValue<SalesQuotation_IndexTableSort>(this.sortingFormConfig, formGroup);
+      const sortingConfig = this.pageService.getFormConfig_DataTableSort();
+      this.formService.resetFormValue<SalesQuotation_IndexTableSort>(sortingConfig, formGroup);
     }
     this.loadData();
   }
@@ -141,8 +126,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
   loadData() {
     try {
       const model: DataViewParams<SalesQuotation_IndexTableFilter, SalesQuotation_IndexTableSort> = {
-        first: this.dataViewEvent.first,
-        last: this.dataViewEvent.rows,
+        first: this.dataViewEvent?.first ?? 1,
+        last: this.dataViewEvent?.rows ?? 25,
         filters: this.filterForm.value,
         sortings: this.sortingForm.value
       };
@@ -212,7 +197,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
 
 
   onSelectionChange(item: SalesQuotation_IndexTableList) {
-
     if (item._selected) {
       this.selectedSalesQuotations.push(item);
     } else {
@@ -221,60 +205,28 @@ export class DataviewComponent implements OnInit, OnDestroy {
           x => x.SalesQuotationID !== item.SalesQuotationID
         );
     }
-
     this.selectAll = this.selectedSalesQuotations.length === this.dataViewDef.data.length;
+    // Emit selected items to parent index component
+    this.selectionChange.emit(this.selectedSalesQuotations);
   }
 
   toggleSelectAll(event: any) {
     this.selectedSalesQuotations = [];
-
     this.dataViewDef.data.forEach((item: SalesQuotation_IndexTableList) => {
       item._selected = event.checked;
       if (event.checked) {
         this.selectedSalesQuotations.push(item);
       }
     });
-  }
-
-  bulkChangeStatus(statusID: number) {
-    this.alertService
-      .showConfirmationWithInput({
-        text: 'Do you want to bulk update <b>Sales Quotation</b>?',
-        inputPlaceholder: 'Reason to Bulk Update'
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          const ids = this.selectedSalesQuotations.map(x => x.SalesQuotationID);
-          const dto: SalesQuotationBulkUpdateRequest = {
-            SalesQuotationIDs: ids,
-            StatusID: statusID
-          };
-
-          this.pageService.BulkChangeStatus(dto)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                this.loadData();
-                this.clearSelection();
-                if (response.IsSuccess) {
-                  this.alertService.showAlert({
-                    type: 'success',
-                    text: response.Message,
-                    timer: 5000,
-                  });
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
-            });
-        }
-      });
+    // Emit selected items to parent index component
+    this.selectionChange.emit(this.selectedSalesQuotations);
   }
 
   clearSelection() {
     this.dataViewDef.data.forEach(x => x._selected = false);
     this.selectedSalesQuotations = [];
     this.selectAll = false;
+    this.selectionChange.emit([]);
   }
 
   formatDate(date: Date) {
