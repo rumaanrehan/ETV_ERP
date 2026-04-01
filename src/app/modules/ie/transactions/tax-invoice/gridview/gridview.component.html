@@ -1,0 +1,47 @@
+<!-- Index Table Component -->
+<z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)" (resetFormEmitter)="onResetForm($event)">
+</z-datatable>
+
+<!-- Table Column Custom Template -->
+<ng-template #selectionColTemplate let-row>
+    <p-checkbox binary="true" [(ngModel)]="row._selected" (onChange)="onSelectionChange()">
+    </p-checkbox>
+</ng-template>
+
+<ng-template #taxInvoiceCodeTemplate let-row>
+    <span class="table-action-link" (click)="onClickEditDetails(row.TaxInvoiceID)" style="cursor: pointer;">
+        {{ row.TaxInvoiceNo }}
+    </span>
+</ng-template>
+
+<ng-template #taxInvoiceDateTemplate let-row>
+    {{ formatDate(row.TaxInvoiceDate) }}
+</ng-template>
+
+<ng-template #subtotalAmountFCTemplate let-row>
+    <span>{{row.CurrencySymbol}} {{row.SubtotalAmountFC | number:'1.2-2'}}</span>
+</ng-template>
+
+<ng-template #taxAmountFCTemplate let-row>
+    <span>{{row.CurrencySymbol}} {{row.TaxAmountFC | number:'1.2-2'}}</span>
+</ng-template>
+
+<ng-template #netAmountFCTemplate let-row>
+    <span>{{row.CurrencySymbol}} {{row.NetAmountFC | number:'1.2-2'}}</span>
+</ng-template>
+
+<ng-template #statusColTemplate let-row>
+    <span class="badge" [ngStyle]="{backgroundColor: row.StatusHex, color: '#ffffff'}"
+        style="font-size: 11px; font-weight: 400; opacity: 0.85; padding: 4px 8px;">
+        {{ row.StatusText }}
+    </span>
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+    <div class="d-flex justify-content-end" *ngIf="(row.StatusText || '').toLowerCase() === 'draft'">
+        <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
+            (click)="$event.stopPropagation(); onClickDeleteReactivate(row)">
+            <i class="pi pi-times-circle"></i>
+        </span>
+    </div>
+</ng-template>

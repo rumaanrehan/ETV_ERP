@@ -77,6 +77,11 @@ export interface ProformaInvoice_IndexTableFilter {
     StatusID: number | null;
 }
 
+export interface ProformaInvoice_IndexTableSort {
+    ProformaInvoiceNo: 1 | 0 | -1;
+    ProformaInvoiceDate: 1 | 0 | -1;
+}
+
 export interface ProformaInvoice_IndexTableList {
     ProformaInvoiceID: number;
     ProformaInvoiceNo: string;
@@ -90,6 +95,9 @@ export interface ProformaInvoice_IndexTableList {
     StatusText: string;
     StatusHex: string;
     CurrencySymbol: string;
+
+    /** UI only */
+    _selected?: boolean;
 }
 
 export interface ProformaInvoiceRequest {

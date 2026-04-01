@@ -69,12 +69,14 @@ export class GridviewComponent implements OnInit, OnDestroy {
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "70px" },
       { data: 'SalesQuotationNo', label: 'Quotation No', hideVisToggle: true, orderable: false, filterable: true, width: "150px", customTemplate: this.quotationCodeTemplate },
       { data: 'CustomerName', label: 'Customer', orderable: false, filterable: true },
+      { data: 'BasedOn', label: 'Based On', orderable: false, width: "150px" },
+      { data: 'NoOfProducts', label: 'No of Products', orderable: false, width: "150px" },
       { data: 'SalesQuotationDate', label: 'Quotation Date', orderable: false, width: "150px" },
-      { data: 'ValidTillDate', label: 'Valid Till', orderable: false, width: "150px" },
-      { data: 'PortOfDischarge', label: 'Port of Discharge', orderable: false },
-      { data: 'FinalDestinationName', label: 'Final Destination', orderable: false },
-      { data: 'TotalAmount', label: 'Total Amount', orderable: false, width: "150px" },
-      { data: 'StatusText', label: 'Status', orderable: false, width: "150px", filterable: true, customTemplate: this.statusColTemplate },
+      { data: 'ValidityDate', label: 'Valid Till', orderable: false, width: "150px" },
+      { data: 'SubtotalAmountFC', label: 'Subtotal', orderable: false, width: "150px" },
+      { data: 'TaxAmountFC', label: 'Tax', orderable: false, width: "150px" },
+      { data: 'NetAmountFC', label: 'Net Amount', orderable: false, width: "150px" },
+      { data: 'StatusText', label: 'Status', orderable: false, width: "130px", filterable: true, customTemplate: this.statusColTemplate },
     ];
   }
 
