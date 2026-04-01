@@ -1177,6 +1177,32 @@ export class CreateComponent implements OnInit, OnDestroy {
     const model: PortMaster = this.formService.createNullObject<PortMaster>();
     this.loadDynamicComponent(model);
   }
+  
+  printPackingDetail(): void {
+    this.disablePrintButton = true;
+    this.route.params.subscribe(params => {
+      const exportOrderID = +params['id'];
+
+      if (!exportOrderID) return;
+
+      this.isEditMode = true;
+      const model = {
+        ExportOrderID: exportOrderID
+      };
+      this.pageService.GeneratePackingListPdf(model).subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          window.open(url);
+        },
+        error: (err) => {
+          console.error('PDF generation failed', err);
+        },
+        complete: () => {
+          this.disablePrintButton = false;
+        }
+      });
+    });
+  }
 
   formatDate(date: Date) {
     return DateUtils.formatDate(date);
