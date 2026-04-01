@@ -321,7 +321,32 @@
 }
 
 .simple-control.has-action {
-    padding-right: 4.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    max-width: var(--se-field-width);
+    padding-right: 0;
+}
+
+.simple-control.has-action > z-autocomplete,
+.simple-control.has-action > z-select {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none !important;
+}
+
+.simple-control.has-action > .simple-action-btn {
+    position: static;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: var(--se-field-height);
+    min-width: var(--se-field-height);
+    height: var(--se-field-height);
+    padding: 0;
+    justify-content: center;
+    flex: 0 0 var(--se-field-height);
 }
 
 .simple-btn {
@@ -462,7 +487,8 @@
     }
 
     .simple-control.has-action {
-        padding-right: 3rem;
+        padding-right: 0;
+        max-width: 100%;
     }
 
     .simple-btn,
@@ -481,24 +507,39 @@
     }
 
     .amount-summary-wrap {
-        justify-content: flex-start;
-        margin-inline: 0 !important;
-        padding-inline: 0.75rem;
+        width: calc(100% - 1.5rem);
+        margin: 0.5rem 0.75rem 0.25rem;
+        padding-top: 0.65rem;
+        box-sizing: border-box;
     }
 
     .amount-summary-card {
-        min-width: 100%;
+        width: 100%;
+        min-width: 0;
         max-width: 100%;
-        padding: 0.6rem;
+        gap: 0.75rem;
     }
 
     .amount-summary-row {
-        gap: 0.5rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
     }
 
     .amount-summary-row span {
-        min-width: 6.5rem;
-        font-size: 0.72rem;
+        flex: 0 0 auto;
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+        font-size: 0.88rem;
+        line-height: 1.2;
+    }
+
+    .amount-summary-row z-inputnumber {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
     }
 
     .create-section-card {
@@ -571,42 +612,99 @@
 
 .amount-summary-wrap {
     display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    min-width: 0;
-    margin-inline: 0 !important;
-    padding-inline: 0.75rem;
+    justify-content: flex-start;
+    width: calc(100% - 1.5rem);
     box-sizing: border-box;
+    margin: 0.5rem 0.75rem 0.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--default-border);
 }
 
 .amount-summary-card {
-    width: min(100%, 28rem);
     min-width: 0;
-    max-width: 28rem;
-    border: 1px solid var(--default-border);
-    border-radius: 8px;
-    background: var(--background-secondary);
-    padding: 0.75rem;
+    max-width: 100%;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    flex-wrap: nowrap;
+    gap: 1rem;
 }
 
 .amount-summary-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 0.75rem;
+    flex: 0 0 auto;
+    min-width: 0;
 
     span {
-        min-width: 8.5rem;
-        font-size: 0.78rem;
-        color: var(--text-muted);
+        flex: 0 0 12rem;
+        min-width: 12rem;
+        max-width: 12rem;
+        font-size: 1rem;
+        font-weight: 400;
+        color: rgba(var(--heading-text-color, 80%));
+        line-height: var(--se-field-height, 2.25rem);
     }
 
     z-inputnumber {
-        flex: 1 1 auto;
+        flex: 0 0 290.67px;
+        width: 290.67px;
         min-width: 0;
+        max-width: 290.67px;
+    }
+}
+
+:host ::ng-deep .amount-summary-row .p-float-label > label {
+    display: none !important;
+}
+
+@media (min-width: 2000px) {
+    .amount-summary-wrap {
+        justify-content: flex-start;
+        margin: 0.75rem 0.75rem 0.5rem;
+    }
+
+    .amount-summary-card {
+        min-width: 0;
+        max-width: 100%;
+        padding: 0;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 0.9rem;
+    }
+
+    .amount-summary-row {
+        gap: 0.75rem;
+        min-height: 2.8rem;
+    }
+
+    .amount-summary-row span {
+        flex: 0 0 12rem;
+        min-width: 12rem;
+        max-width: 12rem;
+        font-size: 1rem;
+        font-weight: 400;
+        color: rgba(var(--heading-text-color, 80%));
+    }
+
+    .amount-summary-row z-inputnumber {
+        flex: 0 0 290.67px;
+        width: 290.67px;
+        min-width: 0;
+        max-width: 290.67px;
+    }
+
+    :host ::ng-deep .amount-summary-row .p-inputnumber,
+    :host ::ng-deep .amount-summary-row .p-inputnumber-input,
+    :host ::ng-deep .amount-summary-row .p-inputtext {
+        height: 2.65rem !important;
+        font-size: 0.9rem;
     }
 }
 
@@ -712,12 +810,14 @@
         width: 100%;
         box-shadow: none;
         transition: none;
+        max-width: var(--se-field-width);
     }
 
     .p-autocomplete,
     .p-dropdown,
     .p-calendar {
         border-radius: var(--se-field-radius);
+        max-width: var(--se-field-width);
     }
 
     .simple-action-btn:hover,
@@ -854,10 +954,25 @@
             color: var(--heading-text-color);
         }
 
-        .page-table .action-input-group > .col-11 {
-            flex: 1 1 auto;
+        .page-table .action-input-group > .product-input-wrap {
+            flex: 1 1 0;
             min-width: 0;
+            width: auto;
+            max-width: none;
             padding: 0;
+        }
+
+        .page-table .action-input-group > .product-input-wrap > z-autocomplete {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            max-width: none !important;
+        }
+
+        .page-table .action-input-group > .product-input-wrap > z-autocomplete .p-autocomplete,
+        .page-table .action-input-group > .product-input-wrap > z-autocomplete .p-autocomplete-input {
+            width: 100% !important;
+            max-width: none !important;
         }
 
         .page-table .action-input-group .inline-add-btn {
@@ -910,10 +1025,10 @@
     height: calc(var(--se-field-height) * 0.8);
 }
 
-@media (min-width: 2000px) {
+@media (min-width: 1300px) {
     .simple-form {
         display: grid;
-        grid-template-columns: minmax(0, 100%) minmax(0, 100%);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         column-gap: 1.5rem;
         row-gap: 0.75rem;
         align-items: start;
@@ -940,3 +1055,4 @@
         grid-row: 3;
     }
 }
+

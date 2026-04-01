@@ -265,7 +265,7 @@
 .simple-form {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
     padding: 0.25rem 0.5rem 1rem;
     width: 100%;
     margin-bottom: 3%;
@@ -274,7 +274,7 @@
 .form-fields {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .simple-field {
@@ -332,6 +332,40 @@
 
 .simple-control.has-action {
     padding-right: 4.25rem;
+}
+
+.plus-field-control {
+    width: 100%;
+    max-width: var(--se-field-width);
+}
+
+.plus-field-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: 100%;
+}
+
+.plus-field-row z-autocomplete,
+.plus-field-row z-select {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: block;
+}
+
+.plus-field-row .plus-field-btn {
+    position: static;
+    top: auto;
+    right: auto;
+    transform: none;
+    width: var(--se-field-height);
+    height: var(--se-field-height);
+    min-width: var(--se-field-height);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 var(--se-field-height);
 }
 
 .simple-btn {
@@ -462,10 +496,10 @@
     }
 
     z-inputnumber {
-        flex: 0 0 436px;
-        width: 436px;
+        flex: 0 0 290.67px;
+        width: 290.67px;
         min-width: 0;
-        max-width: 436px;
+        max-width: 290.67px;
     }
 }
 
@@ -503,10 +537,10 @@
     }
 
     .amount-summary-row z-inputnumber {
-        flex: 0 0 436px;
-        width: 436px;
+        flex: 0 0 290.67px;
+        width: 290.67px;
         min-width: 0;
-        max-width: 436px;
+        max-width: 290.67px;
     }
 
     :host ::ng-deep .amount-summary-row .p-inputnumber,
@@ -619,6 +653,7 @@
         width: 100%;
         box-shadow: none;
         transition: none;
+        max-width: var(--se-field-width);
     }
 
     .p-inputtextarea {
@@ -630,6 +665,7 @@
     .p-dropdown,
     .p-calendar {
         border-radius: var(--se-field-radius);
+        max-width: var(--se-field-width);
     }
 
     .simple-action-btn:hover,
@@ -848,7 +884,7 @@
         display: grid;
         grid-template-columns: minmax(0, 100%) minmax(0, 100%);
         column-gap: 1.5rem;
-        row-gap: 0.75rem;
+        row-gap: 0.5rem;
         align-items: start;
         justify-content: start;
     }
@@ -879,7 +915,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .proforma-invoice-create .horizontal-form .row > [class*="col-"] {
@@ -966,10 +1002,30 @@
 :host ::ng-deep .proforma-invoice-create .horizontal-form .form-group .p-float-label > :not(label) {
     grid-column: 2;
     grid-row: 1;
-    width: 436px;
-    min-width: 436px;
-    max-width: 436px;
+    width: 290.67px;
+    min-width: 290.67px;
+    max-width: 290.67px;
     height: 36px;
+}
+
+/* Keep z-select clear icon inside the field, just left of dropdown arrow */
+:host ::ng-deep .proforma-invoice-create .horizontal-form .form-group > z-select {
+    display: block;
+    width: 290.67px;
+    min-width: 290.67px;
+    max-width: 290.67px;
+}
+
+:host ::ng-deep .proforma-invoice-create .horizontal-form .form-group > z-select .input-group,
+:host ::ng-deep .proforma-invoice-create .horizontal-form .form-group > z-select .input-group > .p-float-label,
+:host ::ng-deep .proforma-invoice-create .horizontal-form .form-group > z-select .input-group > .p-float-label > .p-dropdown {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+:host ::ng-deep .proforma-invoice-create .horizontal-form .form-group > z-select .input-group > .input-group-addon {
+    inset-inline-end: calc(var(--z-select-trigger-width, 2.25rem) + var(--z-select-clear-gap, 0.15rem));
 }
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .form-group .p-float-label > .input-span {
@@ -984,8 +1040,8 @@
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .form-group .simple-control.has-action {
     position: relative;
-    width: 436px;
-    max-width: 436px;
+    width: 290.67px;
+    max-width: 290.67px;
     height: 36px;
     box-sizing: border-box;
     padding: 0 36px 0 0;
@@ -1017,9 +1073,9 @@
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control.has-action,
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action,
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .simple-control.has-action {
-    width: 436px;
-    min-width: 436px;
-    max-width: 436px;
+    width: 290.67px;
+    min-width: 290.67px;
+    max-width: 290.67px;
     height: 36px;
     box-sizing: border-box;
     padding: 0 68px 0 0;
@@ -1061,14 +1117,14 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 0.5rem;
     width: 100%;
 }
 
 .proforma-invoice-create .horizontal-form .proforma-port-stack {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
     width: min(100%, 40rem);
     max-width: 40rem;
 }
@@ -1084,9 +1140,9 @@
 }
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-roundoff-field .proforma-roundoff-control {
-    width: 436px;
-    min-width: 436px;
-    max-width: 436px;
+    width: 290.67px;
+    min-width: 290.67px;
+    max-width: 290.67px;
     min-height: 36px;
     display: flex;
     align-items: center;
@@ -1136,13 +1192,13 @@
     }
 }
 
-@media (min-width: 2000px) {
+@media (min-width: 1300px) {
     .proforma-invoice-create .horizontal-form .row {
         flex-direction: row;
         flex-wrap: wrap;
         align-items: flex-start;
         column-gap: 1.5rem;
-        row-gap: 0.75rem;
+        row-gap: 0.5rem;
     }
 
     .proforma-invoice-create .horizontal-form .row > .proforma-fields-group--pre,
@@ -1388,9 +1444,17 @@
         height: var(--se-field-height) !important;
     }
 
+    :host ::ng-deep .proforma-invoice-create .horizontal-form .form-group > z-select {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
     :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .p-float-label > :not(label),
     :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label > :not(label),
     :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .p-float-label > :not(label) {
         height: var(--se-field-height) !important;
     }
 }
+
+

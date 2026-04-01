@@ -269,7 +269,7 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.Narration.label}}:</label>
         <div class="simple-control">
-          <z-textarea [group]="form" [control]="'Narration'" [label]="''" [autoResize]="true"
+          <z-textarea [group]="form" [control]="'Narration'" [label]="''" [autoResize]="true" [rows]="1"
             [placeholder]="'Optional'"></z-textarea>
         </div>
       </div>
@@ -349,7 +349,7 @@
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
   <div class="action-input-group">
-    <div class="col-11">
+    <div class="product-input-wrap">
       <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
         (onSelect)="onSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
       </z-autocomplete>

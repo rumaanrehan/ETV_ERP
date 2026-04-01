@@ -5,15 +5,19 @@
 </div>
 
 <ng-template #customTemplate let-salesQuotations>
-    <div class="eo-card" *ngFor="let item of salesQuotations; let first = first">
+    <div class="eo-card eo-card--clickable" *ngFor="let item of salesQuotations; let first = first"
+        role="button" tabindex="0" (click)="onClickEditDetails(item.SalesQuotationID)"
+        (keydown.enter)="onClickEditDetails(item.SalesQuotationID)"
+        (keydown.space)="$event.preventDefault(); onClickEditDetails(item.SalesQuotationID)">
         <div class="dataview-item eo-card__body">
             <div class="eo-card__top">
                 <p-checkbox class="eo-card__checkbox" binary="true" [(ngModel)]="item._selected"
-                    (onChange)="onSelectionChange(item)"></p-checkbox>
+                    (onChange)="onSelectionChange(item)" (click)="$event.stopPropagation()"
+                    (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()"></p-checkbox>
 
                 <div class="eo-card__main">
                     <div class="eo-card__line">
-                        <a class="eo-card__title-link" (click)="onClickEditDetails(item.SalesQuotationID)">
+                        <a class="eo-card__title-link" (click)="$event.stopPropagation(); onClickEditDetails(item.SalesQuotationID)">
                             <h5 class="eo-card__title">{{item.SalesQuotationNo}}</h5>
                         </a>
                         <div class="eo-card__status">

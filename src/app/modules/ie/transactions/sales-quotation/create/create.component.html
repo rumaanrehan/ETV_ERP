@@ -77,35 +77,40 @@
 
                   <div class="col-xl-3 form-group px-2 simple-field proforma-customer-field">
                     <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
-                    <div class="simple-control" [class.has-action]="!isBasedOnSalesEnquiry">
-                      <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
-                        (onSearch)="LoadCustomer($event)" (onSelect)="OnSelect_Customer($event)" (onClear)="OnClear_Customer()"
-                        [isClearable]="!isBasedOnSalesEnquiry" [readonly]="isBasedOnSalesEnquiry">
-                      </z-autocomplete>
-                      <button *ngIf="!isBasedOnSalesEnquiry" type="button" class="simple-action-btn" title="Add New Company"
-                        (click)="HandleComponentLoad('VendorCreateComponent')">
-                        <i class="pi pi-plus" aria-hidden="true"></i>
-                      </button>
+                    <div class="simple-control plus-field-control">
+                      <div class="plus-field-row">
+                        <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
+                          (onSearch)="LoadCustomer($event)" (onSelect)="OnSelect_Customer($event)" (onClear)="OnClear_Customer()"
+                          [isClearable]="!isBasedOnSalesEnquiry" [readonly]="isBasedOnSalesEnquiry">
+                        </z-autocomplete>
+                        <button *ngIf="!isBasedOnSalesEnquiry" type="button" class="simple-action-btn plus-field-btn"
+                          title="Add New Company" (click)="HandleComponentLoad('VendorCreateComponent')">
+                          <i class="pi pi-plus" aria-hidden="true"></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
                   <div class="col-xl-{{isBasedOnSalesEnquiry ? 5 : 7}}"></div>
 
                   <div class="col-xl-12 form-group px-2" *ngIf="form.get('CustomerID')?.value">
-                    <z-span [text]="selectedCustomerAddress ?? ''"></z-span>
+                    <z-span [text]="selectedCustomerAddress ?? ''"
+                      [label]="isEditMode ? 'Address' : 'Billing Address'"></z-span>
                   </div>
 
                   <h6 class="form-group px-2">Exchange Rate Details</h6>
 
                   <div class="col-xl-3 form-group px-2 simple-field proforma-fc-field">
                     <label class="simple-label">{{formConfig.FCCurrencyID.label}}:</label>
-                    <div class="simple-control has-action">
-                      <z-select [group]="form" [control]="'FCCurrencyID'" [label]="''" [optionLabel]="'CurrencyName'"
-                        [optionValue]="'CurrencyID'" [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
-                      <button type="button" class="simple-action-btn" title="Add New Currency"
-                        (click)="HandleComponentLoad('CurrencyCreateComponent')">
-                        <i class="pi pi-plus" aria-hidden="true"></i>
-                      </button>
+                    <div class="simple-control plus-field-control">
+                      <div class="plus-field-row">
+                        <z-select [group]="form" [control]="'FCCurrencyID'" [label]="''" [optionLabel]="'CurrencyName'"
+                          [optionValue]="'CurrencyID'" [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
+                        <button type="button" class="simple-action-btn plus-field-btn" title="Add New Currency"
+                          (click)="HandleComponentLoad('CurrencyCreateComponent')">
+                          <i class="pi pi-plus" aria-hidden="true"></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
 

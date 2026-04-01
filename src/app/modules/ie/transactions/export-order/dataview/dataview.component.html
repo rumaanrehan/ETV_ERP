@@ -5,24 +5,29 @@
 </div>
 
 <ng-template #customTemplate let-exportOrders>
-    <div class="eo-card" *ngFor="let item of exportOrders; let first = first">
+    <div class="eo-card eo-card--clickable" *ngFor="let item of exportOrders; let first = first" role="button"
+        tabindex="0" (click)="onClickEditDetails(item.ExportOrderID)"
+        (keydown.enter)="onClickEditDetails(item.ExportOrderID)"
+        (keydown.space)="$event.preventDefault(); onClickEditDetails(item.ExportOrderID)">
         <div class="dataview-item eo-card__body">
             <div class="eo-card__top">
                 <!-- BULK SELECT -->
                 <p-checkbox class="eo-card__checkbox" binary="true" [(ngModel)]="item._selected"
-                    (onChange)="onSelectionChange(item)">
+                    (onChange)="onSelectionChange(item)" (click)="$event.stopPropagation()"
+                    (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
                 </p-checkbox>
 
                 <div class="eo-card__main">
                     <div class="eo-card__line">
-                        <a class="eo-card__title-link" (click)="onClickEditDetails(item.ExportOrderID)">
+                        <a class="eo-card__title-link" (click)="$event.stopPropagation(); onClickEditDetails(item.ExportOrderID)">
                             <h5 class="eo-card__title">{{item.ExportOrderNo}}</h5>
                         </a>
                         <div class="eo-card__status">
                             <span class="eo-card__badge" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
                         </div>
                         <z-menu class="eo-card__menu" [menus]="getMenuOptions(item)"
-                            [styleClass]="'dataview-action-menu'">
+                            [styleClass]="'dataview-action-menu'" (click)="$event.stopPropagation()"
+                            (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
                         </z-menu>
                     </div>
                     <h5 class="eo-card__title eo-card__company">{{item.CompanyName}}</h5>
@@ -69,7 +74,7 @@
 
             <div class="eo-card__footer">
                 <button type="button" class="btn btn-primary eo-card__cta"
-                    (click)="onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)">
+                    (click)="$event.stopPropagation(); onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)">
                     {{item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details'}}
                 </button>
             </div>

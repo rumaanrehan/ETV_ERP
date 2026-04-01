@@ -200,6 +200,15 @@ z-dataview {
     overflow: hidden;
 }
 
+:host ::ng-deep .eo-card--clickable {
+    cursor: pointer;
+}
+
+:host ::ng-deep .eo-card--clickable:focus-visible {
+    outline: 2px solid rgba(var(--primary-rgb), 0.75);
+    outline-offset: 2px;
+}
+
 :host ::ng-deep .eo-card:hover {
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
@@ -442,4 +451,3 @@ z-dataview {
 :host-context([data-theme-mode="dark"]) ::ng-deep .eo-card__footer {
     border-top-color: rgba(148, 163, 184, 0.14);
 }
-

@@ -1278,7 +1278,7 @@ div:where(.swal2-container) .swal2-html-container {
 .create-form {
   --se-field-height: 36px;
   --se-field-radius: 8px;
-  --se-field-width: 436px;
+  --se-field-width: 290.67px;
 }
 
 .create-form .simple-form .p-float-label > label {
@@ -1382,6 +1382,7 @@ div:where(.swal2-container) .swal2-html-container {
   overflow: hidden;
   padding: 0.45rem 0.75rem;
   line-height: 1.25rem;
+  max-width: var(--se-field-width);
 }
 
 .create-form .simple-form .simple-static {
@@ -1390,6 +1391,7 @@ div:where(.swal2-container) .swal2-html-container {
   align-items: center;
   padding-block: 0;
   border-radius: var(--se-field-radius);
+  max-width: var(--se-field-width);
 }
 
 .create-form .simple-form .p-inputtext:enabled:focus,
@@ -1401,3 +1403,4 @@ div:where(.swal2-container) .swal2-html-container {
   box-shadow: none;
   outline: none;
 }
+
