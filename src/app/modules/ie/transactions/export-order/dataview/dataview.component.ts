@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DataViewModule } from 'primeng/dataview';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
+import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { ZFormControlsModule } from '../../../../../shared/components/z-form-controls/z-form-controls.module';
@@ -23,10 +24,9 @@ import { ExportOrderPayment } from '../../export-order-payment/export-payment';
 import { ExportOrderShipping } from '../../export-order-shipping/export-order-shipping';
 import { ExportOrderTracking } from '../../export-order-tracking/export-order-tracking';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
-import { ExportOrder, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderCancelRequest } from '../export-order';
+import { PackingListComponent } from '../../packing-list/packing-list.component';
+import { ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderCancelRequest } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
-import { NavContextService } from '../../../../../core/services/nav-context.service.service';
-import { PackingListComponent } from '../packing-list/packing-list.component';
 
 @Component({
   selector: 'app-dataview',
@@ -52,8 +52,6 @@ export class DataviewComponent implements OnInit, OnDestroy {
   selectedExportOrders: ExportOrder_IndexTableList[] = [];
   selectAll = false;
   showPackingListDialog = false;
-
-  menuCache = new Map<number, MenuItem[]>();
 
   // menuItems: MenuItem[] = [
   //   {

@@ -96,6 +96,14 @@ export class ExportOrderService {
     return this.salesQuotationService.PopulateList(model);
   }
 
+  GeneratePdf(request: any) {
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintInvoice`, request, { responseType: 'blob' });
+  }
+
+  GeneratePackingListPdf(request: any) {
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintPackingList`, request, { responseType: 'blob' });
+  }
+
   GetPortList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
     return this.portService.PopulateList(model);
   }
@@ -918,6 +926,23 @@ export class ExportOrderService {
       optionLabel: 'SalesQuotationNo',
       columns: [
         { data: 'SalesQuotationNo', label: 'Sales Quotation No', width: '200px' },
+        { data: 'CustomerName', label: 'Customer Name', width: '200px' }
+      ],
+    }
+  }
+
+  getPackingListExportOrderAutoCompleteDef(formConfig: FormConfigType<ExportOrderPackingList>, form: FormGroup): AutoCompleteDef<ExportOrder_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'ExportOrderNo',
+      label: formConfig.ExportOrderNo.label,
+      validationMessage: formConfig.ExportOrderNo.error,
+      placeholder: 'Search Export Order',
+      options: [],
+      optionLabel: 'ExportOrderNo',
+      columns: [
+        { data: 'ExportOrderNo', label: 'Export Order No', width: '200px' },
         { data: 'CustomerName', label: 'Customer Name', width: '200px' }
       ],
     }
