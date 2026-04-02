@@ -63,7 +63,11 @@
               <!-- <span>Add</span> -->
             </button>
           </div>
-                <label class="simple-label">{{ isEditMode ? 'Address' : 'Billing Address' }}:</label>
+        </div>
+      </div>
+
+      <div class="simple-field">
+        <label class="simple-label">{{ isEditMode ? 'Address' : 'Billing Address' }}:</label>
         <div class="simple-control">
           <div class="simple-static">{{ selectedCustomerAddress ?? '—' }}</div>
         </div>

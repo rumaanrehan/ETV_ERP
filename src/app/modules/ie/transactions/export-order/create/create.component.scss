@@ -1054,5 +1054,15 @@
         grid-column: 1 / -1;
         grid-row: 3;
     }
+
+    .simple-form > .simple-field.amount-summary-field {
+        grid-column: 1 / -1;
+        grid-row: 4;
+    }
+}
+
+.full-width-divider {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
 }
 

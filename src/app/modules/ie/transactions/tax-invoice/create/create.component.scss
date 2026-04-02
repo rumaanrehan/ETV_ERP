@@ -440,7 +440,7 @@
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .amount-summary-row {
@@ -564,6 +564,14 @@
     z-file-upload {
         display: block;
         width: 100%;
+    }
+
+    :host ::ng-deep z-span .input-span {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        min-height: auto;
+        height: auto;
+        padding: 0.6rem 0.75rem !important;
     }
 
     .input-group-addon {
@@ -876,7 +884,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .proforma-invoice-create .horizontal-form .row > [class*="col-"] {
@@ -1019,7 +1027,7 @@
     max-width: 290.67px;
     height: 36px;
     box-sizing: border-box;
-    padding: 0 68px 0 0;
+    padding: 0 40px 0 0;
 }
 
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control.has-action > .simple-action-btn,
@@ -1042,6 +1050,30 @@
     display: none !important;
 }
 
+/* Make customer field full width */
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control.has-action {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+/* Make FC field full width */
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .p-float-label > :not(label),
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label > :not(label),
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .p-float-label > :not(label) {
@@ -1058,14 +1090,14 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 0.5rem;
     width: 100%;
 }
 
 .proforma-invoice-create .horizontal-form .proforma-port-stack {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
     width: min(100%, 40rem);
     max-width: 40rem;
 }
