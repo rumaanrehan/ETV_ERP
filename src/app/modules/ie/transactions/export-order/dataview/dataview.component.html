@@ -19,9 +19,12 @@
 
                 <div class="eo-card__main">
                     <div class="eo-card__line">
-                        <a class="eo-card__title-link" (click)="$event.stopPropagation(); onClickEditDetails(item.ExportOrderID)">
-                            <h5 class="eo-card__title">{{item.ExportOrderNo}}</h5>
-                        </a>
+                        <div class="eo-card__titles">
+                            <a class="eo-card__title-link" (click)="$event.stopPropagation(); onClickEditDetails(item.ExportOrderID)">
+                                <h5 class="eo-card__title">{{item.ExportOrderNo}}</h5>
+                            </a>
+                            <p class="eo-card__company">{{item.CompanyName}}</p>
+                        </div>
                         <div class="eo-card__status">
                             <span class="eo-card__badge" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
                         </div>
@@ -30,7 +33,6 @@
                             (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
                         </z-menu>
                     </div>
-                    <h5 class="eo-card__title eo-card__company">{{item.CompanyName}}</h5>
                 </div>
             </div>
 

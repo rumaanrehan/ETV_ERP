@@ -259,6 +259,13 @@ z-dataview {
     min-width: 0;
 }
 
+:host ::ng-deep .eo-card__titles {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
 :host ::ng-deep .eo-card__title-link {
     text-decoration: none;
     color: inherit;
@@ -291,7 +298,13 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-card__company {
-    margin-top: 0.14rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 0.12rem 0 0 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
