@@ -19,7 +19,8 @@
 
                 <div class="eo-card__main">
                     <div class="eo-card__line">
-                        <a class="eo-card__title-link" (click)="$event.stopPropagation(); onClickEditDetails(item.ExportOrderID)">
+                        <a class="eo-card__title-link"
+                            (click)="$event.stopPropagation(); onClickEditDetails(item.ExportOrderID)">
                             <h5 class="eo-card__title">{{item.ExportOrderNo}}</h5>
                         </a>
                         <div class="eo-card__status">
@@ -71,17 +72,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="eo-card__footer">
-                <button type="button" class="btn btn-primary eo-card__cta"
-                    (click)="$event.stopPropagation(); onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)">
-                    {{item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details'}}
-                </button>
-            </div>
         </div>
     </div>
 </ng-template>
 
 <ng-template #container></ng-template>
-
-<app-packing-list *ngIf="showPackingListDialog" (closeDialogBoxEvent)="onCloseSidebar()"></app-packing-list>

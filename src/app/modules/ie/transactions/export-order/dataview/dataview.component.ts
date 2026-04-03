@@ -53,17 +53,20 @@ export class DataviewComponent implements OnInit, OnDestroy {
   selectAll = false;
   showPackingListDialog = false;
 
-  // menuItems: MenuItem[] = [
-  //   {
-  //     label: 'Options:',
-  //     items: [{ label: 'Shipping Detail', icon: 'pi pi-plus', command: (row: any) => this.handleComponentLoad('ShippingCreateComponent', row) },
-  //     { label: 'Bill Regulation', icon: 'pi pi-money-bill', command: (row: any) => this.handleComponentLoad('BillCreateComponent', row), disabled:  },
-  //     { label: 'Document', icon: 'pi pi-file-pdf', command: (row: any) => this.handleComponentLoad('DocumentCreateComponent', row) },
-  //     { label: 'Payment', icon: 'pi pi-dollar', command: (row: any) => this.handleComponentLoad('PaymentCreateComponent', row) },
-  //     { label: 'Tracking', icon: 'pi pi-at', command: (row: any) => this.handleComponentLoad('TrackingCreateComponent', row) },
-  //     { label: 'Letter of Credit', icon: 'pi pi-envelope', command: (row: any) => this.handleComponentLoad('LetterOfCreditCreateComponent', row) }]
-  //   }
-  // ];
+  menuCache: Map<string, any> = new Map();
+
+  menuItems: MenuItem[] = [
+    {
+      label: 'Options:',
+      items: [
+        { label: 'Shipping Detail', icon: 'pi pi-plus', command: (row: any) => this.handleComponentLoad('ShippingCreateComponent', row) },
+        { label: 'Bill Regulation', icon: 'pi pi-money-bill', command: (row: any) => this.handleComponentLoad('BillCreateComponent', row), },
+        { label: 'Document', icon: 'pi pi-file-pdf', command: (row: any) => this.handleComponentLoad('DocumentCreateComponent', row) },
+        { label: 'Payment', icon: 'pi pi-dollar', command: (row: any) => this.handleComponentLoad('PaymentCreateComponent', row) },
+        { label: 'Tracking', icon: 'pi pi-at', command: (row: any) => this.handleComponentLoad('TrackingCreateComponent', row) },
+        { label: 'Letter of Credit', icon: 'pi pi-envelope', command: (row: any) => this.handleComponentLoad('LetterOfCreditCreateComponent', row) }]
+    }
+  ];
 
   basedOnList: DataTableFilterList[] = []
   incotermList: DataTableFilterList[] = []
@@ -154,7 +157,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.showPackingListDialog = false;
     this.loadData();
   }
-  
+
   onClickAddPackingDetails(exportOrderID: number, exportOrderPackingListID: number | null): void {
     try {
       if (exportOrderPackingListID) {
