@@ -14,6 +14,7 @@ export interface DataTableDef<T> {
     data: T[];
     totalRecords: number;
     loading: boolean;
+    rowClick?: (row: T) => void;
 }
 
 export type DataTableColumnDef =

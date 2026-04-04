@@ -312,7 +312,7 @@
 
 .simple-label {
     flex: 0 0 12rem;
-    font-size: 1rem;
+    font-size: var(--se-field-font-size);
     font-weight: 400;
     color: rgba(var(--heading-text-color, 80%));
     line-height: var(--se-field-height, 2.25rem);
@@ -455,7 +455,7 @@
         flex: 0 0 12rem;
         min-width: 12rem;
         max-width: 12rem;
-        font-size: 1rem;
+        font-size: var(--se-field-font-size);
         font-weight: 400;
         color: rgba(var(--heading-text-color, 80%));
         line-height: var(--se-field-height, 2.25rem);
@@ -497,7 +497,7 @@
         flex: 0 0 12rem;
         min-width: 12rem;
         max-width: 12rem;
-        font-size: 1rem;
+        font-size: var(--se-field-font-size);
         font-weight: 400;
         color: rgba(var(--heading-text-color, 80%));
     }
@@ -541,6 +541,8 @@
 :host ::ng-deep .proforma-invoice-create .create-form {
     --se-field-height: 2.25rem;
     --se-field-radius: 8px;
+    --se-field-font-size: 0.875rem;
+    --se-placeholder-font-size: 0.82rem;
 
     .simple-form .p-float-label > label {
         display: none !important;
@@ -550,6 +552,7 @@
     .p-autocomplete-input::placeholder,
     textarea::placeholder,
     input::placeholder {
+        font-size: var(--se-placeholder-font-size);
         opacity: 1 !important;
         color: var(--text-muted) !important;
     }
@@ -611,8 +614,10 @@
     .p-inputtext,
     .p-dropdown,
     .p-calendar .p-inputtext,
+    textarea,
     input {
         height: var(--se-field-height);
+        font-size: var(--se-field-font-size);
         border-radius: var(--se-field-radius);
         border-color: var(--default-border);
         background: var(--custom-white);
@@ -627,6 +632,10 @@
     .p-calendar {
         border-radius: var(--se-field-radius);
         max-width: var(--se-field-width);
+    }
+
+    .p-dropdown .p-dropdown-label {
+        font-size: var(--se-field-font-size);
     }
 
     .simple-action-btn:hover,
@@ -949,7 +958,7 @@
     align-items: center;
     justify-content: flex-start;
     line-height: var(--se-field-height, 2.25rem);
-    font-size: 1rem;
+    font-size: var(--se-field-font-size);
     font-weight: 400;
     color: rgba(var(--heading-text-color, 80%));
     white-space: nowrap;
@@ -1249,7 +1258,7 @@
     .simple-label {
         flex: 0 0 auto;
         width: 100%;
-        font-size: 0.88rem;
+        font-size: var(--se-field-font-size);
         line-height: 1.2;
     }
 
@@ -1304,7 +1313,7 @@
         min-width: 0;
         max-width: none;
         width: 100%;
-        font-size: 0.88rem;
+        font-size: var(--se-field-font-size);
         line-height: 1.2;
     }
 
@@ -1322,16 +1331,18 @@
     :host ::ng-deep .proforma-invoice-create .create-form {
         --se-field-height: 2rem;
         --se-field-radius: 7px;
+        --se-field-font-size: 0.875rem;
+        --se-placeholder-font-size: 0.82rem;
 
         .p-inputtext,
         .p-dropdown,
         .p-calendar .p-inputtext,
         input {
-            font-size: 0.82rem;
+            font-size: var(--se-field-font-size);
         }
 
         textarea {
-            font-size: 0.82rem;
+            font-size: var(--se-field-font-size);
             line-height: 1.2rem;
             padding: 0.4rem 0.65rem;
         }
@@ -1359,7 +1370,7 @@
         margin: 0 !important;
         order: -1;
         line-height: 1.2;
-        font-size: 0.88rem;
+        font-size: var(--se-field-font-size);
         white-space: normal;
     }
 

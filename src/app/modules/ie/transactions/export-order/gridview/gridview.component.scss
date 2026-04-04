@@ -11,3 +11,14 @@ z-datatable {
     display: flex;
     flex-direction: column;
 }
+
+:host ::ng-deep .table-action-link {
+    color: inherit;
+    font-weight: 400;
+    transition: color 0.15s ease, font-weight 0.15s ease;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody>tr:not(.p-highlight):hover .table-action-link {
+    color: rgba(0, 90, 158, 1);
+    font-weight: 500;
+}

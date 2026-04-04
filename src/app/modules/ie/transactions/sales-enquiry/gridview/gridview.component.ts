@@ -57,6 +57,7 @@ export class GridviewComponent implements OnInit, OnDestroy {
       data: [],
       totalRecords: 0,
       loading: false,
+      rowClick: (row) => this.onClickEditDetails(row.SalesEnquiryID),
       filterFields: [
         { field: 'SalesEnquiryNo', label: 'Enquiry No', type: 'text' },
         { field: 'CustomerName', label: 'Customer', type: 'text' },

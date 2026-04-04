@@ -387,6 +387,50 @@ export class ZDataTable<T> {
     return String(value);
   }
 
+  onRowClick(rowData: T, event: MouseEvent): void {
+    if (!this.tableDef?.rowClick || this.shouldIgnoreRowClick(event)) {
+      return;
+    }
+
+    this.tableDef.rowClick(rowData);
+  }
+
+  private shouldIgnoreRowClick(event: MouseEvent): boolean {
+    if (event.defaultPrevented || event.button !== 0) {
+      return true;
+    }
+
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return false;
+    }
+
+    const interactiveSelector = [
+      'a',
+      'button',
+      'input',
+      'p-checkbox',
+      'select',
+      'textarea',
+      'label',
+      '[role="button"]',
+      '.btn',
+      '.p-button',
+      '.p-checkbox',
+      '.p-checkbox-box',
+      '.p-dropdown',
+      '.p-multiselect',
+      '.table-action-link'
+    ].join(',');
+
+    if (target.closest(interactiveSelector)) {
+      return true;
+    }
+
+    const selectedText = window.getSelection?.()?.toString();
+    return !!selectedText;
+  }
+
   private formatDate(date: Date): string {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',

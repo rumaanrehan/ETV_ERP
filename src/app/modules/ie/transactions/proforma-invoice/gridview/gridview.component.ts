@@ -54,6 +54,7 @@ export class GridviewComponent implements OnInit, OnDestroy {
       data: [],
       totalRecords: 0,
       loading: false,
+      rowClick: (row) => this.onClickEditDetails(row.ProformaInvoiceID),
       filterFields: [
         { field: 'ProformaInvoiceNo', label: 'Proforma Invoice No', type: 'text' },
         { field: 'BasedOn', label: 'Based On', type: 'dropdown', options: [] },

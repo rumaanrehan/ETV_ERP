@@ -144,7 +144,8 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-      <tr [pSelectableRow]="rowData">
+      <tr [pSelectableRow]="rowData" (click)="onRowClick(rowData, $event)"
+        [class.zdt-clickable-row]="!!tableDef.rowClick">
         <ng-container *ngFor="let col of tableDef.columnDef">
           <td *ngIf="col.visible !== false" class="{{col.cssClass}}">
             <ng-container *ngIf="col.customTemplate; else defaultTemplate">
