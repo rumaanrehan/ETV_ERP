@@ -29,6 +29,7 @@ export class GridviewComponent implements OnInit, OnDestroy {
   @Input() sortingForm!: FormGroup;
   @ViewChild('selectionColTemplate', { static: true }) selectionColTemplate!: TemplateRef<any>;
   @ViewChild('salesEnquiryCodeTemplate', { static: true }) salesEnquiryCodeTemplate!: TemplateRef<any>;
+  @ViewChild('statusColTemplate', { static: true }) statusColTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
   tableDef!: DataTableDef<SalesEnquiry_IndexTableList>;
@@ -73,7 +74,7 @@ export class GridviewComponent implements OnInit, OnDestroy {
       { data: 'ContactEmail', label: 'Contact Email', orderable: false },
       { data: 'EnquiryDate', label: 'Enquiry Date', orderable: false, width: "150px" },
       { data: 'ExpectedDeliveryDate', label: 'Exp. Delivery Date', orderable: false, width: "150px" },
-      { data: 'StatusText', label: 'Status', orderable: false, width: "150px", filterable: true, cssClass: 'text-center' },
+      { data: 'StatusText', label: 'Status', orderable: false, width: "150px", filterable: true, cssClass: 'text-center', customTemplate: this.statusColTemplate },
     ];
   }
 
