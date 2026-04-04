@@ -196,6 +196,23 @@ export const ieRoute: Routes = [
             ]
           },
           {
+            path: 'packing-list',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Packing List'
+            },
+            children: [
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/packing-list/packing-list.component').then((m) => m.PackingListComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/PackingList',
+                }
+              },
+            ]
+          },
+          {
             path: 'tax-invoice',
             canActivateChild: [AuthenticationGuard, AuthorizationGuard],
             data: {

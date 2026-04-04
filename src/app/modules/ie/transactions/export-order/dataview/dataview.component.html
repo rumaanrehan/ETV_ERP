@@ -73,17 +73,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="eo-card__footer">
-                <button type="button" class="btn btn-primary eo-card__cta"
-                    (click)="$event.stopPropagation(); onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)">
-                    {{item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details'}}
-                </button>
-            </div>
         </div>
     </div>
 </ng-template>
 
 <ng-template #container></ng-template>
-
-<app-packing-list *ngIf="showPackingListDialog" (closeDialogBoxEvent)="onCloseSidebar()"></app-packing-list>
