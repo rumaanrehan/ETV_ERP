@@ -1,7 +1,7 @@
 <ng-template #pageHeaderActionTemplate>
 </ng-template>
 
-<div class="sales-enquiry-create">
+<div class="sales-enquiry-create" [class.is-edit-mode]="isEditMode">
   <div class="create-header">
     <div class="create-header-left">
       <button class="toolbar-btn icon-btn back-btn" type="button" (click)="onClickPageHeaderBackButton()"
@@ -51,20 +51,23 @@
     <div class="simple-form">
       <div class="simple-field">
         <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
-        <div class="simple-control has-action">
-          <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
-            (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
-          </z-autocomplete>
-          <button *ngIf="!isEditMode" type="button" class="simple-action-btn" title="Add New Company"
-            (click)="handleComponentLoad('VendorCreateComponent')">
-            <i class="pi pi-plus" aria-hidden="true"></i>
-            <!-- <span>Add</span> -->
-          </button>
+        <div class="simple-control customer-control">
+          <div class="customer-control-row">
+            <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
+              [isClearable]="!isEditMode" (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)"
+              (onClear)="onClear_Customer()">
+            </z-autocomplete>
+            <button *ngIf="!isEditMode" type="button" class="simple-action-btn customer-plus-btn" title="Add New Company"
+              (click)="handleComponentLoad('VendorCreateComponent')">
+              <i class="pi pi-plus" aria-hidden="true"></i>
+              <!-- <span>Add</span> -->
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="simple-field" *ngIf="form.get('CustomerID')?.value">
-        <label class="simple-label">Billing Address:</label>
+      <div class="simple-field">
+        <label class="simple-label">{{ isEditMode ? 'Address' : 'Billing Address' }}:</label>
         <div class="simple-control">
           <div class="simple-static">{{ selectedCustomerAddress ?? '—' }}</div>
         </div>
@@ -111,7 +114,7 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.Note.label}}:</label>
         <div class="simple-control">
-          <z-textarea [group]="form" [control]="'Note'" [autoResize]="true" [label]="''" [placeholder]="'Optional'"
+          <z-textarea [group]="form" [control]="'Note'" [autoResize]="true" [rows]="1" [label]="''" [placeholder]="'Optional'"
             [validationMessage]="formConfig.Note.error"></z-textarea>
         </div>
       </div>
@@ -125,7 +128,7 @@
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
   <div class="action-input-group">
-    <div class="col-11">
+    <div class="product-input-wrap">
       <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
         (onSelect)="onSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
       </z-autocomplete>

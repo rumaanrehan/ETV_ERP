@@ -72,7 +72,7 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: 'index',
-                loadComponent: () => import('./transactions/sales-quotation/dataview/dataview.component').then((m) => m.DataviewComponent),
+                loadComponent: () => import('./transactions/sales-quotation/index/index.component').then((m) => m.SalesQuotationIndexComponent),
                 data: {
                   permission: 'CanRead',
                   menu: 'IE/SalesQuotation',
@@ -116,7 +116,7 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: 'index',
-                loadComponent: () => import('./transactions/export-order/dataview/dataview.component').then((m) => m.DataviewComponent),
+                loadComponent: () => import('./transactions/export-order/index/index.component').then((m) => m.ExportOrderIndexComponent),
                 data: {
                   permission: 'CanRead',
                   menu: 'IE/ExportOrder'

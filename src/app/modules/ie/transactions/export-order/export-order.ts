@@ -175,6 +175,7 @@ export interface ExportOrder_IndexTableList {
     IsKnockOff: boolean;
     StatusID: number;
     StatusText: string;
+    StatusHex: string;
     ExportOrderPackingListID: number | null;
     CurrencySymbol: string;
 

@@ -1,70 +1,38 @@
-<!--Page Header Action Button Template-->
-<ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header btn-md shadow-sm btn-add-export-order"
-        (click)="onClickPageHeaderAddButton()"> <i class="pi pi-plus"></i>&nbsp;Add Export Order</button>
-</ng-template>
-
 <div class="col-xl-12 index-page-content">
-    @if (selectedExportOrders.length > 0) {
-    <div class="index-action-bar selection-active">
-        <div class="d-flex align-items-center gap-3">
-            <!-- SELECT ALL -->
-            <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
-            </p-checkbox>
-
-            <span class="text-muted">
-                <b>{{ selectedExportOrders.length }} selected</b>
-            </span>
-        </div>
-        <div class="col-6 index-action-bar-actions">
-            <!-- BULK ACTIONS -->
-            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
-                [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(1)">
-                <i class="pi pi-check-circle"></i>
-                Revert to Draft
-            </button>
-
-            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
-                [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(5)">
-                <i class="pi pi-send"></i>
-                Mark as Dispatched
-            </button>
-
-            <button class="btn btn-danger d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
-                [disabled]="!selectedExportOrders.length" (click)="bulkChangeStatus(9)">
-                <i class="pi pi-ban m-0"></i>
-                Cancel
-            </button>
-        </div>
-    </div>
-    }
     <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
         (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
     </z-dataview>
 </div>
 
 <ng-template #customTemplate let-exportOrders>
-    <div class="eo-card" *ngFor="let item of exportOrders; let first = first">
+    <div class="eo-card eo-card--clickable" *ngFor="let item of exportOrders; let first = first" role="button"
+        tabindex="0" (click)="onClickEditDetails(item.ExportOrderID)"
+        (keydown.enter)="onClickEditDetails(item.ExportOrderID)"
+        (keydown.space)="$event.preventDefault(); onClickEditDetails(item.ExportOrderID)">
         <div class="dataview-item eo-card__body">
             <div class="eo-card__top">
                 <!-- BULK SELECT -->
                 <p-checkbox class="eo-card__checkbox" binary="true" [(ngModel)]="item._selected"
-                    (onChange)="onSelectionChange(item)">
+                    (onChange)="onSelectionChange(item)" (click)="$event.stopPropagation()"
+                    (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
                 </p-checkbox>
 
                 <div class="eo-card__main">
                     <div class="eo-card__line">
-                        <a class="eo-card__title-link" (click)="onClickEditDetails(item.ExportOrderID)">
-                            <h5 class="eo-card__title">{{item.ExportOrderNo}}</h5>
-                        </a>
+                        <div class="eo-card__titles">
+                            <a class="eo-card__title-link" (click)="$event.stopPropagation(); onClickEditDetails(item.ExportOrderID)">
+                                <h5 class="eo-card__title">{{item.ExportOrderNo}}</h5>
+                            </a>
+                            <p class="eo-card__company">{{item.CompanyName}}</p>
+                        </div>
                         <div class="eo-card__status">
                             <span class="eo-card__badge" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
                         </div>
                         <z-menu class="eo-card__menu" [menus]="getMenuOptions(item)"
-                            [styleClass]="'dataview-action-menu'">
+                            [styleClass]="'dataview-action-menu'" (click)="$event.stopPropagation()"
+                            (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
                         </z-menu>
                     </div>
-                    <h5 class="eo-card__title eo-card__company">{{item.CompanyName}}</h5>
                 </div>
             </div>
 
@@ -105,17 +73,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="eo-card__footer">
-                <button type="button" class="btn btn-primary eo-card__cta"
-                    (click)="onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)">
-                    {{item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details'}}
-                </button>
-            </div>
         </div>
     </div>
 </ng-template>
 
 <ng-template #container></ng-template>
-
-<app-packing-list *ngIf="showPackingListDialog" (closeDialogBoxEvent)="onCloseSidebar()"></app-packing-list>

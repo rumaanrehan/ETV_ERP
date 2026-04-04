@@ -1,4 +1,4 @@
-<ng-template #pageHeaderActionTemplate>
+﻿<ng-template #pageHeaderActionTemplate>
 </ng-template>
 
 <div class="export-order-create">
@@ -276,7 +276,7 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.Narration.label}}:</label>
         <div class="simple-control">
-          <z-textarea [group]="form" [control]="'Narration'" [label]="''" [autoResize]="true"
+          <z-textarea [group]="form" [control]="'Narration'" [label]="''" [autoResize]="true" [rows]="1"
             [placeholder]="'Optional'"></z-textarea>
         </div>
       </div>
@@ -297,8 +297,9 @@
           </z-file-upload>
         </div>
       </div>
+      </div>
 
-      <div class="simple-field simple-field-table" *ngIf="isEditMode">
+      <div class="simple-field amount-summary-field" *ngIf="isEditMode">
         <div class="simple-control amount-summary-wrap">
           <div class="amount-summary-card">
             <div class="amount-summary-row">
@@ -318,7 +319,6 @@
             </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   </form>
@@ -356,7 +356,7 @@
 
 <ng-template #productAutoCompleteColTemplate let-row let-rowIndex="index">
   <div class="action-input-group">
-    <div class="col-11">
+    <div class="product-input-wrap">
       <z-autocomplete [controlDef]="productAutoCompleteDef[rowIndex]" (onSearch)="onSearch_Product($event, rowIndex)"
         (onSelect)="onSelect_Product($event, rowIndex)" (onClear)="OnClear_Product(rowIndex)">
       </z-autocomplete>

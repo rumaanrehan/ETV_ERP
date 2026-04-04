@@ -1,7 +1,9 @@
 <!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-page-header" [routerLink]="'/admin/employee-registration/create'"><i
-      class=" pi pi-plus"></i>&nbsp; Add Employee </button>
+  <button class="btn btn-primary btn-page-header btn-md shadow-sm btn-add-employee-registration"
+    (click)="onClickPageHeaderAddButton()">
+    <i class="pi pi-plus"></i>&nbsp;Add Employee
+  </button>
 </ng-template>
 
 <!-- Page Header Action Button Template -->

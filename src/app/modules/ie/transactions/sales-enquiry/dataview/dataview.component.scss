@@ -92,10 +92,16 @@ z-dataview {
     border-radius: 12px;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
     transition: box-shadow 0.12s ease, border-color 0.12s ease;
+    cursor: pointer;
 }
 
 :host ::ng-deep .se-card:hover {
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+:host ::ng-deep .se-card:focus-visible {
+    outline: 2px solid rgba(var(--primary-rgb), 0.45);
+    outline-offset: 2px;
 }
 
 :host ::ng-deep .se-card.is-selected {
@@ -132,21 +138,29 @@ z-dataview {
     cursor: pointer;
 }
 
+:host ::ng-deep .se-card__hint {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.72rem;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
 :host ::ng-deep .se-card__title {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--heading-text-color);
     margin: 0;
-    line-height: 1.2;
+    line-height: 1;
 }
 
 :host ::ng-deep .se-card__subtitle {
     font-size: 0.78rem;
     color: var(--text-muted);
-    margin: 0.35rem 0 0 0;
+    margin: 0.12rem 0 0 0;
     line-height: 1.2;
     text-transform: uppercase;
     letter-spacing: 0.02em;
+    font-weight: 400;
 }
 
 :host ::ng-deep .se-badge {
@@ -156,7 +170,7 @@ z-dataview {
     border-radius: 8px;
     border: 1px solid var(--default-border);
     padding: 0.3rem 0.65rem;
-    font-size: 0.72rem;
+    font-size: 0.62rem;
     font-weight: 500;
     white-space: nowrap;
     background: var(--gray-2);
@@ -208,17 +222,17 @@ z-dataview {
 
 :host ::ng-deep .se-info-label {
     margin: 0;
-    font-size: 0.76rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
     line-height: 1.2;
 }
 
 :host ::ng-deep .se-info-value {
-    margin: 0.25rem 0 0 0;
-    font-size: 0.9rem;
+    margin: 0;
+    font-size: 0.875rem;
     color: var(--heading-text-color);
-    font-weight: 500;
-    line-height: 1.2;
+    font-weight: 400;
+    line-height: 1.25;
 }
 
 :host ::ng-deep .se-contact {

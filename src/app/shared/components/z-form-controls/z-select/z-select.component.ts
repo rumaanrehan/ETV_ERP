@@ -36,21 +36,7 @@ export class ZSelectComponent {
     return this.options.length > 5;
   }
 
-  get hasValue(): boolean {
-    const value = this.group?.get(this.control)?.value;
-    if (Array.isArray(value)) {
-      return value.length > 0;
-    }
-    return value !== null && value !== undefined && value !== '';
-  }
-
   onValueChange(value: any): void {
     this.onChange.emit(value); // Emit the new value to the parent component
-  }
-
-  clearDropdown(dropdown: any): void {
-    if (dropdown && dropdown.clear) {
-      dropdown.clear();
-    }
   }
 }

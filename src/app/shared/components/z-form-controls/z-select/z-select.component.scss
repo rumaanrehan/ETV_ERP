@@ -1,6 +1,8 @@
 :host {
   display: block;
   width: 100%;
+  --z-select-trigger-width: 2.25rem;
+  --z-select-clear-gap: 0.15rem;
 }
 
 :host ::ng-deep .input-group {
@@ -22,8 +24,13 @@
   border-inline-end-style: solid !important;
 }
 
+:host ::ng-deep .input-group .p-dropdown .p-dropdown-trigger {
+  width: var(--z-select-trigger-width) !important;
+  min-width: var(--z-select-trigger-width) !important;
+}
+
 :host ::ng-deep .input-group .p-dropdown .p-dropdown-label {
-  padding-inline-end: 3.2rem !important;
+  padding-inline-end: calc(var(--z-select-trigger-width) + 1.45rem) !important;
 }
 
 :host ::ng-deep .p-dropdown,
@@ -57,7 +64,8 @@
 
 .input-group-addon {
   position: absolute;
-  inset-inline-end: 2rem;
+  right: calc(var(--z-select-trigger-width) + var(--z-select-clear-gap));
+  inset-inline-end: calc(var(--z-select-trigger-width) + var(--z-select-clear-gap));
   top: 50%;
   transform: translateY(-50%);
   z-index: 3;

@@ -25,4 +25,5 @@ export interface TableHeaderColDef {
     visible?: boolean;
     hideVisToggle?: boolean;
     cssClass?: string;
+    columnIndexes?: number[];
 }

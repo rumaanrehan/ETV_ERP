@@ -200,6 +200,15 @@ z-dataview {
     overflow: hidden;
 }
 
+:host ::ng-deep .eo-card--clickable {
+    cursor: pointer;
+}
+
+:host ::ng-deep .eo-card--clickable:focus-visible {
+    outline: 2px solid rgba(var(--primary-rgb), 0.75);
+    outline-offset: 2px;
+}
+
 :host ::ng-deep .eo-card:hover {
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
@@ -250,6 +259,13 @@ z-dataview {
     min-width: 0;
 }
 
+:host ::ng-deep .eo-card__titles {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
 :host ::ng-deep .eo-card__title-link {
     text-decoration: none;
     color: inherit;
@@ -282,7 +298,13 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-card__company {
-    margin-top: 0.14rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 0.12rem 0 0 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

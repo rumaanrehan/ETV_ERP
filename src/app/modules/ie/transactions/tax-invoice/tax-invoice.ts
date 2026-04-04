@@ -78,6 +78,11 @@ export interface TaxInvoice_IndexTableFilter {
     Status: number | null;
 }
 
+export interface TaxInvoice_IndexTableSort {
+    TaxInvoiceNo: 1 | 0 | -1;
+    TaxInvoiceDate: 1 | 0 | -1;
+}
+
 export interface TaxInvoice_IndexTableList {
     TaxInvoiceID: number;
     TaxInvoiceNo: string;
@@ -91,6 +96,9 @@ export interface TaxInvoice_IndexTableList {
     StatusText: string;
     StatusHex: string;
     CurrencySymbol: string;
+
+    /** UI only */
+    _selected?: boolean;
 }
 
 export interface TaxInvoiceRequest {

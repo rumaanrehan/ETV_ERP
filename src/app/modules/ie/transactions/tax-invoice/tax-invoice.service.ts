@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { RequiredIf, Operator } from '../../../../shared/validators/required-if.validator';
-import { TaxInvoice_IndexTableFilter, TaxInvoice, TaxInvoiceRequest, TaxInvoice_SelectList, TaxInvoice_IndexTableList, Document_SelectList, TaxInvoice_Detail, TaxInvoiceDetail } from './tax-invoice';
+import { TaxInvoice_IndexTableFilter, TaxInvoice, TaxInvoiceRequest, TaxInvoice_SelectList, TaxInvoice_IndexTableList, Document_SelectList, TaxInvoice_Detail, TaxInvoiceDetail, TaxInvoice_IndexTableSort } from './tax-invoice';
 import { ApiService } from '../../../../core/services/api.service';
 import { ProductMasterService } from '../../../ims/settings/product-master/product-master.service';
 import { CompanyMasterService } from '../../settings/company-master/company-master.service';
@@ -16,6 +16,7 @@ import { CompanyRequest, Company_SelectList } from '../../settings/company-maste
 import { ExportOrderRequest, ExportOrder_Detail, ExportOrder_SelectList } from '../export-order/export-order';
 import { ProformaInvoice_Detail, ProformaInvoice_SelectList, ProformaInvoiceRequest } from '../proforma-invoice/proforma-invoice';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ProformaInvoiceService } from '../proforma-invoice/proforma-invoice.service';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
@@ -142,6 +143,42 @@ export class TaxInvoiceService {
       CustomerName: '',
       Status: 0
     }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<TaxInvoice_IndexTableSort> {
+    return {
+      TaxInvoiceNo: {
+        label: 'Tax Invoice No',
+        defaultValue: -1
+      },
+      TaxInvoiceDate: {
+        label: 'Invoice Date',
+        defaultValue: 0
+      }
+    };
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<TaxInvoice_IndexTableList> {
+    return {
+      tableKey: 'IE_TaxInvoice_IndexTable',
+      defaultSortColumn: { sortField: 'TaxInvoiceNo', sortOrder: 1 },
+      filterForm: filterForm,
+      sortingForm: sortingForm,
+      filterFields: [
+        { field: 'TaxInvoiceNo', label: 'Tax Invoice No', type: 'text' },
+        { field: 'BasedOn', label: 'Based On', type: 'dropdown' },
+        { field: 'DocumentNo', label: 'Document No', type: 'text' },
+        { field: 'CustomerName', label: 'Customer Name', type: 'text' },
+        { field: 'Status', label: 'Status', type: 'dropdown' }
+      ],
+      sortFields: [
+        { field: 'TaxInvoiceNo', label: 'Tax Invoice No', enabled: true, order: 1 },
+        { field: 'TaxInvoiceDate', label: 'Invoice Date', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
   }
 
 

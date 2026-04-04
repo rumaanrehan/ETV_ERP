@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -25,7 +25,7 @@ import { ExportOrderShipping } from '../../export-order-shipping/export-order-sh
 import { ExportOrderTracking } from '../../export-order-tracking/export-order-tracking';
 import { LetterOfCredit } from '../../letter-of-credit/letter-of-credit';
 import { PackingListComponent } from '../../packing-list/packing-list.component';
-import { ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest } from '../export-order';
+import { ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrderBillRegulation, ExportOrderCancelRequest } from '../export-order';
 import { ExportOrderService } from '../export-order.service';
 
 @Component({
@@ -38,25 +38,35 @@ import { ExportOrderService } from '../export-order.service';
 
 export class DataviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
+  @Input() filterForm!: FormGroup;
+  @Input() sortingForm!: FormGroup;
+  @Output() selectionChange = new EventEmitter<ExportOrder_IndexTableList[]>();
   @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
+  @ViewChild('container', { read: ViewContainerRef, static: true }) container!: ViewContainerRef;
   @ViewChild(PackingListComponent) createDialog?: PackingListComponent;
 
   componentRef?: ComponentRef<any>;
   dataViewDef!: DataViewDef<ExportOrder_IndexTableList>;
   dataViewEvent!: DataViewLazyLoadEvent;
 
-  filterForm!: FormGroup;
-  filterFormConfig!: FormConfigType<ExportOrder_IndexTableFilter>
-  sortingForm!: FormGroup;
-  sortingFormConfig!: FormConfigType<ExportOrder_IndexTableSort>
-
-  menuCache = new Map<number, MenuItem[]>();
-
   selectedExportOrders: ExportOrder_IndexTableList[] = [];
   selectAll = false;
   showPackingListDialog = false;
+
+  menuCache: Map<string, any> = new Map();
+
+  menuItems: MenuItem[] = [
+    {
+      label: 'Options:',
+      items: [
+        { label: 'Shipping Detail', icon: 'pi pi-plus', command: (row: any) => this.handleComponentLoad('ShippingCreateComponent', row) },
+        { label: 'Bill Regulation', icon: 'pi pi-money-bill', command: (row: any) => this.handleComponentLoad('BillCreateComponent', row), },
+        { label: 'Document', icon: 'pi pi-file-pdf', command: (row: any) => this.handleComponentLoad('DocumentCreateComponent', row) },
+        { label: 'Payment', icon: 'pi pi-dollar', command: (row: any) => this.handleComponentLoad('PaymentCreateComponent', row) },
+        { label: 'Tracking', icon: 'pi pi-at', command: (row: any) => this.handleComponentLoad('TrackingCreateComponent', row) },
+        { label: 'Letter of Credit', icon: 'pi pi-envelope', command: (row: any) => this.handleComponentLoad('LetterOfCreditCreateComponent', row) }]
+    }
+  ];
 
   basedOnList: DataTableFilterList[] = []
   incotermList: DataTableFilterList[] = []
@@ -75,14 +85,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-    this.filterFormConfig = this.pageService.getFormConfig_DataTableFilter();
-    this.filterForm = this.formService.createFormGroup<ExportOrder_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
-    this.sortingFormConfig = this.pageService.getFormConfig_DataTableSort();
-    this.sortingForm = this.formService.createFormGroup<ExportOrder_IndexTableSort>(this.pageService.getFormConfig_DataTableSort());
     this.dataViewDef = this.pageService.getDataViewDef(this.filterForm, this.sortingForm);
-
-    // this.loadDropdownList();
+    this.loadDropdownList();
   }
 
   ngOnDestroy(): void {
@@ -96,8 +100,30 @@ export class DataviewComponent implements OnInit, OnDestroy {
       { columnName: 'Incoterm', targetList: 'incotermList' },
       { columnName: 'IsDutyDrawable', targetList: 'isDutyDrawableList' },
       { columnName: 'IsRoDTEP', targetList: 'isRoDTEPList' },
-      { columnName: 'ShipmentMode', targetList: 'shipmentModeList' }
+      { columnName: 'ShipmentMode', targetList: 'shipmentModeList' },
+      { columnName: 'StatusID', targetList: 'statusList' }
     ]);
+  }
+
+  getStatusText(item: ExportOrder_IndexTableList): string {
+    if (item.StatusText && `${item.StatusText}`.trim().length > 0) {
+      return item.StatusText;
+    }
+
+    const status = this.statusList.find(x => x.iValue === item.StatusID);
+    if (status) {
+      return status.Text;
+    }
+
+    if (item.StatusID != null) {
+      return `Status ${item.StatusID}`;
+    }
+
+    return 'Unknown';
+  }
+
+  getStatusColor(item: ExportOrder_IndexTableList): string {
+    return item.StatusHex || '#111111';
   }
 
   loadDataTableLists(listConfigs: { columnName: string; targetList: keyof DataviewComponent }[]): void {
@@ -131,7 +157,7 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.showPackingListDialog = false;
     this.loadData();
   }
-  
+
   onClickAddPackingDetails(exportOrderID: number, exportOrderPackingListID: number | null): void {
     try {
       if (exportOrderPackingListID) {
@@ -176,16 +202,13 @@ export class DataviewComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  onClickPageHeaderAddButton() {
-    this.navContextService.clear();
-    this.router.navigate(['ie/export-order/create']);
-  }
-
   onResetForm(formGroup: FormGroup): void {
     if (formGroup === this.filterForm) {
-      this.formService.resetFormValue<ExportOrder_IndexTableFilter>(this.filterFormConfig, formGroup);
+      const filterConfig = this.pageService.getFormConfig_DataTableFilter();
+      this.formService.resetFormValue<ExportOrder_IndexTableFilter>(filterConfig, formGroup);
     } else if (formGroup === this.sortingForm) {
-      this.formService.resetFormValue<ExportOrder_IndexTableSort>(this.sortingFormConfig, formGroup);
+      const sortingConfig = this.pageService.getFormConfig_DataTableSort();
+      this.formService.resetFormValue<ExportOrder_IndexTableSort>(sortingConfig, formGroup);
     }
     this.loadData();
   }
@@ -272,6 +295,8 @@ export class DataviewComponent implements OnInit, OnDestroy {
         );
     }
     this.selectAll = this.selectedExportOrders.length === this.dataViewDef.data.length;
+    // Emit selected items to parent index component
+    this.selectionChange.emit(this.selectedExportOrders);
   }
 
   toggleSelectAll(event: any) {
@@ -282,47 +307,15 @@ export class DataviewComponent implements OnInit, OnDestroy {
         this.selectedExportOrders.push(item);
       }
     });
-  }
-
-  bulkChangeStatus(statusID: number) {
-    this.alertService
-      .showConfirmationWithInput({
-        text: 'Do you want to bulk update <b>Export Order</b>?',
-        inputPlaceholder: 'Reason to Bulk Update'
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          const ids = this.selectedExportOrders.map(x => x.ExportOrderID);
-          const dto: ExportOrderBulkUpdateRequest = {
-            ExportOrderIDs: ids,
-            StatusID: statusID
-          };
-
-          this.pageService.BulkChangeStatus(dto)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                this.loadData();
-                this.clearSelection();
-                if (response.IsSuccess) {
-                  this.alertService.showAlert({
-                    type: 'success',
-                    text: response.Message,
-                    timer: 5000,
-                  });
-                } else {
-                  this.alertService.showServerResponseAlert(response);
-                }
-              },
-            });
-        }
-      });
+    // Emit selected items to parent index component
+    this.selectionChange.emit(this.selectedExportOrders);
   }
 
   clearSelection() {
     this.dataViewDef.data.forEach(x => x._selected = false);
     this.selectedExportOrders = [];
     this.selectAll = false;
+    this.selectionChange.emit([]);
   }
 
   handleComponentLoad(componentName: string, model: any) {

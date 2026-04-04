@@ -134,7 +134,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   loadExportOrder(event: string): void {
     const dto: ExportOrderRequest = {
       ExportOrderNo: event,
-      PopulateType: 'AutoSuggest'
+      PopulateType: 'AutoSuggestForPackingList'
     };
 
     this.pageService.PopulateList(dto)
@@ -154,10 +154,9 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   onSelect_ExportOrder(event: ExportOrder_SelectList): void {
-    debugger;
-    if (!event.IsProformaGenerated){
+    if (event.IsProformaGenerated) {
       this.resetPackingForm();
-      
+
       this.alertService.showAlert({
         type: 'warning',
         title: 'Proforma Invoice Not Generated',
@@ -274,11 +273,17 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   removeProductRow(boxIndex: number, productIndex: number): void {
-    const boxNo = this.boxListArray.at(boxIndex).get('ExportOrderPackingListBoxNo')?.value;
-    const productName = this.getProductList(boxIndex).at(productIndex).get('ProductName')?.value;
+    const boxNo = this.boxListArray.at(boxIndex)
+      .get('ExportOrderPackingListBoxNo')?.value;
+
+    const productName = this.getProductList(boxIndex)
+      .at(productIndex)
+      .get('ProductName')?.value;
+
+    const productLabel = productName ? `Product ${productName}` : 'this row';
 
     this.alertService.showConfirmation({
-      text: `Do you really want to remove  <b>Product ${productName} from Box ${boxNo}<b>?`
+      text: `Do you really want to remove <b>${productLabel}</b> from <b>Box ${boxNo}</b>?`
     }).then((result) => {
       if (!result.isConfirmed) return;
 

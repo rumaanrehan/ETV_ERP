@@ -101,7 +101,7 @@
                                     </div>
 
                                     <div class="col-xl-12 form-group px-2" *ngIf="form.get('CustomerID')?.value !== null">
-                                        <z-span [text]="selectedCustomerAddress"></z-span>
+                                        <z-span [text]="selectedCustomerAddress" [label]="'Billing Address'"></z-span>
                                     </div>
 
                                     <h6 class="form-group px-2">Exchange Rate Details</h6>
@@ -239,7 +239,8 @@
                                     <div class="col-md-6 form-group px-2">
                                         <z-textarea [group]="form" [control]="'Narration'"
                                             [label]="formConfig.Narration.label"
-                                            [validationMessage]="formConfig.Narration.error"></z-textarea>
+                                            [validationMessage]="formConfig.Narration.error"
+                                            [autoResize]="true" [rows]="1"></z-textarea>
                                     </div>
                                 </div>
                             </div>
