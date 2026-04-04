@@ -52,151 +52,151 @@
   <form class="create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
     <div class="simple-form">
       <div class="form-fields form-fields--pre-table">
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.ExportOrderNo.label}}:</label>
-        <div class="simple-control">
-          <div class="simple-static">{{ form.get('ExportOrderNo')?.value ?? 'Auto-generated' }}</div>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.ExportOrderNo.label}}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('ExportOrderNo')?.value ?? 'Auto-generated' }}</div>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.BasedOn.label}}:</label>
-        <div class="simple-control">
-          <z-select [group]="form" [control]="'BasedOn'" [label]="''" [optionLabel]="'Text'" [optionValue]="'iValue'"
-            [options]="basedOnList" [readonly]="isEditMode" [showClear]="false"
-            (onChange)="onBasedOnChange()"></z-select>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.BasedOn.label}}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'BasedOn'" [label]="''" [optionLabel]="'Text'" [optionValue]="'iValue'"
+              [options]="basedOnList" [readonly]="isEditMode" [showClear]="false"
+              (onChange)="onBasedOnChange()"></z-select>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field" *ngIf="isBasedOnSalesQuotation">
-        <label class="simple-label">Sales Quotation:</label>
-        <div class="simple-control">
-          <z-autocomplete [controlDef]="salesQuotationAutoCompleteDef" [allowEmptySearch]="true"
-            [isClearable]="!(isBasedOnSalesQuotation && isEditMode)" (onSearch)="loadSalesQuotation($event)"
-            (onSelect)="onSelect_SalesQuotation($event)" (onClear)="onClear_SalesQuotation()"></z-autocomplete>
+        <div class="simple-field" *ngIf="isBasedOnSalesQuotation">
+          <label class="simple-label">Sales Quotation:</label>
+          <div class="simple-control">
+            <z-autocomplete [controlDef]="salesQuotationAutoCompleteDef" [allowEmptySearch]="true"
+              [isClearable]="!(isBasedOnSalesQuotation && isEditMode)" (onSearch)="loadSalesQuotation($event)"
+              (onSelect)="onSelect_SalesQuotation($event)" (onClear)="onClear_SalesQuotation()"></z-autocomplete>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.ExportOrderDate.label}}:</label>
-        <div class="simple-control">
-          <z-datepicker [group]="form" [control]="'ExportOrderDate'" [label]="''" [placeholder]="'dd-mm-yyyy'"
-            [validationMessage]="formConfig.ExportOrderDate.error"></z-datepicker>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.ExportOrderDate.label}}:</label>
+          <div class="simple-control">
+            <z-datepicker [group]="form" [control]="'ExportOrderDate'" [label]="''" [placeholder]="'dd-mm-yyyy'"
+              [validationMessage]="formConfig.ExportOrderDate.error"></z-datepicker>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
-        <div class="simple-control has-action">
-          <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
-            [isClearable]="form.get('BasedOn')?.value == 2" [readonly]="form.get('BasedOn')?.value == 1"
-            (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
-          </z-autocomplete>
-          <button *ngIf="!isBasedOnSalesQuotation" type="button" class="simple-action-btn" title="Add New Company"
-            (click)="handleComponentLoad('VendorCreateComponent')">
-            <i class="pi pi-plus" aria-hidden="true"></i>
-          </button>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
+          <div class="simple-control has-action">
+            <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
+              [isClearable]="form.get('BasedOn')?.value == 2" [readonly]="form.get('BasedOn')?.value == 1"
+              (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)" (onClear)="onClear_Customer()">
+            </z-autocomplete>
+            <button *ngIf="!isBasedOnSalesQuotation" type="button" class="simple-action-btn" title="Add New Company"
+              (click)="handleComponentLoad('VendorCreateComponent')">
+              <i class="pi pi-plus" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field" *ngIf="form.get('CustomerID')?.value">
-        <label class="simple-label">Billing Address:</label>
-        <div class="simple-control">
-          <div class="simple-static">{{ selectedCustomerAddress ?? '�' }}</div>
+        <div class="simple-field" *ngIf="form.get('CustomerID')?.value">
+          <label class="simple-label">Billing Address:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ selectedCustomerAddress ?? '�' }}</div>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.ReferenceDate.label}}:</label>
-        <div class="simple-control">
-          <z-datepicker [group]="form" [control]="'ReferenceDate'" [label]="''" [placeholder]="'dd-mm-yyyy'"
-            [maxDate]="todayDate" [validationMessage]="formConfig.ReferenceDate.error"></z-datepicker>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.ReferenceDate.label}}:</label>
+          <div class="simple-control">
+            <z-datepicker [group]="form" [control]="'ReferenceDate'" [label]="''" [placeholder]="'dd-mm-yyyy'"
+              [maxDate]="todayDate" [validationMessage]="formConfig.ReferenceDate.error"></z-datepicker>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.ReferenceNo.label}}:</label>
-        <div class="simple-control">
-          <z-inputtext [group]="form" [control]="'ReferenceNo'" [label]="''"
-            [validationMessage]="formConfig.ReferenceNo.error"></z-inputtext>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.ReferenceNo.label}}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'ReferenceNo'" [label]="''"
+              [validationMessage]="formConfig.ReferenceNo.error"></z-inputtext>
+          </div>
         </div>
-      </div>
 
-      <div class="table-heading">Exchange Rate Details</div>
+        <div class="table-heading">Exchange Rate Details</div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.FCCurrencyID.label}}:</label>
-        <div class="simple-control has-action">
-          <z-select [group]="form" [control]="'FCCurrencyID'" [label]="''" [optionLabel]="'CurrencyName'"
-            [optionValue]="'CurrencyID'" [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
-          <button *ngIf="!isBasedOnSalesQuotation" type="button" class="simple-action-btn" title="Add New Currency"
-            (click)="handleComponentLoad('CurrencyCreateComponent')">
-            <i class="pi pi-plus" aria-hidden="true"></i>
-          </button>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.FCCurrencyID.label}}:</label>
+          <div class="simple-control has-action">
+            <z-select [group]="form" [control]="'FCCurrencyID'" [label]="''" [optionLabel]="'CurrencyName'"
+              [optionValue]="'CurrencyID'" [options]="currencyList" (onChange)="OnCurrencyChange()"></z-select>
+            <button *ngIf="!isBasedOnSalesQuotation" type="button" class="simple-action-btn" title="Add New Currency"
+              (click)="handleComponentLoad('CurrencyCreateComponent')">
+              <i class="pi pi-plus" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.ExchangeRateDate.label}}:</label>
-        <div class="simple-control">
-          <z-datepicker [group]="form" [control]="'ExchangeRateDate'" [label]="''" [placeholder]="'dd-mm-yyyy'"
-            [maxDate]="todayDate"></z-datepicker>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.ExchangeRateDate.label}}:</label>
+          <div class="simple-control">
+            <z-datepicker [group]="form" [control]="'ExchangeRateDate'" [label]="''" [placeholder]="'dd-mm-yyyy'"
+              [maxDate]="todayDate"></z-datepicker>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.ExchangeRateToBC.label}}:</label>
-        <div class="simple-control">
-          <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="''" (onChange)="ProductCalculation()"
-            [maxFractionDigits]="8"></z-inputnumber>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.ExchangeRateToBC.label}}:</label>
+          <div class="simple-control">
+            <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="''" (onChange)="ProductCalculation()"
+              [maxFractionDigits]="8"></z-inputnumber>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.IncotermID.label}}:</label>
-        <div class="simple-control">
-          <z-select [group]="form" [control]="'IncotermID'" [label]="''" [optionLabel]="'Text'" [optionValue]="'iValue'"
-            [options]="incotermList"></z-select>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.IncotermID.label}}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'IncotermID'" [label]="''" [optionLabel]="'Text'"
+              [optionValue]="'iValue'" [options]="incotermList"></z-select>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.FreightChargeFC.label}}:</label>
-        <div class="simple-control">
-          <z-inputnumber [group]="form" [control]="'FreightChargeFC'" [label]="''"
-            (onChange)="ProductCalculation()"></z-inputnumber>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.FreightChargeFC.label}}:</label>
+          <div class="simple-control">
+            <z-inputnumber [group]="form" [control]="'FreightChargeFC'" [label]="''"
+              (onChange)="ProductCalculation()"></z-inputnumber>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.BankChargesFC.label}}:</label>
-        <div class="simple-control">
-          <z-inputnumber [group]="form" [control]="'BankChargesFC'" [label]="''"
-            (onChange)="ProductCalculation()"></z-inputnumber>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.BankChargesFC.label}}:</label>
+          <div class="simple-control">
+            <z-inputnumber [group]="form" [control]="'BankChargesFC'" [label]="''"
+              (onChange)="ProductCalculation()"></z-inputnumber>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.InsuranceAmountFC.label}}:</label>
-        <div class="simple-control">
-          <z-inputnumber [group]="form" [control]="'InsuranceAmountFC'" [label]="''"
-            (onChange)="ProductCalculation()"></z-inputnumber>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.InsuranceAmountFC.label}}:</label>
+          <div class="simple-control">
+            <z-inputnumber [group]="form" [control]="'InsuranceAmountFC'" [label]="''"
+              (onChange)="ProductCalculation()"></z-inputnumber>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.IsDutyDrawable.label}}:</label>
-        <div class="simple-control checkbox-control">
-          <z-checkbox [group]="form" [control]="'IsDutyDrawable'" [label]="''"></z-checkbox>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.IsDutyDrawable.label}}:</label>
+          <div class="simple-control checkbox-control">
+            <z-checkbox [group]="form" [control]="'IsDutyDrawable'" [label]="''"></z-checkbox>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.IsRoDTEP.label}}:</label>
-        <div class="simple-control checkbox-control">
-          <z-checkbox [group]="form" [control]="'IsRoDTEP'" [label]="''"></z-checkbox>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.IsRoDTEP.label}}:</label>
+          <div class="simple-control checkbox-control">
+            <z-checkbox [group]="form" [control]="'IsRoDTEP'" [label]="''"></z-checkbox>
+          </div>
         </div>
-      </div>
 
       </div>
 
@@ -215,88 +215,88 @@
       </div>
 
       <div class="form-fields form-fields--post-table">
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.PaymentTermID.label}}:</label>
-        <div class="simple-control">
-          <z-select [group]="form" [control]="'PaymentTermID'" [label]="''" [options]="paymentTermList"
-            [optionLabel]="'PaymentTermName'" [optionValue]="'PaymentTermID'"
-            [readonly]="isBasedOnSalesQuotation && this.form.get('PaymentTermID')?.value != null"></z-select>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.PaymentTermID.label}}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'PaymentTermID'" [label]="''" [options]="paymentTermList"
+              [optionLabel]="'PaymentTermName'" [optionValue]="'PaymentTermID'"
+              [readonly]="isBasedOnSalesQuotation && this.form.get('PaymentTermID')?.value != null"></z-select>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.IsRoundOff.label}}:</label>
-        <div class="simple-control checkbox-control">
-          <z-checkbox [group]="form" [control]="'IsRoundOff'" [label]="''"></z-checkbox>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.IsRoundOff.label}}:</label>
+          <div class="simple-control checkbox-control">
+            <z-checkbox [group]="form" [control]="'IsRoundOff'" [label]="''"></z-checkbox>
+          </div>
         </div>
-      </div>
 
-      <div class="table-heading">Shipment</div>
+        <div class="table-heading">Shipment</div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.ShipmentModeID.label}}:</label>
-        <div class="simple-control">
-          <z-select [group]="form" [control]="'ShipmentModeID'" [label]="''" [options]="shipmentModeList"
-            [optionLabel]="'Text'" [optionValue]="'iValue'" (onChange)="onChangeShipmentMode()"></z-select>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.ShipmentModeID.label}}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'ShipmentModeID'" [label]="''" [options]="shipmentModeList"
+              [optionLabel]="'Text'" [optionValue]="'iValue'" (onChange)="onChangeShipmentMode()"></z-select>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.LoadingPortID.label}}:</label>
-        <div class="simple-control has-action">
-          <z-autocomplete [controlDef]="loadingPortAutoCompleteDef" (onSearch)="loadLoadingPort($event)"
-            (onSelect)="OnLoadingPortSelect($event)" (onClear)="onClear_LoadingPort()"></z-autocomplete>
-          <button type="button" class="simple-action-btn" title="Add New Port"
-            (click)="handleComponentLoad('PortCreateComponent')">
-            <i class="pi pi-plus" aria-hidden="true"></i>
-          </button>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.LoadingPortID.label}}:</label>
+          <div class="simple-control has-action">
+            <z-autocomplete [controlDef]="loadingPortAutoCompleteDef" (onSearch)="loadLoadingPort($event)"
+              (onSelect)="OnLoadingPortSelect($event)" (onClear)="onClear_LoadingPort()"></z-autocomplete>
+            <button type="button" class="simple-action-btn" title="Add New Port"
+              (click)="handleComponentLoad('PortCreateComponent')">
+              <i class="pi pi-plus" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.DischargePortID.label}}:</label>
-        <div class="simple-control has-action">
-          <z-autocomplete [controlDef]="dischargePortAutoCompleteDef" (onSearch)="loadDischargePort($event)"
-            (onSelect)="OnDischargePortSelect($event)" (onClear)="onClear_DischargePort()"></z-autocomplete>
-          <button type="button" class="simple-action-btn" title="Add New Port"
-            (click)="handleComponentLoad('PortCreateComponent')">
-            <i class="pi pi-plus" aria-hidden="true"></i>
-          </button>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.DischargePortID.label}}:</label>
+          <div class="simple-control has-action">
+            <z-autocomplete [controlDef]="dischargePortAutoCompleteDef" (onSearch)="loadDischargePort($event)"
+              (onSelect)="OnDischargePortSelect($event)" (onClear)="onClear_DischargePort()"></z-autocomplete>
+            <button type="button" class="simple-action-btn" title="Add New Port"
+              (click)="handleComponentLoad('PortCreateComponent')">
+              <i class="pi pi-plus" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.FinalDestination.label}}:</label>
-        <div class="simple-control">
-          <z-inputtext [group]="form" [control]="'FinalDestination'" [label]="''"
-            [validationMessage]="formConfig.FinalDestination.error"></z-inputtext>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.FinalDestination.label}}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'FinalDestination'" [label]="''"
+              [validationMessage]="formConfig.FinalDestination.error"></z-inputtext>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field">
-        <label class="simple-label">{{formConfig.Narration.label}}:</label>
-        <div class="simple-control">
-          <z-textarea [group]="form" [control]="'Narration'" [label]="''" [autoResize]="true" [rows]="1"
-            [placeholder]="'Optional'"></z-textarea>
+        <div class="simple-field">
+          <label class="simple-label">{{formConfig.Narration.label}}:</label>
+          <div class="simple-control">
+            <z-textarea [group]="form" [control]="'Narration'" [label]="''" [autoResize]="true" [rows]="1"
+              [placeholder]="'Optional'"></z-textarea>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field" *ngIf="!isEditMode">
-        <label class="simple-label">{{formConfig.StatusID.label}}:</label>
-        <div class="simple-control">
-          <z-select [group]="form" [control]="'StatusID'" [label]="''" [optionLabel]="'Text'" [optionValue]="'iValue'"
-            [options]="statusList"></z-select>
+        <div class="simple-field" *ngIf="!isEditMode">
+          <label class="simple-label">{{formConfig.StatusID.label}}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'StatusID'" [label]="''" [optionLabel]="'Text'" [optionValue]="'iValue'"
+              [options]="statusList"></z-select>
+          </div>
         </div>
-      </div>
 
-      <div class="simple-field" *ngIf="isEditMode && !IsPOUploaded">
-        <label class="simple-label">Upload Document:</label>
-        <div class="simple-control po-upload-control">
-          <z-file-upload [group]="form" [control]="'DocumentFile'" [label]="''" [accept]="'.pdf'"
-            [maxFileSize]="2 * 1024 * 1024" fieldLabel="image" (fileSelected)="uploadPO($event)">
-          </z-file-upload>
+        <div class="simple-field" *ngIf="isEditMode && !IsPOUploaded">
+          <label class="simple-label">Upload Document:</label>
+          <div class="simple-control po-upload-control">
+            <z-file-upload [group]="form" [control]="'DocumentFile'" [label]="''" [accept]="'.pdf'"
+              [maxFileSize]="2 * 1024 * 1024" fieldLabel="image" (fileSelected)="uploadPO($event)">
+            </z-file-upload>
+          </div>
         </div>
-      </div>
       </div>
 
       <div class="simple-field amount-summary-field" *ngIf="isEditMode">
