@@ -1,6 +1,6 @@
 [data-nav-style="menu-hover"][data-nav-layout="horizontal"] {
     @extend .menu-hover;
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .app-sidebar {
             .side-menu__item {
                 display: flex !important;
@@ -32,7 +32,7 @@
     @extend .menu-hover;
 }
 [data-nav-style="menu-hover"][data-nav-layout="vertical"][data-toggled="menu-hover-closed"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .app-sidebar {
             position: absolute;
             .side-menu__item {
@@ -62,7 +62,7 @@
     }
 }
 .menu-hover {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
         .app-sidebar {
             width: 9.5rem;
             .main-sidebar {

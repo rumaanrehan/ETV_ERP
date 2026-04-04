@@ -1,77 +1,102 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { PageHeaderService } from '../../../../../shared/services/page-header.service';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
-import { ProformaInvoiceService } from '../proforma-invoice.service';
-import { FormService } from '../../../../../shared/services/form.service';
-import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { Router } from '@angular/router';
-import { TableLazyLoadEvent } from 'primeng/table';
-import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { ProformaInvoice, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList } from '../proforma-invoice';
-import { Subject, takeUntil } from 'rxjs';
-import { DateUtils } from '../../../../../shared/utility/date-utils';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, FormGroup } from '@angular/forms';
+import { CheckboxModule } from 'primeng/checkbox';
+import { Subject, takeUntil } from 'rxjs';
+import { Router } from '@angular/router';
+import { DataviewComponent } from '../dataview/dataview.component';
+import { GridviewComponent } from '../gridview/gridview.component';
+import { ProformaInvoiceService } from '../proforma-invoice.service';
+import { ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_IndexTableSort } from '../proforma-invoice';
+import { PageHeaderService } from '../../../../../shared/services/page-header.service';
+import { FormService } from '../../../../../shared/services/form.service';
 import { NavContextService } from '../../../../../core/services/nav-context.service.service';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [ZDataTable, CommonModule],
+  imports: [CommonModule, FormsModule, CheckboxModule, DataviewComponent, GridviewComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss'
 })
-export class IndexComponent {
+export class IndexComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('proformaInvoiceCodeTemplate', { static: true }) proformaInvoiceCodeTemplate!: TemplateRef<any>;
-  @ViewChild('proformaInvoiceDateTemplate', { static: true }) proformaInvoiceDateTemplate!: TemplateRef<any>;
-  @ViewChild('proformaInvoiceStatusTemplate', { static: true }) proformaInvoiceStatusTemplate!: TemplateRef<any>;
-  @ViewChild('subtotalAmountFCTemplate', { static: true }) subtotalAmountFCTemplate!: TemplateRef<any>;
-  @ViewChild('taxAmountFCTemplate', { static: true }) taxAmountFCTemplate!: TemplateRef<any>;
-  @ViewChild('netAmountFCTemplate', { static: true }) netAmountFCTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
+  @ViewChild(DataviewComponent) dataview?: DataviewComponent;
+  @ViewChild(GridviewComponent) gridview?: GridviewComponent;
 
-  tableDef!: DataTableDef<ProformaInvoice_IndexTableList>;
-  tableEvent!: TableLazyLoadEvent;
+  @ViewChild('pageHeaderActionTemplate') pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild('selectionBar') selectionBar?: ElementRef<HTMLElement>;
+
+  private selectionBarResizeObserver?: ResizeObserver;
+
+  viewType = signal<'card' | 'table'>('card');
+  selectedProformaInvoices: ProformaInvoice_IndexTableList[] = [];
+  selectAll = false;
+
+  filterForm!: FormGroup;
+  sortingForm!: FormGroup;
 
   constructor(
     private pageHeaderService: PageHeaderService,
     private pageService: ProformaInvoiceService,
     private formService: FormService,
-    private alertService: AlertNotificationService,
     private navContextService: NavContextService,
     private router: Router,
+    private hostElement: ElementRef<HTMLElement>
   ) { }
 
   ngOnInit(): void {
+    const savedView = localStorage.getItem('proformaInvoiceViewType');
+    if (savedView === 'card' || savedView === 'table') {
+      this.viewType.set(savedView);
+    }
+
+    this.filterForm = this.formService.createFormGroup_DataTableFilter<ProformaInvoice_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter());
+    this.sortingForm = this.formService.createFormGroup<ProformaInvoice_IndexTableSort>(this.pageService.getFormConfig_DataTableSort());
+
+    const savedFilter = localStorage.getItem('proformaInvoiceFilter');
+    if (savedFilter) {
+      this.filterForm.patchValue(JSON.parse(savedFilter), { emitEvent: false });
+    }
+
+    const savedSort = localStorage.getItem('proformaInvoiceSort');
+    if (savedSort) {
+      this.sortingForm.patchValue(JSON.parse(savedSort), { emitEvent: false });
+    }
+
+    this.filterForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        localStorage.setItem('proformaInvoiceFilter', JSON.stringify(value));
+      });
+
+    this.sortingForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        localStorage.setItem('proformaInvoiceSort', JSON.stringify(value));
+      });
+  }
+
+  ngAfterViewInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-    this.tableDef = {
-      tableKey: 'IE_ProformaInvoice_IndexTable',
-      columnDef: [],
-      defaultSortColumn: { sortField: 'ProformaInvoiceNo', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ProformaInvoice_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
-    this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'ProformaInvoiceNo', label: 'Invoice No', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.proformaInvoiceCodeTemplate },
-      { data: 'ProformaInvoiceDate', label: 'Date', width: "10%", customTemplate: this.proformaInvoiceDateTemplate },
-      { data: 'BasedOn', label: 'Based On', width: "8%", filterable: true, filterType: 'select', filterKey: 'BasedOn' },
-      { data: 'ExportOrderNo', label: 'Export Order No', orderable: false, filterable: true, width: "12%" },
-      { data: 'CustomerName', label: 'Customer', filterable: true, width: "20%" },
-      { data: 'SubtotalAmountFC', label: 'Subtotal Amount', orderable: false, width: "10%", customTemplate: this.subtotalAmountFCTemplate },
-      { data: 'TaxAmountFC', label: 'Tax Amount', orderable: false, width: "10%", customTemplate: this.taxAmountFCTemplate },
-      { data: 'NetAmountFC', label: 'Net Amount', width: "10%", customTemplate: this.netAmountFCTemplate },
-      { data: 'StatusID', label: 'Status', width: "8%", filterable: true, filterType: 'select', filterKey: 'StatusID', cssClass: 'text-center', customTemplate: this.proformaInvoiceStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: "4%", customTemplate: this.actionColTemplate },
-    ];
+    this.scheduleSelectionBarHeightUpdate();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.pageHeaderService.setTemplate(null);
+    this.selectionBarResizeObserver?.disconnect();
+    this.selectionBarResizeObserver = undefined;
+    this.hostElement.nativeElement.style.removeProperty('--proforma-invoice-selection-bar-height');
+  }
+
+  toggleView(type: 'card' | 'table'): void {
+    this.viewType.set(type);
+    localStorage.setItem('proformaInvoiceViewType', type);
+    this.selectedProformaInvoices = [];
+    this.selectAll = false;
+    this.scheduleSelectionBarHeightUpdate();
   }
 
   onClickPageHeaderAddButton(): void {
@@ -79,84 +104,38 @@ export class IndexComponent {
     this.router.navigate(['ie/proforma-invoice/create']);
   }
 
-  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
-    this.tableEvent = event;
-    this.loadData();
+  onSelectionChange(selectedItems: ProformaInvoice_IndexTableList[]): void {
+    this.selectedProformaInvoices = selectedItems;
+    this.selectAll = selectedItems.length > 0 && selectedItems.every(item => item._selected);
+    this.scheduleSelectionBarHeightUpdate();
   }
 
-  loadData(): void {
-    try {
-      const model: DataTableParams<ProformaInvoice_IndexTableFilter> = {
-        first: this.tableEvent.first,
-        last: this.tableEvent.last,
-        sortField: this.tableEvent.sortField,
-        sortOrder: this.tableEvent.sortOrder,
-        filters: this.tableDef.filterForm?.value
-      };
-      this.pageService.PopulateGrid(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
-            }
-            else {
-              this.tableDef.data = [];
-              this.tableDef.totalRecords = 0;
-              this.alertService.showServerResponseToast(response);
-            }
-          },
-          complete: () => {
-            this.tableDef.loading = false;
-          }
-        });
-    }
-    catch (error) {
+  toggleSelectAll(event: any): void {
+    this.selectAll = !!event?.checked;
 
+    if (this.viewType() === 'card') {
+      this.dataview?.toggleSelectAll(this.selectAll);
+    } else {
+      this.gridview?.toggleSelectAll(this.selectAll);
     }
+
+    this.scheduleSelectionBarHeightUpdate();
   }
 
-  onClickEditDetails(proformaInvoiceID: number) {
-    if (proformaInvoiceID) {
-      this.router.navigate([`ie/proforma-invoice/edit/${proformaInvoiceID}`]);
-    }
-  }
+  private scheduleSelectionBarHeightUpdate(): void {
+    requestAnimationFrame(() => {
+      const height = this.selectionBar?.nativeElement?.offsetHeight ?? 0;
+      this.hostElement.nativeElement.style.setProperty('--proforma-invoice-selection-bar-height', `${height}px`);
 
-  onClickDeleteReactivate(row: any): void {
-    try {
-      this.alertService.showConfirmationWithInput({
-        inputPlaceholder: 'Reason To Cancel',
-        text: `Do you really want to cancel the "<b>${row.ProformaInvoiceNo}</b>"?`,
-      })
-        .then(result => {
-          if (result.isConfirmed) {
-            this.pageService.CancelRecord(row.ProformaInvoiceID, result.value)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: (response) => {
-                  if (response.IsSuccess) {
-                    this.loadData();
-                    this.alertService.showAlert({
-                      type: "success",
-                      text: response.Message,
-                      timer: 5000
-                    });
-                  }
-                  else {
-                    this.alertService.showServerResponseAlert(response);
-                  }
-                }
-              });
-          }
-        });
-    }
-    catch (error) {
-
-    }
-  }
-
-  formatDate(date: Date) {
-    return DateUtils.formatDate(date);
+      if (this.selectionBar?.nativeElement) {
+        if (!this.selectionBarResizeObserver) {
+          this.selectionBarResizeObserver = new ResizeObserver(() => this.scheduleSelectionBarHeightUpdate());
+        }
+        this.selectionBarResizeObserver.disconnect();
+        this.selectionBarResizeObserver.observe(this.selectionBar.nativeElement);
+      } else {
+        this.selectionBarResizeObserver?.disconnect();
+      }
+    });
   }
 }

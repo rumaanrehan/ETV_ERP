@@ -74,7 +74,7 @@ export class HomeLayoutComponent {
 
     document.querySelector('#responsive-overlay')?.classList.remove('active');
     let html = this.elementRef.nativeElement.ownerDocument.documentElement;
-    if (window.innerWidth <= 992) {
+    if (window.innerWidth < 768) {
       html?.setAttribute(
         'data-toggled',
         html?.getAttribute('data-toggled') == 'close' ? 'close' : 'close'
@@ -97,7 +97,9 @@ export class HomeLayoutComponent {
 
   clearToggle() {
     let html = this.elementRef.nativeElement.ownerDocument.documentElement;
-    html?.setAttribute('data-toggled', 'close');
+    if (window.innerWidth < 768) {
+      html?.setAttribute('data-toggled', 'close');
+    }
     document.querySelector('#responsive-overlay')?.classList.remove('active');
   }
 }

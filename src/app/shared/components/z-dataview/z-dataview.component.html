@@ -1,86 +1,113 @@
-<div style="height: calc(100vh - 178px);">
-    <p-dataView #dv [value]="dataViewDef.data" [rows]="5" [totalRecords]="dataViewDef.totalRecords" [paginator]="true"
-        [lazy]="true" (onLazyLoad)="loadData($event)" [layout]="'list'">
+<!-- <div style="height: calc(100vh - var(--z-dataview-viewport-offset)); padding-bottom: 0rem;"> -->
+<div class="z-dataview-viewport">
+    <p-dataView *ngIf="dataViewDef" #dv [value]="dataViewDef.data" [first]="first" [rows]="rows"
+        [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="dataViewDef.totalRecords" [showCurrentPageReport]="true"
+        [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'"
+        [paginator]="true" [lazy]="true" [loading]="dataViewDef.loading" (onLazyLoad)="loadData($event)"
+        (onPage)="onPage($event)" [layout]="'list'" [styleClass]="'z-dataview-root'">
         <ng-template pTemplate="header">
-            <div class="index-table-action-bar d-flex justify-content-end">
-                <ng-container *ngIf="dataViewDef.sortingForm && isSortPanelVisible">
-                    <div #sortingPanel class="index-sorting-panel card" [formGroup]="dataViewDef.sortingForm">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6>Sorting</h6>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-primary" [type]="'button'"
-                                    (click)="resetForm(dataViewDef.sortingForm)">Clear
-                                </button>
-                                <button class="btn btn-primary" [type]="'button'" (click)="onClickApplySorting()">Apply
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div *ngFor="let field of dataViewDef.sortFields" class="field">
-                                <label>
-                                    {{ field.label }}
-                                </label>
-                                <div>
-                                    <z-select-button [group]="dataViewDef.sortingForm" [control]="field.field"
-                                        [allowEmpty]="true">
-                                        {{ getAscLabel(field.field)}}
-                                    </z-select-button>
+            <div class="index-table-action-bar">
+                <div class="zdt-toolbar">
+                    <!-- Sorting Wrapper -->
+                    <div class="action-item-wrapper">
+                        <span class="refresh-filter" [class.active-toggle]="isSortPanelVisible"
+                            (click)="toggleSortPanel();" title="Sorting">
+                            <span class="sort-icon" aria-hidden="true"></span>
+                            <span class="sort-label">Sort</span>
+                        </span>
+                        <ng-container *ngIf="dataViewDef.sortingForm && isSortPanelVisible">
+                            <div #sortingPanel class="index-sorting-panel card" [formGroup]="dataViewDef.sortingForm">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6>Sorting</h6>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-primary" [type]="'button'"
+                                            (click)="resetForm(dataViewDef.sortingForm)">Clear
+                                        </button>
+                                        <button class="btn btn-primary" [type]="'button'"
+                                            (click)="onClickApplySorting()">Apply
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div *ngFor="let field of dataViewDef.sortFields" class="field">
+                                        <label>
+                                            {{ field.label }}
+                                        </label>
+                                        <div>
+                                            <z-select-button [group]="dataViewDef.sortingForm" [control]="field.field"
+                                                [allowEmpty]="true">
+                                                {{ getAscLabel(field.field)}}
+                                            </z-select-button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </ng-container>
                     </div>
-                </ng-container>
-                <ng-container *ngIf="dataViewDef.filterForm && isFilterPanelVisible">
-                    <div #filterPanel class="index-filter-panel card" [formGroup]="dataViewDef.filterForm">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6>Filter</h6>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-primary" [type]="'button'"
-                                    (click)="resetForm(dataViewDef.filterForm)">Clear
-                                </button>
-                                <button class="btn btn-primary" [type]="'button'" (click)="onClickApplyFilter()">Apply
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div *ngFor="let field of dataViewDef.filterFields" class="field">
-                                <label>{{field.label}}</label>
-                                <z-inputtext *ngIf="field.type === 'text'" [group]="dataViewDef.filterForm"
-                                    [control]="field.field" [label]="field.label">
-                                </z-inputtext>
 
-                                <z-inputnumber *ngIf="field.type === 'number'" [group]="dataViewDef.filterForm"
-                                    [control]="field.field" [label]="field.label">
-                                </z-inputnumber>
-
-                                <z-datepicker *ngIf="field.type === 'date'" [group]="dataViewDef.filterForm"
-                                    [control]="field.field" [label]="field.label">
-                                </z-datepicker>
-
-                                <z-select *ngIf="field.type === 'dropdown'" [group]="dataViewDef.filterForm"
-                                    [control]="field.field" [label]="field.label" [options]="field.options ?? []"
-                                    [showClear]="false" [optionLabel]="'Text'" [optionValue]="'Value'">
-                                </z-select>
-                            </div>
-                        </div>
+                    <div class="action-item-wrapper">
+                        <span class="refresh-filter" (click)="refreshData();" title="Refresh">
+                            <span class="refresh-icon" aria-hidden="true"></span>
+                            <span class="refresh-label">Refresh</span>
+                        </span>
                     </div>
-                </ng-container>
-                <div class="d-flex justify-content-end">
-                    <span><i class="pi pi-sort-alt refresh-filter" (click)="toggleSortPanel();"
-                            title="Sorting"></i></span>
-                    <span><i class="pi pi-refresh refresh-filter" (click)="refreshData();" title="Refresh"></i></span>
-                    <span><i class="pi pi-filter filter-toggle" (click)="toggleFilterPanel();"
-                            title="Filter"></i></span>
+
+                    <!-- Filter Wrapper -->
+                    <div class="action-item-wrapper">
+                        <span class="filter-toggle" [class.active-toggle]="isFilterPanelVisible"
+                            (click)="toggleFilterPanel();" title="Filter">
+                            <span class="filter-icon" aria-hidden="true"></span>
+                            <span class="filter-label">Filter</span>
+                        </span>
+                        <ng-container *ngIf="dataViewDef.filterForm && isFilterPanelVisible">
+                            <div #filterPanel class="index-filter-panel card" [formGroup]="dataViewDef.filterForm">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6>Filter</h6>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-primary" [type]="'button'"
+                                            (click)="resetForm(dataViewDef.filterForm)">Clear
+                                        </button>
+                                        <button class="btn btn-primary" [type]="'button'"
+                                            (click)="onClickApplyFilter()">Apply
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div *ngFor="let field of dataViewDef.filterFields" class="field">
+                                        <z-inputtext *ngIf="field.type === 'text'" [group]="dataViewDef.filterForm"
+                                            [control]="field.field" [label]="field.label">
+                                        </z-inputtext>
+
+                                        <z-inputnumber *ngIf="field.type === 'number'" [group]="dataViewDef.filterForm"
+                                            [control]="field.field" [label]="field.label">
+                                        </z-inputnumber>
+
+                                        <z-datepicker *ngIf="field.type === 'date'" [group]="dataViewDef.filterForm"
+                                            [control]="field.field" [label]="field.label">
+                                        </z-datepicker>
+
+                                        <z-select *ngIf="field.type === 'dropdown'" [group]="dataViewDef.filterForm"
+                                            [control]="field.field" [label]="field.label"
+                                            [options]="field.options ?? []" [showClear]="false" [optionLabel]="'Text'"
+                                            [optionValue]="'Value'" [appendTo]="'body'">
+                                        </z-select>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
                 </div>
             </div>
         </ng-template>
 
         <ng-template let-products pTemplate="list">
-            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: products }"></ng-container>
+            <div class="z-dataview-list">
+                <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: products }"></ng-container>
+            </div>
         </ng-template>
 
 

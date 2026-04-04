@@ -1,3 +1,30 @@
+// Dark mode overrides
+[data-theme-mode="dark"] .p-breadcrumb {
+    background: #23272b !important;
+    .p-breadcrumb-list {
+        li {
+            .p-menuitem-link {
+                .p-menuitem-text {
+                    color: #f8fafc !important;
+                }
+                .p-menuitem-icon {
+                    color: #94a3b8 !important;
+                }
+            }
+            &.p-menuitem-separator {
+                color: #94a3b8 !important;
+            }
+            &:last-child {
+                .p-menuitem-text {
+                    color: #38bdf8 !important;
+                }
+                .p-menuitem-icon {
+                    color: #38bdf8 !important;
+                }
+            }
+        }
+    }
+}
 .p-breadcrumb {
     background: $breadcrumbBg;
     border: $breadcrumbBorder;

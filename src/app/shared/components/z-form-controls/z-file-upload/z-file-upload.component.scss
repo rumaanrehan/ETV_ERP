@@ -1,0 +1,219 @@
+:host {
+  display: block;
+  width: 100%;
+  --zfu-height: var(--se-field-height, 2.25rem);
+  --zfu-radius: var(--se-field-radius, 8px);
+}
+
+:host ::ng-deep .p-fileupload {
+  width: 100%;
+  max-width: 100%;
+}
+
+:host ::ng-deep .p-fileupload .p-fileupload-buttonbar {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+:host ::ng-deep .p-fileupload .p-fileupload-content {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+:host ::ng-deep .p-fileupload .p-progressbar {
+  display: none !important;
+}
+
+.zfu-header {
+  min-height: var(--zfu-height);
+  border: 1px solid var(--default-border);
+  border-radius: var(--zfu-radius);
+  background: var(--custom-white);
+  padding: 0.25rem 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.zfu-header:focus-within {
+  border-color: rgb(var(--primary-rgb));
+  box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.16);
+}
+
+.zfu-root.zfu-invalid .zfu-header {
+  border-color: var(--danger, #dc3545);
+}
+
+.zfu-btn {
+  height: calc(var(--zfu-height) - 0.55rem);
+  border-radius: calc(var(--zfu-radius) - 2px);
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  padding: 0 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.zfu-btn:hover:not(:disabled) {
+  background: var(--list-hover-focus-bg);
+}
+
+.zfu-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.zfu-btn--upload {
+  background: rgba(var(--primary-rgb), 0.12);
+  border-color: rgba(var(--primary-rgb), 0.28);
+  color: var(--primary-color);
+}
+
+.zfu-btn--clear {
+  width: calc(var(--zfu-height) - 0.55rem);
+  min-width: calc(var(--zfu-height) - 0.55rem);
+  padding: 0;
+}
+
+.zfu-meta {
+  margin-left: auto;
+  min-width: 0;
+  font-size: 0.72rem;
+  color: var(--heading-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zfu-meta--muted {
+  color: var(--text-muted);
+}
+
+.zfu-content {
+  margin-top: 0.45rem;
+  border: 1px solid var(--default-border);
+  border-radius: var(--zfu-radius);
+  background: var(--background-secondary);
+  padding: 0.35rem 0.5rem;
+}
+
+.zfu-file-row {
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.zfu-file-row + .zfu-file-row {
+  border-top: 1px solid var(--default-border);
+  margin-top: 0.3rem;
+  padding-top: 0.3rem;
+}
+
+.zfu-file-row > .pi {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  width: 1rem;
+  text-align: center;
+  flex: 0 0 1rem;
+}
+
+.zfu-file-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+}
+
+.zfu-file-name {
+  font-size: 0.75rem;
+  color: var(--heading-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zfu-file-size {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.zfu-remove-btn {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.zfu-remove-btn:hover {
+  background: var(--list-hover-focus-bg);
+  color: var(--heading-text-color);
+}
+
+.zfu-empty {
+  margin-top: 0;
+  width: 100%;
+  min-height: calc(var(--zfu-height) * 2);
+  border: 1px dashed var(--default-border);
+  border-radius: var(--zfu-radius);
+  background: var(--custom-white);
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: none;
+}
+
+.zfu-empty:hover {
+  background: var(--list-hover-focus-bg);
+}
+
+.zfu-empty:focus-visible {
+  outline: 0;
+  border-color: rgb(var(--primary-rgb));
+  box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.16);
+}
+
+.zfu-root.zfu-invalid .zfu-empty {
+  border-color: var(--danger, #dc3545);
+}
+
+.zfu-root.zfu-invalid .zfu-empty:focus-visible {
+  box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.15);
+}
+
+.zfu-empty .pi {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .zfu-header {
+    flex-wrap: wrap;
+  }
+
+  .zfu-meta {
+    margin-left: 0;
+    width: 100%;
+  }
+}

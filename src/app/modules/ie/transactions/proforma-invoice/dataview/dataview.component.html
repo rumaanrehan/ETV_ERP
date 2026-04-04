@@ -1,0 +1,80 @@
+<z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+</z-dataview>
+
+<ng-template #customTemplate let-proformaInvoice>
+    <div class="se-cards-grid">
+        <div class="se-card" *ngFor="let item of proformaInvoice" [class.is-selected]="item._selected" role="button"
+            tabindex="0" [attr.aria-label]="'Open Proforma Invoice ' + item.ProformaInvoiceNo"
+            (click)="onClickEditDetails(item.ProformaInvoiceID)"
+            (keydown.enter)="onClickEditDetails(item.ProformaInvoiceID)"
+            (keydown.space)="$event.preventDefault(); onClickEditDetails(item.ProformaInvoiceID)">
+            <div class="se-card__body">
+                <div class="se-card__top">
+                    <div class="se-card__select" (click)="$event.stopPropagation()"
+                        (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
+                        <p-checkbox binary="true" [(ngModel)]="item._selected" (onChange)="onSelectionChange(item)">
+                        </p-checkbox>
+                    </div>
+
+                    <div class="se-card__main">
+                        <div class="se-card__head">
+                            <div class="se-card__titles">
+                                <a class="se-card__title-link" (click)="$event.stopPropagation(); onClickEditDetails(item.ProformaInvoiceID)">
+                                    <h3 class="se-card__title">{{item.ProformaInvoiceNo}}</h3>
+                                </a>
+                                <p class="se-card__subtitle">{{item.CustomerName}}</p>
+                            </div>
+                            <span class="se-badge" [ngClass]="getStatusBadgeClass(item.StatusText)">
+                                {{item.StatusText}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="se-info-split">
+                    <div class="se-info se-info--left">
+                        <div class="se-info-row">
+                            <i class="pi pi-calendar se-info-icon" aria-hidden="true"></i>
+                            <div class="se-info-text">
+                                <p class="se-info-label">Invoice Date</p>
+                                <p class="se-info-value">{{formatCardDate(item.ProformaInvoiceDate)}}</p>
+                            </div>
+                        </div>
+
+                        <div class="se-info-row">
+                            <i class="pi pi-tag se-info-icon" aria-hidden="true"></i>
+                            <div class="se-info-text">
+                                <p class="se-info-label">Based On</p>
+                                <p class="se-info-value">{{item.BasedOn}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="se-info se-info--right se-info--amounts">
+                        <div class="se-info-row se-info-row--amount">
+                            <div class="se-info-text se-info-text--right">
+                                <p class="se-info-label">SubTotal (FC)</p>
+                                <p class="se-info-value">{{item.CurrencySymbol}} {{item.SubtotalAmountFC | number:'1.2-2'}}</p>
+                            </div>
+                        </div>
+
+                        <div class="se-info-row se-info-row--amount">
+                            <div class="se-info-text se-info-text--right">
+                                <p class="se-info-label">Tax (FC)</p>
+                                <p class="se-info-value">{{item.CurrencySymbol}} {{item.TaxAmountFC | number:'1.2-2'}}</p>
+                            </div>
+                        </div>
+
+                        <div class="se-info-row se-info-row--amount">
+                            <div class="se-info-text se-info-text--right">
+                                <p class="se-info-label">Net Amount (FC)</p>
+                                <p class="se-info-value">{{item.CurrencySymbol}} {{item.NetAmountFC | number:'1.2-2'}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

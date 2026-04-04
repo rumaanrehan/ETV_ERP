@@ -1,5 +1,5 @@
 [data-vertical-style="overlay"][data-toggled="icon-overlay-close"] {
-    @media(min-width: 992px) {
+    @media(min-width: 768px) {
         &:not([data-icon-overlay="open"]) {
             .app-sidebar {
                 width: 5rem;

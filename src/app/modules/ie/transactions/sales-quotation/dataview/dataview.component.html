@@ -1,101 +1,77 @@
-<!--Page Header Action Button Template-->
-<ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
-            class="pi pi-plus"></i>&nbsp;Add Quotation</button>
-</ng-template>
-
 <div class="col-xl-12 index-page-content">
-    <div class="index-action-bar">
-        <div class="d-flex align-items-center gap-3">
-            <!-- SELECT ALL -->
-            <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
-            </p-checkbox>
-
-            <span class="text-muted">
-                <b>{{ selectedSalesQuotations.length }} selected</b>
-            </span>
-        </div>
-        <div class="col-6 index-action-bar-actions">
-            <!-- BULK ACTIONS -->
-            <button class="btn btn-primary" [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(1)">
-                Revert to Draft
-            </button>
-
-            <button class="btn btn-primary" [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(2)">
-                Mark as Sent
-            </button>
-
-            <button class="btn btn-primary" [disabled]="!selectedSalesQuotations.length" (click)="bulkChangeStatus(4)">
-                Cancel
-            </button>
-        </div>
-    </div>
     <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
         (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
     </z-dataview>
 </div>
 
-<ng-template #customTemplate let-exportOrders>
-    <div class="d-flex align-items-center gap-3" *ngFor="let item of exportOrders; let first = first">
-        <div class="d-flex align-items-center gap-2">
-            <!-- BULK SELECT -->
-            <p-checkbox binary="true" [(ngModel)]="item._selected" (onChange)="onSelectionChange(item)">
-            </p-checkbox>
-        </div>
-        <div class="w-100 p-3 dataview-item mb-3">
-            <div class="d-flex justify-content-between dataview-record-title">
-                <a (click)="onClickEditDetails(item.SalesQuotationID)">
-                    <h5 class="primary-color mb-2">{{item.SalesQuotationNo}} | {{item.CustomerName}}</h5>
-                </a>
-                <div class="text-end">
-                    <span class="badge bg-outline-primary" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
+<ng-template #customTemplate let-salesQuotations>
+    <div class="eo-card eo-card--clickable" *ngFor="let item of salesQuotations; let first = first"
+        role="button" tabindex="0" (click)="onClickEditDetails(item.SalesQuotationID)"
+        (keydown.enter)="onClickEditDetails(item.SalesQuotationID)"
+        (keydown.space)="$event.preventDefault(); onClickEditDetails(item.SalesQuotationID)">
+        <div class="dataview-item eo-card__body">
+            <div class="eo-card__top">
+                <p-checkbox class="eo-card__checkbox" binary="true" [(ngModel)]="item._selected"
+                    (onChange)="onSelectionChange(item)" (click)="$event.stopPropagation()"
+                    (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()"></p-checkbox>
+
+                <div class="eo-card__main">
+                    <div class="eo-card__line">
+                        <div class="eo-card__titles">
+                            <a class="eo-card__title-link" (click)="$event.stopPropagation(); onClickEditDetails(item.SalesQuotationID)">
+                                <h5 class="eo-card__title">{{item.SalesQuotationNo}}</h5>
+                            </a>
+                            <p class="eo-card__company">{{item.CustomerName}}</p>
+                        </div>
+                        <div class="eo-card__status">
+                            <span class="eo-card__badge" [ngStyle]="{color: item.StatusHex}">{{item.StatusText}}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-7">
-                <div class="d-flex flex-wrap justify-content-between">
-                    <div class="dataview-info-column">
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Quotation Date:</span>
-                            <span class="fs-6 text-secondary"> {{formatDate(item.SalesQuotationDate)}} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Valid Till:</span>
-                            <span class="fs-6 text-secondary"> {{formatDate(item.ValidityDate)}} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">No of Products:</span>
-                            <span class="fs-6 text-secondary"> {{item.NoOfProducts}} </span>
-                        </div>
+
+            <div class="eo-card__grid">
+                <div class="eo-col">
+                    <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">Quotation Date</span>
+                        <span class="eo-field__value">{{formatDate(item.SalesQuotationDate)}}</span>
                     </div>
-                    <div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Subtotal Amount (FC):</span>
-                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.SubtotalAmountFC |
-                                number:'1.2-2'}} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Tax Amount (FC):</span>
-                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.TaxAmountFC |
-                                number:'1.2-2' }} </span>
-                        </div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Net Amount (FC):</span>
-                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }} {{item.NetAmountFC |
-                                number:'1.2-2'}} </span>
-                        </div>
+                    <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">Valid Till</span>
+                        <span class="eo-field__value">{{formatDate(item.ValidityDate)}}</span>
                     </div>
-                    <div>
-                        <div class="dataview-info-item">
-                            <span class="fs-6 text-secondary">Order Total:</span>
-                            <span class="fs-6 text-secondary"> {{ item.CurrencySymbol }}{{ item.NetAmountFC |
-                                number:'1.2-2' }}
-                            </span>
-                        </div>
+                    <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">No of Products</span>
+                        <span class="eo-field__value">{{item.NoOfProducts}}</span>
+                    </div>
+                </div>
+
+                <div class="eo-col">
+                    <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">Subtotal Amount (FC)</span>
+                        <span class="eo-field__value">{{ item.CurrencySymbol }} {{item.SubtotalAmountFC | number:'1.2-2'}}</span>
+                    </div>
+                    <div class="dataview-info-item eo-field">
+                        <span class="eo-field__label">Tax Amount (FC)</span>
+                        <span class="eo-field__value">{{ item.CurrencySymbol }} {{item.TaxAmountFC | number:'1.2-2'}}</span>
+                    </div>
+                    <div class="dataview-info-item eo-field eo-field--order-total">
+                        <span class="eo-field__label">Order Total</span>
+                        <span class="eo-field__value">{{ item.CurrencySymbol }} {{item.NetAmountFC | number:'1.2-2'}}</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</ng-template>
+
+<ng-template #selectionColTemplate let-row>
+    <p-checkbox binary="true" [(ngModel)]="row._selected" (onChange)="onSelectionChange(row)">
+    </p-checkbox>
+</ng-template>
+
+<ng-template #salesQuotationCodeTemplate let-row>
+    <span class="table-action-link" (click)="onClickEditDetails(row.SalesQuotationID)" style="cursor: pointer;">{{ row.SalesQuotationNo }}</span>
 </ng-template>
 
 <ng-template #container></ng-template>

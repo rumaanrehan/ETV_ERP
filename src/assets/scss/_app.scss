@@ -1,3 +1,14 @@
+// Remove bottom margin from paginator and dataview content
+.p-dataview-content {
+  margin-bottom: 0 !important;
+}
+.p-paginator-bottom {
+  margin-bottom: 0 !important;
+}
+// Override margin-block-start for .app-content globally
+.app-content {
+  margin-block-start: 0.7rem !important;
+}
 /*Main Sidebar Start*/
 .main-sidebar {
   padding-block-end: 1.875rem;
@@ -8,15 +19,19 @@
 /*Page Header Start*/
 .page-header-breadcrumb {
   z-index: 1;
-  padding: 0.1875rem 0.5rem;
+  padding: 0 0.5rem;
   background: var(--background-tertiary);
   position: sticky;
   top: 3.125rem;
   // box-shadow: 0 2px 5px rgba(40, 90, 185, .1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+ padding-bottom: 0.5rem;
 }
 
 .btn-page-header {
-  padding: 0.125rem 1rem;
+  padding: 0 1rem;
   gap: 0.25rem;
   text-wrap: nowrap;
 }
@@ -46,11 +61,11 @@
 
 /*Page Content Start*/
 .page-content {
-  padding: 0.75rem 0 0.75rem 0.75rem;
+  padding: 0 0 0.75rem 0.75rem;
 }
 
 .index-page-content {
-  padding: .75rem .75rem 0 .75rem;
+  padding: 0 0.75rem 0 0.75rem;
   background-color: var(--custom-white);
 }
 
@@ -86,9 +101,10 @@
 
 /* Footer Start*/
 app-footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 11;
+  width: 100%;
+  flex: 0 0 auto;
+  margin-top: auto;
+  z-index: 1000;
 }
 
 footer {
@@ -113,7 +129,7 @@ footer {
 }
 
 .swal2-container {
-  z-index: 1101;
+  z-index: 12000 !important;  //changed for alert to show above the app-form-dialog (reusable component)
 }
 
 .w-30rem {
@@ -194,6 +210,26 @@ span#password-capslock-tooltip {
 .p-element.ng-touched.ng-invalid .p-component,
 .p-element.ng-touched.ng-invalid>.p-radiobutton>.p-radiobutton-box {
   border-color: #e24c4c;
+}
+
+.invalid-field-highlight {
+  border-radius: 6px;
+  outline: 2px solid rgba(226, 76, 76, 0.65) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(226, 76, 76, 0.18);
+  animation: invalidFieldPulse 1s ease-in-out 3;
+}
+
+@keyframes invalidFieldPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(226, 76, 76, 0.12);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(226, 76, 76, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(226, 76, 76, 0);
+  }
 }
 
 /* End - Invalid Border & Validation Tooltip */
@@ -426,7 +462,7 @@ span.input-group-text .pi {
   color: #fff;
 }
 
-.input-group>:first-child {
+.input-group>:first-child:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: none;
@@ -479,7 +515,7 @@ span.input-group-text .pi {
 
 .btn {
   width: 100%;
-  border-radius: var(--default-radius-sm);
+  border-radius: 4px;
 }
 
 
@@ -765,7 +801,7 @@ span {
 // Dataview
 
 .p-dataview-content {
-  height: calc(100vh - 257px);
+  height: calc(100vh);
   overflow-y: scroll;
 }
 
@@ -819,7 +855,7 @@ span {
 }
 
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .app-content {
     min-height: calc(100vh - 7rem);
     margin-block-end: 0;
@@ -863,32 +899,9 @@ z-table .p-datatable-wrapper {
   font-size: 0.85rem;
 }
 
-.index-filter-panel {
-  background-color: var(--custom-white);
-  position: absolute;
-  right: 1rem;
-  top: 2rem;
-  z-index: 5;
-}
 
-.index-filter-panel .field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-  flex-grow: 1;
-}
 
-.index-filter-panel .field label {
-  width: 50%;
-}
 
-.index-sorting-panel {
-  background-color: var(--custom-white);
-  position: absolute;
-  right: 5rem;
-  top: 2rem;
-}
 
 .index-sorting-panel .field {
   display: flex;
@@ -937,9 +950,15 @@ z-select-button .p-selectbutton {
 .index-sorting-panel {
   background-color: var(--custom-white);
   position: absolute;
-  right: 5rem;
+  right: 1rem;
   top: 2rem;
-  z-index: 1;
+  z-index: 5;
+  width: 25rem;
+}
+
+.index-sorting-panel .btn,
+.index-filter-panel .btn {
+  width: auto;
 }
 
 .index-sorting-panel .field {
@@ -958,10 +977,40 @@ z-select-button .p-selectbutton {
 }
 
 .dataview-item {
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  border-radius: 0.75rem;
-  border: 1px solid var(--default-border);
+  background: #ffffff;
 
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 0.4rem;
+
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.045);
+
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+
+  &:hover {
+    background-color: #fafafa;
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  /* Remove Bootstrap layout weirdness */
+  .col-7 {
+    width: 100%;
+    max-width: 100%;
+    flex: 1;
+  }
+
+  .badge,
+  .badge.bg-outline-primary {
+    background: #f3f4f6;
+    color: #4b5563;
+
+    font-size: 0.68rem;
+    font-weight: 500;
+
+    padding: 0.2rem 0.45rem;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
 }
 
 .dataview-item-status {
@@ -979,7 +1028,7 @@ z-select-button .p-selectbutton {
   border-radius: 0.5rem;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .app-content {
     min-height: calc(100vh - 5.05rem);
     margin-block-end: 0;
@@ -1030,11 +1079,7 @@ z-menu .p-button-icon {
 }
 
 .dataview-action-menu.p-menu-overlay {
-  position: absolute;
-  top: unset !important;
-  left: unset !important;
-  margin-top: 1.5rem !important;
-  margin-left: -10rem;
+  margin-top: 0.25rem;
 }
 
 .p-selectbutton .p-button.p-highlight {
@@ -1050,13 +1095,32 @@ z-menu .p-button-icon {
 }
 
 .dataview-info-item span:first-child {
-  min-width: 115px;
-  /* adjust as needed */
+  color: #9ca3af;
+  font-weight: 400;
 }
 
 .dataview-info-item {
   display: flex;
-  gap: 1rem;
+  gap: 0.35rem;
+
+  font-size: 0.5rem;
+  line-height: 1.5;
+  color: #6b7280;
+  /* calm gray */
+}
+
+/* Bootstrap `fs-*` / `text-*` utilities override our styles */
+.dataview-info-item .fs-6 {
+  font-size: 0.78rem !important;
+}
+
+.dataview-info-item .text-secondary {
+  color: inherit !important;
+}
+
+.dataview-info-item span:last-child {
+  color: #374151;
+  font-weight: 400;
 }
 
 body.swal2-toast-shown .swal2-container {
@@ -1104,11 +1168,7 @@ z-menu .p-button-icon {
 }
 
 .dataview-action-menu.p-menu-overlay {
-  position: absolute;
-  top: unset !important;
-  left: unset !important;
-  margin-top: 1.5rem !important;
-  margin-left: -10rem;
+  margin-top: 0.25rem;
 }
 
 .p-button-primary.btn.btn-primary span {
@@ -1124,6 +1184,25 @@ div:where(.swal2-container) .swal2-html-container {
 
 .dataview-record-title {
   cursor: pointer;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+
+    &:hover h5 {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
+.dataview-record-title h5 {
+  font-size: 1rem;
+  font-weight: 500;
+  /* NOT bold */
+  color: #5e6f86 !important;
+  /* neutral slate (override .primary-color) */
+  margin-bottom: 0.35rem;
 }
 
 .index-action-bar {
@@ -1153,3 +1232,175 @@ div:where(.swal2-container) .swal2-html-container {
 .swal2-html-container ul {
   text-align: start;
 }
+
+@media (max-width: 767.98px) {
+  .btn,
+  .p-button {
+    font-size: 0.78rem !important;
+    padding: 0.3rem 0.55rem !important;
+    min-height: 1.9rem;
+  }
+
+  .btn-sm,
+  .btn-group-sm > .btn,
+  .p-button.p-button-sm {
+    font-size: 0.7rem !important;
+    padding: 0.2rem 0.45rem !important;
+    min-height: 1.65rem;
+  }
+
+  .btn-lg,
+  .btn-group-lg > .btn,
+  .p-button.p-button-lg {
+    font-size: 0.84rem !important;
+    padding: 0.38rem 0.7rem !important;
+    min-height: 2.1rem;
+  }
+
+  .btn i,
+  .btn .bi,
+  .btn .bx,
+  .btn .ti,
+  .p-button .p-button-icon {
+    font-size: 0.85em !important;
+  }
+
+  .p-button-icon-only,
+  .p-button.p-button-icon-only {
+    width: 1.9rem !important;
+    min-width: 1.9rem !important;
+    height: 1.9rem !important;
+    padding: 0 !important;
+  }
+}
+
+/* Shared create-page field styling (simple-form based pages) */
+.create-form {
+  --se-field-height: 36px;
+  --se-field-radius: 8px;
+  --se-field-width: 290.67px;
+}
+
+.create-form .simple-form .p-float-label > label {
+  display: none !important;
+}
+
+.create-form .simple-form .p-inputtext::placeholder,
+.create-form .simple-form .p-autocomplete-input::placeholder,
+.create-form .simple-form textarea::placeholder,
+.create-form .simple-form input::placeholder {
+  opacity: 1 !important;
+  color: var(--text-muted) !important;
+}
+
+.create-form .simple-form z-autocomplete,
+.create-form .simple-form z-datepicker,
+.create-form .simple-form z-textarea,
+.create-form .simple-form z-span,
+.create-form .simple-form z-select,
+.create-form .simple-form z-inputnumber,
+.create-form .simple-form z-inputtext,
+.create-form .simple-form z-file-upload {
+  display: block;
+  width: 100%;
+}
+
+.create-form .simple-form .input-group-addon {
+  height: var(--se-field-height);
+  border-radius: var(--se-field-radius);
+}
+
+.create-form .simple-form .customer-autocomplete .input-group {
+  position: relative;
+}
+
+.create-form .simple-form .customer-autocomplete .p-autocomplete-input,
+.create-form .simple-form .customer-autocomplete input.p-autocomplete-input {
+  padding-right: 2.25rem !important;
+}
+
+.create-form .simple-form .customer-autocomplete .input-group-addon {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  height: auto !important;
+  width: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  line-height: 1;
+}
+
+.create-form .simple-form .customer-autocomplete .input-group-addon i {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.create-form .simple-form .customer-autocomplete .input-group-addon:hover i {
+  color: var(--heading-text-color);
+}
+
+.create-form .simple-form .p-inputtext,
+.create-form .simple-form .p-dropdown,
+.create-form .simple-form .p-calendar .p-inputtext,
+.create-form .simple-form input {
+  height: var(--se-field-height);
+  border-radius: var(--se-field-radius);
+  border-color: var(--default-border);
+  background: var(--custom-white);
+  width: 100%;
+  box-shadow: none;
+  transition: none;
+  max-width: var(--se-field-width);
+}
+
+.create-form .simple-form .p-autocomplete,
+.create-form .simple-form .p-dropdown,
+.create-form .simple-form .p-calendar {
+  border-radius: var(--se-field-radius);
+  max-width: var(--se-field-width);
+}
+
+.create-form .simple-form z-autocomplete,
+.create-form .simple-form z-datepicker,
+.create-form .simple-form z-textarea,
+.create-form .simple-form z-span,
+.create-form .simple-form z-select,
+.create-form .simple-form z-inputnumber,
+.create-form .simple-form z-inputtext,
+.create-form .simple-form z-file-upload {
+  max-width: var(--se-field-width);
+}
+
+.create-form .simple-form textarea {
+  min-height: var(--se-field-height);
+  height: auto;
+  resize: none;
+  overflow: hidden;
+  padding: 0.45rem 0.75rem;
+  line-height: 1.25rem;
+  max-width: var(--se-field-width);
+}
+
+.create-form .simple-form .simple-static {
+  min-height: var(--se-field-height);
+  display: flex;
+  align-items: center;
+  padding-block: 0;
+  border-radius: var(--se-field-radius);
+  max-width: var(--se-field-width);
+}
+
+.create-form .simple-form .p-inputtext:enabled:focus,
+.create-form .simple-form .p-dropdown.p-focus,
+.create-form .simple-form .p-calendar .p-inputtext:enabled:focus,
+.create-form .simple-form textarea:focus,
+.create-form .simple-form input:focus {
+  border-color: rgb(var(--primary-rgb));
+  box-shadow: none;
+  outline: none;
+}
+

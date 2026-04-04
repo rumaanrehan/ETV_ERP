@@ -27,6 +27,7 @@ export class ZSelectComponent {
 
   @Input() multi: boolean = false;
   @Input() maxSelectionLimit: number | null = null;
+  @Input() appendTo: any = null;
 
   @Output() onChange = new EventEmitter<any>(); // Event emitter for value changes
 
@@ -37,11 +38,5 @@ export class ZSelectComponent {
 
   onValueChange(value: any): void {
     this.onChange.emit(value); // Emit the new value to the parent component
-  }
-
-  clearDropdown(dropdown: any): void {
-    if (dropdown && dropdown.clear) {
-      dropdown.clear();
-    }
   }
 }

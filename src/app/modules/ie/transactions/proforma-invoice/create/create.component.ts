@@ -99,6 +99,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.loadingPortAutoCompleteDef = this.pageService.getLoadingPortAutoCompleteDef(this.formConfig, this.form);
     this.dischargePortAutoCompleteDef = this.pageService.getDischargePortAutoCompleteDef(this.formConfig, this.form);
     this.tableDef = {
+      tableHeader: "Product List",
       columnDef: [
         { data: "", label: "S No", hideVisToggle: true, width: "5%", customTemplate: this.serialNoColTemplate },
         { data: "ProductName", hideVisToggle: true, label: "Product Name", width: "20%", customTemplate: this.productAutoCompleteColTemplate },
@@ -597,20 +598,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  // GetproductTaxableAmountFC(): number {
-  //   return this.productListArray.controls.reduce((sum, group) => {
-  //     const value = group.get('TaxableAmountFC')?.value || 0;
-  //     return sum + value;
-  //   }, 0);
-  // }
-
-  // GetproductTaxAmountFCSum(): number {
-  //   return this.productListArray.controls.reduce((sum, group) => {
-  //     const value = group.get('TaxAmountFC')?.value || 0;
-  //     return sum + value;
-  //   }, 0);
-  // }
-
   OnSubmit(): void {
     if (this.isSubmitted) return;
 
@@ -628,7 +615,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
 
       const rawData = this.formService.transformFormData(this.form.value);
-      const { ProformaInvoiceNo, ExportOrderNo, CustomerName, ProductList, LoadingPortName, DischargePortName, ...cleanModel } = rawData;
+      const { ProformaInvoiceNo, ExportOrderNo, CustomerName, LoadingPortName, DischargePortName, ...cleanModel } = rawData;
       const model: ProformaInvoice = { ...cleanModel };
 
       if (this.form.invalid) {

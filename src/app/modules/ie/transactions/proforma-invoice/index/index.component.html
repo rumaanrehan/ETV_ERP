@@ -1,48 +1,57 @@
-<!-- Page Header Action Button Template -->
+<!--Page Header Action Button Template-->
 <ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()">
-        <i class="pi pi-plus"></i>&nbsp;Add Proforma Invoice
-    </button>
-</ng-template>
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-primary btn-page-header btn-md shadow-sm btn-add-proforma-invoice" (click)="onClickPageHeaderAddButton()">
+            <i class="pi pi-plus"></i>&nbsp; Create</button>
 
-<!-- Index Table Component -->
-<div class="col-xl-12 index-page-content">
-    <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)">
-    </z-datatable>
-</div>
-
-<!-- Table Column Custom Template -->
-<ng-template #proformaInvoiceCodeTemplate let-row>
-    <span class="table-action-link" (click)="onClickEditDetails(row.ProformaInvoiceID)" style="cursor: pointer;">{{
-        row.ProformaInvoiceNo }}</span>
-</ng-template>
-
-<ng-template #proformaInvoiceDateTemplate let-row>
-    {{formatDate(row.ProformaInvoiceDate)}}
-</ng-template>
-
-<ng-template #subtotalAmountFCTemplate let-row>
-    <span>{{row.CurrencySymbol}} {{row.SubtotalAmountFC | number:'1.2-2' }}</span>
-</ng-template>
-
-<ng-template #taxAmountFCTemplate let-row>
-    <span>{{row.CurrencySymbol}} {{row.TaxAmountFC | number:'1.2-2' }}</span>
-</ng-template>
-
-<ng-template #netAmountFCTemplate let-row>
-    <span>{{row.CurrencySymbol}} {{row.NetAmountFC | number:'1.2-2' }}</span>
-</ng-template>
-
-<ng-template #proformaInvoiceStatusTemplate let-row>
-    <span class="table-row-status">
-        <i class="pi pi-circle-fill" [style.color]="row.StatusHex"></i>
-        {{ row.StatusText }}
-    </span>
-</ng-template>
-
-<ng-template #actionColTemplate let-row>
-    <div class="d-flex justify-content-end" *ngIf="row.StatusText == 'Draft'">
-        <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-            (click)="onClickDeleteReactivate(row)"><i class="pi pi-times-circle"></i></span>
+        <!-- VIEW SWITCHER -->
+        <div class="btn-group view-switcher-group" role="group">
+            <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'card'"
+                (click)="toggleView('card')">
+                <i class="pi pi-th-large"></i> Card
+            </button>
+            <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'table'"
+                (click)="toggleView('table')">
+                <i class="pi pi-list"></i> Table
+            </button>
+        </div>
     </div>
 </ng-template>
+
+<div class="col-xl-12 index-page-content">
+    @if (selectedProformaInvoices.length > 0) {
+    <div #selectionBar class="index-action-bar">
+        <div class="d-flex align-items-center gap-3">
+            <p-checkbox binary="true" [(ngModel)]="selectAll" (onChange)="toggleSelectAll($event)">
+            </p-checkbox>
+
+            <span class="text-muted">
+                <b>{{ selectedProformaInvoices.length }} selected</b>
+            </span>
+        </div>
+
+        <div class="col-6 index-action-bar-actions">
+            <!-- BULK ACTIONS -->
+            <button class="btn btn-primary bg-primary d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedProformaInvoices.length">
+                <i class="pi pi-check-circle"></i>
+                Approve
+            </button>
+
+            <button class="btn btn-danger  d-flex align-items-center gap-2 px-3 py-1 text-nowrap"
+                [disabled]="!selectedProformaInvoices.length">
+                <i class="pi pi-ban m-0"></i>
+                Cancel
+            </button>
+        </div>
+    </div>
+    }
+
+    @if (viewType() === 'card') {
+    <app-dataview [filterForm]="filterForm" [sortingForm]="sortingForm"
+        (selectionChange)="onSelectionChange($event)"></app-dataview>
+    } @else {
+    <app-gridview [filterForm]="filterForm" [sortingForm]="sortingForm"
+        (selectionChange)="onSelectionChange($event)"></app-gridview>
+    }
+</div>

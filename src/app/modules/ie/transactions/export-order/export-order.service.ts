@@ -1,14 +1,24 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { Environment } from '../../../../../environments/environment';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { AutoCompleteDef } from '../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete';
 import { TableDef } from '../../../../shared/components/z-table/z-table';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
 import { FormConfigType } from '../../../../shared/models/form.model';
 import { DataTableFilterList, DataTableFilterListRequest, StaticList, StaticListRequest } from '../../../../shared/models/select-list';
+import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
 import { SelectListService } from '../../../../shared/services/select-list.service';
+import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
+import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
+import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
+import { NonZero } from '../../../../shared/validators/non-zero.validator';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
 import { Currency_SelectList, CurrencyRequest } from '../../../admin/settings/currency-master/currency-master';
 import { CurrencyMasterService } from '../../../admin/settings/currency-master/currency-master.service';
@@ -24,18 +34,12 @@ import { Port_SelectList, PortRequest } from '../../settings/port-master/port-ma
 import { PortMasterService } from '../../settings/port-master/port-master.service';
 import { ExportOrderDocumentTemplate } from '../export-order-document/export-order-document';
 import { ExportOrderPaymentTemplate } from '../export-order-payment/export-payment';
+import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
 import { SalesQuotation_Detail, SalesQuotation_SelectList, SalesQuotationRequest } from '../sales-quotation/sales-quotation';
 import { SalesQuotationService } from '../sales-quotation/sales-quotation.service';
-import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulation, ExportOrderBillRegulationRequest, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
-import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
-import { ExportOrderShipping } from '../export-order-shipping/export-order-shipping';
-import { ExchangeRateResponse, GetExchangeRateRequest } from '../../../../shared/models/currency';
-import { CurrencyExchangeService } from '../../../../shared/services/currency-exchange.service';
-import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { noFractionValidator } from '../../../../shared/validators/no-fraction.validator';
-import { GreaterThanOrEqual } from '../../../../shared/validators/greater-than-equal-to.validator';
-import { LessThanOrEqual } from '../../../../shared/validators/less-than-equal-to.validator';
-import { NonZero } from '../../../../shared/validators/non-zero.validator';
+import { ExportOrder, ExportOrder_Detail, ExportOrder_IndexTableFilter, ExportOrder_IndexTableList, ExportOrder_IndexTableSort, ExportOrder_SelectList, ExportOrderBillRegulationRequest, ExportOrderBulkUpdateRequest, ExportOrderCancelRequest, ExportOrderDetail, ExportOrderDocumentList, ExportOrderPackingList, ExportOrderPackingList_Detail, ExportOrderPaymentList, ExportOrderRequest } from './export-order';
+import { EmployeeRegistration, EmployeeRegistration_SelectList, EmployeeRegistrationRequest } from '../../../admin/transactions/employee-registration/employee-registration';
+import { EmployeeRegistrationService } from '../../../admin/transactions/employee-registration/employee-registration.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,21 +51,25 @@ export class ExportOrderService {
     private apiService: ApiService,
     private salesQuotationService: SalesQuotationService,
     private companyMasterService: CompanyMasterService,
-    private currencyMasterService: CurrencyMasterService,
-    private productMasterService: ProductMasterService,
     private paymentTermMasterService: PaymentTermMasterService,
     private taxSlabMasterService: TaxSlabMasterService,
+    private currencyMasterService: CurrencyMasterService,
+    private productMasterService: ProductMasterService,
+    private employeeRegistrationService: EmployeeRegistrationService,
     private portService: PortMasterService,
     private selectListService: SelectListService,
-    private currencyExchangeService: CurrencyExchangeService
+    private currencyExchangeService: CurrencyExchangeService,
+    private http: HttpClient
   ) { }
 
   GetMasterDropdownLists(): Observable<{
+    employeeList: ApiListResponse<EmployeeRegistration_SelectList>;
     paymentTermList: ApiListResponse<PaymentTerm_SelectList>;
     taxSlabList: ApiListResponse<TaxSlab_SelectList>;
     currencyList: ApiListResponse<Currency_SelectList>;
   }> {
     return forkJoin({
+      employeeList: this.employeeRegistrationService.PopulateList({ PopulateType: 'SelectList' } as EmployeeRegistrationRequest),
       paymentTermList: this.paymentTermMasterService.PopulateList({ PopulateType: 'SelectList' } as PaymentTermRequest),
       taxSlabList: this.taxSlabMasterService.PopulateList({ PopulateType: 'SelectList' } as TaxSlabRequest),
       currencyList: this.currencyMasterService.PopulateList({ PopulateType: 'SelectList' } as CurrencyRequest)
@@ -86,6 +94,14 @@ export class ExportOrderService {
 
   GetSalesQuotationList(model: SalesQuotationRequest): Observable<ApiListResponse<SalesQuotation_SelectList>> {
     return this.salesQuotationService.PopulateList(model);
+  }
+
+  GeneratePdf(request: any) {
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintInvoice`, request, { responseType: 'blob' });
+  }
+
+  GeneratePackingListPdf(request: any) {
+    return this.http.post(`${Environment.apiBaseUrl}/${this.endpoint}/PrintPackingList`, request, { responseType: 'blob' });
   }
 
   GetPortList(model: PortRequest): Observable<ApiListResponse<Port_SelectList>> {
@@ -144,12 +160,28 @@ export class ExportOrderService {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateBillRegulation`, model);
   }
 
-  UpdateRecord(model: ExportOrder): Observable<ApiResponse> {
-    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
+  GetExportOrderProductDetails(exportOrderID: number): Observable<ApiDataResponse<ExportOrderPackingList_Detail>> {
+    return this.apiService.post<ApiDataResponse<ExportOrderPackingList_Detail>>(`${this.endpoint}/GetProductList?exportOrderID=${exportOrderID}`, {});
+  }
+
+  GetPackingListDetails(exportOrderPackingListID: number): Observable<ApiDataResponse<ExportOrderPackingList>> {
+    return this.apiService.post<ApiDataResponse<ExportOrderPackingList>>(`${this.endpoint}/GetPackingList?exportOrderPackingListID=${exportOrderPackingListID}`, {});
+  }
+
+  CreatePackingRecord(model: ExportOrderPackingList): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/CreatePackingList`, model);
+  }
+
+  UpdatePackingRecord(model: ExportOrderPackingList): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdatePackingList`, model);
   }
 
   CancelOrder(model: ExportOrderCancelRequest): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/Cancel`, model);
+  }
+
+  UploadPODocument(formData: FormData): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${Environment.apiBaseUrl}/${this.endpoint}/POUpload`, formData);
   }
 
   BulkChangeStatus(model: ExportOrderBulkUpdateRequest): Observable<ApiResponse> {
@@ -174,6 +206,10 @@ export class ExportOrderService {
 
   DeletePayment(model: ExportOrderPaymentList): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/DeletePayment`, model);
+  }
+
+  UpdateRecord(model: ExportOrder): Observable<ApiResponse> {
+    return this.apiService.post<ApiResponse>(`${this.endpoint}/Edit`, model);
   }
 
   getFormConfig_DataTableFilter(): FormConfigType<ExportOrder_IndexTableFilter> {
@@ -683,6 +719,201 @@ export class ExportOrderService {
     };
   }
 
+  getPackingListFormConfig(): FormConfigType<ExportOrderPackingList> {
+    return {
+      ExportOrderPackingListID: {
+        label: '',
+        defaultValue: null
+      },
+      ExportOrderPackingListNo: {
+        label: 'Packing List No',
+        defaultValue: "NEW"
+      },
+      ExportOrderID: {
+        label: 'Order No',
+        defaultValue: null
+      },
+      ExportOrderNo: {
+        label: 'Export Order No',
+        defaultValue: null
+      },
+      CustomerName: {
+        label: 'Company Name',
+        defaultValue: null
+      },
+      NoOfBox: {
+        label: 'Boxes',
+        defaultValue: null,
+        validators: [Validators.required, Validators.min(1)],
+        validationMessages: {
+          required: "Number of boxes is required.",
+          min: "Minimum 1 box is required."
+        }
+      },
+      PackingIdentityID: {
+        label: 'Packing Identity',
+        defaultValue: null,
+        validators: [Validators.required],
+        validationMessages: {
+          required: "Packing Identity is required."
+        },
+        type: 'control'
+      },
+      BoxList: {
+        type: 'array',
+        items: {
+          ExportOrderPackingListBoxID: {
+            label: '',
+            defaultValue: null
+          },
+          ExportOrderPackingListBoxNo: {
+            label: 'Box No',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1)],
+            validationMessages: {
+              required: "Number of boxes is required.",
+              min: "Minimum 1 box is required."
+            }
+          },
+          NoOfProduct: {
+            label: 'No of Products',
+            defaultValue: 1,
+            validators: [Validators.required, Validators.min(1)],
+            validationMessages: {
+              required: "Number of products is required.",
+              min: "Number of products must be greater than 0."
+            }
+          },
+          BoxLength: {
+            label: 'Length',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1)],
+            validationMessages: {
+              required: "Box length is required.",
+              min: "Box length must be greater than 0."
+            },
+            type: 'control'
+          },
+          BoxWidth: {
+            label: 'Width',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1)],
+            validationMessages: {
+              required: "Box width is required.",
+              min: "Box width must be greater than 0."
+            },
+            type: 'control'
+          },
+          BoxHeight: {
+            label: 'Height',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1)],
+            validationMessages: {
+              required: "Box height is required.",
+              min: "Box Height must be greater than 0."
+            },
+            type: 'control'
+          },
+          BoxWeight: {
+            label: 'Weight (Kg)',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1)],
+            validationMessages: {
+              required: "Box weight is required.",
+              min: "Box Weight must be greater than 0."
+            },
+            type: 'control'
+          },
+          BoxGrossWeight: {
+            label: 'Gross Weight (Kg)',
+            defaultValue: null,
+            validators: [Validators.required, Validators.min(1)],
+            validationMessages: {
+              required: "Gross Weight is required.",
+              min: "Gross Weight must be greater than 0."
+            },
+            type: 'control'
+          },
+          PackedBy: {
+            label: 'Packed By',
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Packed By is required."
+            },
+            type: 'control'
+          },
+          PackedDateTime: {
+            label: 'Packed On',
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Please select Packed On date."
+            },
+            type: 'control'
+          },
+          InspectedBy: {
+            label: 'Inspected By',
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Inspected By is required."
+            },
+            type: 'control'
+          },
+          InspectedDateTime: {
+            label: 'Inspected On',
+            defaultValue: null,
+            validators: [Validators.required],
+            validationMessages: {
+              required: "Please select Inspected On date."
+            },
+            type: 'control'
+          },
+          ProductList: {
+            type: 'array',
+            items: {
+              ProductID: {
+                label: '',
+                defaultValue: null,
+              },
+              ProductName: {
+                label: '',
+                defaultValue: null,
+                validators: [Validators.required],
+                validationMessages: {
+                  required: "Product Name is required"
+                },
+                type: 'control'
+              },
+              PackedQty: {
+                label: '',
+                defaultValue: null,
+                validators: [Validators.required, Validators.min(1), Validators.max(99999), noFractionValidator()],
+                validationMessages: {
+                  required: "Packed Qty is required.",
+                  min: "Packed Qty must be at least 1.",
+                  max: "Packed Qty cannot exceed 99999.",
+                  noFraction: "Packed quantity cannot have fractions."
+                },
+                type: 'control'
+              },
+              WeightPerUnit: {
+                label: '',
+                defaultValue: null,
+                validators: [Validators.required],
+                validationMessages: {
+                  required: "Weight Per Unit is required"
+                },
+                type: 'control'
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   getSalesQuotationAutoCompleteDef(formConfig: FormConfigType<ExportOrder>, form: FormGroup): AutoCompleteDef<SalesQuotation_SelectList> {
     return {
       type: 'formControl',
@@ -695,6 +926,23 @@ export class ExportOrderService {
       optionLabel: 'SalesQuotationNo',
       columns: [
         { data: 'SalesQuotationNo', label: 'Sales Quotation No', width: '200px' },
+        { data: 'CustomerName', label: 'Customer Name', width: '200px' }
+      ],
+    }
+  }
+
+  getPackingListExportOrderAutoCompleteDef(formConfig: FormConfigType<ExportOrderPackingList>, form: FormGroup): AutoCompleteDef<ExportOrder_SelectList> {
+    return {
+      type: 'formControl',
+      group: form,
+      control: 'ExportOrderNo',
+      label: formConfig.ExportOrderNo.label,
+      validationMessage: formConfig.ExportOrderNo.error,
+      placeholder: 'Search Export Order',
+      options: [],
+      optionLabel: 'ExportOrderNo',
+      columns: [
+        { data: 'ExportOrderNo', label: 'Export Order No', width: '200px' },
         { data: 'CustomerName', label: 'Customer Name', width: '200px' }
       ],
     }

@@ -96,7 +96,7 @@
                   <z-inputtext [group]="form" control="EmployeeCity" [label]="formConfig.EmployeeCity.label"
                     [validationMessage]="formConfig.EmployeeCity.error"></z-inputtext>
                 </div>
-                <div class="col-xl-3 form-group">
+                <div class="col-xl-3 form-group" *ngIf="stateList != null">
                   <z-select [group]="form" [control]="'EmployeeStateID'" [label]="formConfig.EmployeeStateID.label"
                     [validationMessage]="formConfig.EmployeeStateID.error" [options]="stateList"
                     [optionLabel]="'StateName'" [optionValue]="'StateID'">

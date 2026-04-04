@@ -1,6 +1,6 @@
-<div style="height: calc(100vh - 122px);">
-  <p-table #dt [styleClass]="'p-paginator-striped'" [tableStyleClass]="'table index-table'" [value]="tableDef.data"
-    [totalRecords]="tableDef.totalRecords" [rows]="25" [showCurrentPageReport]="true"
+<div class="z-datatable-viewport">
+  <p-table #dt [styleClass]="'p-paginator-striped z-datatable-root'" [tableStyleClass]="'index-table zdt-table'"
+    [value]="tableDef.data" [totalRecords]="tableDef.totalRecords" [rows]="25" [showCurrentPageReport]="true"
     [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'" [scrollable]="true"
     [scrollHeight]="'flex'" [(selection)]="selectedRow" [selectionMode]="'multiple'" [stateStorage]="'session'"
     [stateKey]="tableStateKey" [paginator]="true" [showJumpToPageInput]="true" [rowsPerPageOptions]="[25, 50, 100, 200]"
@@ -9,12 +9,103 @@
     [sortOrder]="tableDef.defaultSortColumn.sortOrder">
     <ng-template pTemplate="caption">
       <div class="index-table-action-bar">
-        <div class="d-flex justify-content-end">
-          <span><i class="pi pi-refresh refresh-filter" (click)="refreshData();" title="Filter"></i></span>
-          <span><i class="pi pi-filter filter-toggle" (click)="toggleFilterPanel();"
-              [ngClass]="{'active-toggle': showFilterPanel}" title="Filter"></i></span>
-          <span><i class="pi pi-sliders-h column-visibility-toggle" (click)="columnMenu.toggle($event)"
-              [ngClass]="{'active-toggle': columnMenu.overlayVisible}"></i></span>
+
+        <div class="zdt-toolbar">
+          <!-- Sorting Wrapper -->
+          <div class="action-item-wrapper">
+            <span class="refresh-filter" (click)="toggleSortPanel();" [ngClass]="{'active-toggle': isSortPanelVisible}"
+              title="Sorting">
+              <span class="sort-icon" aria-hidden="true"></span>
+              <span class="sort-label">Sort</span>
+            </span>
+            <ng-container *ngIf="tableDef.sortingForm && isSortPanelVisible">
+              <div #sortingPanel class="index-sorting-panel card" [formGroup]="tableDef.sortingForm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6>Sorting</h6>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-primary" [type]="'button'" (click)="resetForm(tableDef.sortingForm)">Clear
+                    </button>
+                    <button class="btn btn-primary" [type]="'button'" (click)="onClickApplySorting()">Apply
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div *ngFor="let field of tableDef.sortFields" class="field">
+                    <label>
+                      {{ field.label }}
+                    </label>
+                    <div>
+                      <z-select-button [group]="tableDef.sortingForm" [control]="field.field" [allowEmpty]="true">
+                        {{ getAscLabel(field.field)}}
+                      </z-select-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="action-item-wrapper">
+            <span class="refresh-filter" (click)="refreshData();" title="Refresh">
+              <span class="refresh-icon" aria-hidden="true"></span>
+              <span class="refresh-label">Refresh</span>
+            </span>
+          </div>
+
+          <!-- Filter Wrapper -->
+          <div class="action-item-wrapper">
+            <span class="filter-toggle" (click)="toggleFilterPanel();" [ngClass]="{'active-toggle': showFilterPanel}"
+              title="Filter">
+              <span class="filter-icon" aria-hidden="true"></span>
+              <span class="filter-label">Filter</span>
+            </span>
+            <ng-container *ngIf="tableDef.filterForm && showFilterPanel">
+              <div #filterPanel class="index-filter-panel card" [formGroup]="tableDef.filterForm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6>Filter</h6>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-primary" [type]="'button'" (click)="resetForm(tableDef.filterForm)">Clear
+                    </button>
+                    <button class="btn btn-primary" [type]="'button'" (click)="onClickApplyFilter()">Apply
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div *ngFor="let field of tableDef.filterFields" class="field">
+                    <!-- <label>{{field.label}}</label> -->
+                    <z-inputtext *ngIf="field.type === 'text'" [group]="tableDef.filterForm" [control]="field.field"
+                      [label]="field.label">
+                    </z-inputtext>
+
+                    <z-inputnumber *ngIf="field.type === 'number'" [group]="tableDef.filterForm" [control]="field.field"
+                      [label]="field.label">
+                    </z-inputnumber>
+
+                    <z-datepicker *ngIf="field.type === 'date'" [group]="tableDef.filterForm" [control]="field.field"
+                      [label]="field.label">
+                    </z-datepicker>
+
+                    <z-select *ngIf="field.type === 'dropdown'" [group]="tableDef.filterForm" [control]="field.field"
+                      [label]="field.label" [options]="field.options ?? []" [showClear]="false" [optionLabel]="'Text'"
+                      [optionValue]="'Value'" [appendTo]="'body'">
+                    </z-select>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="action-item-wrapper">
+            <span class="column-visibility-toggle" (click)="columnMenu.toggle($event)"
+              [ngClass]="{'active-toggle': columnMenu.overlayVisible}">
+              <span class="columns-icon" aria-hidden="true"></span>
+              <span class="columns-label">Columns</span>
+            </span>
+          </div>
           <p-overlayPanel #columnMenu>
             <div class="column-toggle-panel">
               <ng-container *ngFor="let col of tableHeaderDef">
@@ -31,36 +122,14 @@
     </ng-template>
     <ng-template pTemplate="header">
       <!-- colgroup pending hai-->
-      <ng-container *ngIf="tableDef.filterForm">
-        <tr *ngIf="showFilterPanel" [formGroup]="tableDef.filterForm" class="filter-panel">
-          <ng-container *ngFor="let col of tableDef.columnDef">
-            <th *ngIf="col.visible !== false" [class]="col.cssClass" [style.width]="col.width">
-              <p-columnFilter *ngIf="col.filterable == true" [showMenu]="false" [showClearButton]="false"
-                [matchMode]="'equals'" field="{{ col.filterKey ?? col.data }}" [type]="'text'">
-                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                  <ng-container *ngIf="col.filterType === 'select'">
-                    <z-select [group]="tableDef.filterForm" [control]="col.filterKey" [label]="col.label ?? ''"
-                      [options]="col.filterSelectList ?? []" [optionLabel]="'Text'" [optionValue]="'Value'"
-                      (onChange)="filter($event)" [showClear]="false">
-                    </z-select>
-                  </ng-container>
-                  <ng-container *ngIf="col.filterType === 'text' || !col.filterType">
-                    <z-inputtext [group]="tableDef.filterForm" [control]="col.data" [label]="col.label ?? ''"
-                      (change)="filter(tableDef.filterForm.get(col.data)?.value)"></z-inputtext>
-                  </ng-container>
-                </ng-template>
-              </p-columnFilter>
-            </th>
-          </ng-container>
-        </tr>
-      </ng-container>
       <tr>
         <ng-container *ngFor="let col of tableHeaderDef">
-          <th *ngIf="col.visible !== false" [pSortableColumn]="col.orderable !== false ? col.data : ''"
+          <th *ngIf="col.visible !== false"
+            [pSortableColumn]="(col.orderable !== false && !tableDef.sortingForm) ? col.data : ''"
             [attr.colspan]="col.colSpan" [attr.rowspan]="col.hasSubHeader === true ? 1 : 2"
             [attr.class]="col.cssClass + (col.hasSubHeader === true ? ' text-center' : '')">
             {{ col.label }}
-            <p-sortIcon *ngIf="col.orderable !== false" field="{{ col.data }}"></p-sortIcon>
+            <p-sortIcon *ngIf="col.orderable !== false && !tableDef.sortingForm" field="{{ col.data }}"></p-sortIcon>
           </th>
         </ng-container>
       </tr>
@@ -74,16 +143,23 @@
         </ng-container>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-rowData>
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
       <tr [pSelectableRow]="rowData">
         <ng-container *ngFor="let col of tableDef.columnDef">
           <td *ngIf="col.visible !== false" class="{{col.cssClass}}">
             <ng-container *ngIf="col.customTemplate; else defaultTemplate">
-              <ng-container *ngTemplateOutlet="col.customTemplate; context: { $implicit: rowData }"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="col.customTemplate; context: { $implicit: rowData, rowIndex: rowIndex }"></ng-container>
             </ng-container>
             <ng-template #defaultTemplate>
               <!-- {{ rowData[col.data] | titlecase }} -->
-              {{ rowData[col.data] }}
+              <ng-container
+                *ngIf="col.label === 'S No' || col.label === 'S.No' || col.label === 'S.No.' || col.label === 'SN'; else stringCell">
+                {{ rowIndex + 1 }}
+              </ng-container>
+              <ng-template #stringCell>
+                {{ formatCellValue(col, rowData) }}
+              </ng-template>
               <!-- <span *ngIf="typeof rowData[col.data] === 'string'; else nonString">
                   {{ rowData[col.data] | titlecase }}
                 </span>
@@ -93,6 +169,13 @@
             </ng-template>
           </td>
         </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="zdt-empty" [attr.colspan]="visibleColumnCount">
+          No records found.
+        </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="footer">

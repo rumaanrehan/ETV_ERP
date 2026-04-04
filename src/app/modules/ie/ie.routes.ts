@@ -37,7 +37,7 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: 'index',
-                loadComponent: () => import('./transactions/sales-enquiry/dataview/dataview.component').then((m) => m.DataviewComponent),
+                loadComponent: () => import('./transactions/sales-enquiry/index/index.component').then((m) => m.SalesEnquiryIndexComponent),
                 data: {
                   permission: 'CanRead',
                   menu: 'IE/SalesEnquiry',
@@ -72,7 +72,7 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: 'index',
-                loadComponent: () => import('./transactions/sales-quotation/dataview/dataview.component').then((m) => m.DataviewComponent),
+                loadComponent: () => import('./transactions/sales-quotation/index/index.component').then((m) => m.SalesQuotationIndexComponent),
                 data: {
                   permission: 'CanRead',
                   menu: 'IE/SalesQuotation',
@@ -160,7 +160,7 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: 'index',
-                loadComponent: () => import('./transactions/export-order/dataview/dataview.component').then((m) => m.DataviewComponent),
+                loadComponent: () => import('./transactions/export-order/index/index.component').then((m) => m.ExportOrderIndexComponent),
                 data: {
                   permission: 'CanRead',
                   menu: 'IE/ExportOrder'
@@ -237,6 +237,23 @@ export const ieRoute: Routes = [
               //     breadcrumb: 'Create'
               //   }
               // }
+            ]
+          },
+          {
+            path: 'packing-list',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Packing List'
+            },
+            children: [
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/packing-list/packing-list.component').then((m) => m.PackingListComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/PackingList',
+                }
+              },
             ]
           },
           {
@@ -326,7 +343,51 @@ export const ieRoute: Routes = [
                 }
               }
             ]
-          }
+          },
+          {
+            path: 'purchase-requisition',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'purchase requisition'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/purchase-requisition/dataview/dataview.component').then((m) => m.DataviewComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/PurchaseRequisition',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/purchase-requisition/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/PurchaseRequisition',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/purchase-requisition/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/PurchaseRequisition',
+                  breadcrumb: 'Edit'
+                }
+              },
+              {
+                path: 'from-export/:exportOrderID',
+                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/ProformaInvoice',
+                  breadcrumb: 'Create'
+                }
+              }
+            ]
+          },
         ]
       },
 

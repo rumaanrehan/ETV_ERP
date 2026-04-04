@@ -2,6 +2,7 @@ import { TemplateRef } from "@angular/core";
 
 export interface TableDef<T> {
   columnDef: TableColumnDef[];
+  tableHeader?: string;
   data: T[];
 }
 
@@ -24,4 +25,5 @@ export interface TableHeaderColDef {
     visible?: boolean;
     hideVisToggle?: boolean;
     cssClass?: string;
+    columnIndexes?: number[];
 }

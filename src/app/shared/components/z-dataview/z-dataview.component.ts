@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { DataViewLazyLoadEvent, DataViewModule } from 'primeng/dataview';
+import { DataViewLazyLoadEvent, DataViewModule, DataViewPageEvent } from 'primeng/dataview';
 import { SelectButtonModule } from "primeng/selectbutton";
 import { Subject, takeUntil } from 'rxjs';
 import { ApiListResponse } from '../../models/api-response';
@@ -39,6 +39,9 @@ export class ZDataviewComponent<T> {
   isFilterPanelVisible: boolean = false;
   isSortPanelVisible: boolean = false;
   dataViewLazyLoadEvent!: DataViewLazyLoadEvent;
+  first = 0;
+  rows = 25;
+  readonly rowsPerPageOptions = [25, 50, 100, 200];
 
   constructor(
     private dataviewService: ZDataviewService,
@@ -48,6 +51,7 @@ export class ZDataviewComponent<T> {
   ngOnInit() {
     this.tableStateKey = `ZDataTable_${this.dataViewDef.tableKey}`;
     this.tableName = this.dataViewDef.tableKey.split('_');
+    this.restorePaginatorState();
 
     this.dataViewDef.filterFields
       ?.filter(f => f.type === 'dropdown')
@@ -71,21 +75,28 @@ export class ZDataviewComponent<T> {
     return field.includes('Date') ? 'Newest first' : 'Z to A';
   }
 
-  // @HostListener('document:click', ['$event'])
-  // onDocumentClick(event: MouseEvent): void {
-  //   if (
-  //     this.isSortPanelVisible &&
-  //     this.sortingPanel &&
-  //     !this.sortingPanel.nativeElement.contains(event.target)
-  //   ) {
-  //     this.isSortPanelVisible = false;
-  //   }
-  // }
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const isClickInsideSort = this.sortingPanel?.nativeElement.contains(target);
+    const isClickInsideFilter = this.filterPanel?.nativeElement.contains(target);
+    const isClickOnToggle = target.closest('.refresh-filter') || target.closest('.filter-toggle');
+    const isClickInsideOverlay = target.closest('.p-dropdown-panel') || target.closest('.p-multiselect-panel') || target.closest('.p-datepicker') || target.closest('.p-overlay');
+
+    if (!isClickInsideSort && !isClickInsideFilter && !isClickOnToggle && !isClickInsideOverlay) {
+      this.isSortPanelVisible = false;
+      this.isFilterPanelVisible = false;
+    }
+  }
 
   loadData(event: DataViewLazyLoadEvent) {
+    this.first = event.first ?? this.first;
+    this.rows = event.rows ?? this.rows;
+    this.persistPaginatorState();
+
     this.dataViewLazyLoadEvent = {
-      first: (event.first ?? 0) + 1,
-      rows: (event.first ?? 0) + (event.rows ?? 25),
+      first: this.first + 1,
+      rows: this.first + this.rows,
       sortField: event.sortField,
       sortOrder: event.sortOrder,
     };
@@ -124,6 +135,15 @@ export class ZDataviewComponent<T> {
   }
 
   refreshData() {
+    if (!this.dataViewLazyLoadEvent) {
+      this.dataViewLazyLoadEvent = {
+        first: this.first + 1,
+        rows: this.first + this.rows,
+        sortField: null,
+        sortOrder: null
+      } as any;
+    }
+    this.dataViewDef.loading = true;
     setTimeout(() => {
       this.lazyLoad.emit(this.dataViewLazyLoadEvent);
     }, 1);
@@ -177,5 +197,39 @@ export class ZDataviewComponent<T> {
   resetForm(formGroup: FormGroup) {
     this.isSortPanelVisible = false;
     this.resetFormEmitter.emit(formGroup);
+  }
+
+  onPage(event: DataViewPageEvent): void {
+    this.first = event.first ?? 0;
+    this.rows = event.rows ?? this.rows;
+    this.persistPaginatorState();
+  }
+
+  private get paginatorStateKey(): string {
+    return `${this.tableStateKey}_PaginatorState`;
+  }
+
+  private restorePaginatorState(): void {
+    const rawState = sessionStorage.getItem(this.paginatorStateKey);
+    if (!rawState) {
+      return;
+    }
+
+    try {
+      const state = JSON.parse(rawState) as { first?: number; rows?: number };
+      if (typeof state.first === 'number' && state.first >= 0) {
+        this.first = state.first;
+      }
+      if (typeof state.rows === 'number' && state.rows > 0) {
+        this.rows = state.rows;
+      }
+    } catch {
+      // Ignore malformed session state and use defaults.
+    }
+  }
+
+  private persistPaginatorState(): void {
+    const state = { first: this.first, rows: this.rows };
+    sessionStorage.setItem(this.paginatorStateKey, JSON.stringify(state));
   }
 }

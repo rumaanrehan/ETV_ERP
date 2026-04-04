@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, HostListener, OnDestroy, OnInit, effect } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, effect } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { SidebarModule } from 'primeng/sidebar';
 import { Subject, Subscription, filter, fromEvent, takeUntil } from 'rxjs';
 import { BreadcrumbTrail, Menu } from '../../../core/models/menu';
 import { MenuService } from '../../../core/services/menu.service';
+import { RequestContextService } from '../../../core/services/request-context.service';
+import { UserService } from '../../../core/services/user.service';
 import { UserStateService } from '../../../core/services/user-state.service';
 import { PageHeaderService } from '../../services/page-header.service';
+import { AlertNotificationService } from '../../services/alert-notification.service';
 import { checkHoriMenu } from './app-sidebar';
 
 @Component({
@@ -22,6 +25,8 @@ export class AppSidebarComponent {
   public windowSubscribe$!: Subscription;
   options = { autoHide: false, scrollbarMinSize: 100 };
 
+  isProfileActionsOpen = false;
+
   currentPath: string = '';
   hasParent = false;
   hasParentLevel = 0;
@@ -30,6 +35,7 @@ export class AppSidebarComponent {
 
   // Addding sticky-pin
   scrolled = false;
+  isDarkMode = localStorage.getItem('ynexdarktheme') === 'dark';
 
   get menuItems() {
     return this.menuService.menu();
@@ -41,10 +47,15 @@ export class AppSidebarComponent {
 
   constructor(
     private pageHeaderService: PageHeaderService,
+    private alertService: AlertNotificationService,
+    private userService: UserService,
     private userStateService: UserStateService,
+    private requestContextService: RequestContextService,
     private menuService: MenuService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    public elementRef: ElementRef,
+    public renderer: Renderer2,
   ) {
     effect(() => {
       const menuData = this.menuItems; // 👈 This accesses the signal, making it reactive!
@@ -142,6 +153,130 @@ export class AppSidebarComponent {
     this.setNavActive(null, url);
   }
 
+  toggleProfileActions() {
+    this.isProfileActionsOpen = !this.isProfileActionsOpen;
+  }
+
+  togglesidebar() {
+    let html = this.elementRef.nativeElement.ownerDocument.documentElement;
+
+    if (window.innerWidth < 768) {
+      html?.setAttribute('data-toggled', html?.getAttribute('data-toggled') === 'open' ? 'close' : 'open');
+      return;
+    }
+
+    if (localStorage.getItem('data-toggled') == 'true') {
+      document.querySelector('html')?.getAttribute('data-toggled') == 'icon-overlay-close';
+    } else if (html?.getAttribute('data-vertical-style') == 'overlay') {
+      document.querySelector('html')?.getAttribute('data-toggled') != null
+        ? document.querySelector('html')?.removeAttribute('data-toggled')
+        : document.querySelector('html')?.setAttribute('data-toggled', 'icon-overlay-close');
+    } else if (localStorage.getItem('ynexverticalstyles') == 'closed') {
+      html?.setAttribute(
+        'data-toggled',
+        html?.getAttribute('data-toggled') == 'close-menu-close' ? '' : 'close-menu-close'
+      );
+    } else if (localStorage.getItem('ynexverticalstyles') == 'icontext') {
+      html?.setAttribute(
+        'data-toggled',
+        html?.getAttribute('data-toggled') == 'icon-text-close' ? '' : 'icon-text-close'
+      );
+    } else if (localStorage.getItem('ynexverticalstyles') == 'detached') {
+      html?.setAttribute(
+        'data-toggled',
+        html?.getAttribute('data-toggled') == 'detached-close' ? '' : 'detached-close'
+      );
+    } else if (localStorage.getItem('ynexverticalstyles') == 'doublemenu') {
+      html?.setAttribute(
+        'data-toggled',
+        html?.getAttribute('data-toggled') == 'double-menu-close' &&
+          document.querySelector('.slide.open')?.classList.contains('has-sub')
+          ? 'double-menu-open'
+          : 'double-menu-close'
+      );
+    } else if (localStorage.getItem('ynexnavstyles') == 'menu-click') {
+      html?.setAttribute(
+        'data-toggled',
+        html?.getAttribute('data-toggled') == 'menu-click-closed' ? '' : 'menu-click-closed'
+      );
+    } else if (localStorage.getItem('ynexnavstyles') == 'menu-hover') {
+      html?.setAttribute(
+        'data-toggled',
+        html?.getAttribute('data-toggled') == 'menu-hover-closed' ? '' : 'menu-hover-closed'
+      );
+    } else if (localStorage.getItem('ynexnavstyles') == 'icon-click') {
+      html?.setAttribute(
+        'data-toggled',
+        html?.getAttribute('data-toggled') == 'icon-click-closed' ? '' : 'icon-click-closed'
+      );
+    } else if (localStorage.getItem('ynexnavstyles') == 'icon-hover') {
+      html?.setAttribute(
+        'data-toggled',
+        html?.getAttribute('data-toggled') == 'icon-hover-closed' ? '' : 'icon-hover-closed'
+      );
+    }
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    const mode = this.isDarkMode ? 'dark' : 'light';
+    const htmlElement = this.elementRef.nativeElement.ownerDocument.documentElement;
+    this.renderer.setAttribute(htmlElement, 'data-theme-mode', mode);
+    this.renderer.setAttribute(htmlElement, 'data-header-styles', mode);
+    this.renderer.setAttribute(htmlElement, 'data-menu-styles', mode);
+    localStorage.setItem('ynexdarktheme', mode);
+    localStorage.setItem('ynexHeader', mode);
+    localStorage.setItem('ynexMenu', mode);
+  }
+
+  themeChange(type: string, type1: string) {
+    const htmlElement = this.elementRef.nativeElement.ownerDocument.documentElement;
+    this.renderer.setAttribute(htmlElement, 'data-header-styles', type);
+    localStorage.setItem('ynexHeader', type);
+    this.renderer.setAttribute(htmlElement, 'data-menu-styles', type1);
+    localStorage.setItem('ynexMenu', type1);
+    this.renderer.setAttribute(htmlElement, 'data-theme-mode', type1);
+    localStorage.setItem('ynexdarktheme', type1);
+
+    if (localStorage.getItem('ynexHeader') == 'light') {
+      this.elementRef.nativeElement.ownerDocument.documentElement?.removeAttribute('style');
+    }
+
+    if (localStorage.getItem('ynexdarktheme') == 'light') {
+      this.elementRef.nativeElement.ownerDocument.documentElement?.removeAttribute('style');
+      localStorage.removeItem('bodyBgRGB');
+      localStorage.removeItem('bodylightRGB');
+    }
+  }
+
+  logout() {
+    try {
+      this.alertService.showConfirmation({
+        text: `Do you really want to Logout?`,
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.userService.Logout()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                if (response.IsSuccess) {
+                  this.userStateService.clearUser();
+                  this.requestContextService.ClearTokens();
+                  this.router.navigate(['/login']);
+                }
+                else {
+                  this.alertService.showServerResponseAlert(response);
+                }
+              },
+            });
+        }
+      });
+    }
+    catch (error) {
+
+    }
+  }
+
   private createBreadcrumbs(route: ActivatedRoute, path: string = '', breadcrumbs: BreadcrumbTrail[] = []): BreadcrumbTrail[] {
     if (route.routeConfig?.data?.['breadcrumb']) {
       // Get breadcrumb label
@@ -174,6 +309,15 @@ export class AppSidebarComponent {
   }
 
   // Start of Set menu Active event
+  onMenuLinkClick(event: MouseEvent, currentPath: string) {
+    this.setNavActive(event, currentPath);
+
+    if (window.innerWidth <= 768) {
+      const html = this.elementRef.nativeElement.ownerDocument.documentElement;
+      html?.setAttribute('data-toggled', 'close');
+    }
+  }
+
   setNavActive(event: any, currentPath: string, menuData = this.menuItems) {
     if (event && event?.ctrlKey) {
       return;

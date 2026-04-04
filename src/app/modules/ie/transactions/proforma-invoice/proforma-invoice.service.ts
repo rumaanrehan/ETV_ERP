@@ -5,6 +5,7 @@ import { Observable, forkJoin } from "rxjs";
 import { Environment } from "../../../../../environments/environment";
 import { ApiService } from "../../../../core/services/api.service";
 import { DataTableParams } from "../../../../shared/components/z-datatable/z-datatable";
+import { DataViewDef } from "../../../../shared/components/z-dataview/z-dataview";
 import { AutoCompleteDef } from "../../../../shared/components/z-form-controls/z-autocomplete/z-autocomplete";
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from "../../../../shared/models/api-response";
 import { GetExchangeRateRequest, ExchangeRateResponse } from "../../../../shared/models/currency";
@@ -32,7 +33,7 @@ import { PortRequest, Port_SelectList } from "../../settings/port-master/port-ma
 import { PortMasterService } from "../../settings/port-master/port-master.service";
 import { ExportOrderRequest, ExportOrder_SelectList, ExportOrder_Detail } from "../export-order/export-order";
 import { ExportOrderService } from "../export-order/export-order.service";
-import { ProformaInvoiceRequest, ProformaInvoice_SelectList, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_Detail, ProformaInvoice, ProformaInvoiceDetail } from "./proforma-invoice";
+import { ProformaInvoiceRequest, ProformaInvoice_SelectList, ProformaInvoice_IndexTableFilter, ProformaInvoice_IndexTableList, ProformaInvoice_Detail, ProformaInvoice, ProformaInvoiceDetail, ProformaInvoice_IndexTableSort } from "./proforma-invoice";
 
 @Injectable({
   providedIn: 'root'
@@ -130,6 +131,19 @@ export class ProformaInvoiceService {
       ExportOrderNo: '',
       CustomerName: '',
       StatusID: 0
+    }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<ProformaInvoice_IndexTableSort> {
+    return {
+      ProformaInvoiceNo: {
+        label: 'Proforma Invoice No',
+        defaultValue: -1
+      },
+      ProformaInvoiceDate: {
+        label: 'Invoice Date',
+        defaultValue: 0
+      }
     }
   }
 
@@ -640,5 +654,28 @@ export class ProformaInvoiceService {
         { data: 'ProductName', label: 'Product Name', width: '200px' }
       ],
     }
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<ProformaInvoice_IndexTableList> {
+    return {
+      tableKey: 'IE_ProformaInvoice_IndexDataView',
+      defaultSortColumn: { sortField: 'ProformaInvoiceNo', sortOrder: 1 },
+      filterForm: filterForm,
+      sortingForm: sortingForm,
+      filterFields: [
+        { field: 'ProformaInvoiceNo', label: 'Proforma Invoice No', type: 'text' },
+        { field: 'BasedOn', label: 'Based On', type: 'dropdown' },
+        { field: 'ExportOrderNo', label: 'Export Order No', type: 'text' },
+        { field: 'CustomerName', label: 'Customer Name', type: 'text' },
+        { field: 'StatusID', label: 'Status', type: 'dropdown' }
+      ],
+      sortFields: [
+        { field: 'ProformaInvoiceNo', label: 'Proforma Invoice No', enabled: true, order: 1 },
+        { field: 'ProformaInvoiceDate', label: 'Invoice Date', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
   }
 }

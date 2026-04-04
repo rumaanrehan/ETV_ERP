@@ -1,17 +1,17 @@
 // @import "primary-color";
 
 :root {
-	--body-bg-rgb: 240, 241, 247;
+	--body-bg-rgb: 249, 250, 251; /* Grey 50 (#F9FAFB) */
 	/* Default 248, 248, 248*/
-	--primary-rgb: 0, 120, 212;
+	--primary-rgb: 37, 99, 235; /* Primary Blue (#2563EB) */
 	/* Default 132, 90, 223 0, 120, 212, 85, 88, 121*/
-	--secondary-rgb: 35, 183, 229;
-	--warning-rgb: 245, 184, 73;
-	--info-rgb: 73, 182, 245;
-	--success-rgb: 38, 191, 148;
-	--danger-rgb: 230, 83, 60;
-	--light-rgb: 243, 246, 248;
-	--dark-rgb: 35, 35, 35;
+	--secondary-rgb: 147, 197, 253; /* Primary Blue Muted (#93C5FD) */
+	--warning-rgb: 217, 119, 6; /* Warning (#D97706) */
+	--info-rgb: 2, 132, 199; /* Info (#0284C7) */
+	--success-rgb: 22, 163, 74; /* Success (#16A34A) */
+	--danger-rgb: 220, 38, 38; /* Error (#DC2626) */
+	--light-rgb: 248, 250, 252; /* Grey 100 (#F8FAFC) */
+	--dark-rgb: 15, 23, 42; /* Grey 900 (#0F172A) */
 	--orange-rgb: 255, 165, 5;
 	--pink-rgb: 231, 145, 188;
 	--teal-rgb: 18, 194, 194;
@@ -32,35 +32,35 @@
 	--default-font-family: 'Segoe UI', 'Inter', sans-serif;
 	/*'Inter', sans-serif*/
 	--default-font-weight: 400;
-	--default-text-color: #333335;
-	--default-border: rgba(200, 200, 200, 0.5);
-	/*#f3f3f3*/
-	--default-background: #f7f8f9;
+	--default-text-color: #334155; /* Grey 700 */
+	--heading-text-color: #0F172A; /* Grey 900 */
+	--default-border: #E2E8F0; /* Grey 300 */
+	--default-background: #F9FAFB; /* Grey 50 */
 	--menu-bg: #fff;
-	--menu-prime-color: #90a1b8;
-	--menu-border-color: #f3f3f3;
+	--menu-prime-color: #64748B; /* Grey 500 */
+	--menu-border-color: #EEF2F7; /* Grey 200 */
 	--header-bg: #fff;
-	--header-prime-color: #536485;
-	--header-border-color: #f3f3f3;
+	--header-prime-color: #64748B; /* Grey 500 */
+	--header-border-color: #EEF2F7; /* Grey 200 */
 	--custom-white: #fff;
 	--custom-black: #000;
-	--bootstrap-card-border: #f3f3f3;
-	--list-hover-focus-bg: #f5f6f7;
-	--text-muted: #8c9097;
-	--input-border: #e9edf6;
+	--bootstrap-card-border: #E2E8F0; /* Grey 300 */
+	--list-hover-focus-bg: #EDF2FA; /* Cool Hover */
+	--text-muted: #64748B; /* Grey 500 */
+	--input-border: #E2E8F0; /* Grey 300 */
 	--form-control-bg: #ffffff;
 	--fixed-white: #ffffff;
 
 	/* Gray set */
-	--gray-1: #f9fafb;
-	--gray-2: #f2f4f5;
-	--gray-3: #e6eaeb;
-	--gray-4: #dbdfe1;
-	--gray-5: #949eb7;
-	--gray-6: #7987a1;
-	--gray-7: #4d5875;
-	--gray-8: #383853;
-	--gray-9: #323251;
+	--gray-1: #F9FAFB; /* Grey 50 */
+	--gray-2: #F8FAFC; /* Grey 100 */
+	--gray-3: #EEF2F7; /* Grey 200 */
+	--gray-4: #E2E8F0; /* Grey 300 */
+	--gray-5: #94A3B8; /* Grey 400 */
+	--gray-6: #64748B; /* Grey 500 */
+	--gray-7: #334155; /* Grey 700 */
+	--gray-8: #1E293B; /* Slate */
+	--gray-9: #0F172A; /* Grey 900 */
 
 	/* White set */
 	--white-1: rgba(255, 255, 255, 0.1);
@@ -94,12 +94,12 @@
 	// --card-background-color:							rgba(255, 255, 255, 1);
 
 	--background-primary: rgb(var(--primary-rgb));
-	--background-secondary: rgba(248, 248, 248, 1);
-	--background-tertiary: rgba(255, 255, 255, 1);
+	--background-secondary: #F4F7FB; /* Cool Surface */
+	--background-tertiary: #F8FAFC; /* Grey 100 */
 	--background-sidebar: var(--background-tertiary);
-	--table-hover-color: #f8f8f8;
+	--table-hover-color: #EDF2FA; /* Cool Hover */
 	--table-action-link-hover-color: rgba(0, 0, 0, 0.06);
-	--table-selected-row-color: rgba(222, 236, 249, 1);
+	--table-selected-row-color: #EFF6FF; /* Primary Blue Soft */
 }
 
 
@@ -254,6 +254,7 @@ $black-9: var(--black-9);
 	--custom-black: #fff;
 	--default-border: rgba(255, 255, 255, 0.1);
 	--default-text-color: rgba(255, 255, 255, 0.7);
+	--heading-text-color: rgba(255, 255, 255, 0.9);
 	--light-rgb: 43, 46, 49;
 	--dark-rgb: 240, 245, 248;
 	--bootstrap-card-border: rgba(255, 255, 255, 0.1);

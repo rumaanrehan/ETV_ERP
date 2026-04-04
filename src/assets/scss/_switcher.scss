@@ -184,9 +184,9 @@
 
 // classic start
 [data-page-style="classic"] {
-  --default-border: #e1e9e8;
-  --header-border-color: #e1e9e8;
-  --menu-border-color: #e1e9e8;
+  --default-border: #E2E8F0; /* Grey 300 */
+  --header-border-color: #EEF2F7; /* Grey 200 */
+  --menu-border-color: #EEF2F7; /* Grey 200 */
 
   &[data-theme-mode="dark"] {
     --default-border: rgba(255, 255, 255, 0.1);
@@ -195,7 +195,7 @@
   }
 
   body {
-    background-color: $custom-white;
+    background-color: var(--default-body-bg-color);
   }
 
   .card.custom-card {
@@ -222,21 +222,21 @@
 // page styles modern start
 [data-page-style="modern"] {
   --light-rgb: 255, 255, 255;
-  --custom-white: rgb(243, 246, 248);
-  --default-border: #e6ebf1;
-  --input-border: rgba(0, 0, 0, 0.1);
+  --custom-white: #F8FAFC; /* Grey 100 */
+  --default-border: #E2E8F0; /* Grey 300 */
+  --input-border: #E2E8F0; /* Grey 300 */
 
   .dropdown-menu {
     background-color: rgb(255, 255, 255);
   }
 
   body {
-    background-color: #fff;
+    background-color: var(--default-body-bg-color);
   }
 
   .card.custom-card {
     box-shadow: none;
-    background-color: rgb(243, 246, 248);
+    background-color: #F4F7FB; /* Cool Surface */
   }
 
   &[data-theme-mode="dark"] {
@@ -446,7 +446,7 @@
     }
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
     // .app-content {
     //   min-height: calc(100vh - 2.5rem);
     // }
@@ -586,7 +586,7 @@
     }
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
     &[data-vertical-style="doublemenu"] .slide.has-sub .slide-menu {
       border-inline-end: 1px solid #f3f3f3;
     }
@@ -723,7 +723,7 @@
     }
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
 
     &[data-nav-layout="horizontal"] .main-menu-container .slide-left,
     &[data-nav-layout="horizontal"] .main-menu-container .slide-right {
@@ -875,7 +875,7 @@
     }
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
 
     &[data-nav-layout="horizontal"] .main-menu-container .slide-left,
     &[data-nav-layout="horizontal"] .main-menu-container .slide-right {
@@ -990,7 +990,7 @@
     }
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
 
     &[data-nav-layout="horizontal"] .main-menu-container .slide-left,
     &[data-nav-layout="horizontal"] .main-menu-container .slide-right {
@@ -1170,7 +1170,7 @@
     }
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
 
     &[data-nav-layout="horizontal"] .main-menu-container .slide-left,
     &[data-nav-layout="horizontal"] .main-menu-container .slide-right {
@@ -1210,7 +1210,7 @@
   --header-prime-color: rgba(255, 255, 255, 0.6);
 
   &[data-nav-layout="horizontal"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
       .header-element .horizontal-logo .header-logo {
         .desktop-dark {
           display: block;
@@ -1255,7 +1255,7 @@
   --header-prime-color: rgba(255, 255, 255, 0.6);
 
   &[data-nav-layout="horizontal"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
       .header-element .horizontal-logo .header-logo {
         .desktop-white {
           display: block;
@@ -1296,7 +1296,7 @@
   --header-prime-color: rgba(255, 255, 255, 0.6);
 
   &[data-nav-layout="horizontal"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
       .header-element .horizontal-logo .header-logo {
         .desktop-white {
           display: block;
@@ -1353,7 +1353,7 @@
   }
 
   &[data-nav-layout="horizontal"] {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
       &[data-theme-mode="light"] {
         .header-element .horizontal-logo .header-logo {
 
@@ -1398,7 +1398,7 @@
 
 .bg-img {
   @mixin slide-menu-bg($color) {
-    @media (min-width: 992px) {
+    @media (min-width: 768px) {
       &[data-nav-layout="horizontal"] {
         ul.slide-menu {
           background-size: cover !important;
@@ -1824,7 +1824,7 @@
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   [data-nav-layout="horizontal"][data-nav-style="icon-hover"] {
     .app-sidebar .slide.has-sub .slide-menu.child1 {
       inset-inline-start: auto !important;
@@ -1841,7 +1841,7 @@
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
 
   [data-menu-styles="color"][data-nav-layout="horizontal"],
   [data-menu-styles="gradient"][data-nav-layout="horizontal"] {

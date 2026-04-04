@@ -1,0 +1,21 @@
+<!-- Index Table Component -->
+<z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)" (resetFormEmitter)="onResetForm($event)">
+</z-datatable>
+
+<!-- Table Column Custom Template -->
+<ng-template #selectionColTemplate let-row>
+    <p-checkbox binary="true" [(ngModel)]="row._selected" (onChange)="onSelectionChange()">
+    </p-checkbox>
+</ng-template>
+
+<ng-template #proformaInvoiceCodeTemplate let-row>
+    <span class="table-action-link" (click)="onClickEditDetails(row.ProformaInvoiceID)" style="cursor: pointer;">{{
+        row.ProformaInvoiceNo }}</span>
+</ng-template>
+
+<ng-template #statusColTemplate let-row>
+    <span class="badge" [ngStyle]="{backgroundColor: row.StatusHex, color: '#ffffff'}"
+        style="font-size: 11px; font-weight: 400; opacity: 0.85; padding: 4px 8px;">
+        {{ row.StatusText }}
+    </span>
+</ng-template>

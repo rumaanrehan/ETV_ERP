@@ -1,0 +1,24 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: width }"
+  [closable]="false"
+  [draggable]="false"
+  [dismissableMask]="false"
+  [header]="title"
+  styleClass="packing-dialog">
+    <!-- Header slot -->
+    <ng-template pTemplate="header">
+        <ng-content select="[formDialogHeader]"></ng-content>
+    </ng-template>
+
+    <!-- Content slot -->
+    <ng-template pTemplate="content">
+        <ng-content select="[formDialogContent]"></ng-content>
+    </ng-template>
+
+    <!-- Footer slot -->
+    <ng-template pTemplate="footer">
+        <ng-content select="[formDialogFooter]"></ng-content>
+    </ng-template>
+</p-dialog>

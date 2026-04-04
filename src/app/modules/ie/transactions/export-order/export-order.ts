@@ -117,6 +117,8 @@ export interface ExportOrder_SelectList {
     ExportOrderID: number;
     ExportOrderNo: string;
     CustomerName: string;
+    ExportOrderPackingListID: number | null;
+    IsProformaGenerated: boolean;
 }
 
 export interface ExportOrderDetail {
@@ -173,6 +175,8 @@ export interface ExportOrder_IndexTableList {
     IsKnockOff: boolean;
     StatusID: number;
     StatusText: string;
+    StatusHex: string;
+    ExportOrderPackingListID: number | null;
     CurrencySymbol: string;
 
     /** UI only */
@@ -225,6 +229,8 @@ export interface ExportOrder_Detail {
     StatusText: string;
     StatusHex: string;
     IsDocumentAlreadyExists: boolean;
+    IsPackingListAvailable: boolean;
+    IsPOUploaded: boolean;
     ProductList: TList<ExportOrderProductDetail>;
 }
 
@@ -286,3 +292,70 @@ export enum ExportOrderDocumentType {
     PackingSlip = 5,
     CustomerPO = 6
 }
+
+//#region Packing List
+// ExportOrderPackingList model
+export interface ExportOrderPackingList {
+    ExportOrderPackingListID: number | null;
+    ExportOrderPackingListNo: string | null;
+    ExportOrderID: number | null;
+    ExportOrderNo: string | null;
+    CustomerName: string | null;
+    NoOfBox: number | null;
+    PackingIdentityID: number | null;
+    BoxList: ExportOrderPackingListBox[];
+}
+
+// ExportOrderPackingListBox model
+export interface ExportOrderPackingListBox {
+    ExportOrderPackingListBoxID: number | null;
+    ExportOrderPackingListBoxNo: string | null;
+    NoOfProduct: number | null;
+    BoxLength: number | null;
+    BoxWidth: number | null;
+    BoxHeight: number | null;
+    BoxWeight: number | null;
+    BoxGrossWeight: number | null;
+    PackedBy: string | null;
+    PackedDateTime: Date | null;
+    InspectedBy: string | null;
+    InspectedDateTime: Date | null;
+    ProductList: ExportOrderPackingListBoxDetail[];
+}
+
+// ExportOrderPackingListBoxDetail model
+export interface ExportOrderPackingListBoxDetail {
+    ProductID: number | null;
+    ProductCode?: string | null;
+    ProductName: string | null;
+    PackedQty: number | null;
+    WeightPerUnit: number | null;
+}
+
+export interface ProductList {
+  ProductID: number;
+  ProductCode?: string;
+  ProductName: string;
+  ProuductCount: number;
+}
+
+export interface ExportOrderPackingList_Detail {
+    ExportOrderID: number;
+    ExportOrderNo: string;
+    CustomerName: string;
+    ProductList: TList<ExportOrderProductList_Detail>;
+}
+
+export interface ExportOrderProductList_Detail {
+    ProductID: number;
+    ProductCode: string;
+    ProductName: string;
+    SalesQty: number;
+}
+
+export interface OpenPackingDialogParams {
+  isEditMode: boolean;
+  productList?: ExportOrderPackingList_Detail | null;
+  packingList?: ExportOrderPackingList | null;
+}
+//#endregion 

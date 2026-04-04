@@ -1,11 +1,11 @@
-// Theme Specific Variables
-$primaryColor: #0078D4; /* Deafult #0078D4 */
-$primaryDarkColor: #1E88E5;
-$primaryDarkerColor: #1976D2;
+// Theme Specific Variables (ERP palette)
+$primaryColor: #2563EB; /* Primary Blue */
+$primaryDarkColor: #1E40AF; /* Primary Blue Dark */
+$primaryDarkerColor: #1E40AF;
 $primaryTextColor: #ffffff;
 
 $highlightBg: #EFF6FF !default;
-$highlightTextColor: $primaryDarkerColor !default;
+$highlightTextColor: $primaryDarkColor !default;
 $highlightFocusBg: rgba($primaryColor, .24) !default; /* Deafult rgba($primaryColor, .24) !default; */
 
 $colors: (
@@ -896,13 +896,13 @@ $imagePreviewActionIconBorderRadius: 50% !default;
     font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --surface-a:#ffffff;
-    --surface-b:#f8f9fa;
-    --surface-c:#e9ecef;
-    --surface-d:#dee2e6;
-    --surface-e:#ffffff;
+    --surface-b:#F9FAFB; /* Grey 50 */
+    --surface-c:#EEF2F7; /* Grey 200 */
+    --surface-d:#E2E8F0; /* Grey 300 */
+    --surface-e:#F8FAFC; /* Grey 100 */
     --surface-f:#ffffff;
-    --text-color:#495057;
-    --text-color-secondary:#6c757d;
+    --text-color:#334155; /* Grey 700 */
+    --text-color-secondary:#64748B; /* Grey 500 */
     --primary-color:rgb(var(--primary-rgb)); /* Default #2196F3 */
     --primary-color-text:#ffffff;
     --surface-0: #ffffff;
@@ -919,12 +919,12 @@ $imagePreviewActionIconBorderRadius: 50% !default;
     --content-padding:#{$panelContentPadding};
     --inline-spacing:#{$inlineSpacing};
     --border-radius:#{$borderRadius};
-    --surface-ground:#f8f9fa;
-    --surface-section:#ffffff;
+    --surface-ground:#F9FAFB; /* Grey 50 */
+    --surface-section:#F8FAFC; /* Grey 100 */
     --surface-card:#ffffff;
     --surface-overlay:#ffffff;
-    --surface-border:#dee2e6;
-    --surface-hover:#e9ecef;
+    --surface-border:#E6ECF3; /* Cool Border */
+    --surface-hover:#EDF2FA; /* Cool Hover */
     --maskbg: #{$maskBg};
     --highlight-bg: #{$highlightBg};
     --highlight-text-color: #{$highlightTextColor};

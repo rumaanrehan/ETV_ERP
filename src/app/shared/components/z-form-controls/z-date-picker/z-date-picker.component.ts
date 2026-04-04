@@ -16,6 +16,7 @@ export class ZDatePickerComponent {
   @Input() group!: FormGroup; // Form group to which this datepicker belongs
   @Input() control: string = ''; // Name of the control
   @Input() label: string = ''; // Label for the datepicker
+  @Input() placeholder: string = '';
   @Input() validationMessage: string | undefined = ''; // Validation message for tooltip
   @Input() minDate: Date | null = null;
   @Input() maxDate: Date | null = null;

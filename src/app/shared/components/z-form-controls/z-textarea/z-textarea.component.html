@@ -2,8 +2,10 @@
     <p-floatLabel>
         <textarea pInputTextarea
             [class]="styleClass"
+            [autoResize]="autoResize"
             [formControlName]="control"
             [appShowValidationTooltip]="validationMessage"
+            [placeholder]="placeholder"
             [rows]="rows"
             [class.p-filled]="group.get(control)?.value">
         </textarea>

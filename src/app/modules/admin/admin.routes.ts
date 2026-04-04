@@ -147,8 +147,8 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'Admin/EmployeeTypeMaster',
-              breadcrumb: 'Employee Type Master'
+              menu: 'Admin/EmployeeRegistration',
+              breadcrumb: 'Employee Registration'
             }
           },
           {
@@ -157,8 +157,8 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'Admin/EmployeeTypeMaster',
-              breadcrumb: 'Employee Type Master'
+              menu: 'Admin/EmployeeRegistration',
+              breadcrumb: 'Employee Registration'
             }
           },
           {
@@ -167,8 +167,8 @@ export const adminRoute: Routes = [
             canActivate: [AuthenticationGuard, AuthorizationGuard],
             data: {
               permission: 'CanRead',
-              menu: 'Admin/EmployeeTypeMaster',
-              breadcrumb: 'Employee Type Master'
+              menu: 'Admin/EmployeeRegistration',
+              breadcrumb: 'Employee Registration'
             }
           }
         ]

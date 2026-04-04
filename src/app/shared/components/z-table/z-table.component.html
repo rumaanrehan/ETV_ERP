@@ -1,22 +1,26 @@
-<div>
-  <p-table [value]="tableDef.data" [styleClass]="'p-paginator-striped'" [tableStyleClass]="'table page-table'"
+<div class="z-table-viewport">
+  <p-table [value]="tableDef.data" [styleClass]="'p-paginator-striped z-table-root'"
+    [tableStyleClass]="'table page-table z-table-table'"
     [scrollable]="false" [scrollHeight]="'flex'">
     <ng-template pTemplate="caption">
       <div class="index-table-action-bar">
-        <div class="d-flex justify-content-end">
-          <span><i class="pi pi-sliders-h column-visibility-toggle" (click)="columnMenu.toggle($event)"
+        <div class="d-flex justify-content-between align-items-center">
+          <h6 class="m-0">{{tableDef.tableHeader}}</h6>
+          <div>
+            <span><i class="pi pi-sliders-h column-visibility-toggle" (click)="columnMenu.toggle($event)"
               [ngClass]="{'active-toggle': columnMenu.overlayVisible}"></i></span>
-          <p-overlayPanel #columnMenu>
-            <div class="column-toggle-panel">
-              <ng-container *ngFor="let col of tableHeaderDef">
-                <p-checkbox *ngIf="!col.hideVisToggle" [(ngModel)]="col.visible" binary="true" [label]="col.label"
-                  (ngModelChange)="onChangeColVisSwitch(col)">
-                </p-checkbox>
-              </ng-container>
-              <hr class="m-0">
-              <button type="button" class="btn btn-primary" (click)="resetColumnVisibility()">Reset to default</button>
-            </div>
-          </p-overlayPanel>
+            <p-overlayPanel #columnMenu>
+              <div class="column-toggle-panel">
+                <ng-container *ngFor="let col of tableHeaderDef">
+                  <p-checkbox *ngIf="!col.hideVisToggle" [(ngModel)]="col.visible" binary="true" [label]="col.label"
+                    (ngModelChange)="onChangeColVisSwitch(col)">
+                  </p-checkbox>
+                </ng-container>
+                <hr class="m-0">
+                <button type="button" class="btn btn-primary" (click)="resetColumnVisibility()">Reset to default</button>
+              </div>
+            </p-overlayPanel>
+          </div>
         </div>
       </div>
     </ng-template>

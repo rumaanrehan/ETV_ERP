@@ -1,0 +1,267 @@
+// Remove bottom margin and padding from paginator and dataview content
+:host ::ng-deep .p-dataview-content {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+:host ::ng-deep .p-paginator-bottom {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+:host-context([data-theme-mode="dark"]) {
+    --zdt-surface: #1e293b;
+    --zdt-border: #334155;
+    --zdt-header-bg: #0f172a;
+    --zdt-row-hover-bg: #334155;
+    --zdt-selected-bg: #1e293b;
+    --zdt-text: #cbd5e1;
+    --zdt-text-strong: #f8fafc;
+    --zdt-muted: #94a3b8;
+}
+
+.z-dataview-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    --zdt-surface: var(--custom-white, #ffffff);
+    --zdt-border: var(--default-border, #e2e8f0);
+    --zdt-header-bg: rgba(248, 250, 252, 0.8);
+    --zdt-row-hover-bg: rgba(248, 250, 252, 0.6);
+    --zdt-selected-bg: #eff6ff;
+    --zdt-text: #334155;
+    --zdt-text-strong: #0f172a;
+    --zdt-muted: #64748b;
+}
+
+:host-context([data-theme-mode="dark"]) {
+    --zdt-surface: #1e293b;
+    --zdt-border: #334155;
+    --zdt-header-bg: #0f172a;
+    --zdt-row-hover-bg: #334155;
+    --zdt-selected-bg: #1e293b;
+    --zdt-text: #cbd5e1;
+    --zdt-text-strong: #f8fafc;
+    --zdt-muted: #94a3b8;
+}
+
+.z-dataview-viewport {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.z-dataview-viewport>p-dataView {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+}
+
+:host ::ng-deep .z-dataview-root.p-dataview {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+:host ::ng-deep .z-dataview-root .p-dataview-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    background: var(--zdt-surface);
+}
+
+:host ::ng-deep .z-dataview-root .p-paginator {
+    flex: 0 0 auto;
+    background: var(--zdt-surface);
+    border-top: 1px solid var(--zdt-border);
+}
+
+:host ::ng-deep .z-dataview-root .p-paginator-bottom {
+    margin-top: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+:host ::ng-deep .z-dataview-root .p-paginator-bottom .p-paginator-content {
+    // padding-bottom: 2px;
+}
+
+.index-table-action-bar {
+    --z-action-btn-height: 34px;
+    --z-action-btn-pad-x: 0.85rem;
+
+    .zdt-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.75rem;
+        // margin-top: 3px;
+        // margin-right: 3px;
+    }
+
+    .action-item-wrapper {
+        position: relative;
+        display: inline-flex;
+    }
+
+    .refresh-filter,
+    .filter-toggle {
+        cursor: pointer;
+        height: var(--z-action-btn-height);
+        padding: 0 var(--z-action-btn-pad-x);
+        margin: 5px 0.2rem;
+        margin-left: 10px;
+        color: var(--zdt-text);
+        background-color: transparent;
+        border-radius: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        i {
+            font-size: 14px;
+            background-color: transparent;
+        }
+
+        &:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.18);
+        }
+
+        &:hover,
+        &.active-toggle {
+            color: var(--primary-color, #007bff);
+            background-color: rgba(var(--primary-rgb), 0.1);
+        }
+
+        &.active-toggle {
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+    }
+
+    .filter-toggle .filter-icon {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        background-color: currentColor;
+        -webkit-mask: url('/assets/images/icons/filter-svgrepo-com.svg') no-repeat center / contain;
+        mask: url('/assets/images/icons/filter-svgrepo-com.svg') no-repeat center / contain;
+    }
+
+    .filter-toggle .filter-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .refresh-filter .sort-icon {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        background-color: currentColor;
+        -webkit-mask: url('/assets/images/icons/sort-from-bottom-to-top-svgrepo-com.svg') no-repeat center / contain;
+        mask: url('/assets/images/icons/sort-from-bottom-to-top-svgrepo-com.svg') no-repeat center / contain;
+    }
+
+    .refresh-filter .sort-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .refresh-filter .refresh-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .refresh-filter .refresh-icon {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        background-color: currentColor;
+        -webkit-mask: url('/assets/images/icons/refresh-cw-alt-3-svgrepo-com.svg') no-repeat center / contain;
+        mask: url('/assets/images/icons/refresh-cw-alt-3-svgrepo-com.svg') no-repeat center / contain;
+    }
+
+    .index-filter-panel,
+    .index-sorting-panel {
+        position: absolute;
+        top: 100%;
+        background-color: var(--zdt-surface);
+        border: 1px solid var(--zdt-border);
+        color: var(--zdt-text);
+        right: 0;
+        width: 300px;
+        z-index: 1000;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+
+        .card-header {
+            background-color: var(--zdt-header-bg);
+            border-bottom: 1px solid var(--zdt-border);
+            padding: 0.75rem 1rem;
+
+            h6 {
+                margin: 0;
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: var(--zdt-text-strong);
+            }
+
+            .btn {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        .card-body {
+            padding: 1rem;
+            background-color: var(--zdt-surface);
+
+            .field {
+                margin-bottom: 1rem;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                label {
+                    display: block;
+                    margin-bottom: 0.35rem;
+                    font-size: 0.8125rem;
+                    font-weight: 500;
+                    color: var(--zdt-text-strong);
+                }
+
+                ::ng-deep .p-dropdown {
+                    width: 100%;
+                }
+
+                ::ng-deep .p-inputtext {
+                    width: 100%;
+                    padding: 0.4rem 0.5rem;
+                    font-size: 0.8125rem;
+                    background: var(--zdt-surface);
+                    color: var(--zdt-text);
+                    border: 1px solid var(--zdt-border);
+                }
+            }
+        }
+    }
+}

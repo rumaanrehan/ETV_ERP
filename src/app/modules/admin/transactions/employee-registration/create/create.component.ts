@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
@@ -14,8 +14,8 @@ import { Country_SelectList } from '../../../settings/country-master/country-mas
 import { Department_SelectList } from '../../../settings/department-master/department-master';
 import { Designation_SelectList } from '../../../settings/designation-master/designation-master';
 import { EmployeeType_SelectList } from '../../../settings/employee-type-master/employee-type-master';
-import { State_SelectList } from '../../../settings/state-master/state-master';
-import { EmployeeRegistration } from '../../employee-registration/employee-registration';
+import { State_SelectList, StateRequest } from '../../../settings/state-master/state-master';
+import { EmployeeRegistration } from '../../employee-registration/employee-registration'; 
 import { EmployeeRegistrationService } from '../employee-registration.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -31,10 +31,12 @@ import { Subject, takeUntil } from 'rxjs';
 
 export class CreateComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+    @Output() closeSidebarEvent: EventEmitter<void> = new EventEmitter();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
 
   // isDialogOpen: boolean = false;
   isEditMode: boolean = false;
+  isFormSidebarVisible: boolean = false;
   isSubmitted: boolean = false;
   form!: FormGroup;
   formConfig!: FormConfigType<EmployeeRegistration>;
@@ -177,12 +179,35 @@ export class CreateComponent implements OnInit, OnDestroy {
           this.employeeTypeList = data.employeeTypeList.Data?.Items ?? [];
           this.departmentList = data.departmentList.Data?.Items ?? [];
           this.countryList = data.countryList.Data?.Items ?? [];
-          this.stateList = data.stateList.Data?.Items ?? [];
+          // this.stateList = data.stateList.Data?.Items ?? [];
           this.designationList = data.designationList.Data?.Items ?? [];
         },
       });
   }
+LoadState(selectedCountryID: number): void {
+  try {
+    
+          const model: StateRequest = {
+            CountryID: selectedCountryID,
+            PopulateType: 'SelectList'
+          }
+      this.pageService.loadState(model)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              this.stateList = response.Data.Items;
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          }
+        });
 
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    this.stateList = [];
+  }
+}
   OnChangeCountry(): void {
     try {
       const selectedCountryID = this.form.value.EmployeeCountryID
@@ -190,11 +215,19 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.stateList = [];
         return;
       }
-      // this.LoadState();
+      this.LoadState(selectedCountryID);
     } catch (error) {
     }
   }
 
+  openSidebar(activeStatus: boolean, isEditMode: boolean, model: EmployeeRegistration): void {
+    if (isEditMode && model) {
+      this.isEditMode = isEditMode;
+    }
+    // this.activeStatus = activeStatus;
+    this.form.patchValue(model);
+    this.isFormSidebarVisible = true;
+  }
   OnChangeCountryPermanent(): void {
     try {
       const selectedCountryID = this.form.value.PermanentCountryID
