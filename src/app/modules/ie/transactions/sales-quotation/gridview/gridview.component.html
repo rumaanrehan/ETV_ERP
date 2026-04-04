@@ -1,5 +1,7 @@
 <ng-template #selectionColTemplate let-row>
-    <p-checkbox [ngModel]="row._selected" (onChange)="onSelectionChange()"></p-checkbox>
+    <span (click)="$event.stopPropagation()">
+        <p-checkbox binary="true" [(ngModel)]="row._selected" (onChange)="onSelectionChange()"></p-checkbox>
+    </span>
 </ng-template>
 
 <ng-template #quotationCodeTemplate let-row>
