@@ -299,7 +299,51 @@ export const ieRoute: Routes = [
                 }
               }
             ]
-          }
+          },
+          {
+            path: 'purchase-requisition',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'purchase requisition'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/purchase-requisition/dataview/dataview.component').then((m) => m.DataviewComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/PurchaseRequisition',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/purchase-requisition/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/PurchaseRequisition',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/purchase-requisition/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/PurchaseRequisition',
+                  breadcrumb: 'Edit'
+                }
+              },
+              {
+                path: 'from-export/:exportOrderID',
+                loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/ProformaInvoice',
+                  breadcrumb: 'Create'
+                }
+              }
+            ]
+          },
         ]
       },
 
