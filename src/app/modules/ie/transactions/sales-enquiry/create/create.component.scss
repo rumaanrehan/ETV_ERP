@@ -305,7 +305,7 @@
 
 .simple-label {
     flex: 0 0 12rem;
-    font-size: 1rem;
+    font-size: var(--se-field-font-size);
     font-weight: 400;
     color: rgba(var(--heading-text-color, 80%));
     line-height: var(--se-field-height, 2.25rem);
@@ -457,6 +457,8 @@
 :host ::ng-deep .sales-enquiry-create .create-form {
     --se-field-height: 2.25rem;
     --se-field-radius: 8px;
+    --se-field-font-size: 0.875rem;
+    --se-placeholder-font-size: 0.82rem;
 
     .customer-control-row .customer-autocomplete,
     .customer-control-row .customer-autocomplete .p-autocomplete,
@@ -474,6 +476,7 @@
     .p-autocomplete-input::placeholder,
     textarea::placeholder,
     input::placeholder {
+        font-size: var(--se-placeholder-font-size);
         opacity: 1 !important;
         color: var(--text-muted) !important;
     }
@@ -532,8 +535,10 @@
     .p-inputtext,
     .p-dropdown,
     .p-calendar .p-inputtext,
+    textarea,
     input {
         height: var(--se-field-height);
+        font-size: var(--se-field-font-size);
         border-radius: var(--se-field-radius);
         border-color: var(--default-border);
         background: var(--custom-white);
@@ -548,6 +553,10 @@
     .p-calendar {
         border-radius: var(--se-field-radius);
         max-width: var(--se-field-width);
+    }
+
+    .p-dropdown .p-dropdown-label {
+        font-size: var(--se-field-font-size);
     }
 
     .simple-action-btn:hover,

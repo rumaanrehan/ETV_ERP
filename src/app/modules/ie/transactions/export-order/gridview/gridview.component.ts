@@ -58,6 +58,7 @@ export class GridviewComponent implements OnInit, OnDestroy {
       data: [],
       totalRecords: 0,
       loading: false,
+      rowClick: (row) => this.onClickEditDetails(row.ExportOrderID),
       filterFields: [
         { field: 'ExportOrderNo', label: 'Order No', type: 'text' },
         { field: 'CustomerName', label: 'Customer', type: 'text' },

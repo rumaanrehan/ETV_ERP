@@ -91,6 +91,10 @@
     background: var(--zdt-row-hover-bg);
 }
 
+:host ::ng-deep .z-datatable-root .p-datatable-tbody>tr.zdt-clickable-row>td {
+    cursor: pointer;
+}
+
 :host ::ng-deep .z-datatable-root .p-datatable-tbody>tr.p-highlight>td {
     background: var(--zdt-selected-bg);
 }

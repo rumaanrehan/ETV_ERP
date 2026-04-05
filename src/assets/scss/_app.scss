@@ -668,10 +668,19 @@ label {
 }
 
 .table-row-status {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 0.3rem;
+  min-height: 1.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.69rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  border: 1px solid rgba(var(--primary-rgb), 0.22);
 }
 
 .table .pi {
@@ -852,6 +861,21 @@ span {
 
 .status-pill span {
   color: #fff;
+}
+
+.grid-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.69rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  color: #fff !important;
+  opacity: 0.85;
 }
 
 

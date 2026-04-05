@@ -9,16 +9,14 @@
 </ng-template>
 
 <ng-template #exportOrderCodeTemplate let-row>
-    <a class="text-decoration-none cursor-pointer" (click)="onClickEditDetails(row.ExportOrderID)">
+    <a class="table-action-link text-decoration-none cursor-pointer" (click)="onClickEditDetails(row.ExportOrderID)">
         {{ row.ExportOrderNo }}
     </a>
 </ng-template>
 
 <ng-template #statusColTemplate let-row>
-    <span class="badge" [ngStyle]="{backgroundColor: row.StatusHex, color: '#ffffff'}" style="font-size: 11px; font-weight: 400; opacity: 0.85; padding: 4px 8px;">{{ row.StatusText }}</span>
+    <span class="grid-status-pill" [ngStyle]="{ backgroundColor: row.StatusHex || 'var(--primary-color)' }">
+        {{ row.StatusText }}
+    </span>
 </ng-template>
 
-<ng-template #exportOrderCodeTemplate let-row>
-    <span class="table-action-link" (click)="onClickEditDetails(row.ExportOrderID)" style="cursor: pointer;">{{
-        row.ExportOrderNo }}</span>
-</ng-template>
