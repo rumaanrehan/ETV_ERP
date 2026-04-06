@@ -1,12 +1,22 @@
 <div formDialogHeader class="col-xl-12 px-0">
-  <div class="packing-header-standalone">
-    <div class="packing-header-field">
+  <div class="packing-header-standalone" [class.is-selected]="form.get('ExportOrderID')?.value">
+    <div class="packing-header-field" [class.is-selected]="form.get('ExportOrderID')?.value">
       <label class="packing-header-label">{{ formConfig.ExportOrderNo.label }}:</label>
       <div class="packing-header-control">
         <z-autocomplete class="packing-header-autocomplete" [controlDef]="exportOrderAutoCompleteDef"
           [allowEmptySearch]="form.get('ExportOrderID')?.value ? false : true" [readonly]="isEditMode"
           (onSearch)="loadExportOrder($event)" (onSelect)="onSelect_ExportOrder($event)" (onClear)="onClear_ExportOrder()">
         </z-autocomplete>
+      </div>
+      <div class="packing-header-actions" *ngIf="form.get('ExportOrderID')?.value">
+        <div class="toolbar">
+          <button type="button" class="toolbar-btn is-active" [disabled]="isSubmitted" (click)="onSubmit()">
+            <span>{{ isEditMode ? "Update" : "Save" }}</span>
+          </button>
+          <button type="button" class="toolbar-btn" (click)="closeDialogBox()">
+            <span>Cancel</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -181,24 +191,6 @@
     </div>
   </div>
 </div>
-
-<div formDialogFooter *ngIf="form.get('ExportOrderID')?.value" class="packing-dialog-footer">
-  <div class="page-action-panel packing-action-panel">
-    <div class="col-xl-4"></div>
-    <div class="col-xl-4"></div>
-    <div class="col-xl-4 d-flex justify-content-end">
-      <div class="col-xl-3 px-1 footer-btn">
-        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted" (click)="onSubmit()">
-          {{ isEditMode ? "Update" : "Save" }}
-        </button>
-      </div>
-      <div class="col-xl-3 px-1 footer-btn">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeDialogBox()">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 <!-- Packing List Box Related Templates Start -->
 <ng-template #serialNoColTemplate let-row let-rowIndex="index">

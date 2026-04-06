@@ -37,6 +37,16 @@
 .packing-header-standalone {
   width: min(100%, 34rem);
   margin: 0.75rem auto 0.35rem;
+  transition: width 260ms ease, max-width 260ms ease, margin 260ms ease, padding 260ms ease;
+  will-change: width, margin, padding;
+}
+
+.packing-header-standalone.is-selected {
+  width: 100%;
+  max-width: none;
+  margin: 0.75rem 0 0.35rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .packing-header-field {
@@ -44,7 +54,85 @@
   align-items: center;
   gap: 0.75rem;
   width: 100%;
-  justify-content: center;
+  justify-content: flex-start;
+}
+
+.packing-header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.packing-header-actions .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  padding: 0.35rem;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: auto;
+  max-width: min(100%, 56rem);
+}
+
+.packing-header-actions .toolbar-btn {
+  min-width: 90px;
+}
+
+.toolbar-btn {
+  height: 36px;
+  padding: 0 1.15rem;
+  border-radius: 5px;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  user-select: none;
+  transition: none;
+}
+
+.toolbar-btn:hover {
+  background: var(--list-hover-focus-bg);
+  transform: none;
+}
+
+.toolbar-btn:active {
+  background: var(--list-hover-focus-bg);
+  transform: none;
+}
+
+.toolbar-btn.is-active {
+  background: rgba(var(--primary-rgb), 0.2);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.toolbar-btn.is-active:hover {
+  background: rgba(var(--primary-rgb), 0.3);
+  color: #ffffff;
+  filter: brightness(1.05);
+}
+
+.toolbar-btn.is-active:hover span,
+.toolbar-btn.is-active:hover i {
+  color: #0e0e0e;
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .packing-header-label {
