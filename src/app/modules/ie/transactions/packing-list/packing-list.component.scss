@@ -23,6 +23,10 @@
 
 .packing-layout-shell {
   padding: 0;
+  --se-field-height: 2.25rem;
+  --se-field-radius: 8px;
+  --se-field-font-size: 0.875rem;
+  --se-placeholder-font-size: 0.82rem;
 }
 
 .packing-layout-scroll {
@@ -30,8 +34,74 @@
   padding-right: 0.125rem;
 }
 
-.packing-header-card {
-  margin-bottom: 0 !important;
+.packing-header-standalone {
+  width: min(100%, 34rem);
+  margin: 0.75rem auto 0.35rem;
+}
+
+.packing-header-field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.packing-header-label {
+  flex: 0 0 9.5rem;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: rgba(var(--heading-text-color, 80%));
+  line-height: 2rem;
+}
+
+.packing-header-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 19rem;
+}
+
+:host ::ng-deep .packing-header-autocomplete .p-float-label > label {
+  display: none !important;
+}
+
+:host ::ng-deep .packing-header-autocomplete .input-group,
+:host ::ng-deep .packing-header-autocomplete .p-autocomplete,
+:host ::ng-deep .packing-header-autocomplete .p-autocomplete-input,
+:host ::ng-deep .packing-header-autocomplete input.p-autocomplete-input {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+:host ::ng-deep .packing-header-autocomplete .p-autocomplete-input,
+:host ::ng-deep .packing-header-autocomplete input.p-autocomplete-input {
+  height: 2rem;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+  border-color: var(--default-border);
+  box-shadow: none;
+}
+
+:host ::ng-deep .packing-header-autocomplete .input-group-addon {
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+:host ::ng-deep .packing-header-autocomplete .p-autocomplete-input::placeholder,
+:host ::ng-deep .packing-header-autocomplete input.p-autocomplete-input::placeholder {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+:host ::ng-deep .packing-header-autocomplete .p-autocomplete-input:enabled:focus,
+:host ::ng-deep .packing-header-autocomplete input.p-autocomplete-input:enabled:focus {
+  border-color: rgb(var(--primary-rgb));
+  box-shadow: none;
+  outline: none;
 }
 
 .packing-page-title h4 {
@@ -92,6 +162,306 @@
   align-items: center;
 }
 
+.order-info-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.55rem 1.25rem;
+}
+
+.order-info-actions .box-detail-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.order-info-actions {
+  grid-column: 2;
+}
+
+.order-info-actions .box-detail-label {
+  display: none;
+}
+
+.order-info-actions .table-add-row {
+  width: 100%;
+  margin-inline: auto;
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.order-info-actions .table-add-row .simple-btn {
+  height: calc(var(--se-field-height) * 0.8);
+}
+
+.box-header-actions .simple-btn {
+  height: calc(var(--se-field-height) * 0.8);
+}
+
+.box-details-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.55rem 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.box-detail-field {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.box-detail-label {
+  flex: 0 0 9.75rem;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: rgba(var(--heading-text-color, 80%));
+  line-height: 2rem;
+}
+
+.box-detail-control {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:host ::ng-deep .box-detail-control .p-float-label > label {
+  display: none !important;
+}
+
+:host ::ng-deep .box-detail-control .p-inputtext,
+:host ::ng-deep .box-detail-control .p-dropdown,
+:host ::ng-deep .box-detail-control .p-calendar .p-inputtext,
+:host ::ng-deep .box-detail-control .p-autocomplete-input,
+:host ::ng-deep .box-detail-control .p-inputnumber-input,
+:host ::ng-deep .box-detail-control .input-span,
+:host ::ng-deep .box-detail-control input {
+  height: 2rem;
+  border-radius: 8px;
+  border-color: var(--default-border);
+  background: var(--custom-white);
+  box-shadow: none;
+}
+
+:host ::ng-deep .box-detail-control .p-inputtext,
+:host ::ng-deep .box-detail-control .p-dropdown,
+:host ::ng-deep .box-detail-control .p-calendar .p-inputtext,
+:host ::ng-deep .box-detail-control .p-autocomplete-input,
+:host ::ng-deep .box-detail-control .p-inputnumber-input,
+:host ::ng-deep .box-detail-control .input-span,
+:host ::ng-deep .box-detail-control input {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+:host ::ng-deep .box-detail-control .p-dropdown {
+  border-radius: 8px;
+}
+
+:host ::ng-deep .box-detail-control .p-inputtext:enabled:focus,
+:host ::ng-deep .box-detail-control .p-dropdown.p-focus,
+:host ::ng-deep .box-detail-control .p-calendar .p-inputtext:enabled:focus,
+:host ::ng-deep .box-detail-control input:focus {
+  border-color: rgb(var(--primary-rgb));
+  box-shadow: none;
+  outline: none;
+}
+
+.simple-field.simple-field-table {
+  gap: 0;
+  width: 100% !important;
+  margin-inline: 0 !important;
+  margin-top: 0;
+  padding: 0 !important;
+}
+
+.simple-field.simple-field-table .simple-control {
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+/* Keep normal card-body spacing for fields, but let table go edge-to-edge */
+.box-card .card-body .simple-field.simple-field-table {
+  margin-inline: -1rem !important;
+  width: calc(100% + 2rem) !important;
+  flex: 0 0 calc(100% + 2rem);
+  max-width: calc(100% + 2rem);
+}
+
+:host ::ng-deep .packing-layout-shell z-table {
+  display: block;
+  width: 100%;
+  padding-inline: 0;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .p-datatable-header {
+  padding: 0 0 0.5rem;
+  border: 0;
+  background: transparent;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table {
+  margin-bottom: 0;
+  border: 0 !important;
+  border-top: 1px solid var(--default-border) !important;
+  border-bottom: 1px solid var(--default-border) !important;
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: transparent;
+  --bs-table-border-color: transparent;
+  table-layout: fixed;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table > thead,
+:host ::ng-deep .packing-layout-shell z-table .page-table > tbody {
+  border: 0 !important;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table > thead > tr > th {
+  background: transparent !important;
+  color: var(--text-muted);
+  font-weight: 600;
+  border: 0 !important;
+  border-bottom: 1px solid var(--default-border) !important;
+  padding: 0.75rem 0.75rem;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table > tbody > tr > td {
+  border: 0 !important;
+  border-bottom: 1px solid var(--default-border) !important;
+  padding: 0.9rem 0.75rem;
+  vertical-align: top;
+  overflow: visible;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table > tbody > tr:last-child > td {
+  border-bottom: 0 !important;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table > tbody > tr:nth-of-type(odd) > * {
+  background: transparent !important;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-inputtext,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-dropdown,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-calendar .p-inputtext,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-autocomplete,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-autocomplete-input,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-inputnumber,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-inputnumber-input,
+:host ::ng-deep .packing-layout-shell z-table .page-table input {
+  width: 100% !important;
+  max-width: 100%;
+  height: var(--se-field-height);
+  font-size: var(--se-field-font-size);
+  border-radius: var(--se-field-radius);
+  border-color: var(--default-border);
+  background: var(--custom-white);
+  box-shadow: none;
+  transition: none;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-autocomplete,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-dropdown,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-calendar {
+  border-radius: var(--se-field-radius);
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-dropdown .p-dropdown-label {
+  font-size: var(--se-field-font-size);
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-inputtext::placeholder,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-autocomplete-input::placeholder,
+:host ::ng-deep .packing-layout-shell z-table .page-table input::placeholder {
+  font-size: var(--se-placeholder-font-size);
+  opacity: 1 !important;
+  color: var(--text-muted) !important;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-inputtext:enabled:focus,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-dropdown.p-focus,
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-calendar .p-inputtext:enabled:focus,
+:host ::ng-deep .packing-layout-shell z-table .page-table input:focus {
+  border-color: rgb(var(--primary-rgb));
+  box-shadow: none;
+  outline: none;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table .p-float-label > label {
+  display: none !important;
+}
+
+:host ::ng-deep .packing-layout-shell z-table .page-table > tbody > tr > td:first-child {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.simple-btn {
+  height: 2.25rem;
+  padding: 0 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: none;
+  transition: none;
+}
+
+.simple-btn:hover,
+.simple-btn:active {
+  background: var(--list-hover-focus-bg);
+}
+
+.simple-btn-icon {
+  padding: 0;
+  width: 2.25rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  line-height: 1;
+  flex: 0 0 2.25rem;
+  justify-content: center;
+}
+
+.simple-btn-icon .pi {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.tables-action-col {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 0.35rem;
+}
+
+.table-add-row {
+  width: 100%;
+  margin-inline: auto;
+  margin-top: 0.35rem;
+  padding: 0 0 0.35rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.table-add-row .simple-btn {
+  height: calc(var(--se-field-height) * 0.8);
+  margin-left: auto;
+}
+
 @media (max-width: 991.98px) {
   .packing-layout-scroll {
     max-height: none;
@@ -109,5 +479,46 @@
 
   .footer-btn {
     min-width: 140px;
+  }
+
+  .packing-header-field {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    justify-content: flex-start;
+  }
+
+  .box-details-grid {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
+  .order-info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
+  .order-info-actions {
+    grid-column: auto;
+  }
+
+  .box-detail-field {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.2rem;
+  }
+
+  .box-detail-label {
+    flex: 0 0 auto;
+    line-height: 1.2;
+  }
+
+  .packing-header-label {
+    flex: 0 0 auto;
+    line-height: 1.2;
+  }
+
+  .packing-header-control {
+    max-width: none;
   }
 }

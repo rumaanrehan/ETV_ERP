@@ -1,50 +1,60 @@
 <div formDialogHeader class="col-xl-12 px-0">
-  <div class="col-xl-4 m-auto page-content packing-layout-shell mt-3">
-    <div class="col-xl-12 card m-auto mb-2 packing-header-card">
-      <div class="card-body">
-        <div class="horizontal-form">
-          <div class="row align-items-end">
-            <div class="col-xl-12 col-lg-5 col-md-8 form-group px-2 mb-0">
-              <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"
-                [allowEmptySearch]="form.get('ExportOrderID')?.value ? false : true" [readonly]="isEditMode"
-                (onSearch)="loadExportOrder($event)" (onSelect)="onSelect_ExportOrder($event)"
-                (onClear)="onClear_ExportOrder()">
-              </z-autocomplete>
-            </div>
-          </div>
-        </div>
+  <div class="packing-header-standalone">
+    <div class="packing-header-field">
+      <label class="packing-header-label">{{ formConfig.ExportOrderNo.label }}:</label>
+      <div class="packing-header-control">
+        <z-autocomplete class="packing-header-autocomplete" [controlDef]="exportOrderAutoCompleteDef"
+          [allowEmptySearch]="form.get('ExportOrderID')?.value ? false : true" [readonly]="isEditMode"
+          (onSearch)="loadExportOrder($event)" (onSelect)="onSelect_ExportOrder($event)" (onClear)="onClear_ExportOrder()">
+        </z-autocomplete>
       </div>
     </div>
   </div>
 </div>
 
 <div formDialogContent class="packing-dialog-content" *ngIf="form.get('ExportOrderID')?.value">
-  <div class="col-xl-10 page-content packing-layout-shell m-auto">
+  <div class="col-12 packing-layout-shell">
     <div class="col-xl-12 page-content-scrollable packing-layout-scroll">
       <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
         <div class="col-xl-12 card m-auto mb-2 order-info-sticky top-border-0">
           <div class="card-body">
             <div class="horizontal-form">
-              <div class="row align-items-end">
-                <div class="col-xl-2 form-group px-2 mb-0">
+              <div class="order-info-grid">
+                <div class="box-detail-field">
+                  <label class="box-detail-label">{{ formConfig.ExportOrderPackingListNo.label }}:</label>
+                  <div class="box-detail-control">
                   <z-span [text]="form.get('ExportOrderPackingListNo')?.value"
-                    [label]="formConfig.ExportOrderPackingListNo.label"></z-span>
+                    [label]="''"></z-span>
+                  </div>
                 </div>
-                <div class="col-xl-4 form-group px-2 mb-0">
-                  <z-span [text]="form.get('CustomerName')?.value" [label]="formConfig.CustomerName.label"></z-span>
+                <div class="box-detail-field">
+                  <label class="box-detail-label">{{ formConfig.CustomerName.label }}:</label>
+                  <div class="box-detail-control">
+                    <z-span [text]="form.get('CustomerName')?.value" [label]="''"></z-span>
+                  </div>
                 </div>
-                <div class="col-xl-3 form-group px-2 mb-0">
-                  <z-select [group]="form" [control]="'PackingIdentityID'" [label]="formConfig.PackingIdentityID.label"
+                <div class="box-detail-field">
+                  <label class="box-detail-label">{{ formConfig.PackingIdentityID.label }}:</label>
+                  <div class="box-detail-control">
+                  <z-select [group]="form" [control]="'PackingIdentityID'" [label]="''"
                     [optionLabel]="'Text'" [optionValue]="'iValue'" [options]="packingIdentityList"></z-select>
+                  </div>
                 </div>
-                <div class="col-xl-2 form-group px-2 mb-0">
-                  <z-span [text]="form.get('NoOfBox')?.value" [label]="formConfig.NoOfBox.label"></z-span>
+                <div class="box-detail-field">
+                  <label class="box-detail-label">{{ formConfig.NoOfBox.label }}:</label>
+                  <div class="box-detail-control">
+                    <z-span [text]="form.get('NoOfBox')?.value" [label]="''"></z-span>
+                  </div>
                 </div>
-                <div class="col-xl-1 mb-0">
-                  <div class="box-header-actions" *ngIf="form.get('ExportOrderID')?.value">
-                    <button type="button" class="btn btn-sm btn-primary" (click)="addBox()">
-                      <i class="pi pi-plus-circle"></i>&nbsp;Add Box
-                    </button>
+                <div class="box-detail-field order-info-actions" *ngIf="form.get('ExportOrderID')?.value">
+                  <label class="box-detail-label">&nbsp;</label>
+                  <div class="box-detail-control">
+                    <div class="table-add-row">
+                      <button type="button" class="simple-btn" (click)="addBox()">
+                        <i class="pi pi-plus" aria-hidden="true"></i>
+                        <span>Add Box</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -61,73 +71,112 @@
                 <i class="pi" [ngClass]="boxCollapsed[i] ? 'pi-chevron-down' : 'pi-chevron-up'"></i>
               </button>
               <div class="box-header-actions">
-                <button type="button" class="btn btn-sm btn-danger" (click)="removeBox(i)">
-                  Remove Box
+                <button type="button" class="simple-btn" (click)="removeBox(i)">
+                  <i class="pi pi-minus" aria-hidden="true"></i>
+                  <span>Remove Box</span>
                 </button>
               </div>
             </div>
 
             <div class="card-body" *ngIf="!boxCollapsed[i]">
               <div class="horizontal-form">
-                <div class="row">
-                  <div class="col-md-2 form-group px-2">
+                <div class="box-details-grid">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.NoOfProduct.label }}:</label>
+                    <div class="box-detail-control">
                     <z-span [text]="box.get('NoOfProduct')?.value"
-                      [label]="formConfig.BoxList.items.NoOfProduct.label"></z-span>
+                      [label]="''"></z-span>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.BoxLength.label }}:</label>
+                    <div class="box-detail-control">
                     <z-inputnumber [group]="box" [control]="'BoxLength'"
-                      [label]="formConfig.BoxList.items.BoxLength.label"
+                      [label]="''"
                       [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.BoxWidth.label }}:</label>
+                    <div class="box-detail-control">
                     <z-inputnumber [group]="box" [control]="'BoxWidth'"
-                      [label]="formConfig.BoxList.items.BoxWidth.label"
+                      [label]="''"
                       [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.BoxHeight.label }}:</label>
+                    <div class="box-detail-control">
                     <z-inputnumber [group]="box" [control]="'BoxHeight'"
-                      [label]="formConfig.BoxList.items.BoxHeight.label"
+                      [label]="''"
                       [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.BoxWeight.label }}:</label>
+                    <div class="box-detail-control">
                     <z-inputnumber [group]="box" [control]="'BoxWeight'"
-                      [label]="formConfig.BoxList.items.BoxWeight.label"
+                      [label]="''"
                       [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.BoxGrossWeight.label }}:</label>
+                    <div class="box-detail-control">
                     <z-inputnumber [group]="box" [control]="'BoxGrossWeight'"
-                      [label]="formConfig.BoxList.items.BoxGrossWeight.label"
+                      [label]="''"
                       [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
-                    <z-select [group]="box" [control]="'PackedBy'" [label]="formConfig.BoxList.items.PackedBy.label"
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.PackedBy.label }}:</label>
+                    <div class="box-detail-control">
+                    <z-select [group]="box" [control]="'PackedBy'" [label]="''"
                       [validationMessage]="formConfig.BoxList.items.PackedDateTime.error" [optionLabel]="'EmployeeName'"
                       [optionValue]="'EmployeeID'" [options]="employeeList"></z-select>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.PackedDateTime.label }}:</label>
+                    <div class="box-detail-control">
                     <z-datepicker [group]="box" [control]="'PackedDateTime'"
-                      [label]="formConfig.BoxList.items.PackedDateTime.label"
+                      [label]="''"
                       [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-datepicker>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.InspectedBy.label }}:</label>
+                    <div class="box-detail-control">
                     <z-select [group]="box" [control]="'InspectedBy'"
-                      [label]="formConfig.BoxList.items.InspectedBy.label"
+                      [label]="''"
                       [validationMessage]="formConfig.BoxList.items.PackedDateTime.error" [optionLabel]="'EmployeeName'"
                       [optionValue]="'EmployeeID'" [options]="employeeList"></z-select>
+                    </div>
                   </div>
-                  <div class="col-md-2 form-group px-2">
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.InspectedDateTime.label }}:</label>
+                    <div class="box-detail-control">
                     <z-datepicker [group]="box" [control]="'InspectedDateTime'"
-                      [label]="formConfig.BoxList.items.InspectedDateTime.label"
+                      [label]="''"
                       [validationMessage]="formConfig.BoxList.items.InspectedDateTime.error"></z-datepicker>
+                    </div>
                   </div>
-                  <div class="col-12 px-2 d-flex flex-column mb-2">
-                    <z-table [tableDef]="productTableDefs[i]"></z-table>
+                </div>
+                  <div class="simple-field simple-field-table">
+                    <div class="simple-control">
+                      <z-table [tableDef]="productTableDefs[i]"></z-table>
+                    </div>
+                  </div>
+                  <div class="table-add-row">
+                    <button type="button" class="simple-btn" (click)="addProductRow(i)">
+                      <i class="pi pi-plus" aria-hidden="true"></i>
+                      <span>Add line</span>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
       </form>
     </div>
   </div>
@@ -158,7 +207,7 @@
 
 <ng-template #productSelectColTemplate let-row let-rowIndex="index">
   <z-select [group]="getProductList(row.__boxIndex).at(rowIndex)" [control]="'ProductID'"
-    [label]="formConfig.BoxList.items.ProductList.items.ProductName.label"
+    [label]="''"
     [validationMessage]="formConfig.BoxList.items.ProductList.items.ProductName.error"
     (onChange)="onChange_Product($event, row.__boxIndex, rowIndex)"
     [options]="getAvailableProducts(row.__boxIndex, rowIndex)" [optionLabel]="'ProductName'"
@@ -169,32 +218,23 @@
 <ng-template #packedQtyColTemplate let-row let-rowIndex="index">
   <z-inputnumber [group]="getProductList(row.__boxIndex).at(rowIndex)"
     (onChange)="onChange_PackedQty(row.__boxIndex, rowIndex)" [control]="'PackedQty'"
-    [label]="formConfig.BoxList.items.ProductList.items.PackedQty.label"
+    [label]="''"
     [validationMessage]="formConfig.BoxList.items.ProductList.items.PackedQty.error">
   </z-inputnumber>
 </ng-template>
 
 <ng-template #weightPerUnitColTemplate let-row let-rowIndex="index">
   <z-inputnumber [group]="getProductList(row.__boxIndex).at(rowIndex)" [control]="'WeightPerUnit'"
-    [label]="formConfig.BoxList.items.ProductList.items.WeightPerUnit.label"
+    [label]="''"
     [validationMessage]="formConfig.BoxList.items.ProductList.items.WeightPerUnit.error">
   </z-inputnumber>
 </ng-template>
 
 <ng-template #productActionColTemplate let-row let-rowIndex="index">
-  <div class="col-12 tables-action-col">
-    <div class="col-6 justify-item-center">
-      <span class="btn btn-icon btn-sm btn-danger-transparent btn-delete-reactivate"
-        (click)="removeProductRow(row.__boxIndex, rowIndex)">
-        <i class="pi pi-minus-circle"></i></span>
-    </div>
-    <div class="col-6 justify-item-center">
-      <span *ngIf="rowIndex === this.getProductList(row.__boxIndex).length - 1"
-        class="btn btn-icon btn-sm btn-success-transparent btn-delete-reactivate"
-        (click)="addProductRow(row.__boxIndex)">
-        <i class="pi pi-plus-circle"></i>
-      </span>
-    </div>
+  <div class="tables-action-col">
+    <button type="button" class="simple-btn simple-btn-icon" (click)="removeProductRow(row.__boxIndex, rowIndex)">
+      <i class="pi pi-minus"></i>
+    </button>
   </div>
 </ng-template>
 <!-- Packing List Box Related Templates End-->

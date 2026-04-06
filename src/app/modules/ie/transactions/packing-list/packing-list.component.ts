@@ -212,7 +212,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     return {
       columnDef: [
         { data: '', label: 'S No', hideVisToggle: true, width: '5%', customTemplate: this.serialNoColTemplate },
-        { data: 'ProductName', hideVisToggle: true, label: 'Product Name', width: '45%', customTemplate: this.productSelectColTemplate },
+        { data: 'ProductName', hideVisToggle: true, label: 'Product Name', width: '25%', customTemplate: this.productSelectColTemplate },
         { data: 'PackedQty', label: 'Packed Qty', width: '15%', customTemplate: this.packedQtyColTemplate },
         { data: 'WeightPerUnit', label: 'Weight Per Unit (Kg)', width: '18%', customTemplate: this.weightPerUnitColTemplate },
         { data: '', label: '', hideVisToggle: true, width: '7%', customTemplate: this.productActionColTemplate },
