@@ -11,7 +11,7 @@
         <a *ngIf="breadcrumb.url && !last" [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
 
         <!-- Display-only breadcrumb (if no URL) -->
-        <span *ngIf="!breadcrumb.url || last" style="color: #333335;">{{ breadcrumb.label }}</span>
+        <span *ngIf="!breadcrumb.url || last" class="breadcrumb-current">{{ breadcrumb.label }}</span>
       </li>
     </ol>
   </nav>

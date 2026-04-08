@@ -1,0 +1,39 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #customTemplate let-modules>
+  <div class="mm-card mm-card--clickable" *ngFor="let item of modules" role="button" tabindex="0"
+    (click)="onClickEditDetails(item.ModuleID, item.ActiveStatus)"
+    (keydown.enter)="onClickEditDetails(item.ModuleID, item.ActiveStatus)"
+    (keydown.space)="$event.preventDefault(); onClickEditDetails(item.ModuleID, item.ActiveStatus)">
+    <div class="mm-card__body">
+      <div class="mm-card__head">
+        <h5 class="mm-card__title">{{ item.ModuleCode }}</h5>
+        <div class="mm-card__head-right">
+          <span class="mm-status-pill" [ngClass]="item.ActiveStatus ? 'is-active' : 'is-inactive'">
+            {{ item.ActiveStatus ? 'Active' : 'Inactive' }}
+          </span>
+          <button type="button" class="mm-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(item)">
+            <i class="pi pi-{{item.ActiveStatus ? 'trash' : 'undo'}}"></i>
+          </button>
+        </div>
+      </div>
+
+      <p class="mm-card__subtitle">{{ item.ModuleName }}</p>
+
+      <div class="mm-card__grid">
+        <div class="mm-field">
+          <span class="mm-field__label">Image Path</span>
+          <span class="mm-field__value">{{ item.ImagePath || '-' }}</span>
+        </div>
+        <div class="mm-field">
+          <span class="mm-field__label">Display Order</span>
+          <span class="mm-field__value">{{ item.DisplayOrder ?? '-' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

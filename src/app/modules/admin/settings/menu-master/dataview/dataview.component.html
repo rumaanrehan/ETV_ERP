@@ -1,0 +1,57 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #customTemplate let-menus>
+  <div class="menu-card menu-card--clickable" *ngFor="let item of menus" role="button" tabindex="0"
+    (click)="onClickEditDetails(item.MenuID, item.ActiveStatus)"
+    (keydown.enter)="onClickEditDetails(item.MenuID, item.ActiveStatus)"
+    (keydown.space)="$event.preventDefault(); onClickEditDetails(item.MenuID, item.ActiveStatus)">
+    <div class="menu-card__body">
+      <div class="menu-card__head">
+        <div class="menu-card__titles">
+          <h5 class="menu-card__title">{{ item.MenuName }}</h5>
+          <p class="menu-card__subtitle">{{ item.ModuleName || '-' }}</p>
+        </div>
+        <div class="menu-card__head-right">
+          <span class="menu-status-pill" [ngClass]="item.ActiveStatus ? 'is-active' : 'is-inactive'">
+            {{ item.ActiveStatus ? 'Active' : 'Inactive' }}
+          </span>
+          <button type="button" class="grid-action-btn"
+            (click)="$event.stopPropagation(); onClickDeleteReactivate(item)">
+            <i class="pi pi-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-card__grid">
+        <div class="menu-field">
+          <span class="menu-field__label">Menu Type</span>
+          <span class="menu-field__value">{{ item.MenuTypeName || '-' }}</span>
+        </div>
+        <div class="menu-field">
+          <span class="menu-field__label">Parent</span>
+          <span class="menu-field__value">{{ item.ParentMenuName || '-' }}</span>
+        </div>
+        <div class="menu-field">
+          <span class="menu-field__label">Controller</span>
+          <span class="menu-field__value">{{ item.ControllerName || '-' }}</span>
+        </div>
+        <div class="menu-field">
+          <span class="menu-field__label">Action</span>
+          <span class="menu-field__value">{{ item.ActionName || '-' }}</span>
+        </div>
+        <div class="menu-field">
+          <span class="menu-field__label">Display Order</span>
+          <span class="menu-field__value">{{ item.DisplayOrder || '-' }}</span>
+        </div>
+        <div class="menu-field">
+          <span class="menu-field__label">Developer Only</span>
+          <span class="menu-field__value">{{ item.IsDeveloperOnly ? 'Yes' : 'No' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

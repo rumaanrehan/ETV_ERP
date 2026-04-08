@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { ModuleMaster, ModuleMaster_IndexTableFilter, ModuleMaster_IndexTableList, ModuleMaster_SelectList, ModuleRequest } from './module-master';
+import { ModuleMaster, ModuleMaster_IndexTableFilter, ModuleMaster_IndexTableList, ModuleMaster_IndexTableSort, ModuleMaster_SelectList, ModuleRequest } from './module-master';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +51,41 @@ export class ModuleMasterService {
       DisplayOrder: 0,
       ActiveStatusID: 0
     }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<ModuleMaster_IndexTableSort> {
+    return {
+      ModuleCode: {
+        label: 'Module Code',
+        defaultValue: -1
+      },
+      ModuleName: {
+        label: 'Module Name',
+        defaultValue: 0
+      }
+    }
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<ModuleMaster_IndexTableList> {
+    return {
+      tableKey: 'Admin_ModuleMaster_IndexTable',
+      defaultSortColumn: { sortField: 'ModuleCode', sortOrder: 1 },
+      filterForm,
+      sortingForm,
+      filterFields: [
+        { field: 'ModuleCode', label: 'Code', type: 'text' },
+        { field: 'ModuleName', label: 'Module Name', type: 'text' },
+        { field: 'DisplayOrder', label: 'Display Order', type: 'number' },
+        { field: 'ActiveStatusID', label: 'Status', type: 'dropdown', options: [] }
+      ],
+      sortFields: [
+        { field: 'ModuleCode', label: 'Code', enabled: true, order: -1 },
+        { field: 'ModuleName', label: 'Module Name', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
   }
 
   getFormConfig(): FormConfigType<ModuleMaster> {

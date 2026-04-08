@@ -19,6 +19,11 @@ export interface ModuleMaster_IndexTableFilter {
   ActiveStatusID: number | null;
 }
 
+export interface ModuleMaster_IndexTableSort {
+  ModuleCode: 1 | 0 | -1;
+  ModuleName: 1 | 0 | -1;
+}
+
 export interface ModuleMaster_IndexTableList {
   RowID: number | null;
   ModuleID: number | null;

@@ -25,6 +25,12 @@ export interface MenuMaster_IndexTableFilter {
   ActiveStatusID: number | null;
 }
 
+export interface MenuMaster_IndexTableSort {
+  MenuType: 1 | 0 | -1;
+  MenuName: 1 | 0 | -1;
+  ModuleName: 1 | 0 | -1;
+}
+
 export interface MenuMaster_IndexTableList {
   RowID: number;
   MenuID: number | null;
