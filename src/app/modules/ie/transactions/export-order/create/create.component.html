@@ -40,8 +40,8 @@
           <span>Add Tax Invoice</span>
         </button>
 
-        <button type="button" class="toolbar-btn" *ngIf="isEditMode" [disabled]="disablePrintButton"
-          (click)="printPackingDetail()">
+        <button type="button" class="toolbar-btn" *ngIf="isEditMode && isPackingListAvailable"
+          [disabled]="disablePrintButton" (click)="printPackingDetail()">
           <span class="spinner-border spinner-border-sm me-2" *ngIf="disablePrintButton" aria-hidden="true"></span>
           <span>Print Packing Detail</span>
         </button>

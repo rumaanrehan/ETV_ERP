@@ -154,7 +154,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   onSelect_ExportOrder(event: ExportOrder_SelectList): void {
-    if (event.IsProformaGenerated) {
+    if (!event.IsProformaGenerated) {
       this.resetPackingForm();
 
       this.alertService.showAlert({

@@ -31,7 +31,7 @@ import { ExportOrderService } from '../export-order.service';
 @Component({
   selector: 'app-dataview',
   standalone: true,
-  imports: [CommonModule, DataViewModule, ZDataviewComponent, PackingListComponent, ReactiveFormsModule, ZFormControlsModule, ZMenuComponent, ButtonModule, FormsModule, CheckboxModule],
+  imports: [CommonModule, DataViewModule, ZDataviewComponent, ReactiveFormsModule, ZFormControlsModule, ZMenuComponent, ButtonModule, FormsModule, CheckboxModule],
   templateUrl: './dataview.component.html',
   styleUrl: './dataview.component.scss'
 })
@@ -459,10 +459,15 @@ export class DataviewComponent implements OnInit, OnDestroy {
         command: () => this.handleComponentLoad('LetterOfCreditCreateComponent', item)
       },
       {
-        label: item.ExportOrderPackingListID ? 'Update Packing Details' : 'Add Packing Details',
-        icon: 'pi pi-box',
-        command: () => this.onClickAddPackingDetails(item.ExportOrderID, item.ExportOrderPackingListID)
-      }
+        label: 'Add Shipping Details',
+        icon: 'pi pi-envelope',
+        command: () => this.handleComponentLoad('ShippingCreateComponent', item)
+      },
+      {
+        label: 'Submit for Bill Regulation',
+        icon: 'pi pi-envelope',
+        command: () => this.handleComponentLoad('BillCreateComponent', item)
+      },
     )
 
     return menuItems;

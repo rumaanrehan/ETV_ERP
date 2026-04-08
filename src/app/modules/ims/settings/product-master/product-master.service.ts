@@ -115,6 +115,14 @@ export class ProductMasterService {
           maxlength: 'Maximum 150 characters allowed.'
         }
       },
+      ModelCode: {
+        label: 'Model Code',
+        defaultValue: '',
+        validators: [Validators.maxLength(150), NotOnlyWhitespaceValidator()],
+        validationMessages: {
+          maxlength: 'Maximum 150 characters allowed.'
+        }
+      },
       UOMID: {
         label: 'UOM',
         defaultValue: null,

@@ -19,6 +19,11 @@
         </z-inputtext>
       </div>
       <div class="col-xl-12 form-group">
+        <z-inputtext [group]="form" [control]="'ModelCode'" [label]="formConfig.ModelCode.label"
+          [validationMessage]="formConfig.ModelCode.error">
+        </z-inputtext>
+      </div>
+      <div class="col-xl-12 form-group">
         <z-select [group]="form" [control]="'UOMID'" [label]="formConfig.UOMID.label"
           [validationMessage]="formConfig.UOMID.error" [optionLabel]="'UOMName'" [optionValue]="'UOMID'"
           [options]="uomList">

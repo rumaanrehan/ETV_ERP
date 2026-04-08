@@ -644,7 +644,7 @@ export class ExportOrderService {
       },
       StatusID: {
         label: 'Status',
-        defaultValue: 3,
+        defaultValue: 1,
         validators: [Validators.required],
         validationMessages: {
           required: "Status is required"
@@ -815,7 +815,7 @@ export class ExportOrderService {
             type: 'control'
           },
           BoxWeight: {
-            label: 'Weight (Kg)',
+            label: 'Net Weight (Kg)',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
             validationMessages: {
