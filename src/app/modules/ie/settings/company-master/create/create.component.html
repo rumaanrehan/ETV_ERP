@@ -15,7 +15,7 @@
             <div class="col-xl-12 form-group">
                 <z-select [group]="form" [control]="'CompanyTypeID'" [label]="formConfig.CompanyTypeID.label"
                     [validationMessage]="formConfig.CompanyTypeID.error" [options]="vendorTypeList"
-                    [optionLabel]="'Text'" [optionValue]="'iValue'">
+                    [optionLabel]="'Text'" [optionValue]="'iValue'" (onChange)="onChange_CompanyType($event)">
                 </z-select>
             </div>
             <div class="col-xl-12 form-group">
@@ -46,24 +46,29 @@
                     [validationMessage]="formConfig.CompanyEmailID.error">
                 </z-inputtext>
             </div>
-            <div class="col-xl-12 form-group">
+            <div class="col-xl-12 form-group"*ngIf="!isClientCompany">
                 <z-inputtext [group]="form" [control]="'ImportLicenseNo'" [label]="formConfig.ImportLicenseNo.label"
                     [validationMessage]="formConfig.ImportLicenseNo.error">
                 </z-inputtext>
             </div>
-            <div class="col-xl-12 form-group">
+            <div class="col-xl-12 form-group" *ngIf="!isClientCompany">
                 <z-inputtext [group]="form" [control]="'GSTNo'" [label]="formConfig.GSTNo.label"
                     [validationMessage]="formConfig.GSTNo.error">
                 </z-inputtext>
             </div>
-            <div class="col-xl-12 form-group">
+            <div class="col-xl-12 form-group" *ngIf="!isClientCompany">
                 <z-inputtext [group]="form" [control]="'TANNo'" [label]="formConfig.TANNo.label"
                     [validationMessage]="formConfig.TANNo.error">
                 </z-inputtext>
             </div>
-            <div class="col-xl-12 form-group">
+            <div class="col-xl-12 form-group" *ngIf="!isClientCompany">
                 <z-inputtext [group]="form" [control]="'PANNo'" [label]="formConfig.PANNo.label"
                     [validationMessage]="formConfig.PANNo.error">
+                </z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group" *ngIf="isClientCompany">
+                <z-inputtext [group]="form" [control]="'CRNumber'" [label]="formConfig.CRNumber.label"
+                    [validationMessage]="formConfig.CRNumber.error">
                 </z-inputtext>
             </div>
             <div class="col-xl-12 form-group">

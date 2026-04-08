@@ -92,7 +92,7 @@
                   <div class="col-md-2 form-group px-2">
                     <z-inputnumber [group]="box" [control]="'BoxWeight'"
                       [label]="formConfig.BoxList.items.BoxWeight.label"
-                      [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
+                      [validationMessage]="formConfig.BoxList.items.BoxWeight.error" [readonly]="true"></z-inputnumber>
                   </div>
                   <div class="col-md-2 form-group px-2">
                     <z-inputnumber [group]="box" [control]="'BoxGrossWeight'"
@@ -176,6 +176,7 @@
 
 <ng-template #weightPerUnitColTemplate let-row let-rowIndex="index">
   <z-inputnumber [group]="getProductList(row.__boxIndex).at(rowIndex)" [control]="'WeightPerUnit'"
+    (onChange)="onChange_WeightPerUnit(row.__boxIndex)"
     [label]="formConfig.BoxList.items.ProductList.items.WeightPerUnit.label"
     [validationMessage]="formConfig.BoxList.items.ProductList.items.WeightPerUnit.error">
   </z-inputnumber>

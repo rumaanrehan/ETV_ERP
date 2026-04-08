@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../../../../core/services/api.service';
-import { Company_IndexTableFilter, Company_IndexTableList, Company_SelectList, CompanyMaster, CompanyRequest } from './company-master';
+import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
-import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
+import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
-import { EmailValidator, Validators } from '@angular/forms';
-import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
-import { Country_SelectList, CountryRequest } from '../../../admin/settings/country-master/country-master';
-import { StateRequest } from '../../../admin/settings/state-master/state-master';
-import { StaticListRequest, StaticList } from '../../../../shared/models/select-list';
+import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
-import { StateMasterService } from '../../../admin/settings/state-master/state-master.service';
+import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
+import { Country_SelectList, CountryRequest } from '../../../admin/settings/country-master/country-master';
+import { CountryMasterService } from '../../../admin/settings/country-master/country-master.service';
+import { StateRequest } from '../../../admin/settings/state-master/state-master';
+import { StateMasterService } from '../../../admin/settings/state-master/state-master.service';
+import { Company_IndexTableFilter, Company_IndexTableList, Company_SelectList, CompanyMaster, CompanyRequest } from './company-master';
 
 @Injectable({
   providedIn: 'root'
@@ -174,6 +174,16 @@ export class CompanyMasterService {
         validators: [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)],
         validationMessages: {
           pattern: "Enter a valid PAN No"
+        },
+        type: 'control'
+      },
+      CRNumber: {
+        label: 'CR Number',
+        defaultValue: null,
+        validators: [Validators.maxLength(20), Validators.pattern(/^[A-Z0-9\-]{8,20}$/)],
+        validationMessages: {
+          maxlength: 'CR Number must not exceed 20 characters',
+          pattern: 'Enter a valid CR Number'
         },
         type: 'control'
       },
