@@ -1,0 +1,44 @@
+:host {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+z-datatable {
+  min-height: 400px;
+}
+
+:host ::ng-deep .table-action-link {
+  color: inherit;
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 0.15s ease, font-weight 0.15s ease;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody > tr:not(.p-highlight):hover .table-action-link {
+  color: rgba(0, 90, 158, 1);
+  font-weight: 500;
+}
+
+:host ::ng-deep .grid-action-btn {
+  height: var(--se-field-height, 2.25rem);
+  width: var(--se-field-height, 2.25rem);
+  padding: 0;
+  border-radius: var(--se-field-radius, 10px);
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  transition: none;
+}
+
+:host ::ng-deep .grid-action-btn:hover,
+:host ::ng-deep .grid-action-btn:active {
+  background: var(--list-hover-focus-bg);
+}

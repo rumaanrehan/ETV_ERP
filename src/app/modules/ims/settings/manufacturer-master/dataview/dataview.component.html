@@ -1,0 +1,36 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #customTemplate let-manufacturers>
+  <div class="mf-card mf-card--clickable" *ngFor="let item of manufacturers" role="button" tabindex="0"
+    (click)="onClickEditDetails(item.ManufacturerID, item.ActiveStatus)"
+    (keydown.enter)="onClickEditDetails(item.ManufacturerID, item.ActiveStatus)"
+    (keydown.space)="$event.preventDefault(); onClickEditDetails(item.ManufacturerID, item.ActiveStatus)">
+    <div class="mf-card__body">
+      <div class="mf-card__head">
+        <div class="mf-card__titles">
+          <h5 class="mf-card__title">{{ item.ManufacturerCode }}</h5>
+          <p class="mf-card__subtitle">{{ item.ManufacturerName }}</p>
+        </div>
+        <div class="mf-card__head-right">
+          <span class="mf-status-pill" [ngClass]="item.ActiveStatus ? 'is-active' : 'is-inactive'">
+            {{ item.ActiveStatus ? 'Active' : 'Inactive' }}
+          </span>
+          <button type="button" class="mf-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(item)">
+            <i class="pi pi-{{ item.ActiveStatus ? 'trash' : 'undo' }}"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mf-card__grid">
+        <div class="mf-field">
+          <span class="mf-field__label">Short Code</span>
+          <span class="mf-field__value">{{ item.ShortCode || '-' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

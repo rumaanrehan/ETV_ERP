@@ -11,6 +11,11 @@ export interface Manufacturer_IndexTableFilter {
   ActiveStatusID: number | null;
 }
 
+export interface Manufacturer_IndexTableSort {
+  ManufacturerCode: number;
+  ManufacturerName: number;
+}
+
 export interface Manufacturer_IndexTableList {
   ManufacturerID: number;
   ManufacturerCode: string;
