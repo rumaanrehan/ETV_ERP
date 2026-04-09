@@ -10,25 +10,31 @@
     (keydown.enter)="onClickEditDetails(item.ModuleID, item.ActiveStatus)"
     (keydown.space)="$event.preventDefault(); onClickEditDetails(item.ModuleID, item.ActiveStatus)">
     <div class="mm-card__body">
-      <div class="mm-card__head">
-        <h5 class="mm-card__title">{{ item.ModuleCode }}</h5>
-        <div class="mm-card__head-right">
-          <span class="mm-status-pill" [ngClass]="item.ActiveStatus ? 'is-active' : 'is-inactive'">
-            {{ item.ActiveStatus ? 'Active' : 'Inactive' }}
-          </span>
-          <button type="button" class="mm-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(item)">
-            <i class="pi pi-{{item.ActiveStatus ? 'trash' : 'undo'}}"></i>
-          </button>
+      <div class="mm-card__top">
+        <div class="mm-avatar" [class.has-image]="!!item.ImagePath"
+          [style.backgroundImage]="item.ImagePath ? 'url(' + item.ImagePath + ')' : 'none'">
+          <i *ngIf="!item.ImagePath" class="pi pi-image" aria-hidden="true"></i>
+        </div>
+
+        <div class="mm-card__main">
+          <div class="mm-card__head">
+            <div class="mm-card__titles d-flex flex-column">
+              <h5 class="mm-card__title">{{ item.ModuleCode }}</h5>
+              <p class="mm-card__subtitle">{{ item.ModuleName }}</p>
+            </div>
+            <div class="mm-card__head-right d-flex align-items-center">
+              <span class="mm-status-pill" [ngClass]="item.ActiveStatus ? 'is-active' : 'is-inactive'">
+                {{ item.ActiveStatus ? 'Active' : 'Inactive' }}
+              </span>
+              <button type="button" class="mm-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(item)">
+                <i class="pi pi-{{item.ActiveStatus ? 'trash' : 'undo'}}"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <p class="mm-card__subtitle">{{ item.ModuleName }}</p>
-
       <div class="mm-card__grid">
-        <div class="mm-field">
-          <span class="mm-field__label">Image Path</span>
-          <span class="mm-field__value">{{ item.ImagePath || '-' }}</span>
-        </div>
         <div class="mm-field">
           <span class="mm-field__label">Display Order</span>
           <span class="mm-field__value">{{ item.DisplayOrder ?? '-' }}</span>
