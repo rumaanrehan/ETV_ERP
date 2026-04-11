@@ -1,0 +1,59 @@
+<!--Page Header Action Button Template-->
+<ng-template #pageHeaderActionTemplate>
+    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"> <i
+            class="pi pi-plus"></i>&nbsp; Add Purchase Requisition</button>
+</ng-template>
+
+<ng-template #aatikTemplate>
+    <div class="btn btn-primary"> Click Me</div>
+
+</ng-template>
+
+<div class="col-xl-12 index-page-content">
+    <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+        (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+    </z-dataview>
+</div>
+
+<ng-template #customTemplate let-purchaseRequisition>
+    <div class="dataview-item" *ngFor="let item of purchaseRequisition; let first = first">
+        <div class="col-12 p-3">
+            <div class="d-flex justify-content-between">
+                <a (click)="onClickEditDetails(item.PurchaseRequisitionID)" class="text-decoration-none">
+                    <h5 class="primary-color mb-2">{{item.PurchaseRequisitionNo}} | {{item.CustomerName}}</h5>
+                </a>
+                <div class="text-end d-flex justify-content-end">
+                    <span class="badge bg-outline-primary">{{ item.StatusText }}</span>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex flex-wrap justify-content-between">
+                    <div class="dataview-info-column">
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">Requisition Date:</span>
+                            <span class="fs-6 text-secondary"> {{formatDate(item.RequisitionDate)}} </span>
+                        </div>
+                        <div class="dataview-info-item">
+                            <span class="fs-6 text-secondary">Required By Date:</span>
+                            <span class="fs-6 text-secondary">{{formatDate(item.RequiredByDate)}}</span>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex flex-wrap justify-content-between">
+                    <div class="dataview-info-item">
+                        <span class="fs-6 text-secondary">ProductCount:</span>
+                        <span class="fs-6 text-secondary">{{item.ProductCount}}</span>
+                    </div>
+                    <div class="text-end" *ngIf="item.StatusText == 'Draft' || item.StatusText == 'Under Review'">
+                        <button class=" btn btn-primary" (click)="onClickCancel(item?.PurchaseRequisitionID)">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+           </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #container></ng-template>

@@ -12,6 +12,7 @@ export interface CompanyMaster {
     GSTNo: string | null;
     TANNo: string | null;
     PANNo: string | null;
+    CRNumber: string | null;
     BillingAddress: string | null;
     IsShippingAddressSameAsBillingAddress: boolean | null;
     ShippingAddress: string | null;
@@ -64,6 +65,7 @@ export interface Company_Details {
     GSTNo: string | null;
     TANNo: string | null;
     PANNo: string | null;
+    CRNumber: string | null;
     BillingAddress: string | null;
     ShippingAddress: string | null;
 }

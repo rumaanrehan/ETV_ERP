@@ -43,6 +43,10 @@ export class CreateComponent {
     private alertService: AlertNotificationService
   ) { }
 
+  get isClientCompany(): boolean {
+    return Number(this.form.get('CompanyTypeID')?.value) === 1;
+  }
+
   ngOnInit(): void {
     this.formConfig = this.pageService.getFormConfig();
     this.form = this.formService.createFormGroup<CompanyMaster>(this.formConfig);
@@ -97,6 +101,19 @@ export class CreateComponent {
     }
   }
 
+  onChange_CompanyType(companyTypeID: number | string | null): void {
+    if (Number(companyTypeID) === 1) {
+      this.form.patchValue({ ImportLicenseNo: null, GSTNo: null, TANNo: null, PANNo: null });
+      return;
+    }
+
+    this.form.patchValue({ CRNumber: null });
+  }
+
+  syncCompanyTypeFields(): void {
+    this.onChange_CompanyType(this.form.get('CompanyTypeID')?.value);
+  }
+
   LoadDropdownList(): void {
     this.loadStaticLists([
       { fieldName: 'CompanyType', targetList: 'vendorTypeList' },
@@ -139,6 +156,8 @@ export class CreateComponent {
 
   onSubmit(): void {
     if (this.isSubmitted) return;
+
+    this.syncCompanyTypeFields();
 
     if (this.form.get('IsShippingAddressSameAsBillingAddress')?.value) {
       this.form.get('ShippingAddress')?.setValue(this.form.get('BillingAddress')?.value);

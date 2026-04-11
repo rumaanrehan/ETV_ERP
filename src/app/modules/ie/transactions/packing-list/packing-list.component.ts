@@ -154,7 +154,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   onSelect_ExportOrder(event: ExportOrder_SelectList): void {
-    if (event.IsProformaGenerated) {
+    if (!event.IsProformaGenerated) {
       this.resetPackingForm();
 
       this.alertService.showAlert({
@@ -269,6 +269,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
     this.getProductList(boxIndex).push(productForm);
     this.updateProductCount(boxIndex);
+    this.updateBoxWeight(boxIndex);
     this.syncProductTable(boxIndex);
   }
 
@@ -295,6 +296,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
       }
 
       this.updateProductCount(boxIndex);
+      this.updateBoxWeight(boxIndex);
       this.syncProductTable(boxIndex);
     });
   }
@@ -304,6 +306,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
     if (!productId) {
       row.patchValue({ ProductID: null, ProductName: null, PackedQty: null });
+      this.updateBoxWeight(boxIndex);
       this.syncProductTables();
       return;
     }
@@ -311,6 +314,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     if (this.isProductDuplicateInBox(productId, boxIndex, rowIndex)) {
       this.alertService.showToast({ text: 'Product already exists' });
       row.patchValue({ ProductID: null, ProductName: null, PackedQty: null });
+      this.updateBoxWeight(boxIndex);
       this.syncProductTables();
       return;
     }
@@ -326,10 +330,13 @@ export class PackingListComponent implements OnInit, OnDestroy {
       PackedQty: remainingQty
     });
 
+    this.updateBoxWeight(boxIndex);
     this.syncProductTables();
   }
 
-  onChange_PackedQty(boxIndex: number, rowIndex: number): void {
+  onChange_PackedQty(boxIndex: number, rowIndex: number): void {    
+    this.updateBoxWeight(boxIndex);
+    
     const currentRow = this.getProductList(boxIndex).at(rowIndex) as FormGroup;
     const productId = currentRow.get('ProductID')?.value as number | null;
 
@@ -342,6 +349,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
     if (totalQty > availableQty) {
       currentRow.patchValue({ PackedQty: availableQty }, { emitEvent: false });
+      this.updateBoxWeight(boxIndex);
       this.syncProductTables();
 
       this.alertService.showAlert({
@@ -355,10 +363,28 @@ export class PackingListComponent implements OnInit, OnDestroy {
     this.syncProductTables();
   }
 
+  onChange_WeightPerUnit(boxIndex: number): void {
+    this.updateBoxWeight(boxIndex);
+  }
+
   updateProductCount(boxIndex: number): void {
     this.boxListArray.at(boxIndex).patchValue({
       NoOfProduct: this.getProductList(boxIndex).length
     });
+  }
+
+  updateBoxWeight(boxIndex: number): void {
+    debugger;
+    const totalWeight = this.getProductList(boxIndex).controls.reduce((total, rowControl) => {
+      const packedQty = Number(rowControl.get('PackedQty')?.value) || 0;
+      const weightPerUnit = Number(rowControl.get('WeightPerUnit')?.value) || 0;
+
+      return total + (packedQty * weightPerUnit);
+    }, 0);
+
+    this.boxListArray.at(boxIndex).patchValue({
+      BoxWeight: totalWeight > 0 ? Number(totalWeight.toFixed(2)) : null
+    }, { emitEvent: false });
   }
 
   updateBoxNumbers(): void {
@@ -697,6 +723,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
     this.boxListArray.controls.forEach((_, index) => {
       this.updateProductCount(index);
+      this.updateBoxWeight(index);
     });
   }
 

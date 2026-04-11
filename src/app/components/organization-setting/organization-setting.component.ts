@@ -21,7 +21,7 @@ import { PageHeaderService } from '../../shared/services/page-header.service';
   templateUrl: './organization-setting.component.html',
   styleUrl: './organization-setting.component.scss'
 })
-export class OrganizationSettingComponent implements OnInit, OnDestroy{
+export class OrganizationSettingComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
 
@@ -31,7 +31,7 @@ export class OrganizationSettingComponent implements OnInit, OnDestroy{
   stateName = '';
   logoImageSrc: string | null = null;
   uploadingLogo = false;
-  
+
   form!: FormGroup;
   logoForm!: FormGroup;
   formConfig!: FormConfigType<OrganizationSettings>;
@@ -45,14 +45,14 @@ export class OrganizationSettingComponent implements OnInit, OnDestroy{
     private formService: FormService,
     private fb: FormBuilder,
     private alertService: AlertNotificationService
-  ) {  }
-  
+  ) { }
+
   ngOnInit(): string {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
     this.formConfig = this.userService.GetOrganizationSettingsFormConfig();
     this.form = this.formService.createFormGroup<OrganizationSettings>(this.formConfig);
     this.formService.initializeFormValidationMessage(this.formConfig, this.form);
-    this.logoForm = this.fb.group({logo: [null]});
+    this.logoForm = this.fb.group({ logo: [null] });
     this.loadCountryList();
     this.getDetails();
     return '';
@@ -92,49 +92,49 @@ export class OrganizationSettingComponent implements OnInit, OnDestroy{
     formData.append('Logo', event);
     try {
       this.userService.UploadOrganizationLogo(formData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            // this.logoImageSrc = URL.createObjectURL(file);
-            // this.logoForm.reset();
-            // this.updateLogo = false;
-            this.alertService.showAlert({
-              type: 'success',
-              text: response.Message,
-              timer: 5000
-            });
-            this.ngOnInit();
-          } else {
-            this.alertService.showServerResponseAlert(response);
-          }
-        },
-      });
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.IsSuccess) {
+              // this.logoImageSrc = URL.createObjectURL(file);
+              // this.logoForm.reset();
+              // this.updateLogo = false;
+              this.alertService.showAlert({
+                type: 'success',
+                text: response.Message,
+                timer: 5000
+              });
+              this.ngOnInit();
+            } else {
+              this.alertService.showServerResponseAlert(response);
+            }
+          },
+        });
     }
     catch (error) {
       this.uploadingLogo = false;
     }
   }
-  
+
   removeLogo(): void {
     this.userService.RemoveOrganizationLogo()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (response) => {
-        if (response.IsSuccess) {
-          this.logoImageSrc = null;
-          this.alertService.showAlert({
-            type: 'success',
-            text: response.Message,
-            timer: 5000
-          });
-        } else {
-          this.alertService.showServerResponseAlert(response);
-        }
-      },
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            this.logoImageSrc = null;
+            this.alertService.showAlert({
+              type: 'success',
+              text: response.Message,
+              timer: 5000
+            });
+          } else {
+            this.alertService.showServerResponseAlert(response);
+          }
+        },
+      });
   }
-  
+
   getDetails(): void {
     try {
       this.userService.GetOrganizationDetails()
@@ -169,17 +169,13 @@ export class OrganizationSettingComponent implements OnInit, OnDestroy{
 
       this.alertService.showConfirmationWithInput({
         text: 'Do you really want to Update?',
-        }).then(result => {
-          if (result.isConfirmed) {
-            const data = {
-              ...this.form.value,
-              ReasonToUpdate: result.value
-            }
-            this.updateRecord(data);
-          }
-          else {
-            this.isSubmitted = false;
-          }
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.updateRecord(this.formService.transformFormData(this.form.value));
+        }
+        else {
+          this.isSubmitted = false;
+        }
       });
     }
     catch (error) {
@@ -187,7 +183,7 @@ export class OrganizationSettingComponent implements OnInit, OnDestroy{
 
     }
   }
-  
+
   updateRecord(formData: OrganizationSettings): void {
     try {
       this.userService.UpdateOrganizationDetails(formData)
@@ -216,7 +212,7 @@ export class OrganizationSettingComponent implements OnInit, OnDestroy{
     if (!name || typeof name !== 'string') { return '?'; }
 
     const trimmed = name.trim();
-    if (!trimmed) { return '?';}
+    if (!trimmed) { return '?'; }
 
     return trimmed.split(/\s+/).map((w: string) => w.charAt(0).toUpperCase()).slice(0, 2).join('');
   }

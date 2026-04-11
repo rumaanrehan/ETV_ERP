@@ -25,13 +25,13 @@ export class UserService {
     private countryService: CountryMasterService,
     private http: HttpClient
   ) { }
-  
-  GetCountryList(): Observable<{countryList: ApiListResponse<Country_SelectList>;}> {
-    return forkJoin({ countryList: this.countryService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest),});
+
+  GetCountryList(): Observable<{ countryList: ApiListResponse<Country_SelectList>; }> {
+    return forkJoin({ countryList: this.countryService.PopulateList({ PopulateType: 'SelectList' } as CountryRequest), });
   }
-  
-  GetStateList(countryID: number): Observable<{stateList: ApiListResponse<State_SelectList>;}> {
-    return forkJoin({ stateList: this.stateService.PopulateList({ PopulateType: 'SelectList', CountryID: countryID } as StateRequest),});
+
+  GetStateList(countryID: number): Observable<{ stateList: ApiListResponse<State_SelectList>; }> {
+    return forkJoin({ stateList: this.stateService.PopulateList({ PopulateType: 'SelectList', CountryID: countryID } as StateRequest), });
   }
 
   Authenticate(request: UserAuthenticateRequest): Observable<ApiDataResponse<UserAuthenticateResponse>> {
@@ -59,14 +59,14 @@ export class UserService {
     return this.apiService.post<ApiDataResponse<OrganizationSettings>>(`${this.endpoint}/GetOrganizationDetails`, {}, true);
   }
 
-  UpdateOrganizationDetails(model: OrganizationSettings): Observable<ApiResponse> {    
+  UpdateOrganizationDetails(model: OrganizationSettings): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/UpdateOrganizationDetails`, model);
   }
-  
+
   UploadOrganizationLogo(formData: FormData): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`http://localhost:44316/api/${this.endpoint}/UploadOrganizationLogo`, formData);
   }
-  
+
   RemoveOrganizationLogo(): Observable<ApiResponse> {
     return this.apiService.post<ApiResponse>(`${this.endpoint}/RemoveOrganizationLogo`, {});
   }
@@ -185,24 +185,23 @@ export class UserService {
       CINNumber: {
         label: 'CIN Number',
         defaultValue: null,
-        validators: [Validators.required , Validators.pattern(/^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/)],
+        validators: [Validators.pattern(/^([LUu]{1})([0-9]{5})([A-Za-z]{2})([0-9]{4})([A-Za-z]{3})([0-9]{6})$/)],
         validationMessages: {
-          maxlength: 'Enter valid CIN Number'
+          pattern: 'Enter valid CIN Number'
         }
       },
       PANNumber: {
         label: 'PAN Number',
         defaultValue: null,
-        validators: [Validators.required , Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)],
+        validators: [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]$/)],
         validationMessages: {
-          required: 'GST Number is required',
           pattern: 'Enter valid PAN Number'
         }
       },
       IECNumber: {
         label: 'IEC Number',
         defaultValue: null,
-        validators: [Validators.required , Validators.pattern(/^[0-9]{10}$/)],
+        validators: [Validators.required],
         validationMessages: {
           required: 'GST Number is required',
           pattern: 'Enter valid IEC Number'
@@ -211,27 +210,24 @@ export class UserService {
       GSTNumber: {
         label: 'GST Number',
         defaultValue: null,
-        validators: [Validators.required , Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/)],
+        validators: [Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/)],
         validationMessages: {
-          required: 'GST Number is required',
           pattern: 'Enter valid GST Number'
         }
       },
       CRNumber: {
         label: 'CR Number',
         defaultValue: null,
-        validators: [Validators.required , Validators.maxLength(20), Validators.pattern(/^[A-Z0-9\-]{8,20}$/)],
+        validators: [Validators.maxLength(20), Validators.pattern(/^[A-Z0-9\-]{8,20}$/)],
         validationMessages: {
-          required: 'GST Number is required',
           pattern: 'Enter valid CR Number',
         }
       },
       Industry: {
         label: 'Industry',
         defaultValue: null,
-        validators: [Validators.required, Validators.maxLength(100)],
+        validators: [Validators.maxLength(100)],
         validationMessages: {
-          required: 'Industry is required',
           maxlength: 'Industry must not exceed 100 characters'
         }
       },
@@ -259,7 +255,7 @@ export class UserService {
       PostalCode: {
         label: 'Postal Code',
         defaultValue: null,
-        validators: [Validators.required , Validators.pattern(/^[0-9]{6}$/)],
+        validators: [Validators.required, Validators.pattern(/^[0-9]{6}$/)],
         validationMessages: {
           required: 'Postal Code is required',
           pattern: 'Enter valid Postal Code'

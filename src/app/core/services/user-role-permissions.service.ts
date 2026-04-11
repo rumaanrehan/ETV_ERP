@@ -9,7 +9,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class UserRolePermissionsService {
   private destroy$ = new Subject<void>();
-  
+
   private isFetching = false;
   permissions = signal<UserPagePermissionsMap>({});
 
@@ -29,10 +29,7 @@ export class UserRolePermissionsService {
   async authorize(menu: string, action: 'CanCreate' | 'CanRead' | 'CanUpdate' | 'CanDelete'): Promise<'authorized' | 'unauthorized' | 'not_found'> {
     await this.waitForPermissions();
     const perms = this.permissions()[menu];
-    console.log(menu);
-    console.log(action);
-    console.log(perms);
-    if(!perms){
+    if (!perms) {
       return 'not_found';
     }
     else {
@@ -64,14 +61,14 @@ export class UserRolePermissionsService {
       // }
       await new Promise(resolve => setTimeout(resolve, 50)); // Wait 50ms between checks
     }
-    
-    
+
+
     // return new Promise((resolve) => {
     //   // If not fetching and permissions are empty, trigger a fresh load
     //   if (!this.isFetching && Object.keys(this.permissions()).length === 0) {
     //     this.loadUserRolePermissions(); // Triggers fetch and sets isFetching = true
     //   }
-      
+
     //   // Defer the immediate check by one tick to let isFetching=true take effect
     //   setTimeout(() => {
     //     // Poll until fetching is done
@@ -92,51 +89,51 @@ export class UserRolePermissionsService {
   /** Load permissions from API */
   loadUserRolePermissions(triggeredByStorage = false) {
     if (this.isFetching) return;
-    
+
     this.isFetching = true;
     this.permissions.set({});
-    
-    this.userService.GetRolePermissions() 
-    .pipe(
-      takeUntil(this.destroy$)
-    )
-    .subscribe({
-      next: (response) => {
-        if (response.IsSuccess) {
-          let permissionMap: any = {};
-          response.Data.Items.forEach(item => {
-            permissionMap[item.AreaName + "/" + item.ControllerName] = {
-              CanCreate: item.CanCreate,
-              CanRead: item.CanRead,
-              CanUpdate: item.CanUpdate,
-              CanDelete: item.CanDelete
-            };
-          });
-          this.permissions.set(permissionMap);
 
-          if (!triggeredByStorage) {
-            localStorage.setItem('__zctx_urps__', Date.now().toString());
+    this.userService.GetRolePermissions()
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (response) => {
+          if (response.IsSuccess) {
+            let permissionMap: any = {};
+            response.Data.Items.forEach(item => {
+              permissionMap[item.AreaName + "/" + item.ControllerName] = {
+                CanCreate: item.CanCreate,
+                CanRead: item.CanRead,
+                CanUpdate: item.CanUpdate,
+                CanDelete: item.CanDelete
+              };
+            });
+            this.permissions.set(permissionMap);
+
+            if (!triggeredByStorage) {
+              localStorage.setItem('__zctx_urps__', Date.now().toString());
+            }
           }
-        }
-        else {
+          else {
+            this.alertService.showServerErrorAlert({
+              type: "warning",
+              title: "Warning Message",
+              text: "<b>Unable to load user permissions.<b/> Please try refreshing the page.",
+            });
+          }
+        },
+        error: () => {
           this.alertService.showServerErrorAlert({
             type: "warning",
             title: "Warning Message",
             text: "<b>Unable to load user permissions.<b/> Please try refreshing the page.",
           });
+        },
+        complete: () => {
+          this.isFetching = false;
         }
-      },
-      error: () => {
-        this.alertService.showServerErrorAlert({
-          type: "warning",
-          title: "Warning Message",
-          text: "<b>Unable to load user permissions.<b/> Please try refreshing the page.",
-        });
-      },
-      complete: () => {
-        this.isFetching = false;
-      }
-    });
+      });
   }
 
   /** Handle changes from other tabs */
@@ -146,5 +143,5 @@ export class UserRolePermissionsService {
     if (event.key === '__zctx_urps__') {
       this.loadUserRolePermissions(true);
     }
-  } 
+  }
 }
