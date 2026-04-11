@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
 import { Operator, RequiredIf } from '../../../../shared/validators/required-if.validator';
-import { MenuMaster, MenuMaster_IndexTableFilter, MenuMaster_IndexTableList, MenuMaster_SelectList, MenuMasterRequest } from './menu-master';
+import { MenuMaster, MenuMaster_IndexTableFilter, MenuMaster_IndexTableList, MenuMaster_IndexTableSort, MenuMaster_SelectList, MenuMasterRequest } from './menu-master';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,48 @@ export class MenuMasterService {
       ControllerName: '',
       ActiveStatusID: 0
     }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<MenuMaster_IndexTableSort> {
+    return {
+      MenuType: {
+        label: 'Menu Type',
+        defaultValue: -1
+      },
+      MenuName: {
+        label: 'Menu Name',
+        defaultValue: 0
+      },
+      ModuleName: {
+        label: 'Module',
+        defaultValue: 0
+      }
+    };
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<MenuMaster_IndexTableList> {
+    return {
+      tableKey: 'Admin_MenuMaster_IndexTable',
+      defaultSortColumn: { sortField: 'MenuType', sortOrder: 1 },
+      filterForm,
+      sortingForm,
+      filterFields: [
+        { field: 'ModuleName', label: 'Module', type: 'text' },
+        { field: 'MenuTypeName', label: 'Menu Type', type: 'text' },
+        { field: 'MenuName', label: 'Menu Name', type: 'text' },
+        { field: 'ParentMenuName', label: 'Parent', type: 'text' },
+        { field: 'ControllerName', label: 'Controller', type: 'text' },
+        { field: 'ActiveStatusID', label: 'Status', type: 'dropdown', options: [] }
+      ],
+      sortFields: [
+        { field: 'MenuType', label: 'Menu Type', enabled: true, order: -1 },
+        { field: 'MenuName', label: 'Menu Name', enabled: true, order: 0 },
+        { field: 'ModuleName', label: 'Module', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
   }
 
   getFormConfig(): FormConfigType<MenuMaster> {

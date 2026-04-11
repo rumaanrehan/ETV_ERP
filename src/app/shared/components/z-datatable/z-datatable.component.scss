@@ -1,7 +1,3 @@
-:host-context([data-theme-mode="dark"]) ::ng-deep .z-datatable-root .p-datatable-tbody>tr>td,
-:host-context([data-theme-mode="dark"]) ::ng-deep .z-datatable-root .p-datatable-thead>tr>th {
-    color: #fff !important;
-}
 :host {
     display: flex;
     flex-direction: column;
@@ -15,6 +11,17 @@
     --zdt-text: #334155;
     --zdt-text-strong: #0f172a;
     --zdt-muted: #64748b;
+}
+
+:host-context([data-theme-mode="dark"]) {
+    --zdt-surface: #23272b;
+    --zdt-border: #334155;
+    --zdt-header-bg: rgba(30, 41, 59, 0.55);
+    --zdt-row-hover-bg: rgba(51, 65, 85, 0.45);
+    --zdt-selected-bg: transparent;
+    --zdt-text: #e5e7eb;
+    --zdt-text-strong: #f8fafc;
+    --zdt-muted: #94a3b8;
 }
 
 .z-datatable-viewport {
@@ -77,9 +84,17 @@
     font-weight: 400;
     font-size: 0.8125rem;
     padding: 0.85rem 1rem;
+    background: transparent;
     border: 0;
     border-bottom: 1px solid var(--zdt-border);
     vertical-align: middle;
+}
+
+/* Disable zebra-striping so all rows have uniform background in all themes */
+:host ::ng-deep .z-datatable-root.p-datatable-striped .p-datatable-tbody>tr>td,
+:host ::ng-deep .z-datatable-root.p-datatable-striped .p-datatable-tbody>tr:nth-child(even)>td,
+:host ::ng-deep .z-datatable-root.p-datatable-striped .p-datatable-tbody>tr:nth-child(odd)>td {
+    background: transparent;
 }
 
 :host ::ng-deep .z-datatable-root .p-datatable-tbody>tr>td:first-child {
@@ -96,7 +111,17 @@
 }
 
 :host ::ng-deep .z-datatable-root .p-datatable-tbody>tr.p-highlight>td {
-    background: var(--zdt-selected-bg);
+    background: transparent !important;
+    color: var(--zdt-text) !important;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody>tr.p-highlight {
+    background: transparent !important;
+    color: var(--zdt-text) !important;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody>tr.p-highlight>td:first-child {
+    color: var(--zdt-text-strong) !important;
 }
 
 :host ::ng-deep .z-datatable-root .p-sortable-column-icon {

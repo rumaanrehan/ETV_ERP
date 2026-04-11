@@ -1,0 +1,27 @@
+<ng-template #moduleCodeTemplate let-row>
+  <span class="table-action-link" (click)="onClickEditDetails(row.ModuleID, row.ActiveStatus)">
+    {{ row.ModuleCode }}
+  </span>
+</ng-template>
+
+<ng-template #moduleActiveStatusTemplate let-row>
+  <span class="grid-status-pill"
+    [ngStyle]="{ backgroundColor: row.ActiveStatus ? '#22c55e' : '#ef4444' }">
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+
+<ng-template #moduleDisplayOrderTemplate let-row>
+  {{ row.DisplayOrder && row.DisplayOrder !== '0' ? row.DisplayOrder : '' }}
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+  <div class="d-flex justify-content-end">
+    <button type="button" class="grid-action-btn" (click)="onClickDeleteReactivate(row)">
+      <i class="pi pi-trash"></i>
+    </button>
+  </div>
+</ng-template>
+
+<z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)" (resetFormEmitter)="onResetForm($event)">
+</z-datatable>

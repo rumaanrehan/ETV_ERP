@@ -21,6 +21,7 @@ import { checkHoriMenu } from './app-sidebar';
 })
 export class AppSidebarComponent {
   private destroy$ = new Subject<void>();
+  private readonly sidebarStateStoragePrefix = 'app_sidebar_open_state_';
   public localdata = localStorage;
   public windowSubscribe$!: Subscription;
   options = { autoHide: false, scrollbarMinSize: 100 };
@@ -28,6 +29,7 @@ export class AppSidebarComponent {
   isProfileActionsOpen = false;
 
   currentPath: string = '';
+  currentModuleCode: string = '';
   hasParent = false;
   hasParentLevel = 0;
 
@@ -61,6 +63,7 @@ export class AppSidebarComponent {
       const menuData = this.menuItems; // 👈 This accesses the signal, making it reactive!
 
       if (menuData?.length) {
+        this.applySavedSidebarState(menuData);
         this.setNavActive(null, this.currentPath);
       }
     });
@@ -137,6 +140,7 @@ export class AppSidebarComponent {
     if (urlSegments.length > 1) {
       const currentModule = urlSegments[1];
 
+      this.currentModuleCode = currentModule ?? '';
 
       this.menuService.moduleCode.set(currentModule);
       this.menuService.loadMenu(currentModule);
@@ -323,27 +327,10 @@ export class AppSidebarComponent {
       return;
     }
 
-    let html = document.documentElement;
+    const html = document.documentElement;
 
     if (html.getAttribute('data-nav-style') != "icon-hover" && html.getAttribute('data-nav-style') != "menu-hover") {
-      for (const item of menuData) {
-        if (item.Path === currentPath) {
-          item.Active = true;
-          item.Selected = true;
-          this.setMenuAncestorsActive(item);
-        }
-        else if (!item.Active && !item.Selected) {
-          item.Active = false; // Set active to false for items not matching the target
-          item.Selected = false; // Set active to false for items not matching the target
-        }
-        else {
-          this.removeActiveOtherMenus(item);
-        }
-
-        if (item.Children && item.Children.length > 0) {
-          this.setNavActive(event, currentPath, item.Children);
-        }
-      }
+      this.markSelectedPath(menuData, currentPath);
     }
   }
 
@@ -387,15 +374,15 @@ export class AppSidebarComponent {
     if (item) {
       if (Array.isArray(item)) {
         for (const val of item) {
-          val.active = false;
-          val.selected = false;
+          val.Active = false;
+          val.Selected = false;
         }
       }
-      item.active = false;
-      item.selected = false;
+      item.Active = false;
+      item.Selected = false;
 
-      if (item.children && item.children.length > 0) {
-        this.removeActiveOtherMenus(item.children);
+      if (item.Children && item.Children.length > 0) {
+        this.removeActiveOtherMenus(item.Children);
       }
     }
     else {
@@ -420,6 +407,7 @@ export class AppSidebarComponent {
             }
           }
           this.setAncestorsActive(menuData, item);
+          this.saveSidebarState(this.menuItems);
 
         } else if (!item.Active) {
           if (html.getAttribute('data-vertical-style') != 'doublemenu') {
@@ -465,8 +453,8 @@ export class AppSidebarComponent {
     let html = document.documentElement;
     const parent = this.findParent(menuData, targetObject);
     if (parent) {
-      parent.active = true;
-      if (parent.active) {
+      parent.Active = true;
+      if (parent.Active) {
         html.setAttribute('data-toggled', 'double-menu-open');
       }
       this.setAncestorsActive(menuData, parent);
@@ -503,6 +491,77 @@ export class AppSidebarComponent {
     return null;
   }
   // End of Toggle menu event
+
+  private markSelectedPath(menuData: Menu[], currentPath: string): boolean {
+    let foundInTree = false;
+
+    for (const item of menuData) {
+      const selfSelected = !!item.Path && item.Path === currentPath;
+      const childSelected = item.Children?.length ? this.markSelectedPath(item.Children, currentPath) : false;
+      item.Selected = selfSelected || childSelected;
+      foundInTree = foundInTree || item.Selected;
+    }
+
+    return foundInTree;
+  }
+
+  private getSidebarStateStorageKey(): string {
+    const moduleCode = this.currentModuleCode || this.menuService.moduleCode() || 'default';
+    return `${this.sidebarStateStoragePrefix}${moduleCode}`;
+  }
+
+  private buildMenuStateKey(item: Menu, parentKey: string, index: number): string {
+    const title = item.Title ?? '';
+    const path = item.Path ?? '';
+    const type = item.MenuType ?? '';
+    const token = `${index}:${title}|${path}|${type}`;
+    return parentKey ? `${parentKey}>${token}` : token;
+  }
+
+  private collectSidebarState(menuData: Menu[], state: Record<string, boolean>, parentKey = ''): void {
+    menuData.forEach((item, index) => {
+      const nodeKey = this.buildMenuStateKey(item, parentKey, index);
+      if (item.MenuType === 'sub' || (item.Children?.length ?? 0) > 0) {
+        state[nodeKey] = !!item.Active;
+      }
+      if (item.Children?.length) {
+        this.collectSidebarState(item.Children, state, nodeKey);
+      }
+    });
+  }
+
+  private applySidebarState(menuData: Menu[], state: Record<string, boolean>, parentKey = ''): void {
+    menuData.forEach((item, index) => {
+      const nodeKey = this.buildMenuStateKey(item, parentKey, index);
+      if (item.MenuType === 'sub' || (item.Children?.length ?? 0) > 0) {
+        item.Active = state[nodeKey] ?? false;
+      }
+      if (item.Children?.length) {
+        this.applySidebarState(item.Children, state, nodeKey);
+      }
+    });
+  }
+
+  private saveSidebarState(menuData: Menu[]): void {
+    const state: Record<string, boolean> = {};
+    this.collectSidebarState(menuData, state);
+    localStorage.setItem(this.getSidebarStateStorageKey(), JSON.stringify(state));
+  }
+
+  private applySavedSidebarState(menuData: Menu[]): void {
+    const rawState = localStorage.getItem(this.getSidebarStateStorageKey());
+    if (!rawState) {
+      this.applySidebarState(menuData, {});
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(rawState) as Record<string, boolean>;
+      this.applySidebarState(menuData, parsed ?? {});
+    } catch {
+      this.applySidebarState(menuData, {});
+    }
+  }
 
   HoverToggleInnerMenuFn(event: Event, item: Menu) {
     let html = document.documentElement;

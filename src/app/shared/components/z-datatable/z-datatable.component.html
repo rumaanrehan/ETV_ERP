@@ -2,7 +2,7 @@
   <p-table #dt [styleClass]="'p-paginator-striped z-datatable-root'" [tableStyleClass]="'index-table zdt-table'"
     [value]="tableDef.data" [totalRecords]="tableDef.totalRecords" [rows]="25" [showCurrentPageReport]="true"
     [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} entries'" [scrollable]="true"
-    [scrollHeight]="'flex'" [(selection)]="selectedRow" [selectionMode]="'multiple'" [stateStorage]="'session'"
+    [scrollHeight]="'flex'" [(selection)]="selectedRow" [selectionMode]="tableDef.rowClick ? null : 'multiple'" [stateStorage]="'session'"
     [stateKey]="tableStateKey" [paginator]="true" [showJumpToPageInput]="true" [rowsPerPageOptions]="[25, 50, 100, 200]"
     [showLoader]="true" [loading]="tableDef.loading" [lazy]="true" (onLazyLoad)="loadData($event)" [filterDelay]="300"
     (onFilter)="onFilter($event)" [sortField]="tableDef.defaultSortColumn.sortField"
@@ -144,7 +144,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
-      <tr [pSelectableRow]="rowData" (click)="onRowClick(rowData, $event)"
+      <tr [pSelectableRow]="tableDef.rowClick ? null : rowData" (click)="onRowClick(rowData, $event)"
         [class.zdt-clickable-row]="!!tableDef.rowClick">
         <ng-container *ngFor="let col of tableDef.columnDef">
           <td *ngIf="col.visible !== false" class="{{col.cssClass}}">

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ManufacturerMaster, Manufacturer_IndexTableFilter, Manufacturer_IndexTableList, Manufacturer_SelectList, ManufacturerRequest, Manufacturer_Details } from './manufacturer-master';
+import { ManufacturerMaster, Manufacturer_IndexTableFilter, Manufacturer_IndexTableList, Manufacturer_SelectList, ManufacturerRequest, Manufacturer_Details, Manufacturer_IndexTableSort } from './manufacturer-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
@@ -49,6 +50,40 @@ export class ManufacturerMasterService {
       ManufacturerName: '',
       ActiveStatusID: 0
     }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<Manufacturer_IndexTableSort> {
+    return {
+      ManufacturerCode: {
+        label: 'Code',
+        defaultValue: -1
+      },
+      ManufacturerName: {
+        label: 'Manufacturer Name',
+        defaultValue: 0
+      }
+    };
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<Manufacturer_IndexTableList> {
+    return {
+      tableKey: 'IMS_ManufacturerMaster_IndexTable',
+      defaultSortColumn: { sortField: 'ManufacturerCode', sortOrder: 1 },
+      filterForm,
+      sortingForm,
+      filterFields: [
+        { field: 'ManufacturerCode', label: 'Code', type: 'text' },
+        { field: 'ManufacturerName', label: 'Manufacturer Name', type: 'text' },
+        { field: 'ActiveStatusID', label: 'Status', type: 'dropdown', options: [] }
+      ],
+      sortFields: [
+        { field: 'ManufacturerCode', label: 'Code', enabled: true, order: -1 },
+        { field: 'ManufacturerName', label: 'Manufacturer Name', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
   }
 
   getFormConfig(): FormConfigType<ManufacturerMaster> {

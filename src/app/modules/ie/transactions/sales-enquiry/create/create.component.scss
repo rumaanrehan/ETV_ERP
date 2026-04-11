@@ -759,13 +759,14 @@
 .table-add-row {
     width: 100%;
     margin-inline: auto;
-    padding: 0 0.75rem 1rem;
+    padding: 0 0 1rem;
     display: flex;
     justify-content: flex-end;
 }
 
 .table-add-row .simple-btn {
     height: calc(var(--se-field-height) * 0.8);
+    margin-left: auto;
 }
 
 :host ::ng-deep .sales-enquiry-create.is-edit-mode .customer-autocomplete .input-group-addon {

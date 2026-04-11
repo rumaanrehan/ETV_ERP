@@ -1,0 +1,224 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.index-page-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+z-dataview {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+:host ::ng-deep .p-dataview-content {
+  overflow-y: auto;
+}
+
+:host ::ng-deep .z-dataview-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.mm-card {
+  border: 1px solid var(--default-border);
+  border-radius: 12px;
+  background: var(--custom-white);
+}
+
+.mm-card--clickable {
+  cursor: pointer;
+}
+
+.mm-card__body {
+  padding: 1rem;
+}
+
+.mm-card__top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mm-avatar {
+  height: 2.9rem;
+  width: 2.9rem;
+  min-height: 2.9rem;
+  min-width: 2.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mm-avatar i {
+  font-size: 1rem;
+}
+
+.mm-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.mm-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.4rem;
+  // margin-bottom: 0.75rem;
+}
+
+.mm-card__titles {
+  min-width: 0;
+}
+
+.mm-card__head-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.mm-card__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--heading-text-color);
+  line-height: 1;
+}
+
+.mm-card__subtitle {
+  margin: 0.04rem 0 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+
+.mm-status-pill {
+  height: 2rem;
+  min-height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.mm-status-pill.is-active {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+  border-color: rgba(34, 197, 94, 0.32);
+}
+
+.mm-status-pill.is-inactive {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border-color: rgba(239, 68, 68, 0.32);
+}
+
+.mm-action-btn {
+  height: 2rem;
+  min-height: 2rem;
+  width: 2rem;
+  min-width: 2rem;
+  border-radius: 10px;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mm-action-btn i {
+  font-size: 0.75rem;
+}
+
+.mm-card__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+
+.mm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.mm-field__label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.mm-field__value {
+  font-size: 0.875rem;
+  color: var(--heading-text-color);
+  font-weight: 400;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+:host-context([data-theme-mode="dark"]) .mm-card {
+  background: var(--background-tertiary-dark, #23272b);
+  border-color: #334155;
+}
+
+:host-context([data-theme-mode="dark"]) .mm-card__title,
+:host-context([data-theme-mode="dark"]) .mm-card__subtitle,
+:host-context([data-theme-mode="dark"]) .mm-field__label,
+:host-context([data-theme-mode="dark"]) .mm-field__value {
+  color: #e5e7eb;
+}
+
+:host-context([data-theme-mode="dark"]) .mm-action-btn {
+  border-color: #334155;
+  background: rgba(15, 23, 42, 0.3);
+  color: #e5e7eb;
+}
+
+:host-context([data-theme-mode="dark"]) .mm-avatar {
+  border-color: #334155;
+  background-color: rgba(15, 23, 42, 0.3);
+  color: #94a3b8;
+}
+
+@media (max-width: 576px) {
+  :host ::ng-deep .z-dataview-list {
+    grid-template-columns: 1fr;
+  }
+
+  .mm-card__grid {
+    grid-template-columns: 1fr;
+  }
+}

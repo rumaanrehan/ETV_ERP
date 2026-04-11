@@ -41,6 +41,22 @@
   font-size: 0.65rem;
 }
 
+/*Module Master header button sizing */
+.btn-page-header.btn-add-module {
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 1rem 1rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+.btn-page-header.btn-add-module i {
+  font-size: 0.75rem !important;
+}
+
+
 .breadcrumb .breadcrumb-item+.breadcrumb-item::before {
   font-family: "primeicons";
   content: "\e932";
@@ -50,6 +66,16 @@
 
 .breadcrumb-item a {
   color: var(--primary-color);
+}
+
+.breadcrumb-current {
+  color: #333335;
+}
+
+[data-theme-mode="dark"] .page-header-breadcrumb .breadcrumb-item a,
+[data-theme-mode="dark"] .page-header-breadcrumb .breadcrumb-current,
+[data-theme-mode="dark"] .page-header-breadcrumb .breadcrumb .breadcrumb-item+.breadcrumb-item::before {
+  color: #ffffff !important;
 }
 
 [data-vertical-style=overlay][data-toggled=icon-overlay-close] .page-header-breadcrumb {
@@ -665,6 +691,32 @@ label {
 
 .table .p-highlight td {
   background-color: var(--table-selected-row-color);
+}
+
+/* Keep datatable rows visually unchanged on click/selection */
+.p-datatable .p-datatable-tbody>tr.p-highlight,
+.p-datatable .p-datatable-tbody>tr.p-highlight>td,
+.p-datatable .p-datatable-tbody>tr.p-highlight:hover>td,
+.p-datatable.p-datatable-hoverable-rows .p-datatable-tbody>tr.p-highlight:hover>td,
+.p-datatable.p-datatable-striped .p-datatable-tbody>tr.p-highlight>td,
+.p-datatable.p-datatable-striped .p-datatable-tbody>tr.p-highlight:nth-child(even)>td {
+  background-color: transparent !important;
+  color: var(--default-text-color) !important;
+}
+
+.p-datatable .p-datatable-tbody>tr.p-highlight .table-action-link,
+.p-datatable .p-datatable-tbody>tr.p-highlight>td * {
+  color: inherit !important;
+}
+
+[data-theme-mode=dark] .p-datatable .p-datatable-tbody>tr.p-highlight,
+[data-theme-mode=dark] .p-datatable .p-datatable-tbody>tr.p-highlight>td,
+[data-theme-mode=dark] .p-datatable .p-datatable-tbody>tr.p-highlight:hover>td,
+[data-theme-mode=dark] .p-datatable.p-datatable-hoverable-rows .p-datatable-tbody>tr.p-highlight:hover>td,
+[data-theme-mode=dark] .p-datatable.p-datatable-striped .p-datatable-tbody>tr.p-highlight>td,
+[data-theme-mode=dark] .p-datatable.p-datatable-striped .p-datatable-tbody>tr.p-highlight:nth-child(even)>td {
+  background-color: transparent !important;
+  color: #e5e7eb !important;
 }
 
 .table-row-status {

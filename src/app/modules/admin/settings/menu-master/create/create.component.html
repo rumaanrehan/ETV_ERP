@@ -1,60 +1,86 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem menu-create-sidebar'">
   <div sidebarHeader>
-    <h5 class="text-white">Menu Master</h5>
+    <h5 class="menu-create-title">{{ isEditMode ? 'Edit Menu' : 'Create Menu' }}</h5>
   </div>
   <div sidebarContent>
-    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'ModuleID'" [label]="formConfig.ModuleID.label"
-          [validationMessage]="formConfig.ModuleID.error" [options]="moduleList" [optionLabel]="'ModuleName'"
-          [optionValue]="'ModuleID'" onselect="loadMenuType($event)" (onChange)="onModuleChange($event)">
-        </z-select>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'MenuType'" [label]="formConfig.MenuType.label"
-          [validationMessage]="formConfig.MenuType.error" [options]="menuTypeList" [optionLabel]="'Text'"
-          [optionValue]="'iValue'" (onChange)="onModuleChange($event)">
-        </z-select>
-      </div>
-      <div class="col-xl-12 form-group" *ngIf="form.get('MenuType')?.value == 2">
-        <z-select [group]="form" [control]="'ParentMenuID'" [label]="formConfig.ParentMenuID.label"
-          [validationMessage]="formConfig.ParentMenuID.error" [options]="parentMenuList" [optionLabel]="'MenuName'"
-          [optionValue]="'MenuID'">
-        </z-select>
-      </div>
-      <div class="col-xl-12 form-group" *ngIf="[1,2].includes(form.get('MenuType')?.value)">
-        <z-inputtext [group]="form" control="MenuName" [label]="formConfig.MenuName.label"
-          [validationMessage]="formConfig.MenuName.error"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group" *ngIf="form.get('MenuType')?.value == 2">
-        <z-inputtext [group]="form" control="ControllerName" [label]="formConfig.ControllerName.label"
-          [validationMessage]="formConfig.ControllerName.error"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group" *ngIf="form.get('MenuType')?.value == 2">
-        <z-inputtext [group]="form" control="ActionName" [label]="formConfig.ActionName.label"
-          [validationMessage]="formConfig.ActionName.error"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group" *ngIf="[1,2,3].includes(form.get('MenuType')?.value)">
-        <z-inputnumber [group]="form" [control]="'DisplayOrder'" [label]="formConfig.DisplayOrder.label"
-          [validationMessage]="formConfig.DisplayOrder.error"></z-inputnumber>
-      </div>
-      <div class="col-xl-12 form-group" *ngIf="form.get('MenuType')?.value == 2">
-        <z-checkbox [group]="form" [control]="'IsDeveloperOnly'"
-          [label]="formConfig.IsDeveloperOnly.label"></z-checkbox>
+    <form class="menu-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ModuleID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'ModuleID'" [label]="''" [validationMessage]="formConfig.ModuleID.error"
+              [options]="moduleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleID'" onselect="loadMenuType($event)"
+              (onChange)="onModuleChange($event)">
+            </z-select>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.MenuType.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'MenuType'" [label]="''" [validationMessage]="formConfig.MenuType.error"
+              [options]="menuTypeList" [optionLabel]="'Text'" [optionValue]="'iValue'" (onChange)="onModuleChange($event)">
+            </z-select>
+          </div>
+        </div>
+
+        <div class="simple-field" *ngIf="form.get('MenuType')?.value == 2">
+          <label class="simple-label">{{ formConfig.ParentMenuID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'ParentMenuID'" [label]="''" [validationMessage]="formConfig.ParentMenuID.error"
+              [options]="parentMenuList" [optionLabel]="'MenuName'" [optionValue]="'MenuID'">
+            </z-select>
+          </div>
+        </div>
+
+        <div class="simple-field" *ngIf="[1,2].includes(form.get('MenuType')?.value)">
+          <label class="simple-label">{{ formConfig.MenuName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="MenuName" [label]="''" [validationMessage]="formConfig.MenuName.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field" *ngIf="form.get('MenuType')?.value == 2">
+          <label class="simple-label">{{ formConfig.ControllerName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="ControllerName" [label]="''"
+              [validationMessage]="formConfig.ControllerName.error"></z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field" *ngIf="form.get('MenuType')?.value == 2">
+          <label class="simple-label">{{ formConfig.ActionName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="ActionName" [label]="''" [validationMessage]="formConfig.ActionName.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field" *ngIf="[1,2,3].includes(form.get('MenuType')?.value)">
+          <label class="simple-label">{{ formConfig.DisplayOrder.label }}:</label>
+          <div class="simple-control">
+            <z-inputnumber [group]="form" [control]="'DisplayOrder'" [label]="''"
+              [validationMessage]="formConfig.DisplayOrder.error"></z-inputnumber>
+          </div>
+        </div>
+
+        <div class="simple-field" *ngIf="form.get('MenuType')?.value == 2">
+          <label class="simple-label">{{ formConfig.IsDeveloperOnly.label }}:</label>
+          <div class="simple-control simple-checkbox-wrap">
+            <z-checkbox [group]="form" [control]="'IsDeveloperOnly'" [label]="''"></z-checkbox>
+          </div>
+        </div>
       </div>
     </form>
   </div>
   <div sidebarFooter>
-    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-      <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"
-          [disabled]="isSubmitted || !activeStatus">
-          {{ isEditMode ? 'Update' : 'Save' }}
-        </button>
-      </div>
-      <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-      </div>
+    <div class="menu-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" (click)="onSubmit()"
+        [disabled]="isSubmitted || !activeStatus || form.invalid">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </app-form-sidebar>

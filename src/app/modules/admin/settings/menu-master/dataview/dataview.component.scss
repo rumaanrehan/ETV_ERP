@@ -1,0 +1,221 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.index-page-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+z-dataview {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+:host ::ng-deep .p-dataview-content {
+  overflow-y: auto;
+}
+
+:host ::ng-deep .z-dataview-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0.7rem;
+  padding: 0.7rem;
+  align-items: stretch;
+}
+
+.menu-card {
+  border: 1px solid rgba(226, 232, 240, 1);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.menu-card--clickable {
+  cursor: pointer;
+}
+
+.menu-card__body {
+  padding: 1.1rem;
+}
+
+.menu-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.55rem;
+  margin-bottom: 0.65rem;
+}
+
+.menu-card__titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.menu-card__head-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 0 0 auto;
+}
+
+.menu-card__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-card__subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-status-pill {
+  height: 2rem;
+  min-height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.menu-status-pill.is-active {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+  border-color: rgba(34, 197, 94, 0.32);
+}
+
+.menu-status-pill.is-inactive {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border-color: rgba(239, 68, 68, 0.32);
+}
+
+.menu-card__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem 0.85rem;
+}
+
+.menu-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.menu-field__label {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.menu-field__value {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #111827;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid-action-btn {
+  height: 2rem;
+  width: 2rem;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(226, 232, 240, 1);
+  background: rgba(248, 250, 252, 1);
+  color: #64748b;
+  font-size: 0.72rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  transition: none;
+}
+
+.grid-action-btn:hover,
+.grid-action-btn:active {
+  background: #f1f5f9;
+}
+
+@media (min-width: 768px) {
+  :host ::ng-deep .z-dataview-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1440px) {
+  :host ::ng-deep .z-dataview-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 2000px) {
+  :host ::ng-deep .z-dataview-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+:host-context([data-theme-mode="dark"]) .menu-card {
+  background: #0b1220;
+  border-color: rgba(51, 65, 85, 1);
+}
+
+:host-context([data-theme-mode="dark"]) .menu-card__title {
+  color: #e5e7eb;
+}
+
+:host-context([data-theme-mode="dark"]) .menu-field__label {
+  color: #94a3b8;
+}
+
+:host-context([data-theme-mode="dark"]) .menu-field__value,
+:host-context([data-theme-mode="dark"]) .menu-card__subtitle {
+  color: #f8fafc;
+}
+
+@media (max-width: 576px) {
+  :host ::ng-deep .z-dataview-list {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-card__grid {
+    grid-template-columns: 1fr;
+  }
+}
