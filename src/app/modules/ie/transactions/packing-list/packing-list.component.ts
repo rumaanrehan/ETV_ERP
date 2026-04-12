@@ -145,9 +145,9 @@ export class PackingListComponent implements OnInit, OnDestroy {
             this.exportOrderAutoCompleteDef.options = response.Data.Items;
           } else {
             this.exportOrderAutoCompleteDef.options = [];
-            if (response.Message !== 'Record not found.') {
-              this.alertService.showServerResponseAlert(response);
-            }
+            // if (response.Message !== 'Record not found.') {
+            //   this.alertService.showServerResponseAlert(response);
+            // }
           }
         },
       });
@@ -334,9 +334,9 @@ export class PackingListComponent implements OnInit, OnDestroy {
     this.syncProductTables();
   }
 
-  onChange_PackedQty(boxIndex: number, rowIndex: number): void {    
+  onChange_PackedQty(boxIndex: number, rowIndex: number): void {
     this.updateBoxWeight(boxIndex);
-    
+
     const currentRow = this.getProductList(boxIndex).at(rowIndex) as FormGroup;
     const productId = currentRow.get('ProductID')?.value as number | null;
 

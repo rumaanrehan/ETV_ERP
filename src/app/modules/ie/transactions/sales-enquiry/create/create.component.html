@@ -57,8 +57,8 @@
               [isClearable]="!isEditMode" (onSearch)="loadCustomer($event)" (onSelect)="onSelect_Customer($event)"
               (onClear)="onClear_Customer()">
             </z-autocomplete>
-            <button *ngIf="!isEditMode" type="button" class="simple-action-btn customer-plus-btn" title="Add New Company"
-              (click)="handleComponentLoad('VendorCreateComponent')">
+            <button *ngIf="!isEditMode" type="button" class="simple-action-btn customer-plus-btn"
+              title="Add New Company" (click)="handleComponentLoad('VendorCreateComponent')">
               <i class="pi pi-plus" aria-hidden="true"></i>
               <!-- <span>Add</span> -->
             </button>
@@ -114,8 +114,8 @@
       <div class="simple-field">
         <label class="simple-label">{{formConfig.Note.label}}:</label>
         <div class="simple-control">
-          <z-textarea [group]="form" [control]="'Note'" [autoResize]="true" [rows]="1" [label]="''" [placeholder]="'Optional'"
-            [validationMessage]="formConfig.Note.error"></z-textarea>
+          <z-textarea [group]="form" [control]="'Note'" [autoResize]="true" [rows]="1" [label]="''"
+            [placeholder]="'Optional'" [validationMessage]="formConfig.Note.error"></z-textarea>
         </div>
       </div>
     </div>

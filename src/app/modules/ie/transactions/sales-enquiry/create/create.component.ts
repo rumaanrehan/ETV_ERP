@@ -161,7 +161,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderBackButton(): void {
     try {
-      this.router.navigate(['/ie/sales-enquiry/index']);
+      this.router.navigate(['/ie/sales-enquiry']);
     } catch (error) { }
   }
 
@@ -174,6 +174,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   resetForm(): void {
     this.formService.resetFormValue<SalesEnquiry>(this.formConfig, this.form);
+    this.selectedCustomerAddress = null;
   }
 
   get productListArray(): FormArray<FormGroup> {

@@ -1,10 +1,11 @@
 :host-context([data-theme-mode="dark"]) .text-muted {
     color: #f3f4f6 !important;
 }
+
 :host-context([data-theme-mode="dark"]) .index-action-bar {
     background: rgba(35, 39, 43, 0.92) !important;
     border: 1px solid #334155 !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.18) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important;
 }
 
 :host-context([data-theme-mode="dark"]) .index-action-bar.selection-active {
@@ -15,7 +16,7 @@
 :host-context([data-theme-mode="dark"]) .view-switcher-group {
     background: rgba(35, 39, 43, 0.98) !important;
     border: 1px solid #334155 !important;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.18) !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18) !important;
 }
 
 :host-context([data-theme-mode="dark"]) .view-switcher-btn {
@@ -25,32 +26,33 @@
 :host-context([data-theme-mode="dark"]) .view-switcher-btn.active {
     background: #38bdf8 !important;
     color: #23272b !important;
-    box-shadow: 0 2px 6px rgba(56,189,248,0.25) !important;
+    box-shadow: 0 2px 6px rgba(56, 189, 248, 0.25) !important;
 }
 
 :host-context([data-theme-mode="dark"]) .btn-page-header.btn-md,
 :host-context([data-theme-mode="dark"]) .btn-add-export-order.btn.btn-primary {
-    background: rgba(56,189,248, 0.18) !important;
+    background: rgba(56, 189, 248, 0.18) !important;
     border-color: #38bdf8 !important;
     color: #38bdf8 !important;
 }
 
 :host-context([data-theme-mode="dark"]) .btn-page-header.btn-md:hover,
 :host-context([data-theme-mode="dark"]) .btn-add-export-order.btn.btn-primary:hover {
-    background: rgba(56,189,248, 0.28) !important;
+    background: rgba(56, 189, 248, 0.28) !important;
     border-color: #38bdf8 !important;
     color: #38bdf8 !important;
 }
 
 :host-context([data-theme-mode="dark"]) .btn-danger {
-    background: rgba(239,68,68,0.18) !important;
+    background: rgba(239, 68, 68, 0.18) !important;
     color: #ef4444 !important;
 }
 
 :host-context([data-theme-mode="dark"]) .btn-danger:hover {
-    background: rgba(239,68,68,0.28) !important;
+    background: rgba(239, 68, 68, 0.28) !important;
     color: #ef4444 !important;
 }
+
 :host {
     display: flex;
     flex-direction: column;
@@ -278,7 +280,7 @@
         white-space: nowrap;
         user-select: none;
         transition: none;
-        
+
         i {
             font-size: 0.9rem;
         }
@@ -292,38 +294,38 @@
             background: var(--list-hover-focus-bg);
             transform: none;
         }
-        
+
         &.btn-primary {
             background: rgba(var(--primary-rgb), 0.2);
             color: #ffffff;
             border-color: transparent;
             box-shadow: none;
-            
+
             &:hover {
                 background: rgba(var(--primary-rgb), 0.3);
                 color: #ffffff;
                 filter: brightness(1.05);
             }
-            
+
             &:hover span,
             &:hover i {
                 color: #0e0e0e;
             }
         }
-        
+
         &.btn-danger {
             background: rgba(var(--bs-danger-rgb), 0.2);
             color: #ffffff;
             border-color: transparent;
             box-shadow: none;
-            
+
             &:hover {
                 background: rgba(var(--bs-danger-rgb), 0.3);
                 color: #ffffff;
                 filter: brightness(1.05);
             }
         }
-        
+
         &:disabled {
             opacity: 0.5;
             cursor: not-allowed;

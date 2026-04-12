@@ -207,7 +207,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   OnClickPageHeaderBackButton(): void {
     try {
-      this.router.navigate(['/ie/proforma-invoice/index']);
+      this.router.navigate(['/ie/proforma-invoice']);
     } catch (error) { }
   }
 
@@ -533,7 +533,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
     netAmount += Number((freightCharge + bankCharges).toFixed(3));
 
-    this.form.patchValue({ 
+    this.form.patchValue({
       SubtotalAmountFC: Number(subtotalAmount.toFixed(3)),
       TaxAmountFC: Number(taxAmount.toFixed(3)),
       NetAmountFC: Number(netAmount.toFixed(3))
@@ -589,7 +589,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }, { emitEvent: false });
 
     // 6️⃣ Debug Log to Verify Calculations only for development, should be removed in production
-    if(this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
+    if (this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
       console.log(
         "Discrepancy in SubtotalAmountBC Calculation!, Backend Should Verify This. Product List total:",
         this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0),
@@ -670,9 +670,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 this.router.navigate(['/ie/proforma-invoice/index']);
               }, 2000);
             } else {
-              setTimeout(() => {
-                this.ngOnInit();
-              }, 2000);
+              this.ResetForm();
             }
             this.selectedCustomerAddress = '';
           }

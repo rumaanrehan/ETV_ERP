@@ -222,7 +222,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   onClickPageHeaderBackButton(): void {
     try {
-      this.router.navigate(['/ie/export-order/index']);
+      this.router.navigate(['/ie/export-order']);
     } catch (error) { }
   }
 
@@ -784,9 +784,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 timer: 5000,
               });
               this.selectedCustomerAddress = null;
-              setTimeout(() => {
-                this.ngOnInit();
-              }, 2000);
+              this.resetForm();
             } else {
               this.alertService.showServerResponseAlert(response);
             }

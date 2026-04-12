@@ -165,7 +165,8 @@ z-dataview {
    ========================= */
 
 :host ::ng-deep .z-dataview-list {
-    display: grid !important; /* override shared z-dataview flex layout */
+    display: grid !important;
+    /* override shared z-dataview flex layout */
     flex-direction: initial !important;
     grid-template-columns: 1fr !important;
     gap: 1rem;
@@ -223,7 +224,8 @@ z-dataview {
     border: 0 !important;
     box-shadow: none !important;
     margin: 0 !important;
-    padding: 1.1rem !important; /* p-5 (slightly tighter) */
+    padding: 1.1rem !important;
+    /* p-5 (slightly tighter) */
 }
 
 :host ::ng-deep .eo-card__top {
@@ -278,7 +280,8 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-card__title {
-    font-size: 1rem; /* text-sm */
+    font-size: 1rem;
+    /* text-sm */
     font-weight: 600;
     color: #111827;
     margin: 0;
@@ -355,7 +358,8 @@ z-dataview {
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
-    padding: 0.25rem !important; /* p-1 */
+    padding: 0.25rem !important;
+    /* p-1 */
     width: var(--eo-topline-height);
     height: var(--eo-topline-height);
     border-radius: 0.5rem;
@@ -411,7 +415,8 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-field__label {
-    font-size: 0.75rem; /* text-xs */
+    font-size: 0.75rem;
+    /* text-xs */
     color: #6b7280;
     margin: 0;
     line-height: 1.2;
@@ -419,7 +424,8 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-field__value {
-    font-size: 0.875rem; /* text-sm */
+    font-size: 0.875rem;
+    /* text-sm */
     color: #111827;
     margin: 0;
     line-height: 1.25;
@@ -430,7 +436,8 @@ z-dataview {
 }
 
 :host ::ng-deep .eo-card__footer {
-    padding-top: 1rem; /* pt-4 */
+    padding-top: 1rem;
+    /* pt-4 */
     border-top: 1px solid rgba(243, 244, 246, 1);
 }
 
@@ -438,7 +445,8 @@ z-dataview {
     width: 100%;
     height: 36px;
     border-radius: 10px;
-    font-size: 0.875rem; /* text-sm */
+    font-size: 0.875rem;
+    /* text-sm */
     font-weight: 500;
     padding: 0.5rem 0.75rem;
 }

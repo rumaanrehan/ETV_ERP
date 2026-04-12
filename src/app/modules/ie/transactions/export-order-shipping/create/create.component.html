@@ -4,21 +4,25 @@
     </div>
     <div sidebarContent>
         <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-        <div class="col-xl-12 form-group">
-            <z-span [text]="form.get('ExportOrderNo')?.value" [label]="formConfig.ExportOrderNo.label"></z-span>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-inputtext [group]="form" [control]="'ShippingBillNo'" [label]="formConfig.ShippingBillNo.label"></z-inputtext>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-datepicker [group]="form" [control]="'ShippingBillDate'" [label]="formConfig.ShippingBillDate.label"></z-datepicker>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-inputtext [group]="form" [control]="'AirwayBillNo'" [label]="formConfig.AirwayBillNo.label"></z-inputtext>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-datepicker [group]="form" [control]="'AirwayBillDate'" [label]="formConfig.AirwayBillDate.label"></z-datepicker>
-        </div>
+            <div class="col-xl-12 form-group">
+                <z-span [text]="form.get('ExportOrderNo')?.value" [label]="formConfig.ExportOrderNo.label"></z-span>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'ShippingBillNo'"
+                    [label]="formConfig.ShippingBillNo.label"></z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-datepicker [group]="form" [control]="'ShippingBillDate'" [label]="formConfig.ShippingBillDate.label"
+                    [readonly]="true"></z-datepicker>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-inputtext [group]="form" [control]="'AirwayBillNo'"
+                    [label]="formConfig.AirwayBillNo.label"></z-inputtext>
+            </div>
+            <div class="col-xl-12 form-group">
+                <z-datepicker [group]="form" [control]="'AirwayBillDate'"
+                    [label]="formConfig.AirwayBillDate.label"></z-datepicker>
+            </div>
         </form>
     </div>
     <div sidebarFooter>
