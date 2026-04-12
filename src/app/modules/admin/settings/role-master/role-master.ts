@@ -15,6 +15,11 @@ export interface RoleMaster_IndexTableFilter {
   ActiveStatusID: number | null;
 }
 
+export interface RoleMaster_IndexTableSort {
+  RoleCode: number;
+  RoleName: number;
+}
+
 export interface RoleMaster_IndexTableList {
   RoleID: number;
   RoleCode: string;

@@ -105,7 +105,11 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.isEditMode = isEditMode;
     }
     this.activeStatus = activeStatus;
-    this.form.patchValue(model);
+    const normalizedModel: ProductMaster = {
+      ...model,
+      ModelCode: model?.ModelCode ?? model?.ProductCode ?? 'NEW',
+    };
+    this.form.patchValue(normalizedModel);
     this.isFormSidebarVisible = true;
   }
 
@@ -136,10 +140,10 @@ export class CreateComponent implements OnInit, OnDestroy {
           text: 'Do you really want to update?',
         }).then(result => {
           if (result.isConfirmed) {
-            const model: ProductMaster = {
+            const model: ProductMaster = this.normalizeProductPayload({
               ...this.formService.transformFormData(this.form.value),
               ReasonToUpdate: result.value
-            };
+            } as ProductMaster);
             this.updateRecord(this.formService.transformFormData(model));
           }
           else {
@@ -148,7 +152,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         });
       }
       else {
-        this.createRecord(this.formService.transformFormData(this.form.value));
+        const model: ProductMaster = this.normalizeProductPayload(this.formService.transformFormData(this.form.value));
+        this.createRecord(model);
       }
     }
     catch (error) {
@@ -207,5 +212,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     catch (error) {
 
     }
+  }
+
+  private normalizeProductPayload(model: ProductMaster): ProductMaster {
+    return {
+      ...model,
+      ModelCode: model?.ModelCode ?? model?.ProductCode ?? 'NEW',
+    };
   }
 }

@@ -1,0 +1,40 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #customTemplate let-products>
+  <div class="product-card product-card--clickable" *ngFor="let item of products" role="button" tabindex="0"
+    (click)="onClickEditDetails(item.ProductID, item.ActiveStatus)"
+    (keydown.enter)="onClickEditDetails(item.ProductID, item.ActiveStatus)"
+    (keydown.space)="$event.preventDefault(); onClickEditDetails(item.ProductID, item.ActiveStatus)">
+    <div class="product-card__body">
+      <div class="product-card__head">
+        <div class="product-card__titles">
+          <h5 class="product-card__title">{{ item.ProductName }}</h5>
+          <p class="product-card__subtitle">{{ item.ProductCode }}</p>
+        </div>
+        <div class="product-card__head-right">
+          <span class="product-status-pill" [ngClass]="item.ActiveStatus ? 'is-active' : 'is-inactive'">
+            {{ item.ActiveStatus ? 'Active' : 'Inactive' }}
+          </span>
+          <button type="button" class="product-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(item)">
+            <i class="pi pi-{{ item.ActiveStatus ? 'trash' : 'undo' }}"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card__grid">
+        <div class="product-field">
+          <span class="product-field__label">Item Category</span>
+          <span class="product-field__value">{{ item.ItemCategoryName || '-' }}</span>
+        </div>
+        <div class="product-field">
+          <span class="product-field__label">UOM</span>
+          <span class="product-field__value">{{ item.UOMName || '-' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

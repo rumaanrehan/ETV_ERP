@@ -53,6 +53,7 @@
 :host ::ng-deep .z-datatable-root .p-datatable-wrapper {
     flex: 1 1 auto;
     min-height: 0;
+    overflow: auto;
 }
 
 :host ::ng-deep .z-datatable-root .p-datatable-header {
@@ -133,9 +134,14 @@
 }
 
 :host ::ng-deep .z-datatable-root .p-paginator-bottom {
+    margin-top: auto;
     margin-bottom: 0;
     padding-bottom: 4px;
     border-top: 1px solid var(--zdt-border);
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background: var(--zdt-surface);
 }
 
 :host ::ng-deep .z-datatable-root .p-paginator-bottom .p-paginator-content {

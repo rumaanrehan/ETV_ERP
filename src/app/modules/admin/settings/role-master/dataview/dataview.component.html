@@ -1,0 +1,29 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #customTemplate let-roles>
+  <div class="rm-card rm-card--clickable" *ngFor="let item of roles" role="button" tabindex="0"
+    (click)="onClickEditDetails(item.RoleID, item.ActiveStatus)"
+    (keydown.enter)="onClickEditDetails(item.RoleID, item.ActiveStatus)"
+    (keydown.space)="$event.preventDefault(); onClickEditDetails(item.RoleID, item.ActiveStatus)">
+    <div class="rm-card__body">
+      <div class="rm-card__head">
+        <div class="rm-card__titles">
+          <h5 class="rm-card__title">{{ item.RoleCode }}</h5>
+          <p class="rm-card__subtitle">{{ item.RoleName }}</p>
+        </div>
+        <div class="rm-card__head-right">
+          <span class="rm-status-pill" [ngClass]="item.ActiveStatus ? 'is-active' : 'is-inactive'">
+            {{ item.ActiveStatus ? 'Active' : 'Inactive' }}
+          </span>
+          <button type="button" class="rm-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(item)">
+            <i class="pi pi-{{ item.ActiveStatus ? 'trash' : 'undo' }}"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

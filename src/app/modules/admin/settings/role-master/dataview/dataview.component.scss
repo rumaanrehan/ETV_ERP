@@ -1,0 +1,151 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.index-page-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+z-dataview {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+:host ::ng-deep .p-dataview-content {
+  overflow-y: auto;
+}
+
+:host ::ng-deep .z-dataview-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.rm-card {
+  border: 1px solid var(--default-border);
+  border-radius: 12px;
+  background: var(--custom-white);
+}
+
+.rm-card--clickable {
+  cursor: pointer;
+}
+
+.rm-card__body {
+  padding: 1rem;
+}
+
+.rm-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.rm-card__titles {
+  min-width: 0;
+}
+
+.rm-card__head-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.rm-card__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--heading-text-color);
+  line-height: 1;
+}
+
+.rm-card__subtitle {
+  margin: 0.12rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+
+.rm-status-pill {
+  height: 2rem;
+  min-height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.rm-status-pill.is-active {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+  border-color: rgba(34, 197, 94, 0.32);
+}
+
+.rm-status-pill.is-inactive {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border-color: rgba(239, 68, 68, 0.32);
+}
+
+.rm-action-btn {
+  height: 2rem;
+  min-height: 2rem;
+  width: 2rem;
+  min-width: 2rem;
+  border-radius: 10px;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.rm-action-btn i {
+  font-size: 0.75rem;
+}
+
+:host-context([data-theme-mode="dark"]) .rm-card {
+  background: var(--background-tertiary-dark, #23272b);
+  border-color: #334155;
+}
+
+:host-context([data-theme-mode="dark"]) .rm-card__title,
+:host-context([data-theme-mode="dark"]) .rm-card__subtitle {
+  color: #e5e7eb;
+}
+
+:host-context([data-theme-mode="dark"]) .rm-action-btn {
+  border-color: #334155;
+  background: rgba(15, 23, 42, 0.3);
+  color: #e5e7eb;
+}
+
+@media (max-width: 576px) {
+  :host ::ng-deep .z-dataview-list {
+    grid-template-columns: 1fr;
+  }
+}

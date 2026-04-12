@@ -1,0 +1,203 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.index-page-content {
+  padding: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.btn-page-header.btn-md {
+  height: 30px;
+  padding: 1rem 1rem;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.25) !important;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i {
+    font-size: 0.75rem;
+    transition: none;
+  }
+}
+
+.btn-add-role.btn.btn-primary,
+.btn-role-permission.btn.btn-primary {
+  background: rgba(var(--primary-rgb)) !important;
+  border-color: rgba(var(--primary-rgb), 0.25) !important;
+  color: white !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .btn-add-role.btn.btn-primary,
+:host ::ng-deep .btn-role-permission.btn.btn-primary {
+  background: rgba(var(--primary-rgb), 0.2) !important;
+  border-color: rgba(var(--primary-rgb), 0.25) !important;
+  color: var(--primary-color) !important;
+  box-shadow: none !important;
+}
+
+.btn-add-role.btn.btn-primary i,
+.btn-role-permission.btn.btn-primary i {
+  color: white !important;
+}
+
+:host ::ng-deep .btn-add-role.btn.btn-primary i,
+:host ::ng-deep .btn-role-permission.btn.btn-primary i {
+  color: var(--primary-color) !important;
+}
+
+.btn-add-role.btn.btn-primary:hover,
+.btn-add-role.btn.btn-primary:focus,
+.btn-role-permission.btn.btn-primary:hover,
+.btn-role-permission.btn.btn-primary:focus {
+  background: rgba(var(--primary-rgb), 0.90) !important;
+  border-color: rgba(var(--primary-rgb), 0.35) !important;
+  color: white !important;
+}
+
+:host ::ng-deep .btn-add-role.btn.btn-primary:hover,
+:host ::ng-deep .btn-add-role.btn.btn-primary:focus,
+:host ::ng-deep .btn-role-permission.btn.btn-primary:hover,
+:host ::ng-deep .btn-role-permission.btn.btn-primary:focus {
+  background: rgba(var(--primary-rgb), 0.28) !important;
+  border-color: rgba(var(--primary-rgb), 0.35) !important;
+  color: var(--primary-color) !important;
+}
+
+.btn-add-role.btn.btn-primary:active,
+.btn-role-permission.btn.btn-primary:active {
+  background: rgba(var(--primary-rgb), 0.32) !important;
+}
+
+:host ::ng-deep .btn-add-role.btn.btn-primary:active,
+:host ::ng-deep .btn-role-permission.btn.btn-primary:active {
+  background: rgba(var(--primary-rgb), 0.32) !important;
+}
+
+.view-switcher-group {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 50px;
+  padding: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    border-color: rgba(var(--primary-rgb), 0.15);
+  }
+
+  .view-switcher-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: #8898aa;
+    font-weight: 400;
+    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+
+    &:first-child {
+      border-top-left-radius: 50px;
+      border-bottom-left-radius: 50px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 50px;
+      border-bottom-right-radius: 50px;
+    }
+
+    i {
+      font-size: 0.75rem;
+      margin-right: 0.25rem;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      color: var(--primary-color);
+      background: rgba(var(--primary-rgb), 0.04);
+
+      i {
+        transform: scale(1.05);
+      }
+    }
+
+    &.active {
+      background: var(--primary-color);
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(var(--primary-rgb), 0.25);
+      font-weight: 600;
+
+      i {
+        transform: scale(1.02);
+      }
+
+      &:hover {
+        background: var(--primary-color);
+        color: #fff;
+        box-shadow: 0 3px 8px rgba(var(--primary-rgb), 0.3);
+      }
+    }
+  }
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-group {
+  background: rgba(35, 39, 43, 0.98) !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18) !important;
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-btn {
+  color: #94a3b8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-btn.active {
+  background: #38bdf8 !important;
+  color: #23272b !important;
+  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.25) !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-page-header.btn-md,
+:host-context([data-theme-mode="dark"]) .btn-add-role.btn.btn-primary,
+:host-context([data-theme-mode="dark"]) .btn-role-permission.btn.btn-primary {
+  background: rgba(56, 189, 248, 0.18) !important;
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .btn-page-header.btn-md:hover,
+:host-context([data-theme-mode="dark"]) .btn-add-role.btn.btn-primary:hover,
+:host-context([data-theme-mode="dark"]) .btn-role-permission.btn.btn-primary:hover {
+  background: rgba(56, 189, 248, 0.28) !important;
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
+}

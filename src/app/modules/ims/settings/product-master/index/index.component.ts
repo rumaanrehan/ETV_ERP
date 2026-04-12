@@ -1,32 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, signal } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
-import { Product_IndexTableFilter, Product_IndexTableList, ProductMaster } from '../product-master';
+import { DataviewComponent } from '../dataview/dataview.component';
+import { GridviewComponent } from '../gridview/gridview.component';
+import { ProductMaster, Product_IndexTableList, Product_IndexTableSort, Product_IndexTableFilter } from '../product-master';
 import { ProductMasterService } from '../product-master.service';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [CommonModule, ZDataTable, CreateComponent],
+  imports: [CommonModule, DataviewComponent, GridviewComponent, CreateComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss'
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('productCodeTemplate', { static: true }) productCodeTemplate!: TemplateRef<any>;
-  @ViewChild('productActiveStatusTemplate', { static: true }) productActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-  @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<Product_IndexTableList>;
-  tableEvent!: DataTableLazyLoadEvent;
+  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
+  @ViewChild(DataviewComponent) dataview?: DataviewComponent;
+  @ViewChild(GridviewComponent) gridview?: GridviewComponent;
+
+  viewType = signal<'card' | 'table'>('card');
+  filterForm!: FormGroup;
+  sortingForm!: FormGroup;
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -37,31 +39,28 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
+    this.filterForm = this.formService.createFormGroup_DataTableFilter<Product_IndexTableFilter>(
+      this.pageService.getFormConfig_DataTableFilter()
+    );
+    this.sortingForm = this.formService.createFormGroup<Product_IndexTableSort>(
+      this.pageService.getFormConfig_DataTableSort()
+    );
 
-    this.tableDef = {
-      tableKey: 'IMS_ProductMaster_IndexTable',
-      columnDef: [],
-      defaultSortColumn: { sortField: 'ProductCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<Product_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
-      data: [],
-      totalRecords: 0,
-      loading: false,
-    };
-
-    this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "5%" },
-      { data: 'ProductCode', label: 'Code', hideVisToggle: true, filterable: true, width: "11%", customTemplate: this.productCodeTemplate },
-      { data: 'ProductName', label: 'Product Name', width: "27%", filterable: true },
-      { data: 'ItemCategoryName', label: 'Item Category', width: "20%", filterable: true },
-      { data: 'UOMName', label: 'UOM Name', width: "16%", filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "18%", customTemplate: this.productActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate }
-    ];
+    const savedView = localStorage.getItem('imsProductMasterViewType');
+    if (savedView === 'card' || savedView === 'table') {
+      this.viewType.set(savedView);
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.pageHeaderService.setTemplate(null);
+  }
+
+  toggleView(type: 'card' | 'table'): void {
+    this.viewType.set(type);
+    localStorage.setItem('imsProductMasterViewType', type);
   }
 
   onClickPageHeaderAddButton(): void {
@@ -98,48 +97,10 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   onCloseSidebar(): void {
-    this.loadData();
+    this.refreshActiveView();
   }
 
-  onIndexTableLazyLoad(event: DataTableLazyLoadEvent) {
-    this.tableEvent = event;
-    this.loadData();
-  }
-
-  loadData() {
-    try {
-      const model: DataTableParams<Product_IndexTableFilter> = {
-        first: this.tableEvent.first,
-        last: this.tableEvent.last,
-        sortField: this.tableEvent.sortField,
-        sortOrder: this.tableEvent.sortOrder,
-        filters: this.tableDef.filterForm?.value,
-      };
-
-      this.pageService.PopulateGrid(this.formService.transformFormData(model))
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
-            }
-            else {
-              this.tableDef.data = [];
-              this.tableDef.totalRecords = 0;
-              this.alertService.showServerResponseToast(response);
-            }
-          },
-          complete: () => {
-            this.tableDef.loading = false;
-          }
-        });
-    } catch (error) {
-
-    }
-  }
-
-  onClickDeleteReactivate(row: any) {
+  onClickDeleteReactivate(row: Product_IndexTableList): void {
     try {
       const ActionType = row.ActiveStatus ? 'Delete' : 'Reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
@@ -155,8 +116,8 @@ export class IndexComponent implements OnInit, OnDestroy {
               .pipe(takeUntil(this.destroy$))
               .subscribe({
                 next: (response) => {
-                  this.loadData();
                   if (response.IsSuccess) {
+                    this.refreshActiveView();
                     this.alertService.showAlert({
                       type: 'success',
                       text: response.Message,
@@ -171,5 +132,13 @@ export class IndexComponent implements OnInit, OnDestroy {
         });
     }
     catch (error) {}
+  }
+
+  private refreshActiveView(): void {
+    if (this.viewType() === 'card') {
+      this.dataview?.reload();
+    } else {
+      this.gridview?.reload();
+    }
   }
 }

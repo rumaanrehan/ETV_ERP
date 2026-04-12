@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { RoleMaster, RoleMaster_IndexTableFilter, RoleMaster_IndexTableList, RoleMaster_SelectList } from './role-master';
+import { RoleMaster, RoleMaster_IndexTableFilter, RoleMaster_IndexTableList, RoleMaster_IndexTableSort, RoleMaster_SelectList } from './role-master';
 
 @Injectable({
   providedIn: 'root',
@@ -49,6 +50,40 @@ export class RoleMasterService {
       RoleName: '',
       ActiveStatusID: 0,
     }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<RoleMaster_IndexTableSort> {
+    return {
+      RoleCode: {
+        label: 'Code',
+        defaultValue: -1
+      },
+      RoleName: {
+        label: 'Role Name',
+        defaultValue: 0
+      }
+    };
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<RoleMaster_IndexTableList> {
+    return {
+      tableKey: 'Admin_RoleMaster_IndexTable',
+      defaultSortColumn: { sortField: 'RoleCode', sortOrder: 1 },
+      filterForm,
+      sortingForm,
+      filterFields: [
+        { field: 'RoleCode', label: 'Code', type: 'text' },
+        { field: 'RoleName', label: 'Role Name', type: 'text' },
+        { field: 'ActiveStatusID', label: 'Status', type: 'dropdown', options: [] }
+      ],
+      sortFields: [
+        { field: 'RoleCode', label: 'Code', enabled: true, order: -1 },
+        { field: 'RoleName', label: 'Role Name', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
   }
 
   getFormConfig(): FormConfigType<RoleMaster> {
