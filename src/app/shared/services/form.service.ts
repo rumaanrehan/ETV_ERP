@@ -181,6 +181,19 @@ export class FormService {
     }
 
     Object.keys(formConfig).forEach(field => {
+      if (formConfig[field].type === 'control') {
+        formConfig[field].error = '';
+      }
+
+      // if (formConfig[field].type === 'array') {
+      //   Object.keys(formConfig[field].items).forEach(item => {
+      //     item
+      //     formConfig[field].[item].error = {};
+      //   });
+      // }
+    });
+
+    Object.keys(formConfig).forEach(field => {
       const control = form.get(field);
 
       if (control) {
@@ -219,7 +232,6 @@ export class FormService {
         else if (formConfig[field].type == 'control' && !control.valid && control.touched) {
           formConfig[field].error = '';
           const messages = formConfig[field]?.validationMessages ?? {};
-          console.log(messages);
           for (const key in control.errors) {
             if (Object.prototype.hasOwnProperty.call(control.errors, key)) {
               formConfig[field].error = (messages[key] ?? control.errors[key]) + '';
@@ -428,7 +440,6 @@ export class FormService {
   }
 
   private onValueChanged(data: any, formValidationMessages: FormValidationMessages, formErrors: FormErrors, form: FormGroup) {
-    console.log('called with data ' + data);
     if (!form) {
       return;
     }

@@ -132,10 +132,6 @@ export class ProductMasterService {
         label: '',
         defaultValue: null
       },
-      ModelCode: {
-        label: 'Model Code',
-        defaultValue: 'NEW'
-      },
       ProductCode: {
         label: 'Product Code',
         defaultValue: 'NEW'
@@ -154,6 +150,14 @@ export class ProductMasterService {
         validators: [Validators.required, Validators.maxLength(150), NotOnlyWhitespaceValidator()],
         validationMessages: {
           required: 'Product Name is required.',
+          maxlength: 'Maximum 150 characters allowed.'
+        }
+      },
+      ModelCode: {
+        label: 'Model Code',
+        defaultValue: '',
+        validators: [Validators.maxLength(150), NotOnlyWhitespaceValidator()],
+        validationMessages: {
           maxlength: 'Maximum 150 characters allowed.'
         }
       },

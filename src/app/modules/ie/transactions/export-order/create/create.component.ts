@@ -839,6 +839,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
+            console.log(response.Data);
             if (!response.IsSuccess) {
               this.alertService.showServerResponseAlert(response);
               return;
@@ -1177,7 +1178,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     const model: PortMaster = this.formService.createNullObject<PortMaster>();
     this.loadDynamicComponent(model);
   }
-  
+
   printPackingDetail(): void {
     this.disablePrintButton = true;
     this.route.params.subscribe(params => {

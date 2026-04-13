@@ -77,7 +77,6 @@ export class IndexComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                console.log(response.Data)
                 const model: ProductMaster = {
                   ...response.Data
                 };
@@ -131,7 +130,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           }
         });
     }
-    catch (error) {}
+    catch (error) { }
   }
 
   private refreshActiveView(): void {
