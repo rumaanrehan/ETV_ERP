@@ -1059,30 +1059,6 @@
     display: none !important;
 }
 
-/* Make customer field full width */
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field {
-    width: 100% !important;
-    max-width: 100% !important;
-}
-
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control.has-action {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-}
-
-/* Make FC field full width */
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field {
-    width: 100% !important;
-    max-width: 100% !important;
-}
-
-:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-}
-
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .p-float-label > :not(label),
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .p-float-label > :not(label),
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .p-float-label > :not(label) {

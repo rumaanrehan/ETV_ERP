@@ -126,44 +126,44 @@
                         [validationMessage]="formConfig.BoxList.items.BoxWeight.error"
                         [readonly]="true"></z-inputnumber>
                     </div>
-                    <div class="box-detail-field">
-                      <label class="box-detail-label">{{ formConfig.BoxList.items.BoxGrossWeight.label }}:</label>
-                      <div class="box-detail-control">
-                        <z-inputnumber [group]="box" [control]="'BoxGrossWeight'" [label]="''"
-                          [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
-                      </div>
+                  </div>
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.BoxGrossWeight.label }}:</label>
+                    <div class="box-detail-control">
+                      <z-inputnumber [group]="box" [control]="'BoxGrossWeight'" [label]="''"
+                        [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputnumber>
                     </div>
-                    <div class="box-detail-field">
-                      <label class="box-detail-label">{{ formConfig.BoxList.items.PackedBy.label }}:</label>
-                      <div class="box-detail-control">
-                        <z-select [group]="box" [control]="'PackedBy'" [label]="''"
-                          [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"
-                          [optionLabel]="'EmployeeName'" [optionValue]="'EmployeeID'"
-                          [options]="employeeList"></z-select>
-                      </div>
+                  </div>
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.PackedBy.label }}:</label>
+                    <div class="box-detail-control">
+                      <z-select [group]="box" [control]="'PackedBy'" [label]="''"
+                        [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"
+                        [optionLabel]="'EmployeeName'" [optionValue]="'EmployeeID'"
+                        [options]="employeeList"></z-select>
                     </div>
-                    <div class="box-detail-field">
-                      <label class="box-detail-label">{{ formConfig.BoxList.items.PackedDateTime.label }}:</label>
-                      <div class="box-detail-control">
-                        <z-datepicker [group]="box" [control]="'PackedDateTime'" [label]="''"
-                          [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-datepicker>
-                      </div>
+                  </div>
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.PackedDateTime.label }}:</label>
+                    <div class="box-detail-control">
+                      <z-datepicker [group]="box" [control]="'PackedDateTime'" [label]="''"
+                        [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-datepicker>
                     </div>
-                    <div class="box-detail-field">
-                      <label class="box-detail-label">{{ formConfig.BoxList.items.InspectedBy.label }}:</label>
-                      <div class="box-detail-control">
-                        <z-select [group]="box" [control]="'InspectedBy'" [label]="''"
-                          [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"
-                          [optionLabel]="'EmployeeName'" [optionValue]="'EmployeeID'"
-                          [options]="employeeList"></z-select>
-                      </div>
+                  </div>
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.InspectedBy.label }}:</label>
+                    <div class="box-detail-control">
+                      <z-select [group]="box" [control]="'InspectedBy'" [label]="''"
+                        [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"
+                        [optionLabel]="'EmployeeName'" [optionValue]="'EmployeeID'"
+                        [options]="employeeList"></z-select>
                     </div>
-                    <div class="box-detail-field">
-                      <label class="box-detail-label">{{ formConfig.BoxList.items.InspectedDateTime.label }}:</label>
-                      <div class="box-detail-control">
-                        <z-datepicker [group]="box" [control]="'InspectedDateTime'" [label]="''"
-                          [validationMessage]="formConfig.BoxList.items.InspectedDateTime.error"></z-datepicker>
-                      </div>
+                  </div>
+                  <div class="box-detail-field">
+                    <label class="box-detail-label">{{ formConfig.BoxList.items.InspectedDateTime.label }}:</label>
+                    <div class="box-detail-control">
+                      <z-datepicker [group]="box" [control]="'InspectedDateTime'" [label]="''"
+                        [validationMessage]="formConfig.BoxList.items.InspectedDateTime.error"></z-datepicker>
                     </div>
                   </div>
                   <div class="simple-field simple-field-table">

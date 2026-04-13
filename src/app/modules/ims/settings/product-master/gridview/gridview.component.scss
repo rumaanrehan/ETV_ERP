@@ -1,0 +1,54 @@
+:host {
+  height: 100%;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+z-datatable {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+:host ::ng-deep .table-action-link {
+  color: inherit;
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 0.15s ease, font-weight 0.15s ease;
+}
+
+:host ::ng-deep .z-datatable-root .p-datatable-tbody > tr:not(.p-highlight):hover .table-action-link {
+  color: rgba(0, 90, 158, 1);
+  font-weight: 500;
+}
+
+.product-action-btn {
+  height: 2rem;
+  min-height: 2rem;
+  width: 2rem;
+  min-width: 2rem;
+  border-radius: 10px;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.product-action-btn i {
+  font-size: 0.75rem;
+}
+
+:host-context([data-theme-mode="dark"]) .product-action-btn {
+  border-color: #334155;
+  background: rgba(15, 23, 42, 0.3);
+  color: #e5e7eb;
+}

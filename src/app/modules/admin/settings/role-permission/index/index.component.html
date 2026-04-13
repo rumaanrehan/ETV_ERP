@@ -1,74 +1,113 @@
 <ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-sm" (click)="onClickPageHeaderAddButton()"> <i class="bi bi-arrow-left-circle" style="vertical-align: bottom; margin-right: 5px;"></i>Back</button>
 </ng-template>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-  <div class="row">
-    <div class="col-xl-4"></div>
-    <div class="col-xl-4 card card-body">
-      <div class="d-flex flex-column justify-content-center align-items-center">
-        <div class="col-xl-12 form-group">
-          <z-select [group]="form" [control]="'RoleID'" [label]="formConfig.RoleID.label" [validationMessage]="formConfig.RoleID.error" (onChange)="onRoleChange($event)"
-                    [options]="roleList" [optionLabel]="'RoleName'" [optionValue]="'RoleID'">
-          </z-select>
+<form class="role-permission-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+  <div class="page-content role-permission-page">
+    <div class="page-content-scrollable role-permission-content">
+      <div class="role-permission-topbar">
+        <div class="role-permission-topbar-left">
+          <button class="toolbar-btn icon-btn back-btn" type="button" (click)="onClickPageHeaderAddButton()"
+            aria-label="Back" title="Back">
+            <i class="pi pi-angle-left" aria-hidden="true"></i>
+            <span class="visually-hidden">Back</span>
+          </button>
+          <div class="role-permission-title">Role Manager</div>
         </div>
-        <div class="col-xl-12 form-group">
-          <z-select [group]="form" [control]="'ModuleID'" [label]="formConfig.ModuleID.label" [validationMessage]="formConfig.ModuleID.error" (onChange)="onModuleChange($event)"
-                    [options]="moduleList" [optionLabel]="'ModuleName'" [optionValue]="'ModuleID'">
-          </z-select>
+        <div class="role-permission-topbar-right">
+          <button type="button" class="simple-btn" (click)="onClickPageHeaderAddButton()">Back To List</button>
+          <button type="submit" class="simple-btn is-active" [disabled]="isSubmitted || !RoleMappingArray.controls.length">
+            Update
+          </button>
         </div>
       </div>
+
+      <div class="role-permission-filter">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.RoleID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'RoleID'" [label]="''" [validationMessage]="formConfig.RoleID.error"
+              (onChange)="onRoleChange($event)" [options]="roleList" [optionLabel]="'RoleName'"
+              [optionValue]="'RoleID'">
+            </z-select>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ModuleID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'ModuleID'" [label]="''" [validationMessage]="formConfig.ModuleID.error"
+              (onChange)="onModuleChange($event)" [options]="moduleList" [optionLabel]="'ModuleName'"
+              [optionValue]="'ModuleID'">
+            </z-select>
+          </div>
+        </div>
+      </div>
+
+      <div class="role-permission-table-card" formArrayName="RoleMapping">
+        <p-table [value]="RoleMappingArray.controls" styleClass="p-datatable-striped role-permission-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="permission-sn">SN</th>
+              <th>Group Menu</th>
+              <th>Menu Name</th>
+              <th>Access Control Name</th>
+              <th class="permission-col">
+                <div class="permission-header-toggle">
+                  <span>Can Read</span>
+                  <input class="form-check-input" type="checkbox" [checked]="isAllCanReadSelected"
+                    (change)="cbSelectAll('CanRead')" />
+                </div>
+              </th>
+              <th class="permission-col">
+                <div class="permission-header-toggle">
+                  <span>Can Create</span>
+                  <input class="form-check-input" type="checkbox" [checked]="isAllCanCreateSelected"
+                    (change)="cbSelectAll('CanCreate')" />
+                </div>
+              </th>
+              <th class="permission-col">
+                <div class="permission-header-toggle">
+                  <span>Can Update</span>
+                  <input class="form-check-input" type="checkbox" [checked]="isAllCanUpdateSelected"
+                    (change)="cbSelectAll('CanUpdate')" />
+                </div>
+              </th>
+              <th class="permission-col">
+                <div class="permission-header-toggle">
+                  <span>Can Delete</span>
+                  <input class="form-check-input" type="checkbox" [checked]="isAllCanDeleteSelected"
+                    (change)="cbSelectAll('CanDelete')" />
+                </div>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-group let-i="rowIndex">
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ group.get('GroupMenuName')?.value }}</td>
+              <td>{{ group.get('MenuName')?.value }}</td>
+              <td>{{ group.get('AccessControlName')?.value }}</td>
+              <td class="permission-cell">
+                <z-checkbox [group]="group" [control]="'CanRead'" [label]="''"></z-checkbox>
+              </td>
+              <td class="permission-cell">
+                <z-checkbox [group]="group" [control]="'CanCreate'" [label]="''"></z-checkbox>
+              </td>
+              <td class="permission-cell">
+                <z-checkbox [group]="group" [control]="'CanUpdate'" [label]="''"></z-checkbox>
+              </td>
+              <td class="permission-cell">
+                <z-checkbox [group]="group" [control]="'CanDelete'" [label]="''"></z-checkbox>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <p class="role-permission-empty" *ngIf="RoleMappingArray.length === 0">
+        Select role and module to load permissions.
+      </p>
     </div>
-    <div class="col-xl-4"></div>
   </div>
 
-  <div class="col-xl-12" formArrayName="RoleMapping">
-    <p-table [value]="RoleMappingArray.controls" styleClass="p-datatable-striped">
-      <ng-template pTemplate="header">
-        <tr>
-          <th> SN</th>
-          <th> Group Menu </th>
-          <th> Menu Name </th>
-          <th> Access Control Name </th>
-          <th> Can Read <input class="form-check-input" type="checkbox" [checked]="isAllCanReadSelected" (change)="cbSelectAll('CanRead')" /> </th>
-          <th> Can Create <input class="form-check-input" type="checkbox" [checked]="isAllCanCreateSelected" (change)="cbSelectAll('CanCreate')" /> </th>
-          <th> Can Update <input class="form-check-input" type="checkbox" [checked]="isAllCanUpdateSelected" (change)="cbSelectAll('CanUpdate')" /> </th>
-          <th> Can Delete <input class="form-check-input" type="checkbox" [checked]="isAllCanDeleteSelected" (change)="cbSelectAll('CanDelete')" /> </th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-group let-i="rowIndex">
-        <tr>
-          <td> {{ i + 1 }} </td>
-          <td> {{ group.get('GroupMenuName')?.value }} </td>
-          <td> {{ group.get('MenuName')?.value }} </td>
-          <td> {{ group.get('AccessControlName')?.value }} </td>
-          <td>
-            <z-checkbox class="text-center" [group]="group" [control]="'CanRead'"></z-checkbox>
-          </td>
-          <td>
-            <z-checkbox class="text-center" [group]="group" [control]="'CanCreate'"></z-checkbox>
-          </td>
-          <td>
-            <z-checkbox class="text-center" [group]="group" [control]="'CanUpdate'"></z-checkbox>
-          </td>
-          <td>
-            <z-checkbox class="text-center" [group]="group" [control]="'CanDelete'"></z-checkbox>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
 </form>
-
-<p *ngIf="RoleMappingArray.length === 0">No data available in table</p>
-<br />
-<div class="row justify-content-between">
-  <div class="d-flex justify-content-center">
-    <div class="col-xl-1 px-1">
-      <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="!RoleMappingArray.controls.length" (click)="onSubmit()">UPDATE</button>
-    </div>
-    <div class="col-xl-2 px-1">
-      <button type="submit" class="btn btn-md btn-primary btn-small" (click)="onClickPageHeaderAddButton()">BACK TO LIST</button>
-    </div>
-  </div>
-</div>

@@ -1,27 +1,34 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem role-create-sidebar'">
   <div sidebarHeader>
-    <h5 class="text-white">Role Master</h5>
+    <h5 class="role-create-title">{{ isEditMode ? 'Edit Role' : 'Create Role' }}</h5>
   </div>
   <div sidebarContent>
-    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'RoleCode'" [label]="formConfig.RoleCode.label"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'RoleName'" [label]="formConfig.RoleName.label"></z-inputtext>
+    <form class="role-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.RoleCode.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('RoleCode')?.value || 'NEW' }}</div>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.RoleName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'RoleName'" [label]="''" [validationMessage]="formConfig.RoleName.error">
+            </z-inputtext>
+          </div>
+        </div>
       </div>
     </form>
   </div>
   <div sidebarFooter>
-    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-      <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="form.invalid">
-          {{ isEditMode ? 'Update' : 'Save' }}
-        </button>
-      </div>
-      <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-      </div>
+    <div class="role-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" (click)="onSubmit()"
+        [disabled]="isSubmitted || !ActiveStatus || form.invalid">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </app-form-sidebar>

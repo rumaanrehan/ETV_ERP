@@ -1,72 +1,85 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem product-create-sidebar'">
   <div sidebarHeader>
-    <h5 class="text-white">Product Master</h5>
+    <h5 class="product-create-title">{{ isEditMode ? 'Edit Product' : 'Create Product' }}</h5>
   </div>
   <div sidebarContent>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-group">
-        <z-span [text]="form.get('ProductCode')?.value" [label]="formConfig.ProductCode.label"></z-span>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'ItemCategoryID'" [label]="formConfig.ItemCategoryID.label"
-          [validationMessage]="formConfig.ItemCategoryID.error" [optionLabel]="'ItemCategoryName'"
-          [optionValue]="'ItemCategoryID'" [options]="itemCategoryList">
-        </z-select>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ProductName'" [label]="formConfig.ProductName.label"
-          [validationMessage]="formConfig.ProductName.error">
-        </z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ModelCode'" [label]="formConfig.ModelCode.label"
-          [validationMessage]="formConfig.ModelCode.error">
-        </z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'UOMID'" [label]="formConfig.UOMID.label"
-          [validationMessage]="formConfig.UOMID.error" [optionLabel]="'UOMName'" [optionValue]="'UOMID'"
-          [options]="uomList">
-        </z-select>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputnumber [group]="form" [control]="'Unit'" [label]="formConfig.Unit.label"
-          [validationMessage]="formConfig.Unit.error">
-        </z-inputnumber>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'HSCode'" [label]="formConfig.HSCode.label"
-          [validationMessage]="formConfig.HSCode.error">
-        </z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group d-flex align-items-center">
-        <label class="col-xl-3 form-label">Purchase Tax:</label>
-        <div class="col-xl-4 px-2">
-          <z-select [group]="form" [control]="'PurTaxOn'" [label]="formConfig.PurTaxOn.label"
-            [validationMessage]="formConfig.PurTaxOn.error" [optionLabel]="'Text'" [optionValue]="'cValue'"
-            [options]="purTaxOnList">
-          </z-select>
+    <form class="product-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ProductCode.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('ProductCode')?.value || 'NEW' }}</div>
+          </div>
         </div>
-        <div class="col-xl-5 px-2">
-          <z-select [group]="form" [control]="'TaxSlabID'" [label]="formConfig.TaxSlabID.label"
-            [validationMessage]="formConfig.ProductName.error" [optionLabel]="'TaxSlabName'" [optionValue]="'TaxSlabID'"
-            [options]="taxSlabList">
-          </z-select>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ItemCategoryID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'ItemCategoryID'" [label]="''"
+              [validationMessage]="formConfig.ItemCategoryID.error" [optionLabel]="'ItemCategoryName'"
+              [optionValue]="'ItemCategoryID'" [options]="itemCategoryList">
+            </z-select>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ProductName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'ProductName'" [label]="''"
+              [validationMessage]="formConfig.ProductName.error"></z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.UOMID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'UOMID'" [label]="''"
+              [validationMessage]="formConfig.UOMID.error" [optionLabel]="'UOMName'" [optionValue]="'UOMID'"
+              [options]="uomList">
+            </z-select>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.Unit.label }}:</label>
+          <div class="simple-control">
+            <z-inputnumber [group]="form" [control]="'Unit'" [label]="''"
+              [validationMessage]="formConfig.Unit.error">
+            </z-inputnumber>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.HSCode.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'HSCode'" [label]="''"
+              [validationMessage]="formConfig.HSCode.error"></z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">Purchase Tax:</label>
+          <div class="simple-control purchase-tax-row">
+            <z-select [group]="form" [control]="'PurTaxOn'" [label]="''"
+              [validationMessage]="formConfig.PurTaxOn.error" [optionLabel]="'Text'" [optionValue]="'cValue'"
+              [options]="purTaxOnList">
+            </z-select>
+            <z-select [group]="form" [control]="'TaxSlabID'" [label]="''"
+              [validationMessage]="formConfig.TaxSlabID.error" [optionLabel]="'TaxSlabName'" [optionValue]="'TaxSlabID'"
+              [options]="taxSlabList">
+            </z-select>
+          </div>
         </div>
       </div>
     </form>
   </div>
   <div sidebarFooter>
-    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-      <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()"
-          [disabled]="isSubmitted || !activeStatus">
-          {{ isEditMode ? "Update" : "Save" }}
-        </button>
-      </div>
-      <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-      </div>
+    <div class="product-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" (click)="onSubmit()"
+        [disabled]="isSubmitted">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </app-form-sidebar>

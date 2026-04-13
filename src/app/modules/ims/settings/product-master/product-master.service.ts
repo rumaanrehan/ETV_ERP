@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
@@ -16,7 +18,7 @@ import { ItemCategoryMasterService } from '../item-category-master/item-category
 import { ItemGroupMasterService } from '../item-group-master/item-group-master.service';
 import { UOM_SelectList, UOMRequest } from '../uom-master/uom-master';
 import { UOMMasterService } from '../uom-master/uom-master.service';
-import { Product_Details, Product_IndexTableFilter, Product_IndexTableList, Product_SelectList, ProductMaster, ProductRequest } from './product-master';
+import { Product_Details, Product_IndexTableFilter, Product_IndexTableList, Product_IndexTableSort, Product_SelectList, ProductMaster, ProductRequest } from './product-master';
 
 @Injectable({
   providedIn: 'root',
@@ -85,6 +87,42 @@ export class ProductMasterService {
       ItemCategoryName: '',
       UOMName: '',
       ActiveStatusID: 0
+    };
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<Product_IndexTableSort> {
+    return {
+      ProductCode: {
+        label: 'Code',
+        defaultValue: -1
+      },
+      ProductName: {
+        label: 'Product Name',
+        defaultValue: 0
+      }
+    };
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<Product_IndexTableList> {
+    return {
+      tableKey: 'IMS_ProductMaster_IndexTable',
+      defaultSortColumn: { sortField: 'ProductCode', sortOrder: 1 },
+      filterForm,
+      sortingForm,
+      filterFields: [
+        { field: 'ProductCode', label: 'Code', type: 'text' },
+        { field: 'ProductName', label: 'Product Name', type: 'text' },
+        { field: 'ItemCategoryName', label: 'Item Category', type: 'text' },
+        { field: 'UOMName', label: 'UOM', type: 'text' },
+        { field: 'ActiveStatusID', label: 'Status', type: 'dropdown', options: [] }
+      ],
+      sortFields: [
+        { field: 'ProductCode', label: 'Code', enabled: true, order: -1 },
+        { field: 'ProductName', label: 'Product Name', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
     };
   }
 

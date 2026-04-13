@@ -1,0 +1,289 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.role-permission-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.role-permission-page {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.role-permission-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+  padding: 0.25rem 0;
+}
+
+.role-permission-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.role-permission-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.role-permission-topbar-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 0.75rem;
+}
+
+.role-permission-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--heading-text-color);
+  line-height: 1.1;
+}
+
+.role-permission-filter {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  max-width: 56rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.simple-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: min(100%, 22rem);
+}
+
+.simple-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.simple-control {
+  width: 100%;
+}
+
+.role-permission-table-card {
+  border: 1px solid var(--default-border);
+  border-radius: 0.5rem;
+  background: var(--custom-white);
+  overflow: hidden;
+}
+
+.permission-col {
+  min-width: 8rem;
+}
+
+.permission-sn {
+  width: 4rem;
+}
+
+.permission-header-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+
+  span {
+    color: var(--text-muted);
+  }
+}
+
+.permission-cell {
+  text-align: center;
+}
+
+.role-permission-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0.25rem 0 0;
+  text-align: center;
+}
+
+.simple-btn {
+  height: 2.1rem;
+  padding: 0 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  font-size: 0.78rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.5rem;
+}
+
+.simple-btn.is-active {
+  background: rgba(var(--primary-rgb), 0.4);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.simple-btn.is-active:not(:disabled):hover {
+  background: rgba(var(--primary-rgb), 0.5);
+}
+
+.simple-btn:disabled {
+  // cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.toolbar-btn:focus-visible,
+.simple-btn:focus-visible {
+  outline: 2px solid rgba(var(--primary-rgb), 0.75);
+  outline-offset: 2px;
+}
+
+:host ::ng-deep .role-permission-filter {
+  --se-field-height: 2.25rem;
+  --se-field-radius: 8px;
+  --se-field-font-size: 0.875rem;
+  --se-placeholder-font-size: 0.82rem;
+
+  .p-float-label > label {
+    display: none !important;
+  }
+
+  z-select {
+    display: block;
+    width: 100%;
+  }
+
+  .p-dropdown,
+  .p-inputtext,
+  input {
+    height: var(--se-field-height);
+    font-size: var(--se-field-font-size);
+    border-radius: var(--se-field-radius);
+    border-color: var(--default-border);
+    background: var(--custom-white);
+    width: 100%;
+    box-shadow: none;
+  }
+
+  .p-dropdown:focus-visible,
+  .p-inputtext:enabled:focus-visible,
+  input:focus-visible {
+    border-color: rgb(var(--primary-rgb));
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+    outline: none;
+  }
+}
+
+:host ::ng-deep .role-permission-table .p-datatable-thead > tr > th,
+:host ::ng-deep .role-permission-table .p-datatable-tbody > tr > td {
+  vertical-align: middle;
+  font-size: 0.8125rem;
+}
+
+:host ::ng-deep .role-permission-table .p-datatable-thead > tr > th {
+  background: rgba(248, 250, 252, 0.8);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+:host ::ng-deep .role-permission-table .p-checkbox {
+  display: inline-flex;
+}
+
+:host ::ng-deep .role-permission-table .p-checkbox .p-checkbox-input:focus-visible + .p-checkbox-box {
+  outline: 2px solid rgba(var(--primary-rgb), 0.75);
+  outline-offset: 2px;
+}
+
+:host ::ng-deep .role-permission-table .form-check-input:focus-visible {
+  outline: 2px solid rgba(var(--primary-rgb), 0.75);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.toolbar-btn {
+  height: 36px;
+  padding: 0 1.15rem;
+  border-radius: 5px;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.toolbar-btn.icon-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  justify-content: center;
+}
+
+.toolbar-btn.back-btn {
+  width: 33px;
+  height: 36px;
+  border-radius: 5px;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+}
+
+@media (max-width: 768px) {
+  .role-permission-topbar {
+    align-items: flex-start;
+  }
+
+  .role-permission-topbar-left,
+  .role-permission-topbar-right {
+    width: 100%;
+  }
+
+  .role-permission-topbar-right {
+    justify-content: flex-start;
+    margin-right: 0;
+  }
+
+  .role-permission-filter {
+    max-width: 100%;
+  }
+
+  .simple-field {
+    width: 100%;
+  }
+
+  .toolbar-btn.icon-btn,
+  .toolbar-btn.back-btn {
+    width: 32px;
+    height: 32px;
+  }
+}

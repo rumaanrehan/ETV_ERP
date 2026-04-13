@@ -374,7 +374,6 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   updateBoxWeight(boxIndex: number): void {
-    debugger;
     const totalWeight = this.getProductList(boxIndex).controls.reduce((total, rowControl) => {
       const packedQty = Number(rowControl.get('PackedQty')?.value) || 0;
       const weightPerUnit = Number(rowControl.get('WeightPerUnit')?.value) || 0;

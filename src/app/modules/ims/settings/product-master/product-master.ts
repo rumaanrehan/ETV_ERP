@@ -1,9 +1,9 @@
 export interface ProductMaster {
   ProductID: number | null;
+  ModelCode: string | null;
   ProductCode: string | null;
   ItemCategoryID: number | null;
   ProductName: string | null;
-  ModelCode: string | null;
   UOMID: number | null;
   Unit: number | null;
   HSCode: string | null;
@@ -34,6 +34,11 @@ export interface Product_IndexTableFilter {
   ActiveStatusID: number | null;
 }
 
+export interface Product_IndexTableSort {
+  ProductCode: number;
+  ProductName: number;
+}
+
 export interface Product_IndexTableList {
   RowID: number;
   ProductID: number;
@@ -46,10 +51,10 @@ export interface Product_IndexTableList {
 
 export interface Product_Details {
   ProductID: number | null;
+  ModelCode: string | null;
   ProductCode: string | null;
   ItemCategoryID: number | null;
   ProductName: string | null;
-  ModelCode: string | null;
   UOMID: number | null;
   Unit: number | null;
   HSCode: string | null;
