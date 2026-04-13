@@ -4,7 +4,6 @@ export interface ProductMaster {
   ProductCode: string | null;
   ItemCategoryID: number | null;
   ProductName: string | null;
-  ModelCode: string | null;
   UOMID: number | null;
   Unit: number | null;
   HSCode: string | null;
@@ -56,7 +55,6 @@ export interface Product_Details {
   ProductCode: string | null;
   ItemCategoryID: number | null;
   ProductName: string | null;
-  ModelCode: string | null;
   UOMID: number | null;
   Unit: number | null;
   HSCode: string | null;

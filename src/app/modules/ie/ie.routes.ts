@@ -44,6 +44,14 @@ export const ieRoute: Routes = [
                 }
               },
               {
+                path: 'index',
+                loadComponent: () => import('./transactions/sales-enquiry/index/index.component').then((m) => m.SalesEnquiryIndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/SalesEnquiry',
+                }
+              },
+              {
                 path: 'create',
                 loadComponent: () => import('./transactions/sales-enquiry/create/create.component').then((m) => m.CreateComponent),
                 data: {
@@ -72,6 +80,14 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: '',
+                loadComponent: () => import('./transactions/sales-quotation/index/index.component').then((m) => m.SalesQuotationIndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/SalesQuotation',
+                }
+              },
+              {
+                path: 'index',
                 loadComponent: () => import('./transactions/sales-quotation/index/index.component').then((m) => m.SalesQuotationIndexComponent),
                 data: {
                   permission: 'CanRead',
@@ -123,6 +139,14 @@ export const ieRoute: Routes = [
                 }
               },
               {
+                path: 'index',
+                loadComponent: () => import('./transactions/purchase-quotation/dataview/dataview.component').then((m) => m.DataviewComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/PurchaseQuotation',
+                }
+              },
+              {
                 path: 'create',
                 loadComponent: () => import('./transactions/purchase-quotation/create/create.component').then((m) => m.CreateComponent),
                 data: {
@@ -160,6 +184,14 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: '',
+                loadComponent: () => import('./transactions/export-order/index/index.component').then((m) => m.ExportOrderIndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/ExportOrder'
+                }
+              },
+              {
+                path: 'index',
                 loadComponent: () => import('./transactions/export-order/index/index.component').then((m) => m.ExportOrderIndexComponent),
                 data: {
                   permission: 'CanRead',
@@ -211,6 +243,14 @@ export const ieRoute: Routes = [
                 }
               },
               {
+                path: 'index',
+                loadComponent: () => import('./transactions/proforma-invoice/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/ProformaInvoice',
+                }
+              },
+              {
                 path: 'create',
                 loadComponent: () => import('./transactions/proforma-invoice/create/create.component').then((m) => m.CreateComponent),
                 data: {
@@ -254,6 +294,14 @@ export const ieRoute: Routes = [
                   menu: 'IE/PackingList',
                 }
               },
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/packing-list/packing-list.component').then((m) => m.PackingListComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/PackingList',
+                }
+              },
             ]
           },
           {
@@ -265,6 +313,14 @@ export const ieRoute: Routes = [
             children: [
               {
                 path: '',
+                loadComponent: () => import('./transactions/tax-invoice/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/TaxInvoice',
+                }
+              },
+              {
+                path: 'index',
                 loadComponent: () => import('./transactions/tax-invoice/index/index.component').then((m) => m.IndexComponent),
                 data: {
                   permission: 'CanRead',
@@ -307,6 +363,57 @@ export const ieRoute: Routes = [
               //     breadcrumb: 'Create'
               //   }
               // }
+            ]
+          },
+          {
+            path: 'letter-of-credit',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Letter Of Credit'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/letter-of-credit/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/LetterOfCredit',
+                }
+              }
+            ]
+          },
+          {
+            path: 'export-order-payment',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Export Order Payment'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/export-order-payment/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/ExportOrderPayment',
+                }
+              }
+            ]
+          },
+          {
+            path: 'export-order-document',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'Export Order Document'
+            },
+            children: [
+              {
+                path: 'index',
+                loadComponent: () => import('./transactions/export-order-document/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'IE/ExportOrderDocument',
+                }
+              }
             ]
           },
           {
