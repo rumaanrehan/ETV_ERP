@@ -1,43 +1,48 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
-    <div sidebarHeader>
-        <h5 class="text-white">Bill Regulation</h5>
-    </div>
-    <div sidebarContent>
-        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-        <div class="col-xl-12 form-group">
-            <z-span [text]="form.get('ExportOrderNo')?.value" [label]="formConfig.ExportOrderNo.label"></z-span>
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem bill-regulation-create-sidebar'">
+  <div sidebarHeader>
+    <h5 class="bill-regulation-create-title">{{ isEditMode ? 'Edit Bill Regulation' : 'Create Bill Regulation' }}</h5>
+  </div>
+  <div sidebarContent>
+    <form class="bill-regulation-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ExportOrderNo.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('ExportOrderNo')?.value || '-' }}</div>
+          </div>
         </div>
-        <div class="col-xl-12 form-group">
-            <z-checkbox [group]="form" [control]="'ShippingBill'" [label]="formConfig.ShippingBill.label"></z-checkbox>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-checkbox [group]="form" [control]="'AirwayBill'" [label]="formConfig.AirwayBill.label"></z-checkbox>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-checkbox [group]="form" [control]="'IECCertificate'" [label]="formConfig.IECCertificate.label"></z-checkbox>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-checkbox [group]="form" [control]="'Invoice'" [label]="formConfig.Invoice.label"></z-checkbox>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-checkbox [group]="form" [control]="'PackingSlip'" [label]="formConfig.PackingSlip.label"></z-checkbox>
-        </div>
-        <div class="col-xl-12 form-group">
-            <z-checkbox [group]="form" [control]="'CustomerPO'" [label]="formConfig.CustomerPO.label"></z-checkbox>
-        </div>
-        </form>
-    </div>
-    <div sidebarFooter>
-        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-            <div class="col-md-6 pe-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted"
-                    (click)="onSubmit()">
-                    {{ isEditMode ? "Update" : "Save" }}
-                </button>
+        <div class="simple-field">
+          <label class="simple-label">Required Documents:</label>
+          <div class="simple-control document-checklist">
+            <div class="check-item">
+              <z-checkbox [group]="form" [control]="'ShippingBill'" [label]="formConfig.ShippingBill.label"></z-checkbox>
             </div>
-            <div class="col-md-6 ps-1">
-                <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
+            <div class="check-item">
+              <z-checkbox [group]="form" [control]="'AirwayBill'" [label]="formConfig.AirwayBill.label"></z-checkbox>
             </div>
+            <div class="check-item">
+              <z-checkbox [group]="form" [control]="'IECCertificate'" [label]="formConfig.IECCertificate.label"></z-checkbox>
+            </div>
+            <div class="check-item">
+              <z-checkbox [group]="form" [control]="'Invoice'" [label]="formConfig.Invoice.label"></z-checkbox>
+            </div>
+            <div class="check-item">
+              <z-checkbox [group]="form" [control]="'PackingSlip'" [label]="formConfig.PackingSlip.label"></z-checkbox>
+            </div>
+            <div class="check-item">
+              <z-checkbox [group]="form" [control]="'CustomerPO'" [label]="formConfig.CustomerPO.label"></z-checkbox>
+            </div>
+          </div>
         </div>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="bill-regulation-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" [disabled]="isSubmitted" (click)="onSubmit()">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
+  </div>
 </app-form-sidebar>

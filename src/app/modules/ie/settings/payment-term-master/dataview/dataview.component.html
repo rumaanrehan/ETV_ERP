@@ -1,0 +1,33 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="cardTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #cardTemplate let-items>
+  <div class="pt-card-list">
+    <div class="pt-card" *ngFor="let row of items">
+      <div class="pt-card__body">
+        <div class="pt-card__top">
+          <div class="pt-card__titles">
+            <h5 class="pt-card__title">{{ row.PaymentTermName }}</h5>
+            <p class="pt-card__subtitle">{{ row.PaymentTermCode }}</p>
+          </div>
+          <div class="pt-card__head-right">
+            <span class="pt-status-pill" [ngClass]="row.ActiveStatus ? 'is-active' : 'is-inactive'">
+              {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+            </span>
+            <button type="button" class="pt-action-btn" (click)="onClickDeleteReactivate(row)">
+              <i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-card__details">
+          <span class="pt-card__label">Payment Term</span>
+          <a class="pt-card__value table-action-link" (click)="onClickEditDetails(row)">{{ row.PaymentTermName }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

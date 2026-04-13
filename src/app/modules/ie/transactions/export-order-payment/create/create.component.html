@@ -1,55 +1,79 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem payment-create-sidebar'">
   <div sidebarHeader>
-    <h5 class="text-white">Export Order Payment</h5>
+    <h5 class="payment-create-title">{{ isEditMode ? 'Edit Export Order Payment' : 'Create Export Order Payment' }}</h5>
   </div>
 
   <div sidebarContent>
-    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-group">
-        <z-span [text]="form.get('ExportOrderPaymentNo')?.value" [label]="formConfig.ExportOrderPaymentNo.label"></z-span>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"></z-autocomplete>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'PaymentRefNo'" [label]="formConfig.PaymentRefNo.label" [validationMessage]="formConfig.PaymentRefNo.error"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-datepicker [group]="form" [control]="'PaymentDate'" [label]="formConfig.PaymentDate.label" [validationMessage]="formConfig.PaymentDate.error"  
-          [maxDate]="currentDate">
-      </z-datepicker>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputnumber [group]="form" [control]="'PaymentAmountFC'" [label]="formConfig.PaymentAmountFC.label"
-            [validationMessage]="formConfig.PaymentAmountFC.error" (onChange)="calculateBaseCurrencyAmount()" [styleClass]="'text-end'"></z-inputnumber>
-      </div>
-      <div class="col-xl-12 form-group">
-        <div class="input-group">
-          <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
-          <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="formConfig.ExchangeRateToBC.label"
-            [validationMessage]="formConfig.ExchangeRateToBC.error" (onChange)="calculateBaseCurrencyAmount()" [styleClass]="'text-end'"></z-inputnumber>
+    <form class="payment-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ExportOrderPaymentNo.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('ExportOrderPaymentNo')?.value || 'NEW' }}</div>
+          </div>
         </div>
-      </div>
-      <div class="col-xl-12 form-group">
-        <div class="input-group">
-          <span class="input-group-text"><i class="pi pi-indian-rupee"></i></span>
-          <z-inputnumber [group]="form" [control]="'PaymentAmountBC'" [label]="formConfig.PaymentAmountBC.label"
-            [validationMessage]="formConfig.PaymentAmountBC.error" [readonly]="true" [styleClass]="'text-end'"></z-inputnumber>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ExportOrderNo.label }}:</label>
+          <div class="simple-control">
+            <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"></z-autocomplete>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.PaymentRefNo.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'PaymentRefNo'" [label]="''"
+              [validationMessage]="formConfig.PaymentRefNo.error"></z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.PaymentDate.label }}:</label>
+          <div class="simple-control">
+            <z-datepicker [group]="form" [control]="'PaymentDate'" [label]="''"
+              [validationMessage]="formConfig.PaymentDate.error" [maxDate]="currentDate"></z-datepicker>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.PaymentAmountFC.label }}:</label>
+          <div class="simple-control">
+            <z-inputnumber [group]="form" [control]="'PaymentAmountFC'" [label]="''"
+              [validationMessage]="formConfig.PaymentAmountFC.error" (onChange)="calculateBaseCurrencyAmount()"
+              [styleClass]="'text-end'"></z-inputnumber>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ExchangeRateToBC.label }}:</label>
+          <div class="simple-control simple-control-currency">
+            <span class="simple-currency-icon"><i class="pi pi-indian-rupee"></i></span>
+            <z-inputnumber [group]="form" [control]="'ExchangeRateToBC'" [label]="''"
+              [validationMessage]="formConfig.ExchangeRateToBC.error" (onChange)="calculateBaseCurrencyAmount()"
+              [styleClass]="'text-end'"></z-inputnumber>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.PaymentAmountBC.label }}:</label>
+          <div class="simple-control simple-control-currency">
+            <span class="simple-currency-icon"><i class="pi pi-indian-rupee"></i></span>
+            <z-inputnumber [group]="form" [control]="'PaymentAmountBC'" [label]="''"
+              [validationMessage]="formConfig.PaymentAmountBC.error" [readonly]="true" [styleClass]="'text-end'">
+            </z-inputnumber>
+          </div>
         </div>
       </div>
     </form>
   </div>
 
   <div sidebarFooter>
-    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-      <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
-          {{ isEditMode ? "Update" : "Save" }}
-        </button>
-      </div>
-      <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-      </div>
+    <div class="payment-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </app-form-sidebar>

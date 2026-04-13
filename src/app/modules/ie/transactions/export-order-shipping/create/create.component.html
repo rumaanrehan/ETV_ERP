@@ -1,41 +1,57 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
-    <div sidebarHeader>
-        <h5 class="text-white">Shipping Details</h5>
-    </div>
-    <div sidebarContent>
-        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-            <div class="col-xl-12 form-group">
-                <z-span [text]="form.get('ExportOrderNo')?.value" [label]="formConfig.ExportOrderNo.label"></z-span>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'ShippingBillNo'"
-                    [label]="formConfig.ShippingBillNo.label"></z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-datepicker [group]="form" [control]="'ShippingBillDate'" [label]="formConfig.ShippingBillDate.label"
-                    [readonly]="true"></z-datepicker>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'AirwayBillNo'"
-                    [label]="formConfig.AirwayBillNo.label"></z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-datepicker [group]="form" [control]="'AirwayBillDate'"
-                    [label]="formConfig.AirwayBillDate.label"></z-datepicker>
-            </div>
-        </form>
-    </div>
-    <div sidebarFooter>
-        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-            <div class="col-md-6 pe-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted"
-                    (click)="onSubmit()">
-                    {{ isEditMode ? "Update" : "Save" }}
-                </button>
-            </div>
-            <div class="col-md-6 ps-1">
-                <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-            </div>
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem shipping-create-sidebar'">
+  <div sidebarHeader>
+    <h5 class="shipping-create-title">{{ isEditMode ? 'Edit Shipping Details' : 'Create Shipping Details' }}</h5>
+  </div>
+  <div sidebarContent>
+    <form class="shipping-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ExportOrderNo.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('ExportOrderNo')?.value || '-' }}</div>
+          </div>
         </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ShippingBillNo.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'ShippingBillNo'" [label]="''"
+              [validationMessage]="formConfig.ShippingBillNo.error"></z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ShippingBillDate.label }}:</label>
+          <div class="simple-control">
+            <z-datepicker [group]="form" [control]="'ShippingBillDate'" [label]="''"
+              [validationMessage]="formConfig.ShippingBillDate.error" [readonly]="true"></z-datepicker>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.AirwayBillNo.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'AirwayBillNo'" [label]="''"
+              [validationMessage]="formConfig.AirwayBillNo.error"></z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.AirwayBillDate.label }}:</label>
+          <div class="simple-control">
+            <z-datepicker [group]="form" [control]="'AirwayBillDate'" [label]="''"
+              [validationMessage]="formConfig.AirwayBillDate.error"></z-datepicker>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="shipping-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" [disabled]="isSubmitted" (click)="onSubmit()">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
+  </div>
 </app-form-sidebar>

@@ -1,19 +1,20 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { TableLazyLoadEvent } from 'primeng/table';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, signal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { PaymentTermMaster, PaymentTerm_IndexTableFilter, PaymentTerm_IndexTableList } from '../payment-term-master';
 import { PaymentTermMasterService } from '../payment-term-master.service';
-import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
+import { PaymentTermGridviewComponent } from '../gridview/gridview.component';
+import { PaymentTermDataviewComponent } from '../dataview/dataview.component';
+import { FormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [ZDataTable, CreateComponent],
+  imports: [CommonModule, CreateComponent, PaymentTermGridviewComponent, PaymentTermDataviewComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss',
 })
@@ -21,13 +22,13 @@ import { CreateComponent } from '../create/create.component';
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('paymentTermCodeTemplate', { static: true }) paymentTermCodeTemplate!: TemplateRef<any>;
-  @ViewChild('paymentTermActiveStatusTemplate', { static: true }) paymentTermActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
+  @ViewChild(PaymentTermGridviewComponent, { static: false }) gridview?: PaymentTermGridviewComponent;
+  @ViewChild(PaymentTermDataviewComponent, { static: false }) dataview?: PaymentTermDataviewComponent;
 
-  tableDef!: DataTableDef<PaymentTerm_IndexTableList>;
-  tableEvent!: TableLazyLoadEvent;
+  viewType = signal<'card' | 'table'>('table');
+  filterForm!: FormGroup;
+  sortingForm!: FormGroup;
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -37,29 +38,33 @@ export class IndexComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
+    const savedView = localStorage.getItem('paymentTermViewType');
+    if (savedView === 'card' || savedView === 'table') {
+      this.viewType.set(savedView);
+    }
 
-    this.tableDef = {
-      tableKey: 'IE_PaymentTermMaster_IndexTable',
-      columnDef: [],
-      defaultSortColumn: { sortField: 'PaymentTermCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<PaymentTerm_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
-    this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'PaymentTermCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.paymentTermCodeTemplate },
-      { data: 'PaymentTermName', label: 'Payment Term Name', width: "50%", filterable: true },
-      { data: 'ActiveStatus', label: 'Status', width: "15%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.paymentTermActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
-    ];
+    this.filterForm = this.formService.createFormGroup_DataTableFilter<PaymentTerm_IndexTableFilter>(
+      this.pageService.getFormConfig_DataTableFilter()
+    );
+
+    this.sortingForm = this.formService.createFormGroup_DataTableFilter({
+      PaymentTermCode: 1,
+      PaymentTermName: 0,
+      ActiveStatusID: 0
+    });
+
+    this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.pageHeaderService.setTemplate(null);
+  }
+
+  toggleView(type: 'card' | 'table'): void {
+    this.viewType.set(type);
+    localStorage.setItem('paymentTermViewType', type);
   }
 
   onClickPageHeaderAddButton(): void {
@@ -68,15 +73,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(paymentTermID: number, activeStatus: boolean): void {
+  onClickEditDetails(payload: { paymentTermID: number; activeStatus: boolean }): void {
     try {
-      if (this.createSidebar && paymentTermID) {
-        this.pageService.GetDetails(paymentTermID)
+      if (this.createSidebar && payload.paymentTermID) {
+        this.pageService.GetDetails(payload.paymentTermID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              this.createSidebar.openSidebar(payload.activeStatus, true, response.Data);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -91,48 +96,14 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   onCloseSidebar(): void {
-    this.loadData();
-  }
-
-  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
-    this.tableEvent = event;
-    this.loadData();
-  }
-
-  loadData(): void {
-    try {
-      const model: DataTableParams<PaymentTerm_IndexTableFilter> = {
-        first: this.tableEvent.first,
-        last: this.tableEvent.last,
-        sortField: this.tableEvent.sortField,
-        sortOrder: this.tableEvent.sortOrder,
-        filters: this.tableDef.filterForm?.value
-      };
-      this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
-          }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
-    }
-    catch (error) {
-
+    if (this.viewType() === 'card') {
+      this.dataview?.loadData();
+    } else {
+      this.gridview?.loadData();
     }
   }
 
-  onClickDeleteReactivate(row: any): void {
+  onClickDeleteReactivate(row: PaymentTerm_IndexTableList): void {
     try {
       const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
@@ -148,7 +119,11 @@ export class IndexComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                this.loadData();
+                if (this.viewType() === 'card') {
+                  this.dataview?.loadData();
+                } else {
+                  this.gridview?.loadData();
+                }
                 this.alertService.showAlert({
                   type: "success",
                   text: response.Message,
