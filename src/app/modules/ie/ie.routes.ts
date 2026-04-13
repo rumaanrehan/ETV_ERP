@@ -302,6 +302,24 @@ export const ieRoute: Routes = [
                   menu: 'IE/PackingList',
                 }
               },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/packing-list/packing-list.component').then((m) => m.PackingListComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'IE/PackingList',
+                  breadcrumb: 'Create'
+                }
+              },
+              {
+                path: 'edit/:id',
+                loadComponent: () => import('./transactions/packing-list/packing-list.component').then((m) => m.PackingListComponent),
+                data: {
+                  permission: 'CanUpdate',
+                  menu: 'IE/PackingList',
+                  breadcrumb: 'Edit'
+                }
+              },
             ]
           },
           {
