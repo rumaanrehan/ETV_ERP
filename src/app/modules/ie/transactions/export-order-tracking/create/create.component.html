@@ -1,52 +1,68 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
-    <div sidebarHeader>
-        <h5 class="text-white">Export Order Tracking</h5>
-    </div>
-    <div sidebarContent>
-        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-            <div class="col-xl-12 form-group">
-                <z-autocomplete [controlDef]="exportOrderAutoCompleteDef" (onSearch)="loadExportOrder($event)"
-                    (onSelect)="onSelectExportOrder($event)" (onClear)="onClearExportOrder()">
-                </z-autocomplete>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'ContainerNo'" [label]="formConfig.ContainerNo.label"
-                    [validationMessage]="formConfig.ContainerNo.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-select [group]="form" [control]="'ContainerTypeID'" [label]="formConfig.ContainerTypeID.label"
-                    [validationMessage]="formConfig.ContainerTypeID.error" [options]="containerTypeList" [optionLabel]="'Text'"
-                    [optionValue]="'iValue'">
-                </z-select>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-datepicker [group]="form" [control]="'ShippedDate'" [label]="formConfig.ShippedDate.label"
-                    [validationMessage]="formConfig.ShippedDate.error">
-                </z-datepicker>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-datepicker [group]="form" [control]="'EstimatedArrivalDate'" [label]="formConfig.EstimatedArrivalDate.label"
-                    [validationMessage]="formConfig.EstimatedArrivalDate.error">
-                </z-datepicker>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'TrackingURL'" [label]="formConfig.TrackingURL.label"
-                    [validationMessage]="formConfig.TrackingURL.error">
-                </z-inputtext>
-            </div>
-        </form>
-    </div>
-    <div sidebarFooter>
-        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-            <div class="col-md-6 pe-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted">
-                    {{ isEditMode ? "Update" : "Save" }}
-                </button>
-            </div>
-            <div class="col-md-6 ps-1">
-                <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-            </div>
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem tracking-create-sidebar'">
+  <div sidebarHeader>
+    <h5 class="tracking-create-title">{{ isEditMode ? 'Edit Export Order Tracking' : 'Create Export Order Tracking' }}</h5>
+  </div>
+  <div sidebarContent>
+    <form class="tracking-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ExportOrderNo.label }}:</label>
+          <div class="simple-control">
+            <z-autocomplete [controlDef]="exportOrderAutoCompleteDef" (onSearch)="loadExportOrder($event)"
+              (onSelect)="onSelectExportOrder($event)" (onClear)="onClearExportOrder()">
+            </z-autocomplete>
+          </div>
         </div>
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ContainerNo.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'ContainerNo'" [label]="''"
+              [validationMessage]="formConfig.ContainerNo.error">
+            </z-inputtext>
+          </div>
+        </div>
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ContainerTypeID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'ContainerTypeID'" [label]="''"
+              [validationMessage]="formConfig.ContainerTypeID.error" [options]="containerTypeList" [optionLabel]="'Text'"
+              [optionValue]="'iValue'">
+            </z-select>
+          </div>
+        </div>
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ShippedDate.label }}:</label>
+          <div class="simple-control">
+            <z-datepicker [group]="form" [control]="'ShippedDate'" [label]="''"
+              [validationMessage]="formConfig.ShippedDate.error">
+            </z-datepicker>
+          </div>
+        </div>
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.EstimatedArrivalDate.label }}:</label>
+          <div class="simple-control">
+            <z-datepicker [group]="form" [control]="'EstimatedArrivalDate'" [label]="''"
+              [validationMessage]="formConfig.EstimatedArrivalDate.error">
+            </z-datepicker>
+          </div>
+        </div>
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.TrackingURL.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'TrackingURL'" [label]="''"
+              [validationMessage]="formConfig.TrackingURL.error">
+            </z-inputtext>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div sidebarFooter>
+    <div class="tracking-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" (click)="onSubmit()" [disabled]="isSubmitted">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
+  </div>
 </app-form-sidebar>
