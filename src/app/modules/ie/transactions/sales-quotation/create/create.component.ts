@@ -186,7 +186,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   OnClickPageHeaderBackButton(): void {
     try {
-      this.router.navigate(['/ie/sales-quotation/index']);
+      this.router.navigate(['/ie/sales-quotation']);
     } catch (error) { }
   }
 
@@ -468,7 +468,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         QuotationAmountBC: Number((quotationAmountFC * exchangeRate).toFixed(3))
       }, { emitEvent: false });
     });
-    
+
     const subtotalAmountFC = this.form.get('SubtotalAmountFC')?.value || 0;
     const taxAmountFC = this.form.get('TaxAmountFC')?.value || 0;
     const netAmountFC = this.form.get('NetAmountFC')?.value;
@@ -486,12 +486,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.form.patchValue({
       SubtotalAmountBC: Number(subtotalAmountBC.toFixed(3)),
       TaxAmountBC: Number(taxAmountBC.toFixed(3)),
-      NetAmountBC: isRoundOff ? roundedNetBC :  Number(netAmountBC.toFixed(3)),
+      NetAmountBC: isRoundOff ? roundedNetBC : Number(netAmountBC.toFixed(3)),
       CoinAdjustment: coinAdjustment
     }, { emitEvent: false });
 
     // 6️⃣ Debug Log to Verify Calculations only for development, should be removed in production
-    if(this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
+    if (this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
       console.log(
         "Discrepancy in SubtotalAmountBC Calculation!, Backend Should Verify This. Product List total:",
         this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0),
@@ -576,9 +576,10 @@ export class CreateComponent implements OnInit, OnDestroy {
                 timer: 5000,
               });
               this.selectedCustomerAddress = null;
-              setTimeout(() => {
-                this.ngOnInit();
-              }, 2000);
+              this.ResetForm();
+              // setTimeout(() => {
+              //   this.ngOnInit();
+              // }, 2000);
             } else {
               this.alertService.showServerResponseAlert(response);
             }

@@ -219,7 +219,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   OnClickPageHeaderBackButton(): void {
     try {
-      this.router.navigate(['/ie/tax-invoice/index']);
+      this.router.navigate(['/ie/tax-invoice']);
     } catch (error) { }
   }
 
@@ -635,7 +635,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }, { emitEvent: false });
 
     // 6️⃣ Debug Log to Verify Calculations only for development, should be removed in production
-    if(this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
+    if (this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0) !== this.form.get('SubtotalAmountBC')?.value) {
       console.log(
         "Discrepancy in SubtotalAmountBC Calculation!, Backend Should Verify This. Product List total:",
         this.form.get('ProductList')?.value.reduce((sum: number, item: any) => sum + (item.TaxableAmountBC || 0), 0),
@@ -719,9 +719,8 @@ export class CreateComponent implements OnInit, OnDestroy {
                 text: response.Message,
                 timer: 5000,
               });
-              setTimeout(() => {
-                this.ngOnInit();
-              }, 2000);
+
+              this.ResetForm();
             } else {
               this.alertService.showServerResponseAlert(response);
             }

@@ -36,7 +36,7 @@ export const ieRoute: Routes = [
             },
             children: [
               {
-                path: 'index',
+                path: '',
                 loadComponent: () => import('./transactions/sales-enquiry/index/index.component').then((m) => m.SalesEnquiryIndexComponent),
                 data: {
                   permission: 'CanRead',
@@ -71,7 +71,7 @@ export const ieRoute: Routes = [
             },
             children: [
               {
-                path: 'index',
+                path: '',
                 loadComponent: () => import('./transactions/sales-quotation/index/index.component').then((m) => m.SalesQuotationIndexComponent),
                 data: {
                   permission: 'CanRead',
@@ -115,7 +115,7 @@ export const ieRoute: Routes = [
             },
             children: [
               {
-                path: 'index',
+                path: '',
                 loadComponent: () => import('./transactions/purchase-quotation/dataview/dataview.component').then((m) => m.DataviewComponent),
                 data: {
                   permission: 'CanRead',
@@ -159,7 +159,7 @@ export const ieRoute: Routes = [
             },
             children: [
               {
-                path: 'index',
+                path: '',
                 loadComponent: () => import('./transactions/export-order/index/index.component').then((m) => m.ExportOrderIndexComponent),
                 data: {
                   permission: 'CanRead',
@@ -203,7 +203,7 @@ export const ieRoute: Routes = [
             },
             children: [
               {
-                path: 'index',
+                path: '',
                 loadComponent: () => import('./transactions/proforma-invoice/index/index.component').then((m) => m.IndexComponent),
                 data: {
                   permission: 'CanRead',
@@ -247,7 +247,7 @@ export const ieRoute: Routes = [
             },
             children: [
               {
-                path: 'create',
+                path: '',
                 loadComponent: () => import('./transactions/packing-list/packing-list.component').then((m) => m.PackingListComponent),
                 data: {
                   permission: 'CanCreate',
@@ -264,7 +264,7 @@ export const ieRoute: Routes = [
             },
             children: [
               {
-                path: 'index',
+                path: '',
                 loadComponent: () => import('./transactions/tax-invoice/index/index.component').then((m) => m.IndexComponent),
                 data: {
                   permission: 'CanRead',

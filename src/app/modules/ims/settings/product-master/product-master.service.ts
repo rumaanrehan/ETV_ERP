@@ -192,19 +192,11 @@ export class ProductMasterService {
       },
       TaxSlabID: {
         label: 'Tax Slab',
-        defaultValue: null,
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'Tax Slab is required.'
-        }
+        defaultValue: null
       },
       PurTaxOn: {
         label: 'Pur Tax on',
-        defaultValue: "",
-        validators: [Validators.required],
-        validationMessages: {
-          required: 'Purchase Tax is required',
-        },
+        defaultValue: ""
       },
     };
   }
