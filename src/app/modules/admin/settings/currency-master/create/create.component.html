@@ -1,40 +1,76 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
-    <div sidebarHeader>
-        <h5 class="text-white">Currency Master</h5>
-    </div>
-    <div sidebarContent>
-        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-            <div class="col-xl-12 form-group">
-                <z-span [text]="form.get('CurrencyCode')?.value" [label]="formConfig.CurrencyCode.label"></z-span>
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem currency-create-sidebar'">
+  <div sidebarHeader>
+    <h5 class="currency-create-title">Currency Master</h5>
+  </div>
+
+  <div sidebarContent>
+    <form class="currency-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+
+      <div class="simple-form">
+
+        <!-- Currency Code -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CurrencyCode.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">
+              {{ form.get('CurrencyCode')?.value || 'NEW' }}
             </div>
-             <div class="col-xl-12 form-group">
-              <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label"
-              [validationMessage]="formConfig.CountryID.error" [optionLabel]="'CountryName'" [optionValue]="'CountryID'" [options]="countryList">
-              </z-select>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'CurrencyName'" [label]="formConfig.CurrencyName.label" [validationMessage]="formConfig.CurrencyName.error"></z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'CurrencySymbol'" [label]="formConfig.CurrencySymbol.label" [validationMessage]="formConfig.CurrencySymbol.error"></z-inputtext>
-            </div>
-           
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'CurrencyISOCode'" [label]="formConfig.CurrencyISOCode.label"></z-inputtext>
-            </div>
-            
-        </form>
-    </div>
-    <div sidebarFooter>
-        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-            <div class="col-md-6 pe-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
-                    {{ isEditMode ? "Update" : "Save" }}
-                </button>
-            </div>
-            <div class="col-md-6 ps-1">
-                <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-            </div>
+          </div>
         </div>
+
+        <!-- Country -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CountryID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" control="CountryID" [label]="''"
+              [validationMessage]="formConfig.CountryID.error"
+              optionLabel="CountryName" optionValue="CountryID"
+              [options]="countryList">
+            </z-select>
+          </div>
+        </div>
+
+        <!-- Currency Name -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CurrencyName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="CurrencyName" [label]="''"
+              [validationMessage]="formConfig.CurrencyName.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <!-- Currency Symbol -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CurrencySymbol.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="CurrencySymbol" [label]="''"
+              [validationMessage]="formConfig.CurrencySymbol.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <!-- ISO Code -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CurrencyISOCode.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="CurrencyISOCode" [label]="''">
+            </z-inputtext>
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+  </div>
+
+  <div sidebarFooter>
+    <div class="currency-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active"
+        (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
+        {{ isEditMode ? "Update" : "Save" }}
+      </button>
     </div>
+  </div>
 </app-form-sidebar>
