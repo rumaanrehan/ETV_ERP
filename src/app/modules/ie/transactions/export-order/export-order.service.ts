@@ -785,7 +785,7 @@ export class ExportOrderService {
             }
           },
           BoxLength: {
-            label: 'Length',
+            label: 'Length (cm)',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
             validationMessages: {
@@ -795,7 +795,7 @@ export class ExportOrderService {
             type: 'control'
           },
           BoxWidth: {
-            label: 'Width',
+            label: 'Width (cm)',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
             validationMessages: {
@@ -805,7 +805,7 @@ export class ExportOrderService {
             type: 'control'
           },
           BoxHeight: {
-            label: 'Height',
+            label: 'Height (cm)',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
             validationMessages: {
@@ -815,7 +815,7 @@ export class ExportOrderService {
             type: 'control'
           },
           BoxWeight: {
-            label: 'Net Weight (Kg)',
+            label: 'Net Weight (kg)',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
             validationMessages: {
@@ -825,7 +825,7 @@ export class ExportOrderService {
             type: 'control'
           },
           BoxGrossWeight: {
-            label: 'Gross Weight (Kg)',
+            label: 'Gross Weight (kg)',
             defaultValue: null,
             validators: [Validators.required, Validators.min(1)],
             validationMessages: {
@@ -837,9 +837,10 @@ export class ExportOrderService {
           PackedBy: {
             label: 'Packed By',
             defaultValue: null,
-            validators: [Validators.required],
+            validators: [Validators.required, Validators.maxLength(100)],
             validationMessages: {
-              required: "Packed By is required."
+              required: "Packed By is required.",
+              maxLength: "Packed By cannot exceed 100 characters."
             },
             type: 'control'
           },
@@ -855,9 +856,10 @@ export class ExportOrderService {
           InspectedBy: {
             label: 'Inspected By',
             defaultValue: null,
-            validators: [Validators.required],
+            validators: [Validators.required, Validators.maxLength(100)],
             validationMessages: {
-              required: "Inspected By is required."
+              required: "Inspected By is required.",
+              maxLength: "Inspected By cannot exceed 100 characters."
             },
             type: 'control'
           },

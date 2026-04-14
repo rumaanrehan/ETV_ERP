@@ -131,48 +131,44 @@ export const adminRoute: Routes = [
               breadcrumb: 'Designation Master'
             }
           },
-          {
-            path: 'employee-type-master',
-            loadComponent: () => import('./settings/employee-type-master/index/index.component').then((m) => m.IndexComponent),
-            canActivate: [AuthenticationGuard, AuthorizationGuard],
-            data: {
-              permission: 'CanRead',
-              menu: 'Admin/EmployeeTypeMaster',
-              breadcrumb: 'Employee Type Master'
-            }
-          },
-          {
-            path: 'employee-registration/index',
-            loadComponent: () => import('./transactions/employee-registration/index/index.component').then((m) => m.IndexComponent),
-            canActivate: [AuthenticationGuard, AuthorizationGuard],
-            data: {
-              permission: 'CanRead',
-              menu: 'Admin/EmployeeRegistration',
-              breadcrumb: 'Employee Registration'
-            }
-          },
-          {
-            path: 'employee-registration/create',
-            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent),
-            canActivate: [AuthenticationGuard, AuthorizationGuard],
-            data: {
-              permission: 'CanRead',
-              menu: 'Admin/EmployeeRegistration',
-              breadcrumb: 'Employee Registration'
-            }
-          },
-          {
-            path: 'employee-registration/edit/:id',
-            loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent),
-            canActivate: [AuthenticationGuard, AuthorizationGuard],
-            data: {
-              permission: 'CanRead',
-              menu: 'Admin/EmployeeRegistration',
-              breadcrumb: 'Employee Registration'
-            }
-          }
         ]
-      }
+      },
+
+      // Transactions
+      {
+        path: '',
+        data: {
+          breadcrumb: 'Transactions'
+        },
+        children: [
+          {
+            path: 'users',
+            canActivateChild: [AuthenticationGuard, AuthorizationGuard],
+            data: {
+              breadcrumb: 'User'
+            },
+            children: [
+              {
+                path: '',
+                loadComponent: () => import('./transactions/employee-registration/index/index.component').then((m) => m.IndexComponent),
+                data: {
+                  permission: 'CanRead',
+                  menu: 'Admin/EmployeeRegistration',
+                }
+              },
+              {
+                path: 'create',
+                loadComponent: () => import('./transactions/employee-registration/create/create.component').then((m) => m.CreateComponent),
+                data: {
+                  permission: 'CanCreate',
+                  menu: 'Admin/EmployeeRegistration',
+                  breadcrumb: 'Create'
+                }
+              }
+            ]
+          },
+        ]
+      },
     ]
   }
 ];

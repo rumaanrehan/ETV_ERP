@@ -137,10 +137,8 @@
                   <div class="box-detail-field">
                     <label class="box-detail-label">{{ formConfig.BoxList.items.PackedBy.label }}:</label>
                     <div class="box-detail-control">
-                      <z-select [group]="box" [control]="'PackedBy'" [label]="''"
-                        [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"
-                        [optionLabel]="'EmployeeName'" [optionValue]="'EmployeeID'"
-                        [options]="employeeList"></z-select>
+                      <z-inputtext [group]="box" [control]="'PackedBy'" [label]="''"
+                        [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputtext>
                     </div>
                   </div>
                   <div class="box-detail-field">
@@ -153,10 +151,8 @@
                   <div class="box-detail-field">
                     <label class="box-detail-label">{{ formConfig.BoxList.items.InspectedBy.label }}:</label>
                     <div class="box-detail-control">
-                      <z-select [group]="box" [control]="'InspectedBy'" [label]="''"
-                        [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"
-                        [optionLabel]="'EmployeeName'" [optionValue]="'EmployeeID'"
-                        [options]="employeeList"></z-select>
+                      <z-inputtext [group]="box" [control]="'InspectedBy'" [label]="''"
+                        [validationMessage]="formConfig.BoxList.items.PackedDateTime.error"></z-inputtext>
                     </div>
                   </div>
                   <div class="box-detail-field">

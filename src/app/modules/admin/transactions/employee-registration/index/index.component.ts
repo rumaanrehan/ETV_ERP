@@ -18,7 +18,7 @@ import { CreateComponent } from "../create/create.component";
   standalone: true,
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  imports: [ZDataTable, CommonModule, CreateComponent],
+  imports: [ZDataTable, CommonModule],
   providers: [FormValidationService]
 })
 
@@ -75,12 +75,12 @@ export class IndexComponent {
   }
 
   onClickPageHeaderAddButton(): void {
-    this.router.navigate(['/admin/employee-registration/create']);
+    this.router.navigate(['/admin/users/create']);
   }
 
   onClickEditDetails(employeeID: number): void {
     if (employeeID) {
-      this.router.navigate([`/admin/employee-registration/edit/${employeeID}`]);
+      this.router.navigate([`/admin/users/edit/${employeeID}`]);
     }
   }
 

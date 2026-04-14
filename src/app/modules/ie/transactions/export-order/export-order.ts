@@ -333,10 +333,10 @@ export interface ExportOrderPackingListBoxDetail {
 }
 
 export interface ProductList {
-  ProductID: number;
-  ProductCode?: string;
-  ProductName: string;
-  ProuductCount: number;
+    ProductID: number;
+    ProductCode?: string;
+    ProductName: string;
+    ProuductCount: number;
 }
 
 export interface ExportOrderPackingList_Detail {
@@ -354,8 +354,8 @@ export interface ExportOrderProductList_Detail {
 }
 
 export interface OpenPackingDialogParams {
-  isEditMode: boolean;
-  productList?: ExportOrderPackingList_Detail | null;
-  packingList?: ExportOrderPackingList | null;
+    isEditMode: boolean;
+    productList?: ExportOrderPackingList_Detail | null;
+    packingList?: ExportOrderPackingList | null;
 }
 //#endregion 
