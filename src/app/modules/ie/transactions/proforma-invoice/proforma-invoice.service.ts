@@ -155,7 +155,14 @@ export class ProformaInvoiceService {
       },
       ProformaInvoiceNo: {
         label: 'Proforma Invoice No',
-        defaultValue: "NEW"
+        defaultValue: null,
+        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(20)],
+        validationMessages: {
+          required: "Proforma Invoice No is required.",
+          notOnlyWhitespace: "Proforma Invoice No cannot be empty or whitespace.",
+          maxLength: "Proforma Invoice No cannot exceed 20 characters."
+        },
+        type: 'control'
       },
       BasedOn: {
         label: 'Based On',

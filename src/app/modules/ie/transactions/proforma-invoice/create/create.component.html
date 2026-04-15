@@ -48,8 +48,9 @@
                             <div class="row">
                                 <div class="proforma-fields-group proforma-fields-group--pre">
                                     <div class="col-xl-2 form-group px-2">
-                                        <z-span [text]="form.get('ProformaInvoiceNo')?.value"
-                                            [label]="formConfig.ProformaInvoiceNo.label"></z-span>
+                                        <z-inputtext [group]="form" [control]="'ProformaInvoiceNo'"
+                                            [label]="formConfig.ProformaInvoiceNo.label"
+                                            [validationMessage]="formConfig.ProformaInvoiceNo.error"></z-inputtext>
                                     </div>
                                     <div class="col-xl-2 form-group px-2">
                                         <z-select [group]="form" [control]="'BasedOn'"

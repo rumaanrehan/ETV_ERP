@@ -34,7 +34,8 @@
 
                 <button type="button" class="toolbar-btn" *ngIf="isEditMode" [disabled]="disablePrintButton"
                     (click)="PrintTaxInvoice()">
-                    <span class="spinner-border spinner-border-sm me-2" *ngIf="disablePrintButton" aria-hidden="true"></span>
+                    <span class="spinner-border spinner-border-sm me-2" *ngIf="disablePrintButton"
+                        aria-hidden="true"></span>
                     <span>Print Tax Invoice</span>
                 </button>
             </div>
@@ -50,11 +51,14 @@
                             <div class="row">
                                 <div class="proforma-fields-group proforma-fields-group--pre">
                                     <div class="col-xl-2 form-group px-2">
-                                        <z-span [text]="form.get('TaxInvoiceNo')?.value" [label]="formConfig.TaxInvoiceNo.label"></z-span>
+                                        <z-inputtext [group]="form" [control]="'TaxInvoiceNo'"
+                                            [label]="formConfig.TaxInvoiceNo.label"
+                                            [validationMessage]="formConfig.TaxInvoiceNo.error"></z-inputtext>
                                     </div>
 
                                     <div class="col-xl-2 form-group px-2">
-                                        <z-select [group]="form" [control]="'BasedOn'" [label]="formConfig.BasedOn.label"
+                                        <z-select [group]="form" [control]="'BasedOn'"
+                                            [label]="formConfig.BasedOn.label"
                                             [validationMessage]="formConfig.BasedOn.error" [optionLabel]="'Text'"
                                             [optionValue]="'iValue'" [options]="basedOnList" [readonly]="isEditMode"
                                             (onChange)="OnBasedOnChange()" [showClear]="false"></z-select>
@@ -63,7 +67,8 @@
                                     <div class="col-xl-6 form-group px-2"></div>
 
                                     <div class="col-xl-2 form-group px-2">
-                                        <z-datepicker [group]="form" [control]="'TaxInvoiceDate'" [label]="formConfig.TaxInvoiceDate.label"
+                                        <z-datepicker [group]="form" [control]="'TaxInvoiceDate'"
+                                            [label]="formConfig.TaxInvoiceDate.label"
                                             [validationMessage]="formConfig.TaxInvoiceDate.error"></z-datepicker>
                                     </div>
 
@@ -76,13 +81,15 @@
                                     <div class="col-xl-3 form-group px-2 simple-field proforma-customer-field">
                                         <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
                                         <div class="simple-control has-action">
-                                            <z-autocomplete class="customer-autocomplete" [controlDef]="companyMasterAutoCompleteDef"
+                                            <z-autocomplete class="customer-autocomplete"
+                                                [controlDef]="companyMasterAutoCompleteDef"
                                                 [isClearable]="!isBasedOnDocument" [readonly]="isBasedOnDocument"
                                                 (onSearch)="LoadCustomer($event)" (onSelect)="OnSelect_Customer($event)"
                                                 (onClear)="OnClear_Customer()">
                                             </z-autocomplete>
                                             <button *ngIf="!isBasedOnDocument" type="button" class="simple-action-btn"
-                                                title="Add New Company" (click)="HandleComponentLoad('VendorCreateComponent')">
+                                                title="Add New Company"
+                                                (click)="HandleComponentLoad('VendorCreateComponent')">
                                                 <i class="pi pi-plus" aria-hidden="true"></i>
                                             </button>
                                         </div>
@@ -91,16 +98,19 @@
                                     <div class="col-xl-{{isBasedOnDocument ? 3 : 5}}"></div>
 
                                     <div class="col-xl-2 form-group px-2">
-                                        <z-datepicker [group]="form" [control]="'ReferenceDate'" [label]="formConfig.ReferenceDate.label"
+                                        <z-datepicker [group]="form" [control]="'ReferenceDate'"
+                                            [label]="formConfig.ReferenceDate.label"
                                             [validationMessage]="formConfig.ReferenceDate.error"></z-datepicker>
                                     </div>
 
                                     <div class="col-xl-2 form-group px-2">
-                                        <z-inputtext [group]="form" [control]="'ReferenceNo'" [label]="formConfig.ReferenceNo.label"
+                                        <z-inputtext [group]="form" [control]="'ReferenceNo'"
+                                            [label]="formConfig.ReferenceNo.label"
                                             [validationMessage]="formConfig.ReferenceNo.error"></z-inputtext>
                                     </div>
 
-                                    <div class="col-xl-12 form-group px-2" *ngIf="form.get('CustomerID')?.value !== null">
+                                    <div class="col-xl-12 form-group px-2"
+                                        *ngIf="form.get('CustomerID')?.value !== null">
                                         <z-span [text]="selectedCustomerAddress" [label]="'Billing Address'"></z-span>
                                     </div>
 
@@ -110,11 +120,14 @@
                                         <label class="simple-label">{{formConfig.FCCurrencyID.label}}:</label>
                                         <div class="simple-control has-action">
                                             <z-select [group]="form" [control]="'FCCurrencyID'" [label]="''"
-                                                [validationMessage]="formConfig.FCCurrencyID.error" [optionLabel]="'CurrencyName'"
-                                                [optionValue]="'CurrencyID'" [options]="currencyList" [readonly]="isBasedOnDocument"
-                                                [showClear]="!isBasedOnDocument" (onChange)="OnCurrencyChange()"></z-select>
+                                                [validationMessage]="formConfig.FCCurrencyID.error"
+                                                [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'"
+                                                [options]="currencyList" [readonly]="isBasedOnDocument"
+                                                [showClear]="!isBasedOnDocument"
+                                                (onChange)="OnCurrencyChange()"></z-select>
                                             <button *ngIf="!isBasedOnDocument" type="button" class="simple-action-btn"
-                                                title="Add New Currency" (click)="HandleComponentLoad('CurrencyCreateComponent')">
+                                                title="Add New Currency"
+                                                (click)="HandleComponentLoad('CurrencyCreateComponent')">
                                                 <i class="pi pi-plus" aria-hidden="true"></i>
                                             </button>
                                         </div>
@@ -125,8 +138,8 @@
                                     <div class="col-xl-2 form-group px-2">
                                         <z-datepicker [group]="form" [control]="'ExchangeRateDate'"
                                             [label]="formConfig.ExchangeRateDate.label"
-                                            [validationMessage]="formConfig.ExchangeRateDate.error" [readonly]="isBasedOnDocument"
-                                            [maxDate]="todayDate"></z-datepicker>
+                                            [validationMessage]="formConfig.ExchangeRateDate.error"
+                                            [readonly]="isBasedOnDocument" [maxDate]="todayDate"></z-datepicker>
                                     </div>
 
                                     <div class="col-xl-2 form-group px-2">
@@ -149,13 +162,15 @@
                                         <z-inputnumber [group]="form" [control]="'FreightChargeFC'"
                                             [label]="formConfig.FreightChargeFC.label"
                                             [validationMessage]="formConfig.FreightChargeFC.error"
-                                            [readonly]="isBasedOnDocument" (onChange)="ProductCalculation()"></z-inputnumber>
+                                            [readonly]="isBasedOnDocument"
+                                            (onChange)="ProductCalculation()"></z-inputnumber>
                                     </div>
 
                                     <div class="col-md-2 form-group px-2">
                                         <z-inputnumber [group]="form" [control]="'BankChargesFC'"
                                             [label]="formConfig.BankChargesFC.label"
-                                            [validationMessage]="formConfig.BankChargesFC.error" [readonly]="isBasedOnDocument"
+                                            [validationMessage]="formConfig.BankChargesFC.error"
+                                            [readonly]="isBasedOnDocument"
                                             (onChange)="ProductCalculation()"></z-inputnumber>
                                     </div>
 
@@ -205,8 +220,10 @@
                                         <div class="col-xl-3 form-group px-2 simple-field proforma-port-field">
                                             <label class="simple-label">Loading Port:</label>
                                             <div class="simple-control has-action">
-                                                <z-autocomplete class="customer-autocomplete" [controlDef]="loadingPortAutoCompleteDef"
-                                                    (onSearch)="LoadLoadingPort($event)" (onSelect)="OnLoadingPortSelect($event)"
+                                                <z-autocomplete class="customer-autocomplete"
+                                                    [controlDef]="loadingPortAutoCompleteDef"
+                                                    (onSearch)="LoadLoadingPort($event)"
+                                                    (onSelect)="OnLoadingPortSelect($event)"
                                                     (onClear)="OnClear_LoadingPort()"></z-autocomplete>
                                                 <button type="button" class="simple-action-btn" title="Add New Port"
                                                     (click)="HandleComponentLoad('PortCreateComponent')">
@@ -218,7 +235,8 @@
                                         <div class="col-xl-3 form-group px-2 simple-field proforma-port-field">
                                             <label class="simple-label">Discharge Port:</label>
                                             <div class="simple-control has-action">
-                                                <z-autocomplete class="customer-autocomplete" [controlDef]="dischargePortAutoCompleteDef"
+                                                <z-autocomplete class="customer-autocomplete"
+                                                    [controlDef]="dischargePortAutoCompleteDef"
                                                     (onSearch)="LoadDischargePort($event)"
                                                     (onSelect)="OnDischargePortSelect($event)"
                                                     (onClear)="OnClear_DischargePort()"></z-autocomplete>
@@ -239,8 +257,8 @@
                                     <div class="col-md-6 form-group px-2">
                                         <z-textarea [group]="form" [control]="'Narration'"
                                             [label]="formConfig.Narration.label"
-                                            [validationMessage]="formConfig.Narration.error"
-                                            [autoResize]="true" [rows]="1"></z-textarea>
+                                            [validationMessage]="formConfig.Narration.error" [autoResize]="true"
+                                            [rows]="1"></z-textarea>
                                     </div>
                                 </div>
                             </div>
@@ -251,17 +269,20 @@
                                 <div class="amount-summary-row">
                                     <span>Subtotal Amount:</span>
                                     <z-inputnumber [group]="form" [control]="'SubtotalAmountFC'" [label]="''"
-                                        [validationMessage]="formConfig.SubtotalAmountFC.error" [readonly]="true"></z-inputnumber>
+                                        [validationMessage]="formConfig.SubtotalAmountFC.error"
+                                        [readonly]="true"></z-inputnumber>
                                 </div>
                                 <div class="amount-summary-row">
                                     <span>Tax Amount:</span>
                                     <z-inputnumber [group]="form" [control]="'TaxAmountFC'" [label]="''"
-                                        [validationMessage]="formConfig.TaxAmountFC.error" [readonly]="true"></z-inputnumber>
+                                        [validationMessage]="formConfig.TaxAmountFC.error"
+                                        [readonly]="true"></z-inputnumber>
                                 </div>
                                 <div class="amount-summary-row">
                                     <span>Net Amount:</span>
                                     <z-inputnumber [group]="form" [control]="'NetAmountFC'" [label]="''"
-                                        [validationMessage]="formConfig.NetAmountFC.error" [readonly]="true"></z-inputnumber>
+                                        [validationMessage]="formConfig.NetAmountFC.error"
+                                        [readonly]="true"></z-inputnumber>
                                 </div>
                             </div>
                         </div>
