@@ -1,0 +1,146 @@
+:host {
+  display: block;
+}
+
+/* Title */
+.currency-create-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--heading-text-color);
+}
+
+/* Form */
+.currency-create-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Layout system */
+.simple-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.simple-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.simple-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.simple-control {
+  width: 100%;
+}
+
+/* Static field */
+.simple-static {
+  min-height: var(--se-field-height, 2.25rem);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 0.75rem;
+  border-radius: var(--se-field-radius, 8px);
+  border: 1px solid var(--default-border);
+  background: var(--background-secondary);
+  color: var(--default-text-color);
+  font-size: var(--se-field-font-size, 0.875rem);
+}
+
+/* Input styling */
+:host ::ng-deep .currency-create-form {
+  --se-field-height: 2.25rem;
+  --se-field-radius: 8px;
+  --se-field-font-size: 0.875rem;
+  --se-placeholder-font-size: 0.82rem;
+
+  .p-float-label > label {
+    display: none !important;
+  }
+
+  .p-inputtext::placeholder,
+  input::placeholder {
+    font-size: var(--se-placeholder-font-size);
+    opacity: 1 !important;
+    color: var(--text-muted) !important;
+  }
+
+  z-inputtext,
+  z-select,
+  z-span {
+    display: block;
+    width: 100%;
+  }
+
+  .p-inputtext,
+  input,
+  .p-dropdown {
+    height: var(--se-field-height);
+    font-size: var(--se-field-font-size);
+    border-radius: var(--se-field-radius);
+    border-color: var(--default-border);
+    background: var(--custom-white);
+    width: 100%;
+    box-shadow: none;
+    transition: none;
+  }
+
+  .p-inputtext:enabled:focus,
+  input:focus,
+  .p-dropdown:focus {
+    border-color: rgb(var(--primary-rgb));
+    box-shadow: none;
+    outline: none;
+  }
+}
+
+/* Footer */
+.currency-create-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Buttons */
+.simple-btn {
+  height: 2.1rem;
+  padding: 0 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  font-size: 0.78rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.5rem;
+}
+
+.simple-btn.is-active {
+  background: rgba(var(--primary-rgb), 0.3);
+  border-color: transparent;
+  color: black;
+}
+
+.simple-btn.is-active:not(:disabled):hover {
+  background: rgba(var(--primary-rgb), 0.4);
+}
+
+.simple-btn:disabled {
+  cursor: not-allowed;
+}
+
+:host-context([data-theme-mode="dark"]) .simple-btn.is-active {
+  color: #e5e7eb;
+}

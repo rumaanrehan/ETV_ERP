@@ -1031,6 +1031,16 @@
     padding: 0 68px 0 0;
 }
 
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control:not(.has-action),
+:host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .simple-control:not(.has-action) {
+    width: 290.67px;
+    min-width: 290.67px;
+    max-width: 290.67px;
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0;
+}
+
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-customer-field .simple-control.has-action > .simple-action-btn,
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-fc-field .simple-control.has-action > .simple-action-btn,
 :host ::ng-deep .proforma-invoice-create .horizontal-form .proforma-port-field .simple-control.has-action > .simple-action-btn {
@@ -1140,6 +1150,33 @@
     .proforma-invoice-create .horizontal-form .row > .proforma-fields-group--post {
         order: 4;
     }
+}
+
+:host ::ng-deep .proforma-invoice-create .customer-autocomplete {
+  .input-group {
+    position: relative;
+  }
+
+  .p-autocomplete-input,
+  input.p-autocomplete-input {
+    padding-right: 2.25rem !important;
+  }
+
+  .input-group-addon {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+
+    height: auto !important;
+    width: auto !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
 }
 
 @media (min-width: 1300px) {

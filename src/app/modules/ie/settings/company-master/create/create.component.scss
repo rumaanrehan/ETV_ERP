@@ -1,0 +1,149 @@
+:host {
+  display: block;
+}
+
+.contact-create-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--heading-text-color);
+}
+
+.contact-create-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Reusable form system */
+.simple-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.simple-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.simple-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.simple-control {
+  width: 100%;
+}
+
+.simple-static {
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--default-border);
+  background: var(--background-secondary);
+}
+
+:host ::ng-deep .contact-create-form {
+  /* SAME TOKENS AS CURRENCY */
+  --se-field-height: 2.25rem;
+  --se-field-radius: 8px;
+  --se-field-font-size: 0.875rem;
+  --se-placeholder-font-size: 0.82rem;
+
+  /* Hide internal labels */
+  .p-float-label > label {
+    display: none !important;
+  }
+
+  /* Placeholder styling */
+  .p-inputtext::placeholder,
+  input::placeholder,
+  textarea::placeholder {
+    font-size: var(--se-placeholder-font-size);
+    opacity: 1 !important;
+    color: var(--text-muted) !important;
+  }
+
+  /* Ensure full width */
+  z-inputtext,
+  z-select,
+  z-span,
+  z-textarea {
+    display: block;
+    width: 100%;
+  }
+
+  /* ✅ MAIN INPUT STYLE (same as currency) */
+  .p-inputtext,
+  input,
+  .p-dropdown,
+  textarea {
+    height: var(--se-field-height);
+    font-size: var(--se-field-font-size);
+    border-radius: var(--se-field-radius);
+    border: 1px solid #e5e7eb; /* 👈 unified light border */
+    background: var(--custom-white);
+    width: 100%;
+    box-shadow: none;
+    transition: all 0.15s ease;
+  }
+
+  /* Textarea override */
+  textarea {
+    min-height: 80px;
+    padding-top: 0.4rem;
+  }
+
+  /* ✅ FOCUS STATE (modern UI) */
+  .p-inputtext:enabled:focus,
+  input:focus,
+  .p-dropdown:focus,
+  textarea:focus {
+    border-color: rgba(var(--primary-rgb), 0.5);
+    box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.15);
+    outline: none;
+  }
+}
+/* Footer */
+.contact-create-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+/* Buttons (same as product UI) */
+.simple-btn {
+  height: 2.1rem;
+  padding: 0 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--default-border);
+  background: var(--background-tertiary);
+  color: var(--default-text-color);
+  font-size: 0.78rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.5rem;
+}
+
+.simple-btn.is-active {
+  background: rgba(var(--primary-rgb), 0.3);
+  border-color: transparent;
+  color: black;
+}
+
+.simple-btn.is-active:not(:disabled):hover {
+  background: rgba(var(--primary-rgb), 0.4);
+}
+
+.simple-btn:disabled {
+  cursor: not-allowed;
+}
+
+:host-context([data-theme-mode="dark"]) .simple-btn.is-active {
+  color: #e5e7eb;
+}
