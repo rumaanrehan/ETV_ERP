@@ -1,41 +1,66 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem port-create-sidebar'">
   <div sidebarHeader>
     <h5 class="text-white">Port Master</h5>
   </div>
   <div sidebarContent>
-    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-group">
-        <z-span [text]="form.get('PortCode')?.value" [label]="formConfig.PortCode.label"></z-span>
+    <form class="port-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+
+  <div class="simple-form">
+
+    <!-- Port Code -->
+    <div class="simple-field">
+      <label class="simple-label">{{ formConfig.PortCode.label }}:</label>
+      <div class="simple-control">
+        <div class="simple-static">
+          {{ form.get('PortCode')?.value || 'NEW' }}
+        </div>
       </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'PortName'" [label]="formConfig.PortName.label"
-          [validationMessage]="formConfig.PortName.error"></z-inputtext>
+    </div>
+
+    <!-- Port Name -->
+    <div class="simple-field">
+      <label class="simple-label">{{ formConfig.PortName.label }}:</label>
+      <div class="simple-control">
+        <z-inputtext [group]="form" control="PortName" [label]="''"
+          [validationMessage]="formConfig.PortName.error">
+        </z-inputtext>
       </div>
-      <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'PortTypeID'" [label]="formConfig.PortTypeID.label"
-          [validationMessage]="formConfig.PortTypeID.error" [optionLabel]="'Text'" [optionValue]="'iValue'"
+    </div>
+
+    <!-- Port Type -->
+    <div class="simple-field">
+      <label class="simple-label">{{ formConfig.PortTypeID.label }}:</label>
+      <div class="simple-control">
+        <z-select [group]="form" control="PortTypeID" [label]="''"
+          [validationMessage]="formConfig.PortTypeID.error"
+          optionLabel="Text" optionValue="iValue"
           [options]="portTypeList">
         </z-select>
       </div>
-      <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label"
-          [validationMessage]="formConfig.CountryID.error" [optionLabel]="'CountryName'" [optionValue]="'CountryID'"
+    </div>
+
+    <!-- Country -->
+    <div class="simple-field">
+      <label class="simple-label">{{ formConfig.CountryID.label }}:</label>
+      <div class="simple-control">
+        <z-select [group]="form" control="CountryID" [label]="''"
+          [validationMessage]="formConfig.CountryID.error"
+          optionLabel="CountryName" optionValue="CountryID"
           [options]="countryList">
         </z-select>
       </div>
-    </form>
+    </div>
+
+  </div>
+
+</form>
   </div>
   <div sidebarFooter>
     <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-      <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus"
-          (click)="onSubmit()">
+      <div class="port-create-footer">
+        <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+        <button type="submit" class="simple-btn is-active" (click)="onSubmit()">
           {{ isEditMode ? "Update" : "Save" }}
-        </button>
-      </div>
-      <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">
-          Cancel
         </button>
       </div>
     </div>

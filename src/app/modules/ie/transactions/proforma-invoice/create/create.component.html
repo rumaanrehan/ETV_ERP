@@ -34,7 +34,7 @@
 
                 <button type="button" class="toolbar-btn" *ngIf="isEditMode && !isTaxAlreadyExists"
                     (click)="OnClickNavigateToTaxInvoice(this.form.get('ProformaInvoiceID')?.value || null)">
-                    <span>Add Tax Invoice</span>
+                    <span>Print Performa Invoice</span>
                 </button>
             </div>
         </div>
@@ -67,12 +67,13 @@
                                     <div class="col-xl-2 form-group px-2" *ngIf="isBasedOnExportOrder">
                                         <z-autocomplete [controlDef]="exportOrderAutoCompleteDef"
                                             [allowEmptySearch]="true" (onSearch)="LoadExportOrder($event)"
-                                            (onSelect)="OnSelect_ExportOrder($event)"
+                                            [isClearable]="!isEditMode" (onSelect)="OnSelect_ExportOrder($event)"
                                             (onClear)="OnClear_ExportOrder()"></z-autocomplete>
                                     </div>
                                     <div class="col-xl-3 form-group px-2 simple-field proforma-customer-field">
                                         <label class="simple-label">{{formConfig.CustomerID.label}}:</label>
-                                        <div class="simple-control has-action">
+                                        <div class="simple-control"
+                                            [ngClass]="{ 'has-action': form.get('BasedOn')?.value == 2 && !isEditMode }">
                                             <z-autocomplete class="customer-autocomplete"
                                                 [controlDef]="companyMasterAutoCompleteDef"
                                                 [readonly]="form.get('BasedOn')?.value == 1"
@@ -80,7 +81,7 @@
                                                 (onSearch)="LoadCustomer($event)" (onSelect)="OnSelect_Customer($event)"
                                                 (onClear)="OnClear_Customer()">
                                             </z-autocomplete>
-                                            <button *ngIf="form.get('BasedOn')?.value == 2" type="button"
+                                            <button *ngIf="form.get('BasedOn')?.value == 2 && !isEditMode" type="button"
                                                 class="simple-action-btn" title="Add New Company"
                                                 (click)="HandleComponentLoad('VendorCreateComponent')">
                                                 <i class="pi pi-plus" aria-hidden="true"></i>
@@ -112,7 +113,7 @@
                                                 [optionLabel]="'CurrencyName'" [optionValue]="'CurrencyID'"
                                                 [readonly]="isBasedOnExportOrder" [options]="currencyList"
                                                 (onChange)="OnCurrencyChange()"></z-select>
-                                            <button *ngIf="!(isBasedOnExportOrder && isEditMode)" type="button"
+                                            <button type="button"
                                                 class="simple-action-btn" title="Add New Currency"
                                                 (click)="HandleComponentLoad('CurrencyCreateComponent')">
                                                 <i class="pi pi-plus" aria-hidden="true"></i>

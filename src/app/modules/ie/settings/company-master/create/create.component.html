@@ -1,105 +1,175 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
-    <div sidebarHeader>
-        <h5 class="text-white">Contact</h5>
-    </div>
-    <div sidebarContent>
-        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-            <div class="col-xl-12 form-group">
-                <z-span [text]="form.get('CompanyCode')?.value" [label]="formConfig.CompanyCode.label"></z-span>
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem contact-create-sidebar'">
+
+  <div sidebarHeader>
+    <h5 class="contact-create-title">Contact</h5>
+  </div>
+
+  <div sidebarContent>
+    <form class="contact-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+
+      <div class="simple-form">
+
+        <!-- Company Code -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CompanyCode.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">
+              {{ form.get('CompanyCode')?.value || 'NEW' }}
             </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'CompanyName'" [label]="formConfig.CompanyName.label"
-                    [validationMessage]="formConfig.CompanyName.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-select [group]="form" [control]="'CompanyTypeID'" [label]="formConfig.CompanyTypeID.label"
-                    [validationMessage]="formConfig.CompanyTypeID.error" [options]="vendorTypeList"
-                    [optionLabel]="'Text'" [optionValue]="'iValue'" (onChange)="onChange_CompanyType($event)">
-                </z-select>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-select [group]="form" [control]="'CountryID'" [label]="formConfig.CountryID.label"
-                    [validationMessage]="formConfig.CountryID.error" [options]="countryList"
-                    [optionLabel]="'CountryName'" [optionValue]="'CountryID'" (click)="loadStates()">
-                </z-select>
-            </div>
-            <div *ngIf="form.get('CountryID')?.value !== null" class="col-xl-12 form-group">
-                <z-select [group]="form" [control]="'StateID'" [label]="formConfig.StateID.label"
-                    [validationMessage]="formConfig.StateID.error" [options]="stateList" [optionLabel]="'StateName'"
-                    [optionValue]="'StateID'">
-                </z-select>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'CompanyContactName'"
-                    [label]="formConfig.CompanyContactName.label"
-                    [validationMessage]="formConfig.CompanyContactName.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'CompanyPhoneNo'" [label]="formConfig.CompanyPhoneNo.label"
-                    [validationMessage]="formConfig.CompanyPhoneNo.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'CompanyEmailID'" [label]="formConfig.CompanyEmailID.label"
-                    [validationMessage]="formConfig.CompanyEmailID.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group"*ngIf="!isClientCompany">
-                <z-inputtext [group]="form" [control]="'ImportLicenseNo'" [label]="formConfig.ImportLicenseNo.label"
-                    [validationMessage]="formConfig.ImportLicenseNo.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group" *ngIf="!isClientCompany">
-                <z-inputtext [group]="form" [control]="'GSTNo'" [label]="formConfig.GSTNo.label"
-                    [validationMessage]="formConfig.GSTNo.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group" *ngIf="!isClientCompany">
-                <z-inputtext [group]="form" [control]="'TANNo'" [label]="formConfig.TANNo.label"
-                    [validationMessage]="formConfig.TANNo.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group" *ngIf="!isClientCompany">
-                <z-inputtext [group]="form" [control]="'PANNo'" [label]="formConfig.PANNo.label"
-                    [validationMessage]="formConfig.PANNo.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group" *ngIf="isClientCompany">
-                <z-inputtext [group]="form" [control]="'CRNumber'" [label]="formConfig.CRNumber.label"
-                    [validationMessage]="formConfig.CRNumber.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-textarea [group]="form" [control]="'BillingAddress'" [label]="formConfig.BillingAddress.label"
-                    [validationMessage]="formConfig.BillingAddress.error">
-                </z-textarea>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-checkbox [group]="form" [control]="'IsShippingAddressSameAsBillingAddress'"
-                    [label]="formConfig.IsShippingAddressSameAsBillingAddress.label"
-                    [validationMessage]="formConfig.IsShippingAddressSameAsBillingAddress.error">
-                </z-checkbox>
-            </div>
-            <div class="col-xl-12 form-group" *ngIf="!this.form.get('IsShippingAddressSameAsBillingAddress')?.value">
-                <z-textarea [group]="form" [control]="'ShippingAddress'" [label]="formConfig.ShippingAddress.label"
-                    [validationMessage]="formConfig.ShippingAddress.error">
-                </z-textarea>
-            </div>
-        </form>
-    </div>
-    <div sidebarFooter>
-        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-            <div class="col-md-6 pe-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus"
-                    (click)="onSubmit()">
-                    {{ isEditMode ? "Update" : "Save" }}
-                </button>
-            </div>
-            <div class="col-md-6 ps-1">
-                <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-            </div>
+          </div>
         </div>
+
+        <!-- Company Name -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CompanyName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="CompanyName" [label]="''"
+              [validationMessage]="formConfig.CompanyName.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <!-- Company Type -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CompanyTypeID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" control="CompanyTypeID" [label]="''"
+              [validationMessage]="formConfig.CompanyTypeID.error"
+              [options]="vendorTypeList" optionLabel="Text" optionValue="iValue"
+              (onChange)="onChange_CompanyType($event)">
+            </z-select>
+          </div>
+        </div>
+
+        <!-- Country -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CountryID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" control="CountryID" [label]="''"
+              [validationMessage]="formConfig.CountryID.error"
+              [options]="countryList" optionLabel="CountryName" optionValue="CountryID"
+              (click)="loadStates()">
+            </z-select>
+          </div>
+        </div>
+
+        <!-- State -->
+        <div class="simple-field" *ngIf="form.get('CountryID')?.value !== null">
+          <label class="simple-label">{{ formConfig.StateID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" control="StateID" [label]="''"
+              [validationMessage]="formConfig.StateID.error"
+              [options]="stateList" optionLabel="StateName" optionValue="StateID">
+            </z-select>
+          </div>
+        </div>
+
+        <!-- Contact Name -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CompanyContactName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="CompanyContactName" [label]="''"
+              [validationMessage]="formConfig.CompanyContactName.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CompanyPhoneNo.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="CompanyPhoneNo" [label]="''"
+              [validationMessage]="formConfig.CompanyPhoneNo.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.CompanyEmailID.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="CompanyEmailID" [label]="''"
+              [validationMessage]="formConfig.CompanyEmailID.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <!-- Conditional fields -->
+        <ng-container *ngIf="!isClientCompany">
+          <div class="simple-field">
+            <label class="simple-label">{{ formConfig.ImportLicenseNo.label }}:</label>
+            <div class="simple-control">
+              <z-inputtext [group]="form" control="ImportLicenseNo" [label]="''"></z-inputtext>
+            </div>
+          </div>
+
+          <div class="simple-field">
+            <label class="simple-label">{{ formConfig.GSTNo.label }}:</label>
+            <div class="simple-control">
+              <z-inputtext [group]="form" control="GSTNo" [label]="''"></z-inputtext>
+            </div>
+          </div>
+
+          <div class="simple-field">
+            <label class="simple-label">{{ formConfig.TANNo.label }}:</label>
+            <div class="simple-control">
+              <z-inputtext [group]="form" control="TANNo" [label]="''"></z-inputtext>
+            </div>
+          </div>
+
+          <div class="simple-field">
+            <label class="simple-label">{{ formConfig.PANNo.label }}:</label>
+            <div class="simple-control">
+              <z-inputtext [group]="form" control="PANNo" [label]="''"></z-inputtext>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="simple-field" *ngIf="isClientCompany">
+          <label class="simple-label">{{ formConfig.CRNumber.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="CRNumber" [label]="''"></z-inputtext>
+          </div>
+        </div>
+
+        <!-- Billing Address -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.BillingAddress.label }}:</label>
+          <div class="simple-control">
+            <z-textarea [group]="form" control="BillingAddress" [label]="''"></z-textarea>
+          </div>
+        </div>
+
+        <!-- Checkbox -->
+        <div class="simple-field">
+          <label class="simple-label"></label>
+          <div class="simple-control">
+            <z-checkbox [group]="form" control="IsShippingAddressSameAsBillingAddress" [label]="formConfig.IsShippingAddressSameAsBillingAddress.label">
+            </z-checkbox>
+          </div>
+        </div>
+
+        <!-- Shipping -->
+        <div class="simple-field" *ngIf="!form.get('IsShippingAddressSameAsBillingAddress')?.value">
+          <label class="simple-label">{{ formConfig.ShippingAddress.label }}:</label>
+          <div class="simple-control">
+            <z-textarea [group]="form" control="ShippingAddress" [label]="''"></z-textarea>
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+  </div>
+
+  <div sidebarFooter>
+    <div class="contact-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active"
+        (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
+        {{ isEditMode ? "Update" : "Save" }}
+      </button>
     </div>
+  </div>
+
 </app-form-sidebar>
