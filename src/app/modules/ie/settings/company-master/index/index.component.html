@@ -1,39 +1,32 @@
-<!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-  <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i
-      class="pi pi-plus"></i>&nbsp;Add Contact</button>
-</ng-template>
+  <div class="d-flex align-items-center gap-2">
+    <button class="btn btn-primary btn-page-header btn-md shadow-sm btn-add-export-order" (click)="onClickPageHeaderAddButton()">
+      <i class="pi pi-plus"></i>&nbsp;Create
+    </button>
 
-<!-- Index Table Component -->
-<div class="col-xl-12 index-page-content">
-  <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)">
-  </z-datatable>
-</div>
-
-<!-- Table Column Custom Template -->
-<ng-template #companyCodeTemplate let-row>
-  <span class="table-action-link" (click)="onClickEditDetails(row.CompanyID, row.ActiveStatus)"
-    style="cursor: pointer;">{{ row.CompanyCode }}</span>
-</ng-template>
-
-<ng-template #companyTypeTemplate let-row>
-  <span class="table-row-status">
-    {{ row.CompanyTypeID == 1? 'Client' : 'Vendor' }}
-  </span>
-</ng-template>
-
-<ng-template #companyActiveStatusTemplate let-row>
-  <span class="table-row-status">
-    <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
-    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
-  </span>
-</ng-template>
-
-<ng-template #actionColTemplate let-row>
-  <div class="d-flex justify-content-end">
-    <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate"
-      (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
+    <div class="btn-group view-switcher-group" role="group">
+      <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'card'"
+        (click)="toggleView('card')">
+        <i class="pi pi-th-large"></i> Card
+      </button>
+      <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'table'"
+        (click)="toggleView('table')">
+        <i class="pi pi-list"></i> Table
+      </button>
+    </div>
   </div>
 </ng-template>
+
+<div class="col-xl-12 index-page-content">
+  @if (viewType() === 'card') {
+    <app-company-dataview [filterForm]="filterForm" [sortingForm]="sortingForm"
+      (editDetails)="onClickEditDetails($event)" (deleteReactivate)="onClickDeleteReactivate($event)">
+    </app-company-dataview>
+  } @else {
+    <app-company-gridview [filterForm]="filterForm"
+      (editDetails)="onClickEditDetails($event)" (deleteReactivate)="onClickDeleteReactivate($event)">
+    </app-company-gridview>
+  }
+</div>
 
 <app-company-create (closeSidebarEvent)="onCloseSidebar()"></app-company-create>

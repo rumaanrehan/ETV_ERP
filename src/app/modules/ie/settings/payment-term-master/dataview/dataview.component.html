@@ -6,7 +6,9 @@
 
 <ng-template #cardTemplate let-items>
   <div class="pt-card-list">
-    <div class="pt-card" *ngFor="let row of items">
+    <div class="pt-card pt-card--clickable" *ngFor="let row of items" role="button" tabindex="0"
+      (click)="onClickEditDetails(row)" (keydown.enter)="onClickEditDetails(row)"
+      (keydown.space)="$event.preventDefault(); onClickEditDetails(row)">
       <div class="pt-card__body">
         <div class="pt-card__top">
           <div class="pt-card__titles">
@@ -17,7 +19,7 @@
             <span class="pt-status-pill" [ngClass]="row.ActiveStatus ? 'is-active' : 'is-inactive'">
               {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
             </span>
-            <button type="button" class="pt-action-btn" (click)="onClickDeleteReactivate(row)">
+            <button type="button" class="pt-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(row)">
               <i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i>
             </button>
           </div>
@@ -25,7 +27,7 @@
 
         <div class="pt-card__details">
           <span class="pt-card__label">Payment Term</span>
-          <a class="pt-card__value table-action-link" (click)="onClickEditDetails(row)">{{ row.PaymentTermName }}</a>
+          <a class="pt-card__value table-action-link" (click)="$event.stopPropagation(); onClickEditDetails(row)">{{ row.PaymentTermName }}</a>
         </div>
       </div>
     </div>

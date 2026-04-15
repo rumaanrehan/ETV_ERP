@@ -6,41 +6,42 @@ import { DataTableDef, DataTableParams } from '../../../../../shared/components/
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { PaymentTerm_IndexTableFilter, PaymentTerm_IndexTableList } from '../payment-term-master';
-import { PaymentTermMasterService } from '../payment-term-master.service';
+import { Company_IndexTableFilter, Company_IndexTableList } from '../company-master';
+import { CompanyMasterService } from '../company-master.service';
 
 @Component({
-  selector: 'app-payment-term-gridview',
+  selector: 'app-company-gridview',
   standalone: true,
   imports: [CommonModule, ZDataTable],
   templateUrl: './gridview.component.html',
   styleUrl: './gridview.component.scss'
 })
-export class PaymentTermGridviewComponent implements OnInit, OnDestroy {
+export class CompanyGridviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   @Input() filterForm!: FormGroup;
-  @Output() editDetails = new EventEmitter<{ paymentTermID: number; activeStatus: boolean }>();
-  @Output() deleteReactivate = new EventEmitter<PaymentTerm_IndexTableList>();
+  @Output() editDetails = new EventEmitter<{ companyID: number; activeStatus: boolean }>();
+  @Output() deleteReactivate = new EventEmitter<Company_IndexTableList>();
 
-  @ViewChild('paymentTermCodeTemplate', { static: true }) paymentTermCodeTemplate!: TemplateRef<any>;
-  @ViewChild('paymentTermActiveStatusTemplate', { static: true }) paymentTermActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('companyCodeTemplate', { static: true }) companyCodeTemplate!: TemplateRef<any>;
+  @ViewChild('companyTypeTemplate', { static: true }) companyTypeTemplate!: TemplateRef<any>;
+  @ViewChild('companyActiveStatusTemplate', { static: true }) companyActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
-  tableDef!: DataTableDef<PaymentTerm_IndexTableList>;
+  tableDef!: DataTableDef<Company_IndexTableList>;
   tableEvent: any;
 
   constructor(
-    private pageService: PaymentTermMasterService,
+    private pageService: CompanyMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
     this.tableDef = {
-      tableKey: 'IE_PaymentTermMaster_IndexTable',
+      tableKey: 'IE_CompanyMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: 'PaymentTermCode', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'CompanyCode', sortOrder: 1 },
       filterForm: this.filterForm,
       data: [],
       totalRecords: 0,
@@ -50,10 +51,13 @@ export class PaymentTermGridviewComponent implements OnInit, OnDestroy {
 
     this.tableDef.columnDef = [
       { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: '4%' },
-      { data: 'PaymentTermCode', label: 'Code', hideVisToggle: true, filterable: true, width: '10%', customTemplate: this.paymentTermCodeTemplate },
-      { data: 'PaymentTermName', label: 'Payment Term Name', width: '50%', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', width: '15%', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.paymentTermActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: '3%', customTemplate: this.actionColTemplate }
+      { data: 'CompanyCode', label: 'Code', hideVisToggle: true, filterable: true, width: '10%', customTemplate: this.companyCodeTemplate },
+      { data: 'CompanyName', label: 'Company Name', width: '20%', filterable: true },
+      { data: 'CompanyTypeName', label: 'Company Type', width: '15%', filterable: true, filterType: 'select', filterKey: 'CompanyTypeID', customTemplate: this.companyTypeTemplate },
+      { data: 'CompanyEmailID', label: 'EmailID', orderable: false, width: '20%' },
+      { data: 'ImportLicenseNo', label: 'Import License No', orderable: false, width: '20%' },
+      { data: 'ActiveStatus', label: 'Status', width: '10%', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.companyActiveStatusTemplate },
+      { data: '', hideVisToggle: true, orderable: false, width: '6%', customTemplate: this.actionColTemplate },
     ];
   }
 
@@ -69,7 +73,7 @@ export class PaymentTermGridviewComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     try {
-      const model: DataTableParams<PaymentTerm_IndexTableFilter> = {
+      const model: DataTableParams<Company_IndexTableFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
@@ -101,16 +105,15 @@ export class PaymentTermGridviewComponent implements OnInit, OnDestroy {
 
   onResetForm(formGroup: FormGroup): void {
     if (formGroup === this.filterForm) {
-      this.formService.resetFormValue<PaymentTerm_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter() as any, formGroup);
+      this.formService.resetFormValue<Company_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter() as any, formGroup);
     }
   }
 
-  onClickEditDetails(row: PaymentTerm_IndexTableList): void {
-    this.editDetails.emit({ paymentTermID: row.PaymentTermID, activeStatus: row.ActiveStatus });
+  onClickEditDetails(row: Company_IndexTableList): void {
+    this.editDetails.emit({ companyID: row.CompanyID, activeStatus: row.ActiveStatus });
   }
 
-  onClickDeleteReactivate(row: PaymentTerm_IndexTableList): void {
+  onClickDeleteReactivate(row: Company_IndexTableList): void {
     this.deleteReactivate.emit(row);
   }
 }
-

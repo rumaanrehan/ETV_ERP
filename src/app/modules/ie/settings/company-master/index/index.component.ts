@@ -1,33 +1,33 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, signal } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { CreateComponent } from '../create/create.component';
-import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
 import { Company_IndexTableFilter, Company_IndexTableList, CompanyMaster } from '../company-master';
-import { TableLazyLoadEvent } from 'primeng/table';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { CompanyMasterService } from '../company-master.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
+import { CompanyGridviewComponent } from '../gridview/gridview.component';
+import { CompanyDataviewComponent } from '../dataview/dataview.component';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [ZDataTable, CreateComponent],
+  imports: [CommonModule, CreateComponent, CompanyGridviewComponent, CompanyDataviewComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss'
 })
-export class IndexComponent {
+export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('companyCodeTemplate', { static: true }) companyCodeTemplate!: TemplateRef<any>;
-  @ViewChild('companyTypeTemplate', { static: true }) companyTypeTemplate!: TemplateRef<any>;
-  @ViewChild('companyActiveStatusTemplate', { static: true }) companyActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
+  @ViewChild(CompanyGridviewComponent, { static: false }) gridview?: CompanyGridviewComponent;
+  @ViewChild(CompanyDataviewComponent, { static: false }) dataview?: CompanyDataviewComponent;
 
-  tableDef!: DataTableDef<Company_IndexTableList>;
-  tableEvent!: TableLazyLoadEvent;
+  viewType = signal<'card' | 'table'>('table');
+  filterForm!: FormGroup;
+  sortingForm!: FormGroup;
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -37,31 +37,34 @@ export class IndexComponent {
   ) { }
 
   ngOnInit(): void {
+    const savedView = localStorage.getItem('companyMasterViewType');
+    if (savedView === 'card' || savedView === 'table') {
+      this.viewType.set(savedView);
+    }
+
+    this.filterForm = this.formService.createFormGroup_DataTableFilter<Company_IndexTableFilter>(
+      this.pageService.getFormConfig_DataTableFilter()
+    );
+
+    this.sortingForm = this.formService.createFormGroup_DataTableFilter({
+      CompanyCode: 1,
+      CompanyName: 0,
+      CompanyTypeID: 0,
+      ActiveStatusID: 0
+    });
+
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-    this.tableDef = {
-      tableKey: 'IE_CompanyMaster_IndexTable',
-      columnDef: [],
-      defaultSortColumn: { sortField: 'CompanyCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<Company_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
-    this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'CompanyCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.companyCodeTemplate },
-      { data: 'CompanyName', label: 'Company Name', width: "15%", filterable: true },
-      { data: 'CompanyTypeName', label: 'Company Type', width: "15%", filterable: true, filterType: 'select', filterKey: 'CompanyTypeID', customTemplate: this.companyTypeTemplate },
-      { data: 'CompanyEmailID', label: 'EmailID', orderable: false, width: "20%" },
-      { data: 'ImportLicenseNo', label: 'Import License No', orderable: false, width: "20%" },
-      { data: 'ActiveStatus', label: 'Status', width: "10%", filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.companyActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: "6%", customTemplate: this.actionColTemplate },
-    ];
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.pageHeaderService.setTemplate(null);
+  }
+
+  toggleView(type: 'card' | 'table'): void {
+    this.viewType.set(type);
+    localStorage.setItem('companyMasterViewType', type);
   }
 
   onClickPageHeaderAddButton(): void {
@@ -70,16 +73,15 @@ export class IndexComponent {
     }
   }
 
-  onClickEditDetails(companyID: number, activeStatus: boolean): void {
+  onClickEditDetails(payload: { companyID: number; activeStatus: boolean }): void {
     try {
-      if (this.createSidebar && companyID) {
-        this.pageService.GetDetails(companyID)
+      if (this.createSidebar && payload.companyID) {
+        this.pageService.GetDetails(payload.companyID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                console.log(response.Data)
-                this.createSidebar.openSidebar(activeStatus, true, response.Data);
+                this.createSidebar.openSidebar(payload.activeStatus, true, response.Data);
               }
               else {
                 this.alertService.showServerResponseAlert(response);
@@ -94,48 +96,14 @@ export class IndexComponent {
   }
 
   onCloseSidebar(): void {
-    this.loadData();
-  }
-
-  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
-    this.tableEvent = event;
-    this.loadData();
-  }
-
-  loadData(): void {
-    try {
-      const model: DataTableParams<Company_IndexTableFilter> = {
-        first: this.tableEvent.first,
-        last: this.tableEvent.last,
-        sortField: this.tableEvent.sortField,
-        sortOrder: this.tableEvent.sortOrder,
-        filters: this.tableDef.filterForm?.value
-      };
-      this.pageService.PopulateGrid(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
-            }
-            else {
-              this.tableDef.data = [];
-              this.tableDef.totalRecords = 0;
-              this.alertService.showServerResponseToast(response);
-            }
-          },
-          complete: () => {
-            this.tableDef.loading = false;
-          }
-        });
-    }
-    catch (error) {
-
+    if (this.viewType() === 'card') {
+      this.dataview?.loadData();
+    } else {
+      this.gridview?.loadData();
     }
   }
 
-  onClickDeleteReactivate(row: any): void {
+  onClickDeleteReactivate(row: Company_IndexTableList): void {
     try {
       const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
@@ -151,7 +119,11 @@ export class IndexComponent {
               .subscribe({
                 next: (response) => {
                   if (response.IsSuccess) {
-                    this.loadData();
+                    if (this.viewType() === 'card') {
+                      this.dataview?.loadData();
+                    } else {
+                      this.gridview?.loadData();
+                    }
                     this.alertService.showAlert({
                       type: "success",
                       text: response.Message,

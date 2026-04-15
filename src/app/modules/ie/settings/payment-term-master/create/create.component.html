@@ -1,34 +1,54 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
-    <div sidebarHeader>
-        <h5 class="text-white">Payment Term Master</h5>
-    </div>
-    <div sidebarContent>
-        <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-            <div class="col-xl-12 form-group">
-                <z-span [text]="form.get('PaymentTermCode')?.value" [label]="formConfig.PaymentTermCode.label"></z-span>
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem payment-term-create-sidebar'">
+  <div sidebarHeader>
+    <h5 class="text-white">Payment Term Master</h5>
+  </div>
+
+  <div sidebarContent>
+    <form class="pt-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+
+        <!-- Payment Term Code -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.PaymentTermCode.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">
+              {{ form.get('PaymentTermCode')?.value || 'NEW' }}
             </div>
-            <div class="col-xl-12 form-group">
-                <z-inputtext [group]="form" [control]="'PaymentTermName'" [label]="formConfig.PaymentTermName.label"
-                    [validationMessage]="formConfig.PaymentTermCode.error">
-                </z-inputtext>
-            </div>
-            <div class="col-xl-12 form-group">
-                <z-textarea [group]="form" [control]="'Description'" [label]="formConfig.Description.label"
-                    [validationMessage]="formConfig.Description.error">
-                </z-textarea>
-            </div>
-        </form>
-    </div>
-    <div sidebarFooter>
-        <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-            <div class="col-md-6 pe-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
-                    {{ isEditMode ? "Update" : "Save" }}
-                </button>
-            </div>
-            <div class="col-md-6 ps-1">
-                <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-            </div>
+          </div>
         </div>
+
+        <!-- Payment Term Name -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.PaymentTermName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="PaymentTermName" [label]="''"
+              [validationMessage]="formConfig.PaymentTermName.error">
+            </z-inputtext>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.Description.label }}:</label>
+          <div class="simple-control">
+            <z-textarea [group]="form" control="Description" [label]="''" [autoResize]="true" [rows]="1"
+              [validationMessage]="formConfig.Description.error">
+            </z-textarea>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <div sidebarFooter>
+    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
+      <div class="pt-create-footer">
+        <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+        <button type="submit" class="simple-btn is-active" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
+          {{ isEditMode ? "Update" : "Save" }}
+        </button>
+      </div>
     </div>
+  </div>
 </app-form-sidebar>

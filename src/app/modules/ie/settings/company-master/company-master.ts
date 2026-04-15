@@ -39,10 +39,11 @@ export interface Company_IndexTableList {
     CompanyID: number;
     CompanyCode: string;
     CompanyName: string;
-    CompanyTypeName: number;
+    CompanyTypeID: number;
+    CompanyTypeName: string;
     CompanyEmailID: string;
     ImportLicenseNo: string;
-    AcitveStatus: string;
+    ActiveStatus: boolean;
 }
 
 export interface CompanyRequest {

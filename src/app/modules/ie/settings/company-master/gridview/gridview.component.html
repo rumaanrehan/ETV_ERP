@@ -3,22 +3,26 @@
   </z-datatable>
 </div>
 
-<ng-template #paymentTermCodeTemplate let-row>
-  <span class="table-action-link">{{ row.PaymentTermCode }}</span>
+<ng-template #companyCodeTemplate let-row>
+  <span class="table-action-link">{{ row.CompanyCode }}</span>
 </ng-template>
 
-<ng-template #paymentTermActiveStatusTemplate let-row>
+<ng-template #companyTypeTemplate let-row>
+  <span class="table-row-status">
+    {{ row.CompanyTypeID == 1 ? 'Client' : 'Vendor' }}
+  </span>
+</ng-template>
+
+<ng-template #companyActiveStatusTemplate let-row>
   <span class="grid-status-pill" [ngStyle]="{ backgroundColor: row.ActiveStatus ? '#22c55e' : '#ef4444' }">
     {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
-  </span>
+    </span>
 </ng-template>
 
 <ng-template #actionColTemplate let-row>
   <div class="d-flex justify-content-end">
-    <button type="button" class="pt-action-btn"
-      (click)="$event.stopPropagation(); onClickDeleteReactivate(row)">
+    <button type="button" class="pt-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(row)">
       <i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i>
     </button>
   </div>
 </ng-template>
-

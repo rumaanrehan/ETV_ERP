@@ -1,0 +1,45 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="cardTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #cardTemplate let-items>
+  <div class="cm-card-list">
+    <div class="cm-card cm-card--clickable" *ngFor="let row of items" role="button" tabindex="0"
+      (click)="onClickEditDetails(row)" (keydown.enter)="onClickEditDetails(row)"
+      (keydown.space)="$event.preventDefault(); onClickEditDetails(row)">
+      <div class="cm-card__body">
+        <div class="cm-card__top">
+          <div class="cm-card__titles">
+            <h5 class="cm-card__title">{{ row.CompanyName }}</h5>
+            <p class="cm-card__subtitle">{{ row.CompanyCode }}</p>
+          </div>
+          <div class="cm-card__head-right">
+            <span class="cm-status-pill" [ngClass]="row.ActiveStatus ? 'is-active' : 'is-inactive'">
+              {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+            </span>
+            <button type="button" class="cm-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(row)">
+              <i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="cm-card__grid">
+          <div class="cm-field">
+            <span class="cm-field__label">Company Type</span>
+            <span class="cm-field__value">{{ row.CompanyTypeName || '-' }}</span>
+          </div>
+          <div class="cm-field">
+            <span class="cm-field__label">Email</span>
+            <span class="cm-field__value">{{ row.CompanyEmailID || '-' }}</span>
+          </div>
+          <div class="cm-field">
+            <span class="cm-field__label">Import License No</span>
+            <span class="cm-field__value">{{ row.ImportLicenseNo || '-' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

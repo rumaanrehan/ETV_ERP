@@ -33,7 +33,6 @@ z-dataview {
   overflow-y: auto;
 }
 
-// Ensure paginator stays visible at the bottom (consistent with grid pages)
 :host ::ng-deep .z-dataview-root .p-paginator-bottom {
   margin-top: auto;
   position: sticky;
@@ -50,36 +49,36 @@ z-dataview {
   align-items: stretch;
 }
 
-.pt-card-list {
+.cm-card-list {
   display: contents;
 }
 
-.pt-card {
+.cm-card {
   border: 1px solid var(--default-border);
   border-radius: 12px;
   background: var(--custom-white);
 }
 
-.pt-card--clickable {
+.cm-card--clickable {
   cursor: pointer;
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-.pt-card--clickable:hover {
+.cm-card--clickable:hover {
   border-color: rgba(var(--primary-rgb), 0.35);
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
-.pt-card--clickable:focus-visible {
+.cm-card--clickable:focus-visible {
   outline: 2px solid rgba(var(--primary-rgb), 0.6);
   outline-offset: 2px;
 }
 
-.pt-card__body {
+.cm-card__body {
   padding: 1rem;
 }
 
-.pt-card__top {
+.cm-card__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -87,11 +86,11 @@ z-dataview {
   margin-bottom: 0.75rem;
 }
 
-.pt-card__titles {
+.cm-card__titles {
   min-width: 0;
 }
 
-.pt-card__title {
+.cm-card__title {
   margin: 0;
   font-size: 0.98rem;
   font-weight: 600;
@@ -99,7 +98,7 @@ z-dataview {
   line-height: 1.2;
 }
 
-.pt-card__subtitle {
+.cm-card__subtitle {
   margin: 0.12rem 0 0;
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -107,13 +106,13 @@ z-dataview {
   letter-spacing: 0.02em;
 }
 
-.pt-card__head-right {
+.cm-card__head-right {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
 }
 
-.pt-status-pill {
+.cm-status-pill {
   height: 2rem;
   min-height: 2rem;
   padding: 0 0.7rem;
@@ -128,19 +127,19 @@ z-dataview {
   white-space: nowrap;
 }
 
-.pt-status-pill.is-active {
+.cm-status-pill.is-active {
   background: rgba(34, 197, 94, 0.12);
   color: #16a34a;
   border-color: rgba(34, 197, 94, 0.32);
 }
 
-.pt-status-pill.is-inactive {
+.cm-status-pill.is-inactive {
   background: rgba(239, 68, 68, 0.12);
   color: #dc2626;
   border-color: rgba(239, 68, 68, 0.32);
 }
 
-.pt-action-btn {
+.cm-action-btn {
   height: 2rem;
   min-height: 2rem;
   width: 2rem;
@@ -156,28 +155,34 @@ z-dataview {
   cursor: pointer;
 }
 
-.pt-action-btn i {
+.cm-action-btn i {
   font-size: 0.75rem;
 }
 
-.pt-action-btn:hover {
+.cm-action-btn:hover {
   background: var(--list-hover-focus-bg);
 }
 
-.pt-card__details {
+.cm-card__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+
+.cm-field {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
   min-width: 0;
 }
 
-.pt-card__label {
+.cm-field__label {
   font-size: 0.75rem;
   color: var(--text-muted);
   line-height: 1.2;
 }
 
-.pt-card__value {
+.cm-field__value {
   font-size: 0.875rem;
   color: var(--heading-text-color);
   font-weight: 400;
@@ -185,20 +190,24 @@ z-dataview {
   word-break: break-word;
 }
 
-:host-context([data-theme-mode="dark"]) .pt-card {
+:host-context([data-theme-mode="dark"]) .cm-card {
   background: var(--background-tertiary-dark, #23272b);
   border-color: #334155;
 }
 
-:host-context([data-theme-mode="dark"]) .pt-card__title,
-:host-context([data-theme-mode="dark"]) .pt-card__subtitle,
-:host-context([data-theme-mode="dark"]) .pt-card__label,
-:host-context([data-theme-mode="dark"]) .pt-card__value {
+:host-context([data-theme-mode="dark"]) .cm-card__title,
+:host-context([data-theme-mode="dark"]) .cm-card__subtitle,
+:host-context([data-theme-mode="dark"]) .cm-field__label,
+:host-context([data-theme-mode="dark"]) .cm-field__value {
   color: #e5e7eb;
 }
 
 @media (max-width: 576px) {
   :host ::ng-deep .z-dataview-list {
+    grid-template-columns: 1fr;
+  }
+
+  .cm-card__grid {
     grid-template-columns: 1fr;
   }
 }
