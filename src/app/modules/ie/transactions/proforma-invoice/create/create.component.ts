@@ -615,7 +615,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       }
 
       const rawData = this.formService.transformFormData(this.form.value);
-      const { ProformaInvoiceNo, ExportOrderNo, CustomerName, LoadingPortName, DischargePortName, ...cleanModel } = rawData;
+      const { ExportOrderNo, CustomerName, LoadingPortName, DischargePortName, ...cleanModel } = rawData;
       const model: ProformaInvoice = { ...cleanModel };
 
       if (this.form.invalid) {

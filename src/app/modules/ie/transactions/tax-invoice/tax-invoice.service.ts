@@ -190,7 +190,14 @@ export class TaxInvoiceService {
       },
       TaxInvoiceNo: {
         label: 'Tax Invoice No',
-        defaultValue: "NEW"
+        defaultValue: null,
+        validators: [Validators.required, NotOnlyWhitespaceValidator(), Validators.maxLength(20)],
+        validationMessages: {
+          required: "Tax Invoice No is required.",
+          notOnlyWhitespace: "Tax Invoice No cannot be empty or whitespace.",
+          maxLength: "Tax Invoice No cannot exceed 20 characters."
+        },
+        type: 'control'
       },
       BasedOn: {
         label: 'Based On',
