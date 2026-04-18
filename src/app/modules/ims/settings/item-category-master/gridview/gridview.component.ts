@@ -6,42 +6,41 @@ import { DataTableDef, DataTableParams } from '../../../../../shared/components/
 import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
-import { Company_IndexTableFilter, Company_IndexTableList } from '../company-master';
-import { CompanyMasterService } from '../company-master.service';
+import { ItemCategory_IndexFilter, ItemCategory_IndexList } from '../item-category-master';
+import { ItemCategoryMasterService } from '../item-category-master.service';
 
 @Component({
-  selector: 'app-company-gridview',
+  selector: 'app-item-category-gridview',
   standalone: true,
   imports: [CommonModule, ZDataTable],
   templateUrl: './gridview.component.html',
   styleUrl: './gridview.component.scss'
 })
-export class CompanyGridviewComponent implements OnInit, OnDestroy {
+export class ItemCategoryGridviewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   @Input() filterForm!: FormGroup;
-  @Output() editDetails = new EventEmitter<{ companyID: number; activeStatus: boolean }>();
-  @Output() deleteReactivate = new EventEmitter<Company_IndexTableList>();
+  @Output() editDetails = new EventEmitter<{ itemCategoryID: number; activeStatus: boolean }>();
+  @Output() deleteReactivate = new EventEmitter<ItemCategory_IndexList>();
 
-  @ViewChild('companyCodeTemplate', { static: true }) companyCodeTemplate!: TemplateRef<any>;
-  @ViewChild('companyTypeTemplate', { static: true }) companyTypeTemplate!: TemplateRef<any>;
-  @ViewChild('companyActiveStatusTemplate', { static: true }) companyActiveStatusTemplate!: TemplateRef<any>;
+  @ViewChild('itemCategoryCodeTemplate', { static: true }) itemCategoryCodeTemplate!: TemplateRef<any>;
+  @ViewChild('itemCategoryActiveStatusTemplate', { static: true }) itemCategoryActiveStatusTemplate!: TemplateRef<any>;
   @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
 
-  tableDef!: DataTableDef<Company_IndexTableList>;
+  tableDef!: DataTableDef<ItemCategory_IndexList>;
   tableEvent: any;
 
   constructor(
-    private pageService: CompanyMasterService,
+    private pageService: ItemCategoryMasterService,
     private formService: FormService,
     private alertService: AlertNotificationService
   ) { }
 
   ngOnInit(): void {
     this.tableDef = {
-      tableKey: 'IE_CompanyMaster_IndexTable',
+      tableKey: 'IMS_ItemCategoryMaster_IndexTable',
       columnDef: [],
-      defaultSortColumn: { sortField: 'CompanyCode', sortOrder: 1 },
+      defaultSortColumn: { sortField: 'ItemCategoryCode', sortOrder: 1 },
       filterForm: this.filterForm,
       data: [],
       totalRecords: 0,
@@ -50,14 +49,12 @@ export class CompanyGridviewComponent implements OnInit, OnDestroy {
     };
 
     this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: '4%' },
-      { data: 'CompanyCode', label: 'Code', hideVisToggle: true, filterable: true, width: '10%', customTemplate: this.companyCodeTemplate },
-      { data: 'CompanyName', label: 'Company Name', width: '20%', filterable: true },
-      { data: 'CompanyTypeName', label: 'Company Type', width: '15%', filterable: true, filterType: 'select', filterKey: 'CompanyTypeID', customTemplate: this.companyTypeTemplate },
-      { data: 'CompanyEmailID', label: 'EmailID', orderable: false, width: '20%' },
-      { data: 'CRNumber', label: 'CR Number', orderable: false, width: '20%' },
-      { data: 'ActiveStatus', label: 'Status', width: '10%', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', customTemplate: this.companyActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: '6%', customTemplate: this.actionColTemplate },
+      { data: 'RowID', label: 'SN', width: '5%', hideVisToggle: true, orderable: false },
+      { data: 'ItemCategoryID', visible: false, hideVisToggle: true, orderable: false },
+      { data: 'ItemCategoryCode', label: 'Code', hideVisToggle: true, filterable: true, width: '12%', customTemplate: this.itemCategoryCodeTemplate },
+      { data: 'ItemCategoryName', label: 'Item Category Name', filterable: true, width: '66%' },
+      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: '11%', customTemplate: this.itemCategoryActiveStatusTemplate },
+      { data: '', hideVisToggle: true, orderable: false, cssClass: 'text-center', width: '6%', customTemplate: this.actionColTemplate }
     ];
   }
 
@@ -73,7 +70,7 @@ export class CompanyGridviewComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     try {
-      const model: DataTableParams<Company_IndexTableFilter> = {
+      const model: DataTableParams<ItemCategory_IndexFilter> = {
         first: this.tableEvent.first,
         last: this.tableEvent.last,
         sortField: this.tableEvent.sortField,
@@ -105,15 +102,15 @@ export class CompanyGridviewComponent implements OnInit, OnDestroy {
 
   onResetForm(formGroup: FormGroup): void {
     if (formGroup === this.filterForm) {
-      this.formService.resetFormValue<Company_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter() as any, formGroup);
+      this.formService.resetFormValue<ItemCategory_IndexFilter>(this.pageService.getFormConfig_DataTableFilter() as any, formGroup);
     }
   }
 
-  onClickEditDetails(row: Company_IndexTableList): void {
-    this.editDetails.emit({ companyID: row.CompanyID, activeStatus: row.ActiveStatus });
+  onClickEditDetails(row: ItemCategory_IndexList): void {
+    this.editDetails.emit({ itemCategoryID: row.ItemCategoryID, activeStatus: row.ActiveStatus });
   }
 
-  onClickDeleteReactivate(row: Company_IndexTableList): void {
+  onClickDeleteReactivate(row: ItemCategory_IndexList): void {
     this.deleteReactivate.emit(row);
   }
 }

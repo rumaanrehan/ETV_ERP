@@ -41,8 +41,15 @@ export interface Company_IndexTableList {
     CompanyName: string;
     CompanyTypeID: number;
     CompanyTypeName: string;
+    CompanyContactName?: string | null;
+    CompanyPhoneNo?: string | null;
     CompanyEmailID: string;
-    ImportLicenseNo: string;
+    CRNumber?: string | null;
+    GSTNo?: string | null;
+    TANNo?: string | null;
+    PANNo?: string | null;
+    BillingAddress?: string | null;
+    ImportLicenseNo?: string | null;
     ActiveStatus: boolean;
 }
 

@@ -48,18 +48,15 @@
 }
 
 :host ::ng-deep .contact-create-form {
-  /* SAME TOKENS AS CURRENCY */
   --se-field-height: 2.25rem;
   --se-field-radius: 8px;
   --se-field-font-size: 0.875rem;
   --se-placeholder-font-size: 0.82rem;
 
-  /* Hide internal labels */
   .p-float-label > label {
     display: none !important;
   }
 
-  /* Placeholder styling */
   .p-inputtext::placeholder,
   input::placeholder,
   textarea::placeholder {
@@ -68,7 +65,6 @@
     color: var(--text-muted) !important;
   }
 
-  /* Ensure full width */
   z-inputtext,
   z-select,
   z-span,
@@ -77,7 +73,6 @@
     width: 100%;
   }
 
-  /* ✅ MAIN INPUT STYLE (same as currency) */
   .p-inputtext,
   input,
   .p-dropdown,
@@ -85,20 +80,18 @@
     height: var(--se-field-height);
     font-size: var(--se-field-font-size);
     border-radius: var(--se-field-radius);
-    border: 1px solid #e5e7eb; /* 👈 unified light border */
+    border: 1px solid #e5e7eb;
     background: var(--custom-white);
     width: 100%;
     box-shadow: none;
     transition: all 0.15s ease;
   }
 
-  /* Textarea override */
   textarea {
     min-height: 80px;
     padding-top: 0.4rem;
   }
 
-  /* ✅ FOCUS STATE (modern UI) */
   .p-inputtext:enabled:focus,
   input:focus,
   .p-dropdown:focus,
@@ -107,13 +100,45 @@
     box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.15);
     outline: none;
   }
+
+  z-select .p-float-label {
+    width: 100%;
+    display: block;
+  }
+
+  z-select .p-dropdown {
+    height: var(--se-field-height);
+    min-height: var(--se-field-height);
+    display: flex;
+    align-items: center;
+  }
+
+  z-select .p-dropdown .p-dropdown-label {
+    display: flex;
+    align-items: center;
+    min-height: calc(var(--se-field-height) - 2px);
+    padding-block: 0;
+    padding-inline: 0.75rem;
+    font-size: var(--se-field-font-size);
+  }
+
+  z-select .p-dropdown .p-dropdown-trigger {
+    width: var(--se-field-height);
+    min-width: var(--se-field-height);
+  }
+
+  z-select .p-dropdown .p-dropdown-trigger-icon {
+    font-size: 0.72rem;
+  }
 }
+
 /* Footer */
 .contact-create-footer {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
 }
+
 /* Buttons (same as product UI) */
 .simple-btn {
   height: 2.1rem;

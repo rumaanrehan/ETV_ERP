@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, signal } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { DataTableDef, DataTableLazyLoadEvent, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormValidationService } from '../../../../../shared/services/form-validation.service';
 import { FormService } from '../../../../../shared/services/form.service';
@@ -10,11 +9,13 @@ import { PageHeaderService } from '../../../../../shared/services/page-header.se
 import { CreateComponent } from '../create/create.component';
 import { ItemCategory_IndexFilter, ItemCategory_IndexList, ItemCategoryMaster } from '../item-category-master';
 import { ItemCategoryMasterService } from '../item-category-master.service';
+import { ItemCategoryGridviewComponent } from '../gridview/gridview.component';
+import { ItemCategoryDataviewComponent } from '../dataview/dataview.component';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [CommonModule, ZDataTable, CreateComponent],
+  imports: [CommonModule, CreateComponent, ItemCategoryGridviewComponent, ItemCategoryDataviewComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss',
   providers: [FormValidationService],
@@ -22,13 +23,13 @@ import { ItemCategoryMasterService } from '../item-category-master.service';
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('itemCategoryCodeTemplate', { static: true }) itemCategoryCodeTemplate!: TemplateRef<any>;
-  @ViewChild('itemCategoryActiveStatusTemplate', { static: true }) itemCategoryActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent) createSidebar!: CreateComponent;
+  @ViewChild(ItemCategoryGridviewComponent, { static: false }) gridview?: ItemCategoryGridviewComponent;
+  @ViewChild(ItemCategoryDataviewComponent, { static: false }) dataview?: ItemCategoryDataviewComponent;
 
-  tableDef!: DataTableDef<ItemCategory_IndexList>;
-  tableEvent!: DataTableLazyLoadEvent;
+  viewType = signal<'card' | 'table'>('table');
+  filterForm!: FormGroup;
+  sortingForm!: FormGroup;
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -38,29 +39,33 @@ export class IndexComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    const savedView = localStorage.getItem('itemCategoryMasterViewType');
+    if (savedView === 'card' || savedView === 'table') {
+      this.viewType.set(savedView);
+    }
+
+    this.filterForm = this.formService.createFormGroup_DataTableFilter<ItemCategory_IndexFilter>(
+      this.pageService.getFormConfig_DataTableFilter()
+    );
+
+    this.sortingForm = this.formService.createFormGroup_DataTableFilter({
+      ItemCategoryCode: 1,
+      ItemCategoryName: 0,
+      ActiveStatusID: 0
+    });
+
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-    this.tableDef = {
-      tableKey: 'IMS_ItemCategoryMaster_IndexTable',
-      columnDef: [],
-      defaultSortColumn: { sortField: 'ItemCategoryCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<ItemCategory_IndexFilter>(this.pageService.getFormConfig_DataTableFilter()),
-      data: [],
-      totalRecords: 0,
-      loading: false,
-    };
-    this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', width: "5%", hideVisToggle: true, orderable: false },
-      { data: 'ItemCategoryID', visible: false, hideVisToggle: true, orderable: false },
-      { data: 'ItemCategoryCode', label: 'Code', hideVisToggle: true, filterable: true, width: "10%", customTemplate: this.itemCategoryCodeTemplate },
-      { data: 'ItemCategoryName', label: 'Item Category Name', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "5%", customTemplate: this.itemCategoryActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, cssClass: 'text-center', width: "5%", customTemplate: this.actionColTemplate }
-    ];
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.pageHeaderService.setTemplate(null);
+  }
+
+  toggleView(type: 'card' | 'table'): void {
+    this.viewType.set(type);
+    localStorage.setItem('itemCategoryMasterViewType', type);
   }
 
   onClickPageHeaderAddButton(): void {
@@ -69,11 +74,11 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(itemCategoryID: number, activeStatus: boolean) {
+  onClickEditDetails(payload: { itemCategoryID: number; activeStatus: boolean }): void {
     try {
-      if (this.createSidebar && itemCategoryID) {
+      if (this.createSidebar && payload.itemCategoryID) {
         this.pageService
-          .GetDetails(itemCategoryID)
+          .GetDetails(payload.itemCategoryID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
@@ -81,7 +86,7 @@ export class IndexComponent implements OnInit, OnDestroy {
                 const model: ItemCategoryMaster = {
                   ...response.Data,
                 };
-                this.createSidebar.openSidebar(activeStatus, true, model);
+                this.createSidebar.openSidebar(payload.activeStatus, true, model);
               } else {
                 this.alertService.showServerResponseAlert(response);
               }
@@ -92,42 +97,11 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   onCloseSidebar(): void {
-    this.loadData();
-  }
-
-  onIndexTableLazyLoad(event: DataTableLazyLoadEvent) {
-    this.tableEvent = event;
-    this.loadData();
-  }
-
-  loadData() {
-    try {
-      const model: DataTableParams<ItemCategory_IndexFilter> = {
-        first: this.tableEvent.first,
-        last: this.tableEvent.last,
-        sortField: this.tableEvent.sortField,
-        sortOrder: this.tableEvent.sortOrder,
-        filters: this.tableDef.filterForm?.value,
-      };
-      this.pageService
-        .PopulateGrid(model)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.IsSuccess) {
-              this.tableDef.data = response.Data.Items;
-              this.tableDef.totalRecords = response.Data.TotalRecords;
-            } else {
-              this.tableDef.data = [];
-              this.tableDef.totalRecords = 0;
-              this.alertService.showServerResponseToast(response);
-            }
-          },
-          complete: () => {
-            this.tableDef.loading = false;
-          },
-        });
-    } catch (error) { }
+    if (this.viewType() === 'card') {
+      this.dataview?.loadData();
+    } else {
+      this.gridview?.loadData();
+    }
   }
 
   onClickDeleteReactivate(row: any) {
@@ -145,7 +119,11 @@ export class IndexComponent implements OnInit, OnDestroy {
               .subscribe({
                 next: (response) => {
                   if (response.IsSuccess) {
-                    this.loadData();
+                    if (this.viewType() === 'card') {
+                      this.dataview?.loadData();
+                    } else {
+                      this.gridview?.loadData();
+                    }
                     this.alertService.showAlert({
                       type: 'success',
                       text: response.Message,

@@ -1,31 +1,33 @@
 <!-- Page Header Action Button Template -->
 <ng-template #pageHeaderActionTemplate>
-    <button class="btn btn-primary btn-page-header" (click)="onClickPageHeaderAddButton()"><i class="pi pi-plus"></i>&nbsp;Add Currency</button>
-</ng-template>
+  <div class="d-flex align-items-center gap-2">
+    <button class="btn btn-primary btn-page-header btn-md shadow-sm btn-add-currency" (click)="onClickPageHeaderAddButton()">
+      <i class="pi pi-plus"></i>&nbsp; Create
+    </button>
 
-<!-- Index Table Component -->
-<div class="col-xl-12 index-page-content">
-  <z-datatable [tableDef]="tableDef"
-    (lazyLoad)="onIndexTableLazyLoad($event)">
-  </z-datatable>
-</div>
-
-<!-- Table Column Custom Template -->
- <ng-template #currencyCodeTemplate let-row>
-    <span class="table-action-link" (click)="onClickEditDetails(row.CurrencyID, row.ActiveStatus)" style="cursor: pointer;">{{ row.CurrencyCode }}</span>
-</ng-template>
-
-<ng-template #currencyActiveStatusTemplate let-row>
-    <span class="table-row-status">
-        <i class="pi pi-circle-fill text-{{ row.ActiveStatus ? 'success' : 'danger' }}"></i>
-        {{ row.ActiveStatus ? 'Active'  : 'Inactive' }}
-    </span>
-</ng-template>
-
-<ng-template #actionColTemplate let-row>
-    <div class="d-flex justify-content-end">
-        <span class="btn btn-icon btn-sm btn-{{row.ActiveStatus ? 'danger' : 'success'}}-transparent btn-delete-reactivate" (click)="onClickDeleteReactivate(row)"><i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i></span>
+    <div class="btn-group view-switcher-group" role="group">
+      <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'card'"
+        (click)="toggleView('card')">
+        <i class="pi pi-th-large"></i> Card
+      </button>
+      <button class="btn btn-outline-primary view-switcher-btn" [class.active]="viewType() === 'table'"
+        (click)="toggleView('table')">
+        <i class="pi pi-list"></i> Table
+      </button>
     </div>
+  </div>
 </ng-template>
+
+<div class="col-xl-12 index-page-content">
+  @if (viewType() === 'card') {
+    <app-currency-dataview [filterForm]="filterForm" [sortingForm]="sortingForm"
+      (editDetails)="onClickEditDetails($event)" (deleteReactivate)="onClickDeleteReactivate($event)">
+    </app-currency-dataview>
+  } @else {
+    <app-currency-gridview [filterForm]="filterForm"
+      (editDetails)="onClickEditDetails($event)" (deleteReactivate)="onClickDeleteReactivate($event)">
+    </app-currency-gridview>
+  }
+</div>
 
 <app-create (closeSidebarEvent)="onCloseSidebar()"></app-create>

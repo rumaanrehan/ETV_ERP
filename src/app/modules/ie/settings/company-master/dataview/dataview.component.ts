@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, catchError, forkJoin, map, of, takeUntil } from 'rxjs';
 import { DataViewDef, DataViewLazyLoadEvent, DataViewParams } from '../../../../../shared/components/z-dataview/z-dataview';
 import { ZDataviewComponent } from '../../../../../shared/components/z-dataview/z-dataview.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
@@ -67,6 +67,48 @@ export class CompanyDataviewComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
+  private loadCardDetails(items: Company_IndexTableList[], totalRecords: number): void {
+    if (!items.length) {
+      this.dataViewDef.data = [];
+      this.dataViewDef.totalRecords = totalRecords;
+      this.dataViewDef.loading = false;
+      return;
+    }
+
+    const detailRequests = items.map((item) =>
+      this.pageService.GetDetails(item.CompanyID).pipe(
+        map((response) => response?.IsSuccess ? response.Data : null),
+        catchError(() => of(null))
+      )
+    );
+
+    forkJoin(detailRequests)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (details) => {
+          this.dataViewDef.data = items.map((item, index) => {
+            const detail = details[index];
+            if (!detail) {
+              return item;
+            }
+
+            return {
+              ...item,
+              ...detail
+            } as Company_IndexTableList;
+          });
+          this.dataViewDef.totalRecords = totalRecords;
+        },
+        error: () => {
+          this.dataViewDef.data = items;
+          this.dataViewDef.totalRecords = totalRecords;
+        },
+        complete: () => {
+          this.dataViewDef.loading = false;
+        }
+      });
+  }
+
   loadData(): void {
     try {
       this.dataViewDef.loading = true;
@@ -82,16 +124,19 @@ export class CompanyDataviewComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.dataViewDef.data = response.Data.Items;
-              this.dataViewDef.totalRecords = response.Data.TotalRecords;
+              this.loadCardDetails(response.Data.Items ?? [], response.Data.TotalRecords ?? 0);
             } else {
               this.dataViewDef.data = [];
               this.dataViewDef.totalRecords = 0;
+              this.dataViewDef.loading = false;
               this.alertService.showServerResponseToast(response);
             }
           },
-          complete: () => {
+          error: () => {
             this.dataViewDef.loading = false;
+          },
+          complete: () => {
+            // Loading is ended in `loadCardDetails` after detail API calls complete.
           }
         });
     } catch {

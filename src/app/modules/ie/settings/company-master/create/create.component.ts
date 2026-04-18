@@ -106,8 +106,6 @@ export class CreateComponent {
       this.form.patchValue({ ImportLicenseNo: null, GSTNo: null, TANNo: null, PANNo: null });
       return;
     }
-
-    this.form.patchValue({ CRNumber: null });
   }
 
   syncCompanyTypeFields(): void {

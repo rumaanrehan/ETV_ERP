@@ -1,0 +1,144 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.index-page-content {
+  padding: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+app-currency-dataview,
+app-currency-gridview {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+:host ::ng-deep .btn-add-currency.btn.btn-primary {
+  background: rgba(var(--primary-rgb), 0.2) !important;
+  border-color: rgba(var(--primary-rgb), 0.25) !important;
+  color: var(--primary-color) !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .btn-add-currency.btn.btn-primary i {
+  color: var(--primary-color) !important;
+}
+
+:host ::ng-deep .btn-add-currency.btn.btn-primary:hover,
+:host ::ng-deep .btn-add-currency.btn.btn-primary:focus {
+  background: rgba(var(--primary-rgb), 0.28) !important;
+  border-color: rgba(var(--primary-rgb), 0.35) !important;
+  color: var(--primary-color) !important;
+}
+
+:host ::ng-deep .btn-add-currency.btn.btn-primary:active {
+  background: rgba(var(--primary-rgb), 0.32) !important;
+}
+
+.view-switcher-group {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 50px;
+  padding: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-switcher-group:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border-color: rgba(var(--primary-rgb), 0.15);
+}
+
+.view-switcher-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #8898aa;
+  font-weight: 400;
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-switcher-btn:first-child {
+  border-top-left-radius: 50px !important;
+  border-bottom-left-radius: 50px !important;
+}
+
+.view-switcher-btn:last-child {
+  border-top-right-radius: 50px !important;
+  border-bottom-right-radius: 50px !important;
+}
+
+.view-switcher-btn i {
+  font-size: 0.75rem;
+  margin-right: 0.25rem;
+}
+
+.view-switcher-btn:hover {
+  color: var(--primary-color);
+  background: rgba(var(--primary-rgb), 0.04);
+}
+
+.view-switcher-btn.active {
+  background: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(var(--primary-rgb), 0.25);
+  font-weight: 600;
+}
+
+.btn-page-header.btn-md {
+  height: 30px;
+  padding: 1rem 1rem;
+  font-weight: 500;
+  font-size: 0.8rem;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(var(--primary-rgb), 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-page-header.btn-md:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.25) !important;
+}
+
+.btn-page-header.btn-md:active {
+  transform: translateY(0);
+}
+
+.btn-page-header.btn-md i {
+  font-size: 0.75rem;
+  transition: none;
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-group {
+  background: rgba(35, 39, 43, 0.98) !important;
+  border: 1px solid #334155 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-btn {
+  color: #94a3b8 !important;
+}
+
+:host-context([data-theme-mode="dark"]) .view-switcher-btn.active {
+  background: #38bdf8 !important;
+  color: #23272b !important;
+}

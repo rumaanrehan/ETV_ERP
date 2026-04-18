@@ -97,13 +97,6 @@
         <!-- Conditional fields -->
         <ng-container *ngIf="!isClientCompany">
           <div class="simple-field">
-            <label class="simple-label">{{ formConfig.ImportLicenseNo.label }}:</label>
-            <div class="simple-control">
-              <z-inputtext [group]="form" control="ImportLicenseNo" [label]="''"></z-inputtext>
-            </div>
-          </div>
-
-          <div class="simple-field">
             <label class="simple-label">{{ formConfig.GSTNo.label }}:</label>
             <div class="simple-control">
               <z-inputtext [group]="form" control="GSTNo" [label]="''"></z-inputtext>
@@ -125,7 +118,7 @@
           </div>
         </ng-container>
 
-        <div class="simple-field" *ngIf="isClientCompany">
+        <div class="simple-field">
           <label class="simple-label">{{ formConfig.CRNumber.label }}:</label>
           <div class="simple-control">
             <z-inputtext [group]="form" control="CRNumber" [label]="''"></z-inputtext>

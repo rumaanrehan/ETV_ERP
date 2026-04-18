@@ -49,23 +49,6 @@ z-datatable {
   font-size: 0.75rem;
 }
 
-/* Match export-order status pill styling */
-.grid-status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 1.3rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.69rem;
-  font-weight: 500;
-  line-height: 1;
-  white-space: nowrap;
-  color: #fff !important;
-  opacity: 0.85;
-}
-
-
 .pt-action-btn:hover {
   background: var(--list-hover-focus-bg);
 }

@@ -1,0 +1,22 @@
+<div class="col-xl-12 index-page-content">
+  <z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)" (resetFormEmitter)="onResetForm($event)">
+  </z-datatable>
+</div>
+
+<ng-template #itemCategoryCodeTemplate let-row>
+  <span class="table-action-link">{{ row.ItemCategoryCode }}</span>
+</ng-template>
+
+<ng-template #itemCategoryActiveStatusTemplate let-row>
+  <span class="grid-status-pill" [ngStyle]="{ backgroundColor: row.ActiveStatus ? '#22c55e' : '#ef4444' }">
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+  <div class="d-flex justify-content-end">
+    <button type="button" class="pt-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(row)">
+      <i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i>
+    </button>
+  </div>
+</ng-template>

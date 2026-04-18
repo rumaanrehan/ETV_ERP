@@ -1,41 +1,33 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem item-category-create-sidebar'">
   <div sidebarHeader>
-    <h5 class="text-white">Item Category Master</h5>
+    <h5 class="item-category-create-title">{{ isEditMode ? 'Edit Item Category' : 'Create Item Category' }}</h5>
   </div>
   <div sidebarContent>
-    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-group">
-        <z-span [text]="form.get('ItemCategoryCode')?.value" [label]="formConfig.ItemCategoryCode.label"></z-span>
-      </div>
-      <!-- <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'ItemTypeID'" [label]="formConfig.ItemTypeID.label"
-          [optionLabel]="'ItemTypeName'" [optionValue]="'ItemTypeID'" [options]="itemTypeList"  (onChange)="onChange_ItemType()">
-        </z-select>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'ItemGroupID'" [label]="formConfig.ItemGroupID.label"
-          [optionLabel]="'ItemGroupName'" [optionValue]="'ItemGroupID'" [options]="itemGroupList">
-        </z-select>
-      </div> -->
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" [control]="'ItemCategoryName'"
-          [label]="formConfig.ItemCategoryName.label"></z-inputtext>
+    <form class="item-category-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ItemCategoryCode.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('ItemCategoryCode')?.value || 'NEW' }}</div>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ItemCategoryName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'ItemCategoryName'" [label]="''"
+              [validationMessage]="formConfig.ItemCategoryName.error"></z-inputtext>
+          </div>
+        </div>
       </div>
     </form>
   </div>
   <div sidebarFooter>
-    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-      <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" [disabled]="isSubmitted || !activeStatus"
-          (click)="onSubmit()">
-          {{ isEditMode ? "Update" : "Save" }}
-        </button>
-      </div>
-      <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">
-          Cancel
-        </button>
-      </div>
+    <div class="item-category-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" [disabled]="isSubmitted || !activeStatus" (click)="onSubmit()">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </app-form-sidebar>

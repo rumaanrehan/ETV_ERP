@@ -1,33 +1,34 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { TableLazyLoadEvent } from 'primeng/table';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, signal } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
 import { Currency_IndexTableFilter, Currency_IndexTableList, CurrencyMaster } from '../currency-master';
 import { CurrencyMasterService } from '../currency-master.service';
+import { CurrencyDataviewComponent } from '../dataview/dataview.component';
+import { CurrencyGridviewComponent } from '../gridview/gridview.component';
 
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [ZDataTable, CreateComponent],
+  imports: [CommonModule, CreateComponent, CurrencyGridviewComponent, CurrencyDataviewComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss'
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('currencyCodeTemplate', { static: true }) currencyCodeTemplate!: TemplateRef<any>;
-  @ViewChild('currencyActiveStatusTemplate', { static: true }) currencyActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
   @ViewChild(CreateComponent, { static: false }) createSidebar!: CreateComponent;
+  @ViewChild(CurrencyGridviewComponent, { static: false }) gridview?: CurrencyGridviewComponent;
+  @ViewChild(CurrencyDataviewComponent, { static: false }) dataview?: CurrencyDataviewComponent;
 
-  tableDef!: DataTableDef<Currency_IndexTableList>;
-  tableEvent!: TableLazyLoadEvent;
+  viewType = signal<'card' | 'table'>('table');
+  filterForm!: FormGroup;
+  sortingForm!: FormGroup;
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -37,31 +38,35 @@ export class IndexComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    const savedView = localStorage.getItem('currencyMasterViewType');
+    if (savedView === 'card' || savedView === 'table') {
+      this.viewType.set(savedView);
+    }
+
+    this.filterForm = this.formService.createFormGroup_DataTableFilter<Currency_IndexTableFilter>(
+      this.pageService.getFormConfig_DataTableFilter()
+    );
+
+    this.sortingForm = this.formService.createFormGroup_DataTableFilter({
+      CurrencyCode: 1,
+      CountryName: 0,
+      CurrencyName: 0,
+      CurrencySymbol: 0,
+      ActiveStatusID: 0
+    });
+
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
-    this.tableDef = {
-      tableKey: 'Admin_CurrencyMaster_IndexTable',
-      columnDef: [],
-      defaultSortColumn: { sortField: 'CurrencyCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<Currency_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
-    this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'CurrencyCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.currencyCodeTemplate },
-      { data: 'CountryName', label: 'Country Name', filterable: true, width: "10%" },
-      { data: 'CurrencyName', label: 'Currency Name', filterable: true },
-      { data: 'CurrencyISOCode', label: 'Currency ISO Code', width: "10%" },
-      { data: 'CurrencySymbol', label: 'Currency Symbol', filterable: true, orderable: false, width: "8%" },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.currencyActiveStatusTemplate },
-      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
-    ];
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.pageHeaderService.setTemplate(null);
+  }
+
+  toggleView(type: 'card' | 'table'): void {
+    this.viewType.set(type);
+    localStorage.setItem('currencyMasterViewType', type);
   }
 
   onClickPageHeaderAddButton(): void {
@@ -70,15 +75,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEditDetails(currencyID: number, activeStatus: boolean): void {
+  onClickEditDetails(payload: { currencyID: number; activeStatus: boolean }): void {
     try {
-      if (this.createSidebar && currencyID) {
-        this.pageService.GetDetails(currencyID)
+      if (this.createSidebar && payload.currencyID) {
+        this.pageService.GetDetails(payload.currencyID)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.IsSuccess) {
-              this.createSidebar.openSidebar(activeStatus, true, response.Data);
+              this.createSidebar.openSidebar(payload.activeStatus, true, response.Data);
             }
             else {
               this.alertService.showServerResponseAlert(response);
@@ -93,48 +98,14 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   onCloseSidebar(): void {
-    this.loadData();
-  }
-
-  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
-    this.tableEvent = event;
-    this.loadData();
-  }
-
-  loadData(): void {
-    try {
-      const model: DataTableParams<Currency_IndexTableFilter> = {
-        first: this.tableEvent.first,
-        last: this.tableEvent.last,
-        sortField: this.tableEvent.sortField,
-        sortOrder: this.tableEvent.sortOrder,
-        filters: this.tableDef.filterForm?.value
-      };
-      this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
-          }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
-    }
-    catch (error) {
-
+    if (this.viewType() === 'card') {
+      this.dataview?.loadData();
+    } else {
+      this.gridview?.loadData();
     }
   }
 
-  onClickDeleteReactivate(row: any): void {
+  onClickDeleteReactivate(row: Currency_IndexTableList): void {
     try {
       const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
@@ -150,7 +121,11 @@ export class IndexComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                this.loadData();
+                if (this.viewType() === 'card') {
+                  this.dataview?.loadData();
+                } else {
+                  this.gridview?.loadData();
+                }
                 this.alertService.showAlert({
                   type: "success",
                   text: response.Message,

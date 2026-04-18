@@ -25,6 +25,7 @@ export interface Currency_IndexTableList {
     CurrencyCode: string;
     CurrencyName: string;
     CurrencyISOCode: string | null;
+    CurrencySymbol?: string | null;
     CountryName: string;
     ActiveStatus: boolean;
 }

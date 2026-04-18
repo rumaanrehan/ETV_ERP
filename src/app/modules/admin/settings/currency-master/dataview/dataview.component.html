@@ -12,8 +12,8 @@
       <div class="cm-card__body">
         <div class="cm-card__top">
           <div class="cm-card__titles">
-            <h5 class="cm-card__title">{{ row.CompanyName }}</h5>
-            <p class="cm-card__subtitle">{{ row.CompanyCode }}</p>
+            <h5 class="cm-card__title">{{ row.CurrencyName || '-' }}</h5>
+            <p class="cm-card__subtitle">{{ row.CurrencyCode || '-' }}</p>
           </div>
           <div class="cm-card__head-right">
             <span class="cm-status-pill" [ngClass]="row.ActiveStatus ? 'is-active' : 'is-inactive'">
@@ -27,24 +27,16 @@
 
         <div class="cm-card__grid">
           <div class="cm-field">
-            <span class="cm-field__label">Company Type</span>
-            <span class="cm-field__value">{{ row.CompanyTypeName || '-' }}</span>
+            <span class="cm-field__label">Country Name</span>
+            <span class="cm-field__value">{{ row.CountryName || '-' }}</span>
           </div>
           <div class="cm-field">
-            <span class="cm-field__label">Contact Name</span>
-            <span class="cm-field__value">{{ $any(row).CompanyContactName || '-' }}</span>
+            <span class="cm-field__label">Currency ISO Code</span>
+            <span class="cm-field__value">{{ row.CurrencyISOCode || '-' }}</span>
           </div>
           <div class="cm-field">
-            <span class="cm-field__label">Phone</span>
-            <span class="cm-field__value">{{ $any(row).CompanyPhoneNo || '-' }}</span>
-          </div>
-          <div class="cm-field">
-            <span class="cm-field__label">Email</span>
-            <span class="cm-field__value">{{ row.CompanyEmailID || '-' }}</span>
-          </div>
-          <div class="cm-field">
-            <span class="cm-field__label">CR Number</span>
-            <span class="cm-field__value">{{ $any(row).CRNumber || '-' }}</span>
+            <span class="cm-field__label">Currency Symbol</span>
+            <span class="cm-field__value">{{ row.CurrencySymbol || '-' }}</span>
           </div>
         </div>
       </div>
