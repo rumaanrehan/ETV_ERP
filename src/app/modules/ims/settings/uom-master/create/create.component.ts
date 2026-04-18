@@ -46,9 +46,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: UOMMaster): void {
-    if (isEditMode && model) {
-      this.isEditMode = isEditMode;
-    }
+    this.isEditMode = isEditMode;
+    this.isSubmitted = false;
     this.activeStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;

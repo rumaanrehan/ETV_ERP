@@ -25,6 +25,12 @@ export interface TaxSlab_IndexTableFilter {
   ActiveStatusID: number | null;
 }
 
+export interface TaxSlab_IndexTableSort {
+  TaxSlabCode: number;
+  TaxSlabName: number;
+  TaxRate: number;
+}
+
 export interface TaxSlab_IndexTableList {
   TaxSlabID: number;
   TaxSlabCode: string;

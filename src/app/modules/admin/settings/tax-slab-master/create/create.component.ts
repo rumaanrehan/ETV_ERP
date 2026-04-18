@@ -87,10 +87,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   openSidebar(activeStatus: boolean, isEditMode: boolean, model: TaxSlabMaster): void {
-    if (isEditMode && model) {
-      this.isEditMode = isEditMode;
-      this.ActiveStatus = activeStatus;
-    }
+    this.isEditMode = isEditMode;
+    this.isSubmitted = false;
     this.ActiveStatus = activeStatus;
     this.form.patchValue(model);
     this.isFormSidebarVisible = true;

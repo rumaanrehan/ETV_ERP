@@ -1,32 +1,34 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { TableLazyLoadEvent } from 'primeng/table';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, signal } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { DataTableDef, DataTableParams } from '../../../../../shared/components/z-datatable/z-datatable';
-import { ZDataTable } from '../../../../../shared/components/z-datatable/z-datatable.component';
 import { AlertNotificationService } from '../../../../../shared/services/alert-notification.service';
 import { FormService } from '../../../../../shared/services/form.service';
 import { PageHeaderService } from '../../../../../shared/services/page-header.service';
 import { CreateComponent } from '../create/create.component';
-import { TaxSlabMaster, TaxSlab_IndexTableFilter, TaxSlab_IndexTableList } from '../tax-slab-master';
+import { DataviewComponent } from '../dataview/dataview.component';
+import { GridviewComponent } from '../gridview/gridview.component';
+import { TaxSlabMaster, TaxSlab_IndexTableFilter, TaxSlab_IndexTableList, TaxSlab_IndexTableSort } from '../tax-slab-master';
 import { TaxSlabMasterService } from '../tax-slab-master.service';
 
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [ZDataTable, CreateComponent],
+  imports: [CommonModule, DataviewComponent, GridviewComponent, CreateComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss'
 })
 export class IndexComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
-  @ViewChild('taxSlabCodeTemplate', { static: true }) taxSlabCodeTemplate!: TemplateRef<any>;
-  @ViewChild('taxSlabActiveStatusTemplate', { static: true }) taxSlabActiveStatusTemplate!: TemplateRef<any>;
-  @ViewChild('actionColTemplate', { static: true }) actionColTemplate!: TemplateRef<any>;
-  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
 
-  tableDef!: DataTableDef<TaxSlab_IndexTableList>;
-  tableEvent!: TableLazyLoadEvent;
+  @ViewChild('pageHeaderActionTemplate', { static: true }) pageHeaderActionTemplate!: TemplateRef<any>;
+  @ViewChild(CreateComponent) createSidebar!: CreateComponent;
+  @ViewChild(DataviewComponent) dataview?: DataviewComponent;
+  @ViewChild(GridviewComponent) gridview?: GridviewComponent;
+
+  viewType = signal<'card' | 'table'>('card');
+  filterForm!: FormGroup;
+  sortingForm!: FormGroup;
 
   constructor(
     private pageHeaderService: PageHeaderService,
@@ -37,29 +39,28 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pageHeaderService.setTemplate(this.pageHeaderActionTemplate);
+    this.filterForm = this.formService.createFormGroup_DataTableFilter<TaxSlab_IndexTableFilter>(
+      this.pageService.getFormConfig_DataTableFilter()
+    );
+    this.sortingForm = this.formService.createFormGroup<TaxSlab_IndexTableSort>(
+      this.pageService.getFormConfig_DataTableSort()
+    );
 
-    this.tableDef = {
-      tableKey: 'Admin_TaxSlabMaster_IndexTable',
-      columnDef: [],
-      defaultSortColumn: { sortField: 'TaxSlabCode', sortOrder: 1 },
-      filterForm: this.formService.createFormGroup_DataTableFilter<TaxSlab_IndexTableFilter>(this.pageService.getFormConfig_DataTableFilter()),
-      data: [],
-      totalRecords: 0,
-      loading: false
-    };
-    this.tableDef.columnDef = [
-      { data: 'RowID', label: 'SN', hideVisToggle: true, orderable: false, width: "4%" },
-      { data: 'TaxSlabCode',  label: 'Code', hideVisToggle: true, filterable: true, width: "8%", customTemplate: this.taxSlabCodeTemplate },
-      { data: 'TaxSlabName', label: 'Tax Slab Name', filterable: true },
-      { data: 'TaxRate', label: 'Tax Rate', filterType: 'select', filterKey: 'TaxRateID', filterable: true },
-      { data: 'ActiveStatus', label: 'Status', filterable: true, filterType: 'select', filterKey: 'ActiveStatusID', cssClass: 'text-center', width: "10%", customTemplate: this.taxSlabActiveStatusTemplate, },
-      { data: '', hideVisToggle: true, orderable: false, width: "3%", customTemplate: this.actionColTemplate },
-    ];
+    const savedView = localStorage.getItem('adminTaxSlabMasterViewType');
+    if (savedView === 'card' || savedView === 'table') {
+      this.viewType.set(savedView);
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.pageHeaderService.setTemplate(null);
+  }
+
+  toggleView(type: 'card' | 'table'): void {
+    this.viewType.set(type);
+    localStorage.setItem('adminTaxSlabMasterViewType', type);
   }
 
   onClickPageHeaderAddButton(): void {
@@ -94,48 +95,10 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   onCloseSidebar(): void {
-    this.loadData();
+    this.refreshActiveView();
   }
 
-  onIndexTableLazyLoad(event: TableLazyLoadEvent): void {
-    this.tableEvent = event;
-    this.loadData();
-  }
-
-  loadData(): void {
-    try {
-      const model: DataTableParams<TaxSlab_IndexTableFilter> = {
-        first: this.tableEvent.first,
-        last: this.tableEvent.last,
-        sortField: this.tableEvent.sortField,
-        sortOrder: this.tableEvent.sortOrder,
-        filters: this.tableDef.filterForm?.value
-      };
-      this.pageService.PopulateGrid(model)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.IsSuccess) {
-            this.tableDef.data = response.Data.Items;
-            this.tableDef.totalRecords = response.Data.TotalRecords;
-          }
-          else {
-            this.tableDef.data = [];
-            this.tableDef.totalRecords = 0;
-            this.alertService.showServerResponseToast(response);
-          }
-        },
-        complete: () => {
-          this.tableDef.loading = false;
-        }
-      });
-    }
-    catch (error) {
-
-    }
-  }
-
-  onClickDeleteReactivate(row: any): void {
+  onClickDeleteReactivate(row: TaxSlab_IndexTableList): void {
      try {
       const ActionType = row.ActiveStatus ? 'delete' : 'reactivate';
       const inputPlaceholder = row.ActiveStatus ? 'Reason To Delete' : 'Reason To Reactivate';
@@ -151,7 +114,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           .subscribe({
             next: (response) => {
               if (response.IsSuccess) {
-                this.loadData();
+                this.refreshActiveView();
                 this.alertService.showAlert({
                   type: "success",
                   text: response.Message,
@@ -168,6 +131,14 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
     catch (error) {
 
+    }
+  }
+
+  private refreshActiveView(): void {
+    if (this.viewType() === 'card') {
+      this.dataview?.reload();
+    } else {
+      this.gridview?.reload();
     }
   }
 }

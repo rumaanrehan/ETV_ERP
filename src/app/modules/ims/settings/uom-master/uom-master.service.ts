@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { UOMMaster, UOMRequest, UOM_Details, UOM_IndexTableFilter, UOM_IndexTableList, UOM_SelectList } from './uom-master';
+import { UOMMaster, UOMRequest, UOM_Details, UOM_IndexTableFilter, UOM_IndexTableList, UOM_IndexTableSort, UOM_SelectList } from './uom-master';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ApiListResponse, ApiPagedListResponse, ApiDataResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
@@ -50,6 +52,40 @@ export class UOMMasterService {
       UOMName: '',
       ActiveStatusID: 0
     }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<UOM_IndexTableSort> {
+    return {
+      UOMCode: {
+        label: 'Code',
+        defaultValue: -1
+      },
+      UOMName: {
+        label: 'UOM Name',
+        defaultValue: 0
+      }
+    };
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<UOM_IndexTableList> {
+    return {
+      tableKey: 'IMS_UOM_IndexTable',
+      defaultSortColumn: { sortField: 'UOMCode', sortOrder: 1 },
+      filterForm,
+      sortingForm,
+      filterFields: [
+        { field: 'UOMCode', label: 'Code', type: 'text' },
+        { field: 'UOMName', label: 'UOM Name', type: 'text' },
+        { field: 'ActiveStatusID', label: 'Status', type: 'dropdown', options: [] }
+      ],
+      sortFields: [
+        { field: 'UOMCode', label: 'Code', enabled: true, order: -1 },
+        { field: 'UOMName', label: 'UOM Name', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
   }
 
   getFormConfig(): FormConfigType<UOMMaster> {

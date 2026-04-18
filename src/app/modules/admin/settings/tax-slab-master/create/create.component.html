@@ -1,35 +1,52 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem tax-slab-create-sidebar'">
   <div sidebarHeader>
-    <h5 class="text-white">Tax Slab Master</h5>
+    <h5 class="tax-slab-create-title">{{ isEditMode ? 'Edit Tax Slab' : 'Create Tax Slab' }}</h5>
   </div>
   <div sidebarContent>
-    <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-      <div class="col-xl-12 form-group">
-          <z-span [text]="form.get('TaxSlabCode')?.value" [label]="formConfig.TaxSlabCode.label"></z-span>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-select [group]="form" [control]="'TaxTypeID'" [label]="formConfig.TaxTypeID.label"
-        [validationMessage]="formConfig.TaxTypeID.error" [optionLabel]="'TaxTypeName'" [optionValue]="'TaxTypeID'" [options]="taxTypeList">
-        </z-select>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputtext [group]="form" control="TaxSlabName" [label]="formConfig.TaxSlabName.label"></z-inputtext>
-      </div>
-      <div class="col-xl-12 form-group">
-        <z-inputnumber [group]="form" [control]="'TaxRate'" [min]="0" [max]="100" [label]="formConfig.TaxRate.label"></z-inputnumber>
+    <form class="tax-slab-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.TaxSlabCode.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('TaxSlabCode')?.value || 'NEW' }}</div>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.TaxTypeID.label }}:</label>
+          <div class="simple-control">
+            <z-select [group]="form" [control]="'TaxTypeID'" [label]="''"
+              [validationMessage]="formConfig.TaxTypeID.error" [optionLabel]="'TaxTypeName'" [optionValue]="'TaxTypeID'"
+              [options]="taxTypeList">
+            </z-select>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.TaxSlabName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" control="TaxSlabName" [label]="''"
+              [validationMessage]="formConfig.TaxSlabName.error"></z-inputtext>
+          </div>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.TaxRate.label }}:</label>
+          <div class="simple-control">
+            <z-inputnumber [group]="form" [control]="'TaxRate'" [min]="0" [max]="100" [label]="''"
+              [validationMessage]="formConfig.TaxRate.error"></z-inputnumber>
+          </div>
+        </div>
       </div>
     </form>
   </div>
   <div sidebarFooter>
-    <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-      <div class="col-md-6 pe-1">
-        <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="form.invalid">
-          {{ isEditMode ? 'Update' : 'Save' }}
-        </button>
-      </div>
-      <div class="col-md-6 ps-1">
-        <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-      </div>
+    <div class="tax-slab-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" (click)="onSubmit()"
+        [disabled]="isSubmitted || !ActiveStatus || form.invalid">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </app-form-sidebar>

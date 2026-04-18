@@ -1,0 +1,22 @@
+<ng-template #uomCodeTemplate let-row>
+  <span class="table-action-link" (click)="onClickEditDetails(row.UOMID, row.ActiveStatus)">
+    {{ row.UOMCode }}
+  </span>
+</ng-template>
+
+<ng-template #uomMasterActiveStatusTemplate let-row>
+  <span class="grid-status-pill" [ngStyle]="{ backgroundColor: row.ActiveStatus ? '#22c55e' : '#ef4444' }">
+    {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+  </span>
+</ng-template>
+
+<ng-template #actionColTemplate let-row>
+  <div class="d-flex justify-content-end">
+    <button type="button" class="uom-action-btn" (click)="onClickDeleteReactivate(row)">
+      <i class="pi pi-{{ row.ActiveStatus ? 'trash' : 'undo' }}"></i>
+    </button>
+  </div>
+</ng-template>
+
+<z-datatable [tableDef]="tableDef" (lazyLoad)="onIndexTableLazyLoad($event)" (resetFormEmitter)="onResetForm($event)">
+</z-datatable>

@@ -1,30 +1,42 @@
-<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem'">
+<app-form-sidebar [isVisible]="isFormSidebarVisible" [styleClass]="'w-30rem uom-create-sidebar'">
   <div sidebarHeader>
-      <h5 class="text-white">UOM Master</h5>
+    <h5 class="uom-create-title">{{ isEditMode ? 'Edit UOM' : 'Create UOM' }}</h5>
   </div>
   <div sidebarContent>
-      <form class="form-sidebar" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-          <div class="col-xl-12 form-group">
-              <z-span [text]="form.get('UOMCode')?.value" [label]="formConfig.UOMCode.label"></z-span>
+    <form class="uom-create-form" [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="simple-form">
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.UOMCode.label }}:</label>
+          <div class="simple-control">
+            <div class="simple-static">{{ form.get('UOMCode')?.value || 'NEW' }}</div>
           </div>
-          <div class="col-xl-12 form-group">
-              <z-inputtext [group]="form" [control]="'UOMName'" [label]="formConfig.UOMName.label" [validationMessage]="formConfig.UOMName.error"></z-inputtext>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.UOMName.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'UOMName'" [label]="''"
+              [validationMessage]="formConfig.UOMName.error"></z-inputtext>
           </div>
-          <div class="col-xl-12 form-group">
-              <z-inputtext [group]="form" [control]="'ShortCode'" [label]="formConfig.ShortCode.label"></z-inputtext>
+        </div>
+
+        <div class="simple-field">
+          <label class="simple-label">{{ formConfig.ShortCode.label }}:</label>
+          <div class="simple-control">
+            <z-inputtext [group]="form" [control]="'ShortCode'" [label]="''"
+              [validationMessage]="formConfig.ShortCode.error"></z-inputtext>
           </div>
-      </form>
+        </div>
+      </div>
+    </form>
   </div>
   <div sidebarFooter>
-      <div class="col-xl-12 d-grid mt-4 d-flex align-items-center">
-          <div class="col-md-6 pe-1">
-                <button type="submit" class="btn btn-md btn-primary w-100" (click)="onSubmit()" [disabled]="isSubmitted || !activeStatus">
-                    {{ isEditMode ? "Update" : "Save" }}
-                </button>
-          </div>
-          <div class="col-md-6 ps-1">
-              <button type="button" class="btn btn-md btn-light w-100" (click)="closeSidebar()">Cancel</button>
-          </div>
-      </div>
+    <div class="uom-create-footer">
+      <button type="button" class="simple-btn" (click)="closeSidebar()">Cancel</button>
+      <button type="submit" class="simple-btn is-active" (click)="onSubmit()"
+        [disabled]="isSubmitted || !activeStatus || form.invalid">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
+    </div>
   </div>
 </app-form-sidebar>

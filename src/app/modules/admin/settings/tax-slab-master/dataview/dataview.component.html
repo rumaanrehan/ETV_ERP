@@ -1,0 +1,36 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #customTemplate let-taxSlabs>
+  <div class="ts-card ts-card--clickable" *ngFor="let row of taxSlabs" role="button" tabindex="0"
+    (click)="onClickEditDetails(row.TaxSlabID, row.ActiveStatus)"
+    (keydown.enter)="onClickEditDetails(row.TaxSlabID, row.ActiveStatus)"
+    (keydown.space)="$event.preventDefault(); onClickEditDetails(row.TaxSlabID, row.ActiveStatus)">
+    <div class="ts-card__body">
+      <div class="ts-card__head">
+        <div class="ts-card__titles">
+          <h5 class="ts-card__title">{{ row.TaxSlabCode || '-' }}</h5>
+          <p class="ts-card__subtitle">{{ row.TaxSlabName || '-' }}</p>
+        </div>
+        <div class="ts-card__head-right">
+          <span class="ts-status-pill" [ngClass]="row.ActiveStatus ? 'is-active' : 'is-inactive'">
+            {{ row.ActiveStatus ? 'Active' : 'Inactive' }}
+          </span>
+          <button type="button" class="ts-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(row)">
+            <i class="pi pi-{{row.ActiveStatus ? 'trash' : 'undo'}}"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="ts-card__grid">
+        <div class="ts-field">
+          <span class="ts-field__label">Tax Rate</span>
+          <span class="ts-field__value">{{ row.TaxRate }}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -19,6 +19,11 @@ export interface UOM_IndexTableFilter {
   ActiveStatusID: number | null;
 }
 
+export interface UOM_IndexTableSort {
+  UOMCode: number;
+  UOMName: number;
+}
+
 export interface UOM_SelectList {
   UOMID: number;
   UOMName: string;

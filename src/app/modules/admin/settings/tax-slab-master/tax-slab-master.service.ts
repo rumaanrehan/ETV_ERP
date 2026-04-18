@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { DataTableParams } from '../../../../shared/components/z-datatable/z-datatable';
+import { DataViewDef } from '../../../../shared/components/z-dataview/z-dataview';
 import { ApiDataResponse, ApiListResponse, ApiPagedListResponse, ApiResponse } from '../../../../shared/models/api-response';
 import { DataTableFilterFormConfigType, FormConfigType } from '../../../../shared/models/form.model';
 import { StaticList, StaticListRequest } from '../../../../shared/models/select-list';
 import { SelectListService } from '../../../../shared/services/select-list.service';
 import { NotOnlyWhitespaceValidator } from '../../../../shared/validators/not-only-whitespace.validator';
-import { TaxSlab_IndexTableFilter, TaxSlab_IndexTableList, TaxSlab_SelectList, TaxSlabMaster, TaxSlabRequest } from './tax-slab-master';
+import { TaxSlab_IndexTableFilter, TaxSlab_IndexTableList, TaxSlab_IndexTableSort, TaxSlab_SelectList, TaxSlabMaster, TaxSlabRequest } from './tax-slab-master';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +59,46 @@ export class TaxSlabMasterService {
       TaxRateID: 0,
       ActiveStatusID: 0
     }
+  }
+
+  getFormConfig_DataTableSort(): FormConfigType<TaxSlab_IndexTableSort> {
+    return {
+      TaxSlabCode: {
+        label: 'Code',
+        defaultValue: -1
+      },
+      TaxSlabName: {
+        label: 'Tax Slab Name',
+        defaultValue: 0
+      },
+      TaxRate: {
+        label: 'Tax Rate',
+        defaultValue: 0
+      }
+    };
+  }
+
+  getDataViewDef(filterForm: FormGroup, sortingForm: FormGroup): DataViewDef<TaxSlab_IndexTableList> {
+    return {
+      tableKey: 'Admin_TaxSlabMaster_IndexTable',
+      defaultSortColumn: { sortField: 'TaxSlabCode', sortOrder: 1 },
+      filterForm,
+      sortingForm,
+      filterFields: [
+        { field: 'TaxSlabCode', label: 'Code', type: 'text' },
+        { field: 'TaxSlabName', label: 'Tax Slab Name', type: 'text' },
+        { field: 'TaxRateID', label: 'Tax Rate', type: 'dropdown', options: [] },
+        { field: 'ActiveStatusID', label: 'Status', type: 'dropdown', options: [] }
+      ],
+      sortFields: [
+        { field: 'TaxSlabCode', label: 'Code', enabled: true, order: -1 },
+        { field: 'TaxSlabName', label: 'Tax Slab Name', enabled: true, order: 0 },
+        { field: 'TaxRate', label: 'Tax Rate', enabled: true, order: 0 }
+      ],
+      data: [],
+      totalRecords: 0,
+      loading: false
+    };
   }
   
   getFormConfig(): FormConfigType<TaxSlabMaster> {

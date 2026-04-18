@@ -1,0 +1,36 @@
+<div class="col-xl-12 index-page-content">
+  <z-dataview [dataViewDef]="dataViewDef" (lazyLoad)="onIndexDataViewLazyLoad($event)"
+    (resetFormEmitter)="onResetForm($event)" [itemTemplate]="customTemplate">
+  </z-dataview>
+</div>
+
+<ng-template #customTemplate let-uomItems>
+  <div class="uom-card uom-card--clickable" *ngFor="let item of uomItems" role="button" tabindex="0"
+    (click)="onClickEditDetails(item.UOMID, item.ActiveStatus)"
+    (keydown.enter)="onClickEditDetails(item.UOMID, item.ActiveStatus)"
+    (keydown.space)="$event.preventDefault(); onClickEditDetails(item.UOMID, item.ActiveStatus)">
+    <div class="uom-card__body">
+      <div class="uom-card__head">
+        <div class="uom-card__titles">
+          <h5 class="uom-card__title">{{ item.UOMCode }}</h5>
+          <p class="uom-card__subtitle">{{ item.UOMName }}</p>
+        </div>
+        <div class="uom-card__head-right">
+          <span class="uom-status-pill" [ngClass]="item.ActiveStatus ? 'is-active' : 'is-inactive'">
+            {{ item.ActiveStatus ? 'Active' : 'Inactive' }}
+          </span>
+          <button type="button" class="uom-action-btn" (click)="$event.stopPropagation(); onClickDeleteReactivate(item)">
+            <i class="pi pi-{{ item.ActiveStatus ? 'trash' : 'undo' }}"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="uom-card__grid">
+        <div class="uom-field">
+          <span class="uom-field__label">Short Code</span>
+          <span class="uom-field__value">{{ item.ShortCode || '-' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
